@@ -1,6 +1,5 @@
 ## 
-## Enduro Execution platform's UBF library
-## We are using flex & bison for boolean expressions!
+## Enduro/X JNI Backing library
 ##
 ## @file CMakeLists.txt
 ## 
@@ -34,13 +33,8 @@
 # Set minimum version
 cmake_minimum_required(VERSION 2.6)
 
-find_package(BISON)
-find_package(FLEX)
-
-BISON_TARGET(EXPRPARSER expr.y ${CMAKE_CURRENT_BINARY_DIR}/expr.tab.c)
-FLEX_TARGET(EXPRSCANNER expr.l ${CMAKE_CURRENT_BINARY_DIR}/expr.lex.c)
-
-#set(CMAKE_C_FLAGS_DEBUG "-DUBF_DEBUG" ${CMAKE_C_FLAGS_DEBUG})
+find_package(Java)
+include(UseJava)
 
 # Add debug options
 # By default if RELEASE_BUILD is not defined, then we run in debug!
@@ -50,49 +44,47 @@ ELSE ($ENV{RELEASE_BUILD})
 	ADD_DEFINITIONS("-D UBF_DEBUG")
 ENDIF ($ENV{RELEASE_BUILD})
 
+find_package(JNI)
+
+if (JNI_FOUND)
+    message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+    message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
+endif()
+
 # Make sure the compiler can find include files from our UBF library.
-include_directories (. ${ENDUROX_SOURCE_DIR}/include ${ENDUROX_SOURCE_DIR}/libnstd)
+include_directories (. ${JNI_INCLUDE_DIRS})
+
+
+add_jar(enduroxjava
+        AtmiCtx.java
+        )
+
+create_javah(TARGET enduroxjh CLASSES AtmiCtx CLASSPATH enduroxjava)
 
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
-add_library (ubf SHARED
-		ubf_impl.c
-		ubf.c
-		fproj_impl.c
-		find_impl.c
-		get_impl.c
-		bprint_impl.c
-		fmerge.c
-		ferror.c 
-		fdatatype.c
-		fieldtable.c
-		cf.c 
-		expr_funcs.c
-		utils.c
-                b_readwrite.c
-                ubf_tls.c
-                view_null.c
-                view_parser.c
-                view_plot.c
-                view_struct.c
-                view_ubf.c
-		view_access.c
-		${BISON_EXPRPARSER_OUTPUTS} 
-		${FLEX_EXPRSCANNER_OUTPUTS}
+add_library (exjava SHARED
+		AtmiCtx.c
 	)
 
+
+add_dependencies(exjava enduroxjh)
+
+
+    target_link_libraries(exjava atmisrvinteg atmi ubf nstd pthread)
 if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
-    target_link_libraries(ubf nstd)
+    target_link_libraries(exjava nstd)
 elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
-    target_link_libraries(ubf nstd)
+    target_link_libraries(eoxjava nstd)
 elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
     # for XL tls
-    target_link_libraries(ubf pthread)
+    target_link_libraries(enduroxjava pthread)
 endif()
 
 install (TARGETS 
-    ubf 
+    exjava
     DESTINATION "${INSTALL_LIB_DIR}"
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
     COMPONENT libraries
     )
+

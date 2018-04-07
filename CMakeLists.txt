@@ -1,5 +1,5 @@
 ## 
-## Enduro Execution platform main Make descriptor
+## Enduro/X Java Bindings
 ##
 ## @file CMakeLists.txt
 ## 
@@ -32,7 +32,7 @@
 
 cmake_minimum_required (VERSION 2.8) 
 project (ENDUROX-JAVA) 
-set(VERSION "5.2.16")
+set(VERSION "0.0.1")
 set(PROJ_NAME "Enduro/X Java")
 set(RELEASE "1")
 
