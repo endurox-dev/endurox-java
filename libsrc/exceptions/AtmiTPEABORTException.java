@@ -4,7 +4,7 @@ package org.endurox;
  * TPEABORT exception
  */
 public class AtmiTPEABORTException extends AtmiException {
-	
+        
     public AtmiTPEABORTException(String msg) {
         super(msg, AtmiConstants.TPEABORT);
     }
@@ -13,4 +13,5 @@ public class AtmiTPEABORTException extends AtmiException {
         super(s, AtmiConstants.TPEABORT, throwable);
     }
 }
+
 

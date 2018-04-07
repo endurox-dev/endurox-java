@@ -3,7 +3,7 @@ package org.endurox;
 /**
  * ATMI Base exception
  */
-public class AtmiException extends RuntimeException {
+public class UbfException extends RuntimeException {
 	
 	/**
 	 * Error code
@@ -15,7 +15,7 @@ public class AtmiException extends RuntimeException {
 	 * @param msg error message
 	 * @param tperrno tp error code
 	 */
-    public AtmiException(String msg, int tperrno) {
+    public UbfException(String msg, int tperrno) {
         super(msg);
         
         errorCode = tperrno;
@@ -27,7 +27,7 @@ public class AtmiException extends RuntimeException {
      * @param tperrno
      * @param throwable
      */
-    public AtmiException(String s, int tperrno, Throwable throwable) {
+    public UbfException(String s, int tperrno, Throwable throwable) {
         super(s, throwable);
         errorCode = tperrno;
         
@@ -40,6 +40,5 @@ public class AtmiException extends RuntimeException {
     public int getErrorCode() {
     	return errorCode;
     }
-
 }
 

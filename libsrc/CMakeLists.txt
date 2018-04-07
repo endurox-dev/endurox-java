@@ -61,6 +61,71 @@ add_jar(enduroxjava
         exceptions/AtmiException.java
         exceptions/AtmiTPEABORTException.java
         exceptions/AtmiTPEBADDESCException.java
+        exceptions/AtmiTPEBLOCKException.java
+        exceptions/AtmiTPEDIAGNOSTICException.java
+        exceptions/AtmiTPEEVENTException.java
+        exceptions/AtmiTPEHAZARDException.java
+        exceptions/AtmiTPEHEURISTICException.java
+        exceptions/AtmiTPEINVALException.java
+        exceptions/AtmiTPEITYPEException.java
+        exceptions/AtmiTPELIMITException.java
+        exceptions/AtmiTPEMATCHException.java
+        exceptions/AtmiTPEMIBException.java
+        exceptions/AtmiTPENOENTException.java
+        exceptions/AtmiTPEOSException.java
+        exceptions/AtmiTPEOTYPEException.java
+        exceptions/AtmiTPEPERMException.java
+        exceptions/AtmiTPEPROTOException.java
+        exceptions/AtmiTPERELEASEException.java
+        exceptions/AtmiTPERFU26Exception.java
+        exceptions/AtmiTPERFU27Exception.java
+        exceptions/AtmiTPERFU28Exception.java
+        exceptions/AtmiTPERFU29Exception.java
+        exceptions/AtmiTPERMERRException.java
+        exceptions/AtmiTPESVCERRException.java
+        exceptions/AtmiTPESVCFAILException.java
+        exceptions/AtmiTPESYSTEMException.java
+        exceptions/AtmiTPETIMEException.java
+        exceptions/AtmiTPETRANException.java
+        exceptions/AtmiTPGOTSIGException.java
+        exceptions/AtmiTPINITFAILException.java
+        exceptions/NstdException.java
+        exceptions/NstdNEFORMATException.java
+        exceptions/NstdNEINVALException.java
+        exceptions/NstdNEINVALINIException.java
+        exceptions/NstdNEINVALKEYException.java
+        exceptions/NstdNELIMITException.java
+        exceptions/NstdNEMALLOCException.java
+        exceptions/NstdNEMANDATORYException.java
+        exceptions/NstdNENOCONNException.java
+        exceptions/NstdNENOSPACEException.java
+        exceptions/NstdNEPLUGINException.java
+        exceptions/NstdNESYSTEMException.java
+        exceptions/NstdNETOUTException.java
+        exceptions/NstdNEUNIXException.java
+        exceptions/UbfBALIGNERRException.java
+        exceptions/UbfBBADACMException.java
+        exceptions/UbfBBADFLDException.java
+        exceptions/UbfBBADNAMEException.java
+        exceptions/UbfBBADTBLException.java
+        exceptions/UbfBBADVIEWException.java
+        exceptions/UbfBEBADOPException.java
+        exceptions/UbfBEINVALException.java
+        exceptions/UbfBERFU0Exception.java
+        exceptions/UbfBERFU1Exception.java
+        exceptions/UbfBEUNIXException.java
+        exceptions/UbfBFTOPENException.java
+        exceptions/UbfBFTSYNTAXException.java
+        exceptions/UbfBMALLOCException.java
+        exceptions/UbfBNOCNAMEException.java
+        exceptions/UbfBNOSPACEException.java
+        exceptions/UbfBNOTFLDException.java
+        exceptions/UbfBNOTPRESException.java
+        exceptions/UbfBSYNTAXException.java
+        exceptions/UbfBTYPERRException.java
+        exceptions/UbfBVFOPENException.java
+        exceptions/UbfBVFSYNTAXException.java
+        exceptions/UbfException.java
         )
 
 create_javah(TARGET enduroxjh CLASSES AtmiCtx CLASSPATH enduroxjava)
