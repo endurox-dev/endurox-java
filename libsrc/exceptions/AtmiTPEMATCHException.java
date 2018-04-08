@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEMATCHException extends AtmiException {
         
     public AtmiTPEMATCHException(String msg) {
-        super(msg, AtmiConstants.TPEMATCH);
+        super(AtmiConstants.TPEMATCH, msg);
     }
     
-    public AtmiTPEMATCHException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEMATCH, throwable);
+    public AtmiTPEMATCHException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEMATCH, msg, throwable);
     }
 }
 

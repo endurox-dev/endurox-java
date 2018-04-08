@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEOSException extends AtmiException {
         
     public AtmiTPEOSException(String msg) {
-        super(msg, AtmiConstants.TPEOS);
+        super(AtmiConstants.TPEOS, msg);
     }
     
-    public AtmiTPEOSException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEOS, throwable);
+    public AtmiTPEOSException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEOS, msg, throwable);
     }
 }
 

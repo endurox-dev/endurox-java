@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNELIMITException extends NstdException {
         
     public NstdNELIMITException(String msg) {
-        super(msg, AtmiConstants.NELIMIT);
+        super(AtmiConstants.NELIMIT, msg);
     }
     
-    public NstdNELIMITException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NELIMIT, throwable);
+    public NstdNELIMITException(String msg, Throwable throwable) {
+        super(AtmiConstants.NELIMIT, msg, throwable);
     }
 }
 

@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNENOCONNException extends NstdException {
         
     public NstdNENOCONNException(String msg) {
-        super(msg, AtmiConstants.NENOCONN);
+        super(AtmiConstants.NENOCONN, msg);
     }
     
-    public NstdNENOCONNException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NENOCONN, throwable);
+    public NstdNENOCONNException(String msg, Throwable throwable) {
+        super(AtmiConstants.NENOCONN, msg, throwable);
     }
 }
 

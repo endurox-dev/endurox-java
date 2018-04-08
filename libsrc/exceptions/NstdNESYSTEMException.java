@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNESYSTEMException extends NstdException {
         
     public NstdNESYSTEMException(String msg) {
-        super(msg, AtmiConstants.NESYSTEM);
+        super(AtmiConstants.NESYSTEM, msg);
     }
     
-    public NstdNESYSTEMException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NESYSTEM, throwable);
+    public NstdNESYSTEMException(String msg, Throwable throwable) {
+        super(AtmiConstants.NESYSTEM, msg, throwable);
     }
 }
 

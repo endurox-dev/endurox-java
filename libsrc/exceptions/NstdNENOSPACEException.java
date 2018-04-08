@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNENOSPACEException extends NstdException {
         
     public NstdNENOSPACEException(String msg) {
-        super(msg, AtmiConstants.NENOSPACE);
+        super(AtmiConstants.NENOSPACE, msg);
     }
     
-    public NstdNENOSPACEException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NENOSPACE, throwable);
+    public NstdNENOSPACEException(String msg, Throwable throwable) {
+        super(AtmiConstants.NENOSPACE, msg, throwable);
     }
 }
 

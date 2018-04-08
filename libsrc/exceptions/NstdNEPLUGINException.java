@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNEPLUGINException extends NstdException {
         
     public NstdNEPLUGINException(String msg) {
-        super(msg, AtmiConstants.NEPLUGIN);
+        super(AtmiConstants.NEPLUGIN, msg);
     }
     
-    public NstdNEPLUGINException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NEPLUGIN, throwable);
+    public NstdNEPLUGINException(String msg, Throwable throwable) {
+        super(AtmiConstants.NEPLUGIN, msg, throwable);
     }
 }
 

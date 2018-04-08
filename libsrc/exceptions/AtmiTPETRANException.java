@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPETRANException extends AtmiException {
         
     public AtmiTPETRANException(String msg) {
-        super(msg, AtmiConstants.TPETRAN);
+        super(AtmiConstants.TPETRAN, msg);
     }
     
-    public AtmiTPETRANException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPETRAN, throwable);
+    public AtmiTPETRANException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPETRAN, msg, throwable);
     }
 }
 

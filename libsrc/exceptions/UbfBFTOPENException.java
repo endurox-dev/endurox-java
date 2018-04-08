@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBFTOPENException extends UbfException {
         
     public UbfBFTOPENException(String msg) {
-        super(msg, AtmiConstants.BFTOPEN);
+        super(AtmiConstants.BFTOPEN, msg);
     }
     
-    public UbfBFTOPENException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BFTOPEN, throwable);
+    public UbfBFTOPENException(String msg, Throwable throwable) {
+        super(AtmiConstants.BFTOPEN, msg, throwable);
     }
 }
 

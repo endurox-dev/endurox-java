@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBFTSYNTAXException extends UbfException {
         
     public UbfBFTSYNTAXException(String msg) {
-        super(msg, AtmiConstants.BFTSYNTAX);
+        super(AtmiConstants.BFTSYNTAX, msg);
     }
     
-    public UbfBFTSYNTAXException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BFTSYNTAX, throwable);
+    public UbfBFTSYNTAXException(String msg, Throwable throwable) {
+        super(AtmiConstants.BFTSYNTAX, msg, throwable);
     }
 }
 

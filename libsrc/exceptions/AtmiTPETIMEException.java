@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPETIMEException extends AtmiException {
         
     public AtmiTPETIMEException(String msg) {
-        super(msg, AtmiConstants.TPETIME);
+        super(AtmiConstants.TPETIME, msg);
     }
     
-    public AtmiTPETIMEException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPETIME, throwable);
+    public AtmiTPETIMEException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPETIME, msg, throwable);
     }
 }
 

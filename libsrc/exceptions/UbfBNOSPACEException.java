@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBNOSPACEException extends UbfException {
         
     public UbfBNOSPACEException(String msg) {
-        super(msg, AtmiConstants.BNOSPACE);
+        super(AtmiConstants.BNOSPACE, msg);
     }
     
-    public UbfBNOSPACEException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BNOSPACE, throwable);
+    public UbfBNOSPACEException(String msg, Throwable throwable) {
+        super(AtmiConstants.BNOSPACE, msg, throwable);
     }
 }
 

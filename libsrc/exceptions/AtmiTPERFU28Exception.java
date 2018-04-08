@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPERFU28Exception extends AtmiException {
         
     public AtmiTPERFU28Exception(String msg) {
-        super(msg, AtmiConstants.TPERFU28);
+        super(AtmiConstants.TPERFU28, msg);
     }
     
-    public AtmiTPERFU28Exception(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPERFU28, throwable);
+    public AtmiTPERFU28Exception(String msg, Throwable throwable) {
+        super(AtmiConstants.TPERFU28, msg, throwable);
     }
 }
 

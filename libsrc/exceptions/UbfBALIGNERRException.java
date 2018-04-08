@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBALIGNERRException extends UbfException {
         
     public UbfBALIGNERRException(String msg) {
-        super(msg, AtmiConstants.BALIGNERR);
+        super(AtmiConstants.BALIGNERR, msg);
     }
     
-    public UbfBALIGNERRException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BALIGNERR, throwable);
+    public UbfBALIGNERRException(String msg, Throwable throwable) {
+        super(AtmiConstants.BALIGNERR, msg, throwable);
     }
 }
 

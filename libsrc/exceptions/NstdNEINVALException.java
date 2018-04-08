@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNEINVALException extends NstdException {
         
     public NstdNEINVALException(String msg) {
-        super(msg, AtmiConstants.NEINVAL);
+        super(AtmiConstants.NEINVAL, msg);
     }
     
-    public NstdNEINVALException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NEINVAL, throwable);
+    public NstdNEINVALException(String msg, Throwable throwable) {
+        super(AtmiConstants.NEINVAL, msg, throwable);
     }
 }
 

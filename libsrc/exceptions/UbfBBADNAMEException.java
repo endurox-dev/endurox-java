@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBBADNAMEException extends UbfException {
         
     public UbfBBADNAMEException(String msg) {
-        super(msg, AtmiConstants.BBADNAME);
+        super(AtmiConstants.BBADNAME, msg);
     }
     
-    public UbfBBADNAMEException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BBADNAME, throwable);
+    public UbfBBADNAMEException(String msg, Throwable throwable) {
+        super(AtmiConstants.BBADNAME, msg, throwable);
     }
 }
 

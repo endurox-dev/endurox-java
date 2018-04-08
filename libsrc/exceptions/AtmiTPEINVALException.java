@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEINVALException extends AtmiException {
         
     public AtmiTPEINVALException(String msg) {
-        super(msg, AtmiConstants.TPEINVAL);
+        super(AtmiConstants.TPEINVAL, msg);
     }
     
-    public AtmiTPEINVALException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEINVAL, throwable);
+    public AtmiTPEINVALException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEINVAL, msg, throwable);
     }
 }
 

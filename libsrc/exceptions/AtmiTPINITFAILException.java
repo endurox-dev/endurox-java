@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPINITFAILException extends AtmiException {
         
     public AtmiTPINITFAILException(String msg) {
-        super(msg, AtmiConstants.TPINITFAIL);
+        super(AtmiConstants.TPINITFAIL, msg);
     }
     
-    public AtmiTPINITFAILException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPINITFAIL, throwable);
+    public AtmiTPINITFAILException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPINITFAIL, msg, throwable);
     }
 }
 

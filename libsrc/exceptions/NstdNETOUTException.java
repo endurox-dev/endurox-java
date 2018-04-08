@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNETOUTException extends NstdException {
         
     public NstdNETOUTException(String msg) {
-        super(msg, AtmiConstants.NETOUT);
+        super(AtmiConstants.NETOUT, msg);
     }
     
-    public NstdNETOUTException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NETOUT, throwable);
+    public NstdNETOUTException(String msg, Throwable throwable) {
+        super(AtmiConstants.NETOUT, msg, throwable);
     }
 }
 

@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNEMALLOCException extends NstdException {
         
     public NstdNEMALLOCException(String msg) {
-        super(msg, AtmiConstants.NEMALLOC);
+        super(AtmiConstants.NEMALLOC, msg);
     }
     
-    public NstdNEMALLOCException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NEMALLOC, throwable);
+    public NstdNEMALLOCException(String msg, Throwable throwable) {
+        super(AtmiConstants.NEMALLOC, msg, throwable);
     }
 }
 

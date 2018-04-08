@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBMALLOCException extends UbfException {
         
     public UbfBMALLOCException(String msg) {
-        super(msg, AtmiConstants.BMALLOC);
+        super(AtmiConstants.BMALLOC, msg);
     }
     
-    public UbfBMALLOCException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BMALLOC, throwable);
+    public UbfBMALLOCException(String msg, Throwable throwable) {
+        super(AtmiConstants.BMALLOC, msg, throwable);
     }
 }
 

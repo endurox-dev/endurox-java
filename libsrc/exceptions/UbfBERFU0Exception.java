@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBERFU0Exception extends UbfException {
         
     public UbfBERFU0Exception(String msg) {
-        super(msg, AtmiConstants.BERFU0);
+        super(AtmiConstants.BERFU0, msg);
     }
     
-    public UbfBERFU0Exception(String s, Throwable throwable) {
-        super(s, AtmiConstants.BERFU0, throwable);
+    public UbfBERFU0Exception(String msg, Throwable throwable) {
+        super(AtmiConstants.BERFU0, msg, throwable);
     }
 }
 

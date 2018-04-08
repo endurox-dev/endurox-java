@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEBADDESCException extends AtmiException {
         
     public AtmiTPEBADDESCException(String msg) {
-        super(msg, AtmiConstants.TPEBADDESC);
+        super(AtmiConstants.TPEBADDESC, msg);
     }
     
-    public AtmiTPEBADDESCException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEBADDESC, throwable);
+    public AtmiTPEBADDESCException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEBADDESC, msg, throwable);
     }
 }
 

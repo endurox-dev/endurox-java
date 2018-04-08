@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPERELEASEException extends AtmiException {
         
     public AtmiTPERELEASEException(String msg) {
-        super(msg, AtmiConstants.TPERELEASE);
+        super(AtmiConstants.TPERELEASE, msg);
     }
     
-    public AtmiTPERELEASEException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPERELEASE, throwable);
+    public AtmiTPERELEASEException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPERELEASE, msg, throwable);
     }
 }
 

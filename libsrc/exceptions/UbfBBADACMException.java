@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBBADACMException extends UbfException {
         
     public UbfBBADACMException(String msg) {
-        super(msg, AtmiConstants.BBADACM);
+        super(AtmiConstants.BBADACM, msg);
     }
     
-    public UbfBBADACMException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BBADACM, throwable);
+    public UbfBBADACMException(String msg, Throwable throwable) {
+        super(AtmiConstants.BBADACM, msg, throwable);
     }
 }
 

@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPESYSTEMException extends AtmiException {
         
     public AtmiTPESYSTEMException(String msg) {
-        super(msg, AtmiConstants.TPESYSTEM);
+        super(AtmiConstants.TPESYSTEM, msg);
     }
     
-    public AtmiTPESYSTEMException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPESYSTEM, throwable);
+    public AtmiTPESYSTEMException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPESYSTEM, msg, throwable);
     }
 }
 

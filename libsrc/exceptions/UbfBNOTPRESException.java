@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBNOTPRESException extends UbfException {
         
     public UbfBNOTPRESException(String msg) {
-        super(msg, AtmiConstants.BNOTPRES);
+        super(AtmiConstants.BNOTPRES, msg);
     }
     
-    public UbfBNOTPRESException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BNOTPRES, throwable);
+    public UbfBNOTPRESException(String msg, Throwable throwable) {
+        super(AtmiConstants.BNOTPRES, msg, throwable);
     }
 }
 

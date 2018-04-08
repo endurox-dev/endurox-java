@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPESVCERRException extends AtmiException {
         
     public AtmiTPESVCERRException(String msg) {
-        super(msg, AtmiConstants.TPESVCERR);
+        super(AtmiConstants.TPESVCERR, msg);
     }
     
-    public AtmiTPESVCERRException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPESVCERR, throwable);
+    public AtmiTPESVCERRException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPESVCERR, msg, throwable);
     }
 }
 

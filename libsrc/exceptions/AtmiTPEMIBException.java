@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEMIBException extends AtmiException {
         
     public AtmiTPEMIBException(String msg) {
-        super(msg, AtmiConstants.TPEMIB);
+        super(AtmiConstants.TPEMIB, msg);
     }
     
-    public AtmiTPEMIBException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEMIB, throwable);
+    public AtmiTPEMIBException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEMIB, msg, throwable);
     }
 }
 

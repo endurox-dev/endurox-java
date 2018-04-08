@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEPROTOException extends AtmiException {
         
     public AtmiTPEPROTOException(String msg) {
-        super(msg, AtmiConstants.TPEPROTO);
+        super(AtmiConstants.TPEPROTO, msg);
     }
     
-    public AtmiTPEPROTOException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEPROTO, throwable);
+    public AtmiTPEPROTOException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEPROTO, msg, throwable);
     }
 }
 

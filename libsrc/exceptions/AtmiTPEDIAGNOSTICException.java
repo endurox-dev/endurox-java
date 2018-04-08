@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEDIAGNOSTICException extends AtmiException {
         
     public AtmiTPEDIAGNOSTICException(String msg) {
-        super(msg, AtmiConstants.TPEDIAGNOSTIC);
+        super(AtmiConstants.TPEDIAGNOSTIC, msg);
     }
     
-    public AtmiTPEDIAGNOSTICException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEDIAGNOSTIC, throwable);
+    public AtmiTPEDIAGNOSTICException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEDIAGNOSTIC, msg, throwable);
     }
 }
 

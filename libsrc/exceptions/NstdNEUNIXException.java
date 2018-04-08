@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNEUNIXException extends NstdException {
         
     public NstdNEUNIXException(String msg) {
-        super(msg, AtmiConstants.NEUNIX);
+        super(AtmiConstants.NEUNIX, msg);
     }
     
-    public NstdNEUNIXException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NEUNIX, throwable);
+    public NstdNEUNIXException(String msg, Throwable throwable) {
+        super(AtmiConstants.NEUNIX, msg, throwable);
     }
 }
 

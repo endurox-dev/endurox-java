@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPGOTSIGException extends AtmiException {
         
     public AtmiTPGOTSIGException(String msg) {
-        super(msg, AtmiConstants.TPGOTSIG);
+        super(AtmiConstants.TPGOTSIG, msg);
     }
     
-    public AtmiTPGOTSIGException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPGOTSIG, throwable);
+    public AtmiTPGOTSIGException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPGOTSIG, msg, throwable);
     }
 }
 

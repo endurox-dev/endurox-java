@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBEUNIXException extends UbfException {
         
     public UbfBEUNIXException(String msg) {
-        super(msg, AtmiConstants.BEUNIX);
+        super(AtmiConstants.BEUNIX, msg);
     }
     
-    public UbfBEUNIXException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BEUNIX, throwable);
+    public UbfBEUNIXException(String msg, Throwable throwable) {
+        super(AtmiConstants.BEUNIX, msg, throwable);
     }
 }
 

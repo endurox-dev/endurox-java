@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBEINVALException extends UbfException {
         
     public UbfBEINVALException(String msg) {
-        super(msg, AtmiConstants.BEINVAL);
+        super(AtmiConstants.BEINVAL, msg);
     }
     
-    public UbfBEINVALException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BEINVAL, throwable);
+    public UbfBEINVALException(String msg, Throwable throwable) {
+        super(AtmiConstants.BEINVAL, msg, throwable);
     }
 }
 

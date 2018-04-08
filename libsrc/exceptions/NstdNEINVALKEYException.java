@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNEINVALKEYException extends NstdException {
         
     public NstdNEINVALKEYException(String msg) {
-        super(msg, AtmiConstants.NEINVALKEY);
+        super(AtmiConstants.NEINVALKEY, msg);
     }
     
-    public NstdNEINVALKEYException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NEINVALKEY, throwable);
+    public NstdNEINVALKEYException(String msg, Throwable throwable) {
+        super(AtmiConstants.NEINVALKEY, msg, throwable);
     }
 }
 

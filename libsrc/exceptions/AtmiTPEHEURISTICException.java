@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEHEURISTICException extends AtmiException {
         
     public AtmiTPEHEURISTICException(String msg) {
-        super(msg, AtmiConstants.TPEHEURISTIC);
+        super(AtmiConstants.TPEHEURISTIC, msg);
     }
     
-    public AtmiTPEHEURISTICException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEHEURISTIC, throwable);
+    public AtmiTPEHEURISTICException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEHEURISTIC, msg, throwable);
     }
 }
 

@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPELIMITException extends AtmiException {
         
     public AtmiTPELIMITException(String msg) {
-        super(msg, AtmiConstants.TPELIMIT);
+        super(AtmiConstants.TPELIMIT, msg);
     }
     
-    public AtmiTPELIMITException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPELIMIT, throwable);
+    public AtmiTPELIMITException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPELIMIT, msg, throwable);
     }
 }
 

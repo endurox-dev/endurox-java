@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPENOENTException extends AtmiException {
         
     public AtmiTPENOENTException(String msg) {
-        super(msg, AtmiConstants.TPENOENT);
+        super(AtmiConstants.TPENOENT, msg);
     }
     
-    public AtmiTPENOENTException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPENOENT, throwable);
+    public AtmiTPENOENTException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPENOENT, msg, throwable);
     }
 }
 

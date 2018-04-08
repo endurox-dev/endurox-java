@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEABORTException extends AtmiException {
         
     public AtmiTPEABORTException(String msg) {
-        super(msg, AtmiConstants.TPEABORT);
+        super(AtmiConstants.TPEABORT, msg);
     }
     
-    public AtmiTPEABORTException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEABORT, throwable);
+    public AtmiTPEABORTException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEABORT, msg, throwable);
     }
 }
 

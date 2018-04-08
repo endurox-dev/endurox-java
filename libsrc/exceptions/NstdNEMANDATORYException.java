@@ -6,11 +6,11 @@ package org.endurox;
 public class NstdNEMANDATORYException extends NstdException {
         
     public NstdNEMANDATORYException(String msg) {
-        super(msg, AtmiConstants.NEMANDATORY);
+        super(AtmiConstants.NEMANDATORY, msg);
     }
     
-    public NstdNEMANDATORYException(String s, Throwable throwable) {
-        super(s, AtmiConstants.NEMANDATORY, throwable);
+    public NstdNEMANDATORYException(String msg, Throwable throwable) {
+        super(AtmiConstants.NEMANDATORY, msg, throwable);
     }
 }
 

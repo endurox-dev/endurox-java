@@ -6,11 +6,11 @@ package org.endurox;
 public class UbfBEBADOPException extends UbfException {
         
     public UbfBEBADOPException(String msg) {
-        super(msg, AtmiConstants.BEBADOP);
+        super(AtmiConstants.BEBADOP, msg);
     }
     
-    public UbfBEBADOPException(String s, Throwable throwable) {
-        super(s, AtmiConstants.BEBADOP, throwable);
+    public UbfBEBADOPException(String msg, Throwable throwable) {
+        super(AtmiConstants.BEBADOP, msg, throwable);
     }
 }
 

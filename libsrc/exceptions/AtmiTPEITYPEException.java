@@ -6,11 +6,11 @@ package org.endurox;
 public class AtmiTPEITYPEException extends AtmiException {
         
     public AtmiTPEITYPEException(String msg) {
-        super(msg, AtmiConstants.TPEITYPE);
+        super(AtmiConstants.TPEITYPE, msg);
     }
     
-    public AtmiTPEITYPEException(String s, Throwable throwable) {
-        super(s, AtmiConstants.TPEITYPE, throwable);
+    public AtmiTPEITYPEException(String msg, Throwable throwable) {
+        super(AtmiConstants.TPEITYPE, msg, throwable);
     }
 }
 
