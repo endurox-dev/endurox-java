@@ -129,7 +129,7 @@ add_jar(enduroxjava
         ErrorTuple.java
         )
 
-create_javah(TARGET enduroxjh CLASSES AtmiCtx CLASSPATH enduroxjava)
+create_javah(TARGET enduroxjh CLASSES org.endurox.AtmiCtx CLASSPATH enduroxjava)
 
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 

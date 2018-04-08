@@ -16,7 +16,7 @@ public class AtmiCtx {
     * Get ATMI Error 
     * @return Error tuple (code and message)
     */
-   private static native ErrorTuple getAtmiError();
+   private native ErrorTuple getAtmiError();
    
    /**
     * Allocate new ATMI Context
@@ -32,6 +32,7 @@ public class AtmiCtx {
     */
    public static AtmiCtx newAtmiCtx() {
 	   
+/*
 	   AtmiCtx ret = new AtmiCtx();
 	   
 	   if (0==(ret.ctx = AtmiCtx.tpnewctxt())) {
@@ -40,12 +41,14 @@ public class AtmiCtx {
 	   }
 	   
 	   return ret;
+*/
+        return null;
 	   
    }
    
    // Test Driver
    public static void main(String[] args) {
-      System.out.printf("%d", tpnewctxt());
+      //System.out.printf("%d", tpnewctxt());
    }
 }
 
