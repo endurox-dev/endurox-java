@@ -126,6 +126,7 @@ add_jar(enduroxjava
         exceptions/UbfBVFOPENException.java
         exceptions/UbfBVFSYNTAXException.java
         exceptions/UbfException.java
+        ErrorTuple.java
         )
 
 create_javah(TARGET enduroxjh CLASSES AtmiCtx CLASSPATH enduroxjava)

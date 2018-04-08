@@ -47,7 +47,7 @@ public class NstdException extends RuntimeException {
      * @param msg error message
      * @return
      */
-    public NstdException create(int tperrno, String msg) {
+    public static NstdException create(int tperrno, String msg) {
     	
     	switch (tperrno) {
     	

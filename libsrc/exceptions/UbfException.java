@@ -46,7 +46,7 @@ public class UbfException extends RuntimeException {
      * @param msg error message
      * @return
      */
-    public UbfException create(int tperrno, String msg) {
+    public static UbfException create(int tperrno, String msg) {
     	
     	switch (tperrno) {
     		case AtmiConstants.BERFU0:

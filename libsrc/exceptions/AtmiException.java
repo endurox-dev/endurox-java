@@ -47,7 +47,7 @@ public class AtmiException extends RuntimeException {
      * @param msg error message
      * @return
      */
-    public AtmiException create(int tperrno, String msg) {
+    public static AtmiException create(int tperrno, String msg) {
     	
     	switch (tperrno) {
     	
