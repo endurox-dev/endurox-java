@@ -21,7 +21,7 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
  */
 JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jobject obj)
 {
-    TPCONTEXT_T p_ctxt;
+    TPCONTEXT_T ctxt;
     int err;
     
     jstring jstr;
@@ -29,10 +29,9 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
     jlong fieldVal = (*env)->GetLongField(env, obj, myFieldID);
     
-    
-    p_ctxt = (TPCONTEXT_T)fieldVal;
-    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, p_ctxt);
-    err = Otperrno(p_ctxt);
+    ctxt = (TPCONTEXT_T)fieldVal;
+    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, ctxt);
+    err = Otperrno(&ctxt);
 
     /* Get the class we wish to return an instance of */
     jclass errClazz = (*env)->FindClass(env, "org/endurox/ErrorTuple");
@@ -50,10 +49,10 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     /* Set fields for object */
     (*env)->SetIntField(env, errObj, param1Field, err);
 
-    jstr=(jstring)((*env)->NewStringUTF(env, Otpstrerror(p_ctxt, err)) );
+    jstr=(jstring)((*env)->NewStringUTF(env, Otpstrerror(&ctxt, err)) );
     (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
 
     /* return object */
-    return obj;
+    return errObj;
 }
 

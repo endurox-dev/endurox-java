@@ -62,7 +62,7 @@ public class AtmiCtx {
     AtmiCtx ctx = new AtmiCtx();
 
     ErrorTuple err = ctx.getAtmiError();
-      System.out.printf("%d: %s", err.err, err.msg);
+      System.out.printf("%d: %s\n", err.err, err.msg);
    }
 }
 
