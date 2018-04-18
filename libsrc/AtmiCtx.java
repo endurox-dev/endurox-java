@@ -46,6 +46,17 @@ public class AtmiCtx {
 	   
    }
    
+  public AtmiCtx()  {
+        ctx = tpnewctxt();
+
+        if (0==ctx) {
+            //thow exception...
+        }
+  }
+    protected void finalize() {
+        //Remove ATMI context...
+    }
+ 
    // Test Driver
    public static void main(String[] args) {
     AtmiCtx ctx = new AtmiCtx();
