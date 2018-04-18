@@ -48,7 +48,10 @@ public class AtmiCtx {
    
    // Test Driver
    public static void main(String[] args) {
-      //System.out.printf("%d", tpnewctxt());
+    AtmiCtx ctx = new AtmiCtx();
+
+    ErrorTuple err = ctx.getAtmiError();
+      System.out.printf("%d: %s", err.err, err.msg);
    }
 }
 
