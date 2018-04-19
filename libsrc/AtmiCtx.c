@@ -1,8 +1,48 @@
+/* 
+** ATMI Context backing JNI functions
+**
+** @file AtmiCtx.c
+** 
+** -----------------------------------------------------------------------------
+** Enduro/X Middleware Platform for Distributed Transaction Processing
+** Copyright (C) 2015, Mavimax, Ltd. All Rights Reserved.
+** This software is released under one of the following licenses:
+** GPL or Mavimax's license for commercial use.
+** -----------------------------------------------------------------------------
+** GPL license:
+** 
+** This program is free software; you can redistribute it and/or modify it under
+** the terms of the GNU General Public License as published by the Free Software
+** Foundation; either version 2 of the License, or (at your option) any later
+** version.
+**
+** This program is distributed in the hope that it will be useful, but WITHOUT ANY
+** WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+** PARTICULAR PURPOSE. See the GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License along with
+** this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+** Place, Suite 330, Boston, MA 02111-1307 USA
+**
+** -----------------------------------------------------------------------------
+** A commercial use license is available from Mavimax, Ltd
+** contact@mavimax.com
+** -----------------------------------------------------------------------------
+*/
+
+/*---------------------------Includes-----------------------------------*/
 #include <jni.h>
 #include "org_endurox_AtmiCtx.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
+/*---------------------------Externs------------------------------------*/
+/*---------------------------Macros-------------------------------------*/
+/*---------------------------Enums--------------------------------------*/
+/*---------------------------Typedefs-----------------------------------*/
+/*---------------------------Globals------------------------------------*/
+/*---------------------------Statics------------------------------------*/
+/*---------------------------Prototypes---------------------------------*/
 
 /**
  * Class:     HelloJNI
@@ -21,7 +61,7 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
  */
 JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jobject obj)
 {
-    TPCONTEXT_T ctxt;
+    TPCONTEXT_T ctx;
     int err;
     
     jstring jstr;
@@ -29,9 +69,11 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
     jlong fieldVal = (*env)->GetLongField(env, obj, myFieldID);
     
-    ctxt = (TPCONTEXT_T)fieldVal;
-    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, ctxt);
-    err = Otperrno(&ctxt);
+    ctx = (TPCONTEXT_T)fieldVal;
+    tpsetctxt(ctx, 0L);
+
+    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, ctx);
+    err = tperrno;
 
     /* Get the class we wish to return an instance of */
     jclass errClazz = (*env)->FindClass(env, "org/endurox/ErrorTuple");
@@ -49,10 +91,14 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     /* Set fields for object */
     (*env)->SetIntField(env, errObj, param1Field, err);
 
-    jstr=(jstring)((*env)->NewStringUTF(env, Otpstrerror(&ctxt, err)) );
+    jstr=(jstring)((*env)->NewStringUTF(env, tpstrerror(err)) );
     (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
+
+    /* unset context */
+    tpsetctxt(NULL, 0L);
 
     /* return object */
     return errObj;
 }
+
 
