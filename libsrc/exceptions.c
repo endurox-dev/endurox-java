@@ -1,7 +1,7 @@
 /* 
-** ATMI Context backing JNI functions
+** Exceptions from JNI code
 **
-** @file AtmiCtx.c
+** @file exceptions.c
 ** 
 ** -----------------------------------------------------------------------------
 ** Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -44,69 +44,5 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-/**
- * Throw runtime exception 
- */
-jint ndrxj_throw_exception(JNIEnv *env, char *msg)
-{
-    return (*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/Exception"), msg);
-}
 
-/**
- * Class:     HelloJNI
- * Method:    sayHello
- * Signature: ()V
- */
-jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
-{
-        TPCONTEXT_T ctx = tpnewctxt(0, 0);
-        NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
-        return (long)ctx;
-}
-
-/**
- * Get ATMI Error result
- */
-JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jobject obj)
-{
-    TPCONTEXT_T ctx;
-    int err;
-    
-    jstring jstr;
-    jclass objClass = (*env)->GetObjectClass(env, obj);
-    jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
-    jlong fieldVal = (*env)->GetLongField(env, obj, myFieldID);
-    
-    ctx = (TPCONTEXT_T)fieldVal;
-    tpsetctxt(ctx, 0L);
-
-    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, ctx);
-    err = tperrno;
-
-    /* Get the class we wish to return an instance of */
-    jclass errClazz = (*env)->FindClass(env, "org/endurox/ErrorTuple");
-
-    /* Get the method id of an empty constructor in clazz */
-    jmethodID constructor = (*env)->GetMethodID(env, errClazz, "<init>", "()V");
-
-    /* Create an instance of clazz */
-    jobject errObj = (*env)->NewObject(env, errClazz, constructor);
-
-    /* Get Field references */
-    jfieldID param1Field = (*env)->GetFieldID(env, errClazz, "err", "I");
-    jfieldID param2Field = (*env)->GetFieldID(env, errClazz, "msg", "Ljava/lang/String;");
-
-    /* Set fields for object */
-    (*env)->SetIntField(env, errObj, param1Field, err);
-
-    jstr=(jstring)((*env)->NewStringUTF(env, tpstrerror(err)) );
-    (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
-
-    /* unset context */
-    tpsetctxt(NULL, 0L);
-
-    /* return object */
-    return errObj;
-}
-
-
+/* TODO: We need a functions to map the ATMI errors to exceptions, this could be table driven. */
