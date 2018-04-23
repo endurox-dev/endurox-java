@@ -40,3 +40,6 @@
 /*---------------------------Prototypes---------------------------------*/
 
 extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg);
+extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msg);
+extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msg);
+

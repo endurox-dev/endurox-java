@@ -37,6 +37,7 @@
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
+#include <nerror.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -50,6 +51,9 @@
 
 /**
  * Throw ATMI error 
+ * @param env java env
+ * @param err ATMI Errro code
+ * @param msg message
  */
 void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg)
 {
@@ -71,3 +75,57 @@ void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg)
         
     (*env)->ThrowNew(env, ex, msg);
 }
+
+/**
+ * Throw Enduro/X standard library error 
+ * @param env java env
+ * @param err ATMI Errro code
+ * @param msg message
+ */
+void ndrxj_nstd_throw(JNIEnv *env, int err, char *msg)
+{
+    char cls[PATH_MAX];
+    jclass ex;
+    
+    snprintf(cls, sizeof(cls), "org/endurox/Nstd%sException", ndrx_Necodestr(err));
+    
+    
+    NDRX_LOG(log_info, "Throwing: [%s]", cls);
+    
+    ex = (*env)->FindClass(env, cls);
+    
+    if (!ex)
+    {
+        NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
+        abort();
+    }
+        
+    (*env)->ThrowNew(env, ex, msg);
+}
+
+/**
+ * Throw UBF error
+ * @param env java env
+ * @param err ATMI Errro code
+ * @param msg message
+ */
+void ndrxj_ubf_throw(JNIEnv *env, int err, char *msg)
+{
+    char cls[PATH_MAX];
+    jclass ex;
+    
+    snprintf(cls, sizeof(cls), "org/endurox/Ubf%sException", Becodestr(err));
+    
+    NDRX_LOG(log_info, "Throwing: [%s]", cls);
+    
+    ex = (*env)->FindClass(env, cls);
+    
+    if (!ex)
+    {
+        NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
+        abort();
+    }
+        
+    (*env)->ThrowNew(env, ex, msg);
+}
+
