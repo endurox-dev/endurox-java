@@ -1,7 +1,7 @@
 /* 
-** Exceptions from JNI code
+** Commons for Enduro/X JAVA lib
 **
-** @file exceptions.c
+** @file libsrc.h
 ** 
 ** -----------------------------------------------------------------------------
 ** Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -29,14 +29,8 @@
 ** contact@mavimax.com
 ** -----------------------------------------------------------------------------
 */
-
 /*---------------------------Includes-----------------------------------*/
-#include <stdlib.h>
 #include <jni.h>
-#include "org_endurox_AtmiCtx.h"
-#include <atmi.h>
-#include <oatmi.h>
-#include <ndebug.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -45,29 +39,4 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-
-/* TODO: We need a functions to map the ATMI errors to exceptions, this could be table driven. */
-
-/**
- * Throw ATMI error 
- */
-void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg)
-{
-    char cls[PATH_MAX];
-    jclass ex;
-    
-    snprintf(cls, sizeof(cls), "org/endurox/Atmi%sException", tpecodestr(err));
-    
-    
-    NDRX_LOG(log_info, "Throwing: [%s]", cls);
-    
-    ex = (*env)->FindClass(env, cls);
-    
-    if (!ex)
-    {
-        NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
-        abort();
-    }
-        
-    (*env)->ThrowNew(env, ex, msg);
-}
+extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg);

@@ -135,6 +135,7 @@ create_javah(TARGET enduroxjh CLASSES org.endurox.AtmiCtx CLASSPATH enduroxjava)
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjava SHARED
 		AtmiCtx.c
+                exceptions.c
 	)
 
 

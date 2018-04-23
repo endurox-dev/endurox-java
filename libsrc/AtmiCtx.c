@@ -36,6 +36,7 @@
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
+#include "libsrc.h"
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -101,6 +102,11 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
 
     jstr=(jstring)((*env)->NewStringUTF(env, tpstrerror(err)) );
     (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
+    
+    /* throw some exception, for test!!! */
+    ndrxj_atmi_throw(env, TPENOENT, "HELLO TEST EXCEPTION!!!!");
+    
+    NDRX_LOG(log_error, "YOPT ! AFTER!");
 
     /* unset context */
     tpsetctxt(NULL, 0L);
