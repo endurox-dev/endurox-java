@@ -2,10 +2,10 @@ package org.endurox;
 
 public class AtmiCtx {
 	
-	/**
-	 * Pointer to C ATMI Context object
-	 */
-	private long ctx;
+    /**
+     * Pointer to C ATMI Context object
+     */
+    private long ctx;
 	
    static {
       System.loadLibrary("exjava"); // Load native library at runtime
