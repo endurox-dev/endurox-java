@@ -61,6 +61,10 @@ jint ndrxj_throw_exception(JNIEnv *env, char *msg)
 jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
 {
         TPCONTEXT_T ctx = tpnewctxt(0, 0);
+        if (NULL==ctx)
+        {
+            ndrxj_atmi_throw(env, TPESYSTEM, "Failed to allocate new ATMI context!");
+        }
         NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
         return (long)ctx;
 }

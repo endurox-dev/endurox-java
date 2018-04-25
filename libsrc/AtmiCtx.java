@@ -5,7 +5,7 @@ public class AtmiCtx {
     /**
      * Pointer to C ATMI Context object
      */
-    private long ctx;
+   private long ctx;
 	
    static {
       System.loadLibrary("exjava"); // Load native library at runtime
@@ -22,37 +22,21 @@ public class AtmiCtx {
     * Allocate new ATMI Context
     * ptr to ATMI context
     * @return C pointer to context object
+    * @exception AtmiTPESYSTEMException
     */
    private static native long tpnewctxt();
-   
-   
+
    /**
-    * Allocate new ATMI context 
-    * @return
+    * Free up ATMI Context
+    * @param ctx ATMI Context
     */
-   public static AtmiCtx newAtmiCtx() {
-	   
-/*
-	   AtmiCtx ret = new AtmiCtx();
-	   
-	   if (0==(ret.ctx = AtmiCtx.tpnewctxt())) {
-		   //Throw some exception
-		   
-	   }
-	   
-	   return ret;
-*/
-        return null;
-	   
-   }
+   private static native void tpfreectxt(long ctx);
+   
    
   public AtmiCtx()  {
+        // This thorws TPESYSTEM if failed.
         ctx = tpnewctxt();
-
-        if (0==ctx) {
-            //thow exception...
-        }
-  }
+    }
     protected void finalize() {
         //Remove ATMI context...
     }
