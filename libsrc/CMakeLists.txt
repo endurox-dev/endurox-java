@@ -127,15 +127,20 @@ add_jar(enduroxjava
         exceptions/UbfBVFSYNTAXException.java
         exceptions/UbfException.java
         ErrorTuple.java
+        AtmiBuf.java
         )
 
-create_javah(TARGET enduroxjh CLASSES org.endurox.AtmiCtx CLASSPATH enduroxjava)
+# Create JNI headers
+create_javah(TARGET enduroxjh CLASSES
+        org.endurox.AtmiCtx
+        org.endurox.AtmiBuf
+    CLASSPATH enduroxjava)
 
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjava SHARED
 		AtmiCtx.c
-                exceptions.c
+        exceptions.c
 	)
 
 
