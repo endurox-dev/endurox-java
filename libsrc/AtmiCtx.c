@@ -45,6 +45,17 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
+/**
+ * get context from current object
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @return NULL (and expection set) or context data
+ */
+static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
+{
+    return NULL;
+}
+
 /*
  * Class:     org_endurox_AtmiCtx
  * Method:    tpAlloc
@@ -55,7 +66,7 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, jstr
 
     /* get context handler */
 
-    /* thorw exception if hanlder if bad..! */
+    /* throw exception if hanlder if bad..! */
 
     /* set context */
 
