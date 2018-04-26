@@ -36,7 +36,7 @@ public class AtmiCtx {
      * Allocate buffer
      * Thow some exceptions.. too!
      */
-    public native void tpAlloc(String btype, String bsubtype, long size);
+    public native AtmiBuf tpAlloc(String btype, String bsubtype, long size);
 
     /**
      * Allocate new ATMI Context
