@@ -53,7 +53,20 @@
  */
 static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
 {
-    return NULL;
+    TPCONTEXT_T ctx;
+   
+    jclass objClass = (*env)->GetObjectClass(env, atmiCtxObj);
+    jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
+    jlong fieldVal = (*env)->GetLongField(env, atmiCtxObj, myFieldID);
+
+    ctx = (TPCONTEXT_T)fieldVal;
+
+    if (NULL==ctx)
+    {
+        ndrxj_atmi_throw(env, TPEINVAL, "NULL C context for ATMI Context OP!");
+    }
+
+    return ctx;
 }
 
 /*
@@ -63,17 +76,43 @@ static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
  */
 jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, jstring btype, jstring bsubtype, jlong size)
 {
+    jobject ret = NULL;
+    TPCONTEXT_T ctx;
+    char *buf;
+    const char *n_btype = (*env)->GetStringUTFChars(env, btype, 0);
+    const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, 0);
 
     /* get context handler */
 
-    /* throw exception if hanlder if bad..! */
+    /* exception will thown if invalid object... */
+    if (NULL==(ctx = get_ctx(env, obj)))
+    {
+        goto out;
+    }
 
     /* set context */
+    tpsetctxt(ctx, 0L);
 
-    /* allocate buffer, if error thorw exception  */
 
-    /* unset the buffer */
-    return NULL;
+    /* allocate buffer, if error throw exception  */
+    buf = tpalloc((char *)n_btype, (char *)n_bsubtype, (long)size);
+
+    if (NULL==buf)
+    {
+        int err = tperrno;
+        /* Generate exception! */
+        ndrxj_atmi_throw(env, err, tpstrerror(err));
+        goto out;
+    }
+
+    /* unset context */
+    tpsetctxt(NULL, 0L);
+
+out:
+    
+    (*env)->ReleaseStringUTFChars(env, btype, n_btype);
+    (*env)->ReleaseStringUTFChars(env, bsubtype, n_bsubtype);
+    return ret;
 }
 
 
@@ -100,16 +139,17 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
 {
     TPCONTEXT_T ctx;
     int err;
-    
     jstring jstr;
-    jclass objClass = (*env)->GetObjectClass(env, obj);
-    jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
-    jlong fieldVal = (*env)->GetLongField(env, obj, myFieldID);
     
-    ctx = (TPCONTEXT_T)fieldVal;
+    /* exception will thown if invalid object... */
+    if (NULL==(ctx = get_ctx(env, obj)))
+    {
+        return NULL;
+    }
+
     tpsetctxt(ctx, 0L);
 
-    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, ctx);
+    NDRX_LOG(log_debug, "context: (%p)", ctx);
     err = tperrno;
 
     /* Get the class we wish to return an instance of */
@@ -131,11 +171,6 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     jstr=(jstring)((*env)->NewStringUTF(env, tpstrerror(err)) );
     (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
     
-    /* throw some exception, for test!!! */
-    ndrxj_atmi_throw(env, TPENOENT, "HELLO TEST EXCEPTION!!!!");
-    
-    NDRX_LOG(log_error, "YOPT ! AFTER!");
-
     /* unset context */
     tpsetctxt(NULL, 0L);
 
