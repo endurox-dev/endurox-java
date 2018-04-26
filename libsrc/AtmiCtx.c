@@ -45,6 +45,27 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
+/*
+ * Class:     org_endurox_AtmiCtx
+ * Method:    tpAlloc
+ * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/AtmiBuf;
+ */
+jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, jstring btype, jstring bsubtype, jlong size)
+{
+
+    /* get context handler */
+
+    /* thorw exception if hanlder if bad..! */
+
+    /* set context */
+
+    /* allocate buffer, if error thorw exception  */
+
+    /* unset the buffer */
+    return NULL;
+}
+
+
 /**
  * Class:     HelloJNI
  * Method:    sayHello

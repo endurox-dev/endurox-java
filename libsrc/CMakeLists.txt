@@ -129,6 +129,9 @@ add_jar(enduroxjava
         ErrorTuple.java
         AtmiBuf.java
         TypedUbf.java
+        TypedCarray.java
+        TypedJson.java
+        TypedString.java
         )
 
 # Create JNI headers
