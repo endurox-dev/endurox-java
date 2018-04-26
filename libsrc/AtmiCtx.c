@@ -46,14 +46,6 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Throw runtime exception 
- */
-jint ndrxj_throw_exception(JNIEnv *env, char *msg)
-{
-    return (*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/Exception"), msg);
-}
-
-/**
  * Class:     HelloJNI
  * Method:    sayHello
  * Signature: ()V

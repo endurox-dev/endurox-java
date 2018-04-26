@@ -128,6 +128,7 @@ add_jar(enduroxjava
         exceptions/UbfException.java
         ErrorTuple.java
         AtmiBuf.java
+        TypedUbf.java
         )
 
 # Create JNI headers
@@ -140,6 +141,7 @@ create_javah(TARGET enduroxjh CLASSES
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjava SHARED
 		AtmiCtx.c
+        AtmiBuf.c
         exceptions.c
 	)
 

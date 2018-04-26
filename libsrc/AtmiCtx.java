@@ -16,7 +16,7 @@ public class AtmiCtx {
     * Get ATMI Error 
     * @return Error tuple (code and message)
     */
-   private native ErrorTuple getAtmiError();
+    private native ErrorTuple getAtmiError();
    
    /**
     * Allocate new ATMI Context
@@ -24,19 +24,28 @@ public class AtmiCtx {
     * @return C pointer to context object
     * @exception AtmiTPESYSTEMException
     */
-   private static native long tpnewctxt();
+    private static native long tpnewctxt();
 
    /**
     * Free up ATMI Context
     * @param ctx ATMI Context
     */
-   private static native void tpfreectxt(long ctx);
+    private static native void tpfreectxt(long ctx);
    
-   
-  public AtmiCtx()  {
+    /**
+     * Allocate buffer
+     * Thow some exceptions.. too!
+     */
+    public native void tpAlloc(String btype, String bsubtype, long size);
+
+    /**
+     * Allocate new ATMI Context
+     */
+    public AtmiCtx()  {
         // This thorws TPESYSTEM if failed.
         ctx = tpnewctxt();
     }
+
     protected void finalize() {
         //Remove ATMI context...
     }
