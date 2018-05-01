@@ -80,6 +80,7 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     jobject ret = NULL;
     jclass bclz;
     TPCONTEXT_T ctx;
+    jmethodID mid;
     char *buf;
     const char *n_btype = (*env)->GetStringUTFChars(env, btype, 0);
     const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, 0);
@@ -137,28 +138,47 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     }
     else
     {
-        char msg[128];
-        snprintf(msg, sizeof(msg), "buffer type [%s] not supported", n_btype);
-        ndrxj_atmi_throw(env, TPEINVAL, msg);
+        ndrxj_atmi_throw(env, TPEINVAL, "buffer type [%s] not supported", 
+                n_btype);
         goto out;
     }
     
     
     NDRX_LOG(log_debug, "Allocating [%s] class", clazz);
     
-    
     bclz = (*env)->FindClass(env, clazz);
     
     if (NULL==bclz)
-    {
-        char msg[128];
-        snprintf(msg, sizeof(msg), "Class not found [%s]", clazz);
+    {        
+        /* ndrxj_atmi_throw(env, TPESYSTEM, "Class not found [%s]", clazz); */
+        NDRX_LOG(log_error, "Failed to find class [%s]", clazz);
+        goto out;
         
-        ndrxj_atmi_throw(env, TPEINVAL, msg);
+    }
+    
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        goto out;
     }
 
+    NDRX_LOG(log_debug, "About to NewObject()");
+    ret = (*env)->NewObject(env, bclz, mid, obj, JNI_TRUE, (jlong)buf, size);
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to create [%s]", clazz);
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "NewObject() done");
+    
     /* unset context */
-    tpsetctxt(NULL, 0L);
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
 
 out:
     
@@ -175,13 +195,13 @@ out:
  */
 jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
 {
-        TPCONTEXT_T ctx = tpnewctxt(0, 0);
-        if (NULL==ctx)
-        {
-            ndrxj_atmi_throw(env, TPESYSTEM, "Failed to allocate new ATMI context!");
-        }
-        NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
-        return (long)ctx;
+    TPCONTEXT_T ctx = tpnewctxt(0, 0);
+    if (NULL==ctx)
+    {
+        ndrxj_atmi_throw(env, TPESYSTEM, "Failed to allocate new ATMI context!");
+    }
+    NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
+    return (long)ctx;
 }
 
 /**
@@ -224,7 +244,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
     
     /* unset context */
-    tpsetctxt(NULL, 0L);
+    tpsetctxt(TPNULLCONTEXT, 0L);
 
     /* return object */
     return errObj;

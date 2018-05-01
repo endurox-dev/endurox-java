@@ -40,6 +40,7 @@
 #include <nerror.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+#define ERROR_MAX               1024
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -55,13 +56,17 @@
  * @param err ATMI Errro code
  * @param msg message
  */
-void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg)
+void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
-    char cls[PATH_MAX];
+    char cls[256];
+    char error[ERROR_MAX];
     jclass ex;
+    va_list args;
+    va_start (args, msgfmt);
+    vsnprintf (error, sizeof(error), msgfmt, args);
+    va_end (args);
     
     snprintf(cls, sizeof(cls), "org/endurox/Atmi%sException", tpecodestr(err));
-    
     
     NDRX_LOG(log_info, "Throwing: [%s]", cls);
     
@@ -73,7 +78,7 @@ void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg)
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, msg);
+    (*env)->ThrowNew(env, ex, error);
 }
 
 /**
@@ -82,10 +87,15 @@ void ndrxj_atmi_throw(JNIEnv *env, int err, char *msg)
  * @param err ATMI Errro code
  * @param msg message
  */
-void ndrxj_nstd_throw(JNIEnv *env, int err, char *msg)
+void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
-    char cls[PATH_MAX];
+    char cls[256];
+    char error[ERROR_MAX];
     jclass ex;
+    va_list args;
+    va_start (args, msgfmt);
+    vsnprintf (error, sizeof(error), msgfmt, args);
+    va_end (args);
     
     snprintf(cls, sizeof(cls), "org/endurox/Nstd%sException", ndrx_Necodestr(err));
     
@@ -100,7 +110,7 @@ void ndrxj_nstd_throw(JNIEnv *env, int err, char *msg)
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, msg);
+    (*env)->ThrowNew(env, ex, error);
 }
 
 /**
@@ -109,10 +119,15 @@ void ndrxj_nstd_throw(JNIEnv *env, int err, char *msg)
  * @param err ATMI Errro code
  * @param msg message
  */
-void ndrxj_ubf_throw(JNIEnv *env, int err, char *msg)
+void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
-    char cls[PATH_MAX];
+    char cls[256];
+    char error[ERROR_MAX];
     jclass ex;
+    va_list args;
+    va_start (args, msgfmt);
+    vsnprintf (error, sizeof(error), msgfmt, args);
+    va_end (args);
     
     snprintf(cls, sizeof(cls), "org/endurox/Ubf%sException", Becodestr(err));
     
@@ -126,6 +141,6 @@ void ndrxj_ubf_throw(JNIEnv *env, int err, char *msg)
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, msg);
+    (*env)->ThrowNew(env, ex, msgfmt);
 }
 

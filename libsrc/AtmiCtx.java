@@ -54,8 +54,18 @@ public class AtmiCtx {
    public static void main(String[] args) {
     AtmiCtx ctx = new AtmiCtx();
 
+    TypedUbf b = (TypedUbf)ctx.tpAlloc("UBF", "", 1024);
+    
+    
+    System.out.printf("Buffer OK!");
+    
     ErrorTuple err = ctx.getAtmiError();
       System.out.printf("%d: %s\n", err.err, err.msg);
+      
+   
+    
    }
+   
+
 }
 

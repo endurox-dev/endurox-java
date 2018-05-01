@@ -65,7 +65,7 @@ void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj, jlong cP
     
     tpfree((char *)cPtr);
         /* unset context */
-    tpsetctxt(NULL, 0L);
+    tpsetctxt(TPNULLCONTEXT, 0L);
 
     /* return object */
     return;
