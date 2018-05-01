@@ -132,6 +132,7 @@ add_jar(enduroxjava
         TypedCarray.java
         TypedJson.java
         TypedString.java
+        TypedView.java
         )
 
 # Create JNI headers

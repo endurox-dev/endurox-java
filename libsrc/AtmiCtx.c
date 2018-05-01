@@ -74,14 +74,16 @@ static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
  * Method:    tpAlloc
  * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/AtmiBuf;
  */
-jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, jstring btype, jstring bsubtype, jlong size)
+jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, 
+        jstring btype, jstring bsubtype, jlong size)
 {
     jobject ret = NULL;
+    jclass bclz;
     TPCONTEXT_T ctx;
     char *buf;
     const char *n_btype = (*env)->GetStringUTFChars(env, btype, 0);
     const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, 0);
-
+    char clazz[256];
     /* get context handler */
 
     /* exception will thown if invalid object... */
@@ -103,6 +105,56 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, jstr
         /* Generate exception! */
         ndrxj_atmi_throw(env, err, tpstrerror(err));
         goto out;
+    }
+    
+    /* allocate the object here according to the buffer type */
+    
+    if (0==strncmp(n_btype, "UBF", 3) || 
+            0==strncmp(n_btype, "FML", 3))
+    {
+        /* UBF object */
+        snprintf(clazz, sizeof(clazz), "org/endurox/TypedUbf");
+    }
+    else if (0==strcmp(n_btype, "CARRAY"))
+    {
+        /* Carray object */
+        snprintf(clazz, sizeof(clazz), "org/endurox/TypedCarray");
+    }
+    else if (0==strcmp(n_btype, "STRING"))
+    {
+        /* String object */
+        snprintf(clazz, sizeof(clazz), "org/endurox/TypedString");
+    }
+    else if (0==strcmp(n_btype, "VIEW"))
+    {
+        /* VIEW object */
+        snprintf(clazz, sizeof(clazz), "org/endurox/TypedView");
+    }
+    else if (0==strcmp(n_btype, "JSON"))
+    {
+        /* JSON object */
+        snprintf(clazz, sizeof(clazz), "org/endurox/TypedJson");
+    }
+    else
+    {
+        char msg[128];
+        snprintf(msg, sizeof(msg), "buffer type [%s] not supported", n_btype);
+        ndrxj_atmi_throw(env, TPEINVAL, msg);
+        goto out;
+    }
+    
+    
+    NDRX_LOG(log_debug, "Allocating [%s] class", clazz);
+    
+    
+    bclz = (*env)->FindClass(env, clazz);
+    
+    if (NULL==bclz)
+    {
+        char msg[128];
+        snprintf(msg, sizeof(msg), "Class not found [%s]", clazz);
+        
+        ndrxj_atmi_throw(env, TPEINVAL, msg);
     }
 
     /* unset context */
