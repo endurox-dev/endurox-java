@@ -61,7 +61,8 @@ void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj, jlong cP
     ctx = (TPCONTEXT_T)fieldVal;
     tpsetctxt(ctx, 0L);
 
-    NDRX_LOG(log_debug, "context: %ld (%p)", fieldVal, ctx);
+    NDRX_LOG(log_debug, "About to free up: context: %ld (%p) buf: %p", fieldVal, 
+            ctx, (void *)cPtr);
     
     tpfree((char *)cPtr);
         /* unset context */
