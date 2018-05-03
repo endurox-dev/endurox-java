@@ -54,119 +54,49 @@ endif()
 # Make sure the compiler can find include files from our UBF library.
 include_directories (. ${JNI_INCLUDE_DIRS})
 
+FILE(GLOB JAVASRC java/org/endurox/*.java)
+FILE(GLOB JAVASRC_EXCEPTIONS java/org/endurox/exceptions/*.java)
 
 add_jar(enduroxjava
-        AtmiCtx.java
-       	AtmiConstants.java
-        exceptions/AtmiException.java
-        exceptions/AtmiTPEABORTException.java
-        exceptions/AtmiTPEBADDESCException.java
-        exceptions/AtmiTPEBLOCKException.java
-        exceptions/AtmiTPEDIAGNOSTICException.java
-        exceptions/AtmiTPEEVENTException.java
-        exceptions/AtmiTPEHAZARDException.java
-        exceptions/AtmiTPEHEURISTICException.java
-        exceptions/AtmiTPEINVALException.java
-        exceptions/AtmiTPEITYPEException.java
-        exceptions/AtmiTPELIMITException.java
-        exceptions/AtmiTPEMATCHException.java
-        exceptions/AtmiTPEMIBException.java
-        exceptions/AtmiTPENOENTException.java
-        exceptions/AtmiTPEOSException.java
-        exceptions/AtmiTPEOTYPEException.java
-        exceptions/AtmiTPEPERMException.java
-        exceptions/AtmiTPEPROTOException.java
-        exceptions/AtmiTPERELEASEException.java
-        exceptions/AtmiTPERFU26Exception.java
-        exceptions/AtmiTPERFU27Exception.java
-        exceptions/AtmiTPERFU28Exception.java
-        exceptions/AtmiTPERFU29Exception.java
-        exceptions/AtmiTPERMERRException.java
-        exceptions/AtmiTPESVCERRException.java
-        exceptions/AtmiTPESVCFAILException.java
-        exceptions/AtmiTPESYSTEMException.java
-        exceptions/AtmiTPETIMEException.java
-        exceptions/AtmiTPETRANException.java
-        exceptions/AtmiTPGOTSIGException.java
-        exceptions/AtmiTPINITFAILException.java
-        exceptions/NstdException.java
-        exceptions/NstdNEFORMATException.java
-        exceptions/NstdNEINVALException.java
-        exceptions/NstdNEINVALINIException.java
-        exceptions/NstdNEINVALKEYException.java
-        exceptions/NstdNELIMITException.java
-        exceptions/NstdNEMALLOCException.java
-        exceptions/NstdNEMANDATORYException.java
-        exceptions/NstdNENOCONNException.java
-        exceptions/NstdNENOSPACEException.java
-        exceptions/NstdNEPLUGINException.java
-        exceptions/NstdNESYSTEMException.java
-        exceptions/NstdNETOUTException.java
-        exceptions/NstdNEUNIXException.java
-        exceptions/UbfBALIGNERRException.java
-        exceptions/UbfBBADACMException.java
-        exceptions/UbfBBADFLDException.java
-        exceptions/UbfBBADNAMEException.java
-        exceptions/UbfBBADTBLException.java
-        exceptions/UbfBBADVIEWException.java
-        exceptions/UbfBEBADOPException.java
-        exceptions/UbfBEINVALException.java
-        exceptions/UbfBERFU0Exception.java
-        exceptions/UbfBERFU1Exception.java
-        exceptions/UbfBEUNIXException.java
-        exceptions/UbfBFTOPENException.java
-        exceptions/UbfBFTSYNTAXException.java
-        exceptions/UbfBMALLOCException.java
-        exceptions/UbfBNOCNAMEException.java
-        exceptions/UbfBNOSPACEException.java
-        exceptions/UbfBNOTFLDException.java
-        exceptions/UbfBNOTPRESException.java
-        exceptions/UbfBSYNTAXException.java
-        exceptions/UbfBTYPERRException.java
-        exceptions/UbfBVFOPENException.java
-        exceptions/UbfBVFSYNTAXException.java
-        exceptions/UbfException.java
-        ErrorTuple.java
-        AtmiBuf.java
-        TypedUbf.java
-        TypedCarray.java
-        TypedJson.java
-        TypedString.java
-        TypedView.java
+        ${JAVASRC}
+        ${JAVASRC_EXCEPTIONS}
         )
 
 # Create JNI headers
 create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
         org.endurox.AtmiBuf
+    OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     CLASSPATH enduroxjava)
 
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
-add_library (exjava SHARED
-		AtmiCtx.c
-        AtmiBuf.c
-        exceptions.c
-	)
+#add_library (exjava SHARED
+#		AtmiCtx.c
+#        AtmiBuf.c
+#        exceptions.c
+#	)
 
 
-add_dependencies(exjava enduroxjh)
+#add_dependencies(exjava enduroxjh)
 
 
-    target_link_libraries(exjava atmisrvinteg atmi ubf nstd pthread)
-if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
-    target_link_libraries(exjava nstd)
-elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
-    target_link_libraries(eoxjava nstd)
-elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
-    # for XL tls
-    target_link_libraries(enduroxjava pthread)
-endif()
+add_subdirectory (c)
 
-install (TARGETS 
-    exjava
-    DESTINATION "${INSTALL_LIB_DIR}"
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-    COMPONENT libraries
-    )
+#    target_link_libraries(exjava atmisrvinteg atmi ubf nstd pthread)
+#if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
+#    target_link_libraries(exjava nstd)
+#elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
+#    target_link_libraries(eoxjava nstd)
+#elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
+#    # for XL tls
+#    target_link_libraries(enduroxjava pthread)
+#endif()
+
+#install (TARGETS 
+#    exjava
+#    DESTINATION "${INSTALL_LIB_DIR}"
+#    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+#    COMPONENT libraries
+#    )
 
