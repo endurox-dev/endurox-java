@@ -5,7 +5,7 @@ public class AtmiCtx {
     /**
      * Pointer to C ATMI Context object
      */
-   private long ctx;
+   private final long ctx;
 	
    static {
       System.loadLibrary("exjava"); // Load native library at runtime
@@ -45,9 +45,11 @@ public class AtmiCtx {
         // This thorws TPESYSTEM if failed.
         ctx = tpnewctxt();
     }
-
-    protected void finalize() {
+    
+    @Override
+    protected void finalize() throws Throwable {
         //Remove ATMI context...
+        super.finalize();
     }
  
    // Test Driver
@@ -65,7 +67,6 @@ public class AtmiCtx {
     ErrorTuple err = ctx.getAtmiError();
       System.out.printf("%d: %s\n", err.err, err.msg);
       
-   
     
    }
    
