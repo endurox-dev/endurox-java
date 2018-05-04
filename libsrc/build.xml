@@ -6,8 +6,8 @@
 
     <target name="build">
         <mkdir dir="build/classes"/>
-        <javac srcdir="java/org/endurox" destdir="build/classes"/>
-        <javac srcdir="java/org/endurox/exceptions" destdir="build/classes"/>
+        <javac includeantruntime="false" srcdir="java/org/endurox" destdir="build/classes"/>
+        <javac includeantruntime="false" srcdir="java/org/endurox/exceptions" destdir="build/classes"/>
 <!--    </target>
 
     <target name="jar">
