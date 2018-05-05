@@ -1,6 +1,6 @@
 package org.endurox;
 /**
- * @class ErrorTuple
+ * @class ClientId
  *
  * @brief Service call interface
  */
@@ -30,12 +30,18 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
-public class ErrorTuple {
-	
-    /** Error code */
-    public int err;
-    /** Error message */
-    public String msg; 
+public class ClientId {
+    String clientData;
+
+    /**
+     * Create client ID object
+     * @param clientData  client data string
+     */
+    public ClientId(String clientData) {
+        this.clientData = clientData;
+    }
+    /** @return client ID string */
+    public String getClientData() {
+        return clientData;
+    }
 }
-
-
