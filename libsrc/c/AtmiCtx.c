@@ -69,6 +69,20 @@ static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
     return ctx;
 }
 
+/**
+ * Free up the atmi context
+ * @param env java env
+ * @param cls class on which method is called (Atmi Context this case), static
+ * @param cPtr pointer to context C object 
+ */
+void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env, 
+        jclass cls, jlong cPtr)
+{
+    TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
+    
+    tpfreectxt(ctx);
+}
+
 /*
  * Class:     org_endurox_AtmiCtx
  * Method:    tpAlloc
@@ -196,11 +210,16 @@ out:
 jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
 {
     TPCONTEXT_T ctx = tpnewctxt(0, 0);
+
     if (NULL==ctx)
     {
         ndrxj_atmi_throw(env, TPESYSTEM, "Failed to allocate new ATMI context!");
     }
-    NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
+    else
+    {
+        NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
+    }
+
     return (long)ctx;
 }
 

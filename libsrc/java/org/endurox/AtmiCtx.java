@@ -1,4 +1,9 @@
 package org.endurox;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.endurox.exceptions.AtmiTPESYSTEMException;
+
 /**
  * @class AtmiCtx
  *
@@ -44,6 +49,18 @@ public class AtmiCtx {
                             // hello.dll (Windows) or libenduroxjava.so (Unixes)
     }
     
+    /* Have some static hash list of the services we advertise */
+    
+    /**
+     * Internal list of services
+     */
+    private static Map<String, Service> svcMap = new HashMap<String, Service>();
+    
+    /**
+     * Server interface (if we run in server mode)
+     */
+    private static Server svr = null;  
+    
     /* TODO: We need a registry with non terminated ATMI contexts
      * so that we can hook up the JVM and remove all open contexts at
      * shutdown 
@@ -71,16 +88,22 @@ public class AtmiCtx {
 
     /**
      * Allocate buffer
-     * Thow some exceptions.. too!
      * @param btype buffer type name
      * @param bsubtype buffer sub type or empty string (if no subtype)
      * @param size buffer size in bytes
      * @return allocate ATMI buffer
+     * @throw AtmiTPEINVALException invalid arguments passed to {@code btype} or 
+     *  {@code bsubtype}
+     * @throw AtmiTPEOTYPEException invalid types specified (or sub-type)
+     * @throw AtmiTPESYSTEMException system exception occurred
+     * @throw AtmiTPEOSException Operating System error occurred
      */
     public native AtmiBuf tpAlloc(String btype, String bsubtype, long size);
 
     /**
      * Allocate new ATMI Context
+     * @throw AtmiTPESYSTEMException Failed to allocate new context object in
+     *  C space.
      */
     public AtmiCtx()  {
         // This thorws TPESYSTEM if failed.
@@ -102,7 +125,19 @@ public class AtmiCtx {
        //Remove ATMI context...
        super.finalize();
     }
-     
+    
+    
+    /**
+     * Run server instance. Only one thread is allowed to step into this
+     * @param svr 
+     */
+    public synchronized void TpRun(Server svr)
+    {
+        this.svr = svr;
+        
+        /* TODO: Call native server entry... */
+    }
+    
     // Test Driver
     public static void main(String[] args) {
      AtmiCtx ctx = new AtmiCtx();
@@ -119,6 +154,32 @@ public class AtmiCtx {
        System.out.printf("%d: %s\n", err.err, err.msg);
 
     }
-
+    
+    /* TODO: Have some loggers! */
+    
+    /**
+     * Native logger call
+     * @param lev log level
+     * @param file optional file name
+     * @param line optional line number in file (if no metadata infos, use -1)
+     * @param message log message
+     */
+    private native void tpLogC(int lev, String file, long line, String message);
+    
+    /**
+     * Write the user log
+     * @param lev Log level
+     * @param format format string
+     * @param arguments  format arguments
+     */
+    public void tpLog(int lev, String format, Object... arguments) {
+        
+       /* write the log according to the detail level with or with out
+        * stack tracking
+        */
+       
+    }
+    
+    
 }
 
