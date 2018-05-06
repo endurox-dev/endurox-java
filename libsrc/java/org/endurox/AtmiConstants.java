@@ -119,4 +119,10 @@ public class AtmiConstants {
     /** Invalid key (probably) */
     public static final int NEINVALKEY	= 13;
 
+    /** Failed status */
+    public static final int FAIL        = -1;
+    
+    /** Succeed status */
+    public static final int SUCCEED     = 0;
+    
 }

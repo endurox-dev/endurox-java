@@ -167,6 +167,16 @@ public class AtmiCtx {
     private native void tpLogC(int lev, String file, long line, String message);
     
     /**
+     * Get logger levels
+     * So bit layout: RRRRRRRRnnnnNNNNuuuuUUUUttttTTTT
+     * where n - flags (see LOGFLAGS_) for NDRX logger, N - log level of NDRX
+     * where u - flags (see LOGFLAGS_) for UBF logger, U - log level of UBF
+     * where t - flags (see LOGFLAGS_) for TP logger, T - log level of TP
+     * @return oldest byte is reserved, then ndrx (4 bits flags, 4 bits lev), ubf, tp
+     */
+    private native int tpLogGetLevel();
+    
+    /**
      * Write the user log
      * @param lev Log level
      * @param format format string
@@ -174,9 +184,20 @@ public class AtmiCtx {
      */
     public void tpLog(int lev, String format, Object... arguments) {
         
-       /* write the log according to the detail level with or with out
-        * stack tracking
-        */
+        /* todo: detect log level */
+        
+        int log_config = tpLogGetLevel();
+        
+        /*  */
+        if ( lev > (log_config & 0x0f) ) {
+            /* nothing to do */
+            return;
+        }
+        
+        /* write the log according to the detail level with or with out
+         * stack tracking
+         */
+        tpLogC(lev, "", AtmiConstants.FAIL, String.format(format, arguments));
        
     }
     
