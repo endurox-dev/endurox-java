@@ -47,27 +47,34 @@
 
 /**
  * Free up the the context
+ * @param env java env
+ * @param obj ATMI buffer Object
+ * @param cPtr C pointer to ATMI Buffer
  */
 void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj, jlong cPtr)
 {
     TPCONTEXT_T ctx;
-    int err;
-    
-    jstring jstr;
+
     jclass objClass = (*env)->GetObjectClass(env, obj);
-    jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
-    jlong fieldVal = (*env)->GetLongField(env, obj, myFieldID);
+    jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", "Lorg/endurox/AtmiCtx;");
+    jobject atmi_ctx_obj = (*env)->GetObjectField(env, obj, atmi_ctx_fld);
     
-    ctx = (TPCONTEXT_T)fieldVal;
+    if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj)))
+    {
+        goto out;
+    }
+    
     tpsetctxt(ctx, 0L);
 
-    NDRX_LOG(log_debug, "About to free up: context: %ld (%p) buf: %p", fieldVal, 
+    NDRX_LOG(log_debug, "About to free up: context: %p buf: %p",
             ctx, (void *)cPtr);
     
     tpfree((char *)cPtr);
-        /* unset context */
+    
+    /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
+out:
     /* return object */
     return;
 }

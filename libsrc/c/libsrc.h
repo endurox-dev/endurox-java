@@ -31,6 +31,7 @@
 */
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
+#include <atmi.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -42,3 +43,4 @@
 extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
+extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj);

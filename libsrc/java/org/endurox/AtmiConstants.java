@@ -124,5 +124,56 @@ public class AtmiConstants {
     
     /** Succeed status */
     public static final int SUCCEED     = 0;
+        
+    /** Get log level for NDRXD        */
+    public static final long TPLOGQI_GET_NDRX            = 0x00000001;
+    /** Get log level for UBF        */
+    public static final long TPLOGQI_GET_UBF             = 0x00000002;
+    /** Get level for tp logger */
+    public static final long TPLOGQI_GET_TP              = 0x00000004;
+    /** Eval detailed flag  */
+    public static final long TPLOGQI_EVAL_DETAILED       = 0x00000008;
+    /** Return results (log level & detailed flag) event logging shall not be done */
+    public static final long TPLOGQI_EVAL_RETURN         = 0x00000010;
     
+    /** settings for ATMI logging        */
+    public static final long  LOG_FACILITY_NDRX           = 0x00000001;
+    /** settings for UBF logging         */
+    public static final long  LOG_FACILITY_UBF            = 0x00000002;
+    /** settings for TP logging          */
+    public static final long  LOG_FACILITY_TP             = 0x00000004;
+    /** settings for TP, thread based logging */
+    public static final long  LOG_FACILITY_TP_THREAD      = 0x00000008;
+    /** tp, Request logging, thread based*/
+    public static final long  LOG_FACILITY_TP_REQUEST     = 0x00000010;
+    /** ndrx thread logging              */
+    public static final long  LOG_FACILITY_NDRX_THREAD    = 0x00000020;
+    /** ubf thread logging               */
+    public static final long  LOG_FACILITY_UBF_THREAD     = 0x00000040;
+    /** ndrx request logging             */
+    public static final long  LOG_FACILITY_NDRX_REQUEST   = 0x00000080;
+    /** ubf request logging              */
+    public static final long  LOG_FACILITY_UBF_REQUEST    = 0x00000100;
+
+    /** Mask of the log facility bitwise flags */
+    public static final long  LOG_FACILITY_MASK           = 0x0000ffff;
+
+    /** first byte is reserved for log level (should not collide with LOG_FACILITY!) */
+    public static final long  TPLOGQI_RET_HAVDETAILED     = 0x00010000;            
+    /** Bit offset for log level in tpLogQInfo return */
+    public static final long  TPLOGQI_RET_DBGLEVBITS      =  24;
+    
+    /** Log lever Always (unless debug disabled) */
+    public static final int LOG_ALWAYS                  = 1;
+    /** Error log level */
+    public static final int LOG_ERROR                   = 2;
+    /** Warning log level */
+    public static final int LOG_WARN                    = 3;
+    /** Informational log level */
+    public static final int LOG_INFO                    = 4;
+    /** Debug logs enable */
+    public static final int LOG_DEBUG                   = 5;
+    /** Maximum log level, including binary dumps */
+    public static final int LOG_DUMP                    = 6;
+
 }

@@ -140,18 +140,21 @@ public class AtmiCtx {
     
     // Test Driver
     public static void main(String[] args) {
-     AtmiCtx ctx = new AtmiCtx();
+        AtmiCtx ctx = new AtmiCtx();
 
-     TypedUbf b = (TypedUbf)ctx.tpAlloc("UBF", "", 1024);
+        
+        TypedUbf b = (TypedUbf)ctx.tpAlloc("UBF", "", 1024);
 
-     System.out.printf("Buffer OK!");
+        System.out.printf("Buffer OK!");
 
-     b = null;
+        b = null;
 
-     System.gc();
+        System.gc();
 
-     ErrorTuple err = ctx.getAtmiError();
-       System.out.printf("%d: %s\n", err.err, err.msg);
+        ErrorTuple err = ctx.getAtmiError();
+        System.out.printf("%d: %s\n", err.err, err.msg);
+        
+        ctx.tpLogInfo("Hello [%s]", "World!!!!!!!!");
 
     }
     
@@ -167,40 +170,108 @@ public class AtmiCtx {
     private native void tpLogC(int lev, String file, long line, String message);
     
     /**
-     * Get logger levels
-     * So bit layout: RRRRRRRRnnnnNNNNuuuuUUUUttttTTTT
-     * where n - flags (see LOGFLAGS_) for NDRX logger, N - log level of NDRX
-     * where u - flags (see LOGFLAGS_) for UBF logger, U - log level of UBF
-     * where t - flags (see LOGFLAGS_) for TP logger, T - log level of TP
-     * @return oldest byte is reserved, then ndrx (4 bits flags, 4 bits lev), ubf, tp
+     * Query logger information
+     * @param lev current log level
+     * @param flags  See TPLOGQI_GET_ and TPLOGQI_EVAL_ flag constants
+     * @return LOG_FACILITY_ bits, TPLOGQI_RET_ bits, and bits from 24..32 
+     *  represents log level.
      */
-    private native int tpLogGetLevel();
+    public native int tpLogQInfo(int lev, long flags);
     
     /**
      * Write the user log
      * @param lev Log level
+     * @param directCall is this function called directly or via logger wrapper?
      * @param format format string
      * @param arguments  format arguments
      */
-    public void tpLog(int lev, String format, Object... arguments) {
+    public void tpLog(int lev, boolean directCall, String format, Object... arguments) {
         
-        /* todo: detect log level */
+        int log_config = tpLogQInfo(lev, 
+                AtmiConstants.TPLOGQI_GET_TP | AtmiConstants.TPLOGQI_EVAL_DETAILED);
         
-        int log_config = tpLogGetLevel();
+        String filename = "";
+        long line = AtmiConstants.FAIL;
         
-        /*  */
-        if ( lev > (log_config & 0x0f) ) {
-            /* nothing to do */
+        if (log_config <= 0) {
+            
+            /* nothing to log */
             return;
         }
         
+        if ((log_config & AtmiConstants.TPLOGQI_EVAL_DETAILED) > 0) {
+            
+            /* backtrace the file and line number */
+            StackTraceElement[] s = Thread.currentThread().getStackTrace();
+            
+            if (directCall) {
+                filename = s[2].getFileName();
+                line = s[2].getLineNumber();
+                
+            } else {
+                filename = s[3].getFileName();
+                line = s[3].getLineNumber();
+            }
+        }
         /* write the log according to the detail level with or with out
          * stack tracking
          */
-        tpLogC(lev, "", AtmiConstants.FAIL, String.format(format, arguments));
-       
+        tpLogC(lev, filename, line, String.format(format, arguments));
     }
     
+    /**
+     * Log Always
+     * @param format format string
+     * @param arguments variable args 
+     */
+    public void tpLogAlways(String format, Object... arguments) {
+        tpLog(AtmiConstants.LOG_ALWAYS, false, format, arguments);
+    }   
+    
+    /**
+     * Log Error
+     * @param format format string
+     * @param arguments variable args 
+     */
+    public void tpLogError(String format, Object... arguments) {
+        tpLog(AtmiConstants.LOG_ERROR, false, format, arguments);
+    }
+    
+    /**
+     * Log Warning
+     * @param format format string
+     * @param arguments variable args 
+     */
+    public void tpLogWarn(String format, Object... arguments) {
+        tpLog(AtmiConstants.LOG_WARN, false, format, arguments);
+    }
+    
+    /**
+     * Log Info
+     * @param format format string
+     * @param arguments variable args 
+     */
+    public void tpLogInfo(String format, Object... arguments) {
+        tpLog(AtmiConstants.LOG_INFO, false, format, arguments);
+    }
+    
+    /**
+     * Log Debug
+     * @param format format string
+     * @param arguments variable args 
+     */
+    public void tpLogDebug(String format, Object... arguments) {
+        tpLog(AtmiConstants.LOG_DEBUG, false, format, arguments);
+    }
+    
+    /**
+     * Log Dump
+     * @param format format string
+     * @param arguments variable args 
+     */
+    public void tpLogDump(String format, Object... arguments) {
+        tpLog(AtmiConstants.LOG_DUMP, false, format, arguments);
+    }
     
 }
 

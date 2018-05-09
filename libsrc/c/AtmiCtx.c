@@ -36,6 +36,7 @@
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
+#include <ondebug.h>
 #include "libsrc.h"
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
@@ -51,7 +52,7 @@
  * @param atmiCtxObj ATMI Context object
  * @return NULL (and expection set) or context data
  */
-static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
+expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj)
 {
     TPCONTEXT_T ctx;
    
@@ -68,6 +69,76 @@ static TPCONTEXT_T get_ctx(JNIEnv *env, jobject atmiCtxObj)
 
     return ctx;
 }
+
+
+/**
+ * Query log information
+ * @param env java env
+ * @param obj Atmi context
+ * @param lev log level
+ * @param flags flags
+ * @return logger configuration
+ */
+jint JNICALL Java_org_endurox_AtmiCtx_tpLogQInfo (JNIEnv *env, jobject obj, 
+        jint lev, jlong flags)
+{
+    TPCONTEXT_T ctx;
+    int ret = 0;
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    {
+        goto out;
+    }
+    
+    ret = Otplogqinfo(&ctx, (int)lev, (long)flags);
+    
+    if (ret < 0)
+    {
+        /* throw exception */
+        ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
+    }
+    
+out:
+    return ret;
+}
+
+/**
+ * TP Log entry
+ * @param env java nev
+ * @param obj java object (Atmi Context)
+ * @param lev log level
+ * @param file log file or empty string if not detailed log user
+ * @param line line number of -1 if no detailed log user
+ * @param msg message to log
+ */
+void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev, jstring file, jlong line, jstring msg)
+{
+    TPCONTEXT_T ctx;
+    
+    const char *n_file = (*env)->GetStringUTFChars(env, file, 0);
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, 0);
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    {
+        return;
+    }
+    
+    if (line!=EXFAIL)
+    {
+        Otplogex(&ctx, (int)lev, (char *)n_file, (long)line, (char *)n_msg);
+    }
+    else
+    {
+        Otplog(&ctx, (int)lev, (char *)n_msg);
+    }
+    
+out:    
+    (*env)->ReleaseStringUTFChars(env, file, n_file);
+    (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    
+}
+
+
 
 /**
  * Free up the atmi context
@@ -102,7 +173,7 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     /* get context handler */
 
     /* exception will thown if invalid object... */
-    if (NULL==(ctx = get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
     {
         goto out;
     }
@@ -231,9 +302,9 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     TPCONTEXT_T ctx;
     int err;
     jstring jstr;
-    
+    jobject errObj = NULL;
     /* exception will thown if invalid object... */
-    if (NULL==(ctx = get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
     {
         return NULL;
     }
@@ -250,7 +321,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     jmethodID constructor = (*env)->GetMethodID(env, errClazz, "<init>", "()V");
 
     /* Create an instance of clazz */
-    jobject errObj = (*env)->NewObject(env, errClazz, constructor);
+    errObj = (*env)->NewObject(env, errClazz, constructor);
 
     /* Get Field references */
     jfieldID param1Field = (*env)->GetFieldID(env, errClazz, "err", "I");
@@ -264,7 +335,8 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
-
+    
+out:
     /* return object */
     return errObj;
 }
