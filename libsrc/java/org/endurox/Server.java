@@ -33,12 +33,14 @@ package org.endurox;
 public interface Server {
     /**
      * Server init call
+     * TODO: We need a context here.
      * @param argv Enduro/X command line options
      */
     public void tpSvrInit(String [] argv);
     
     /**
      * Server call when shutdown of server process is performed
+     * TODO: We need a context here.
      */
     public void tpSvrDone();
 }
