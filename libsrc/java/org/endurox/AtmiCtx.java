@@ -161,13 +161,22 @@ public class AtmiCtx {
     /* TODO: Have some loggers! */
     
     /**
-     * Native logger call
+     * TP logger
      * @param lev log level
      * @param file optional file name
      * @param line optional line number in file (if no metadata infos, use -1)
      * @param message log message
      */
     private native void tpLogC(int lev, String file, long line, String message);
+
+    /**
+     * NDRX package internal logger
+     * @param lev log level
+     * @param file optional file name
+     * @param line optional line number in file (if no metadata infos, use -1)
+     * @param message log message
+     */
+    private native void tpLogNdrxC(int lev, String file, long line, String message);
     
     /**
      * Query logger information
@@ -177,7 +186,42 @@ public class AtmiCtx {
      *  represents log level.
      */
     public native int tpLogQInfo(int lev, long flags);
-    
+
+    /**
+     * Write the ndrx log (for library internal use). Package level access.
+     * @param lev Log level
+     * @param directCall is this function called directly or via logger wrapper?
+     * @param format format string
+     * @param arguments  format arguments
+     */
+    void tpLogNdrx(int lev, String format, Object... arguments) {
+
+        int log_config = tpLogQInfo(lev,
+                AtmiConstants.TPLOGQI_GET_NDRX | AtmiConstants.TPLOGQI_EVAL_DETAILED);
+
+        String filename = "";
+        long line = AtmiConstants.FAIL;
+
+        if (log_config <= 0) {
+
+            /* nothing to log */
+            return;
+        }
+
+        if ((log_config & AtmiConstants.TPLOGQI_EVAL_DETAILED) > 0) {
+
+            /* backtrace the file and line number */
+            StackTraceElement[] s = Thread.currentThread().getStackTrace();
+
+            filename = s[2].getFileName();
+            line = s[2].getLineNumber();
+        }
+        /* write the log according to the detail level with or with out
+         * stack tracking
+         */
+        tpLogNdrxC(lev, filename, line, String.format(format, arguments));
+    }
+
     /**
      * Write the user log
      * @param lev Log level
@@ -207,7 +251,6 @@ public class AtmiCtx {
             if (directCall) {
                 filename = s[2].getFileName();
                 line = s[2].getLineNumber();
-                
             } else {
                 filename = s[3].getFileName();
                 line = s[3].getLineNumber();
