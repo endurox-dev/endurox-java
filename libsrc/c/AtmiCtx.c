@@ -111,7 +111,8 @@ out:
  * @param line line number of -1 if no detailed log user
  * @param msg message to log
  */
-void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev, jstring file, jlong line, jstring msg)
+void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev, 
+        jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;
     
@@ -134,11 +135,45 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev
     
 out:    
     (*env)->ReleaseStringUTFChars(env, file, n_file);
-    (*env)->ReleaseStringUTFChars(env, msg, n_msg);
-    
+    (*env)->ReleaseStringUTFChars(env, msg, n_msg);   
 }
 
 
+/**
+ * NDRX Log entry
+ * @param env java nev
+ * @param obj java object (Atmi Context)
+ * @param lev log level
+ * @param file log file or empty string if not detailed log user
+ * @param line line number of -1 if no detailed log user
+ * @param msg message to log
+ */
+void JNICALL Java_org_endurox_AtmiCtx_tpLogNdrxC(JNIEnv * env, jobject obj, jint lev, 
+        jstring file, jlong line, jstring msg)
+{
+    TPCONTEXT_T ctx;
+    
+    const char *n_file = (*env)->GetStringUTFChars(env, file, 0);
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, 0);
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    {
+        return;
+    }
+    
+    if (line!=EXFAIL)
+    {
+        Otplogex(&ctx, (int)lev, (char *)n_file, (long)line, (char *)n_msg);
+    }
+    else
+    {
+        Otplog(&ctx, (int)lev, (char *)n_msg);
+    }
+    
+out:    
+    (*env)->ReleaseStringUTFChars(env, file, n_file);
+    (*env)->ReleaseStringUTFChars(env, msg, n_msg);   
+}
 
 /**
  * Free up the atmi context
