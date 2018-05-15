@@ -2,6 +2,7 @@ package org.endurox;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.endurox.exceptions.AtmiTPEINVALException;
 import org.endurox.exceptions.AtmiTPESYSTEMException;
 
 /**
@@ -59,7 +60,7 @@ public class AtmiCtx {
     /**
      * Server interface (if we run in server mode)
      */
-    private static Server svr = null;  
+    private Server svr = null;  
     
     /* TODO: We need a registry with non terminated ATMI contexts
      * so that we can hook up the JVM and remove all open contexts at
@@ -126,16 +127,30 @@ public class AtmiCtx {
        super.finalize();
     }
     
+    /**
+     * Run server in context
+     */
+    private native int TpRunC();
     
     /**
      * Run server instance. Only one thread is allowed to step into this
      * @param svr 
      */
-    public synchronized void TpRun(Server svr)
+    public synchronized int TpRun(Server svr)
     {
+        if (null==svr)
+        {
+            throw new AtmiTPEINVALException("svr argument is null!");
+        }
+        
         this.svr = svr;
         
-        /* TODO: Call native server entry... */
+        tpLogNdrx(AtmiConstants.LOG_INFO, "Booting server");
+        
+        /* Call native server entry (this should in return boot call server
+         * interface 
+         */
+        return TpRunC();
     }
     
     // Test Driver

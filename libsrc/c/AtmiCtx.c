@@ -1,34 +1,35 @@
-/* 
-** ATMI Context backing JNI functions
-**
-** @file AtmiCtx.c
-** 
-** -----------------------------------------------------------------------------
-** Enduro/X Middleware Platform for Distributed Transaction Processing
-** Copyright (C) 2015, Mavimax, Ltd. All Rights Reserved.
-** This software is released under one of the following licenses:
-** GPL or Mavimax's license for commercial use.
-** -----------------------------------------------------------------------------
-** GPL license:
-** 
-** This program is free software; you can redistribute it and/or modify it under
-** the terms of the GNU General Public License as published by the Free Software
-** Foundation; either version 2 of the License, or (at your option) any later
-** version.
-**
-** This program is distributed in the hope that it will be useful, but WITHOUT ANY
-** WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-** PARTICULAR PURPOSE. See the GNU General Public License for more details.
-**
-** You should have received a copy of the GNU General Public License along with
-** this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-** Place, Suite 330, Boston, MA 02111-1307 USA
-**
-** -----------------------------------------------------------------------------
-** A commercial use license is available from Mavimax, Ltd
-** contact@mavimax.com
-** -----------------------------------------------------------------------------
-*/
+/**
+ * @brief ATMI Context backing JNI functions
+ *
+ * @file AtmiCtx.c
+ */ 
+/*
+ * -----------------------------------------------------------------------------
+ * Enduro/X Middleware Platform for Distributed Transaction Processing
+ * Copyright (C) 2015-2018 Mavimax, Ltd. All Rights Reserved.
+ * This software is released under one of the following licenses:
+ * GPL or Mavimax's license for commercial use.
+ * -----------------------------------------------------------------------------
+ * GPL license:
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ *
+ * -----------------------------------------------------------------------------
+ * A commercial use license is available from Mavimax, Ltd
+ * contact@mavimax.com
+ * -----------------------------------------------------------------------------
+ */
 
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
@@ -44,6 +45,18 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
+
+/* NOTE: we can have single main thread only, thus we may use globals */
+
+/** Java env for server operations */
+exprivate JNIEnv *M_srv_ctx_env = NULL;
+
+/** Context object */
+exprivate jobject M_srv_ctx_obj = NULL;
+
+/** Resolve context */
+exprivate TPCONTEXT_T M_srv_ctx = NULL;
+
 /*---------------------------Prototypes---------------------------------*/
 
 /**
@@ -338,7 +351,8 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     int err;
     jstring jstr;
     jobject errObj = NULL;
-    /* exception will thown if invalid object... */
+    
+    /* exception will thrown if invalid object... */
     if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
     {
         return NULL;
@@ -376,4 +390,50 @@ out:
     return errObj;
 }
 
+/**
+ * Do the server init call back the interface
+ * @param argc
+ * @param argv
+ * @return 
+ */
+exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
+{
+    
+}
 
+/**
+ * Shutdown of the server process
+ */
+exprivate void ndrxj_tpsvrdone(void)
+{
+    
+}
+
+/**
+ * Run the server entry point...
+ * @param env Java env
+ * @param obj ATMI Context
+ */
+jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj)
+{
+    M_srv_ctx_env = env;
+    M_srv_ctx_obj = obj;
+    
+    if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj)))
+    {
+        return EXFAIL;
+    }
+    
+    /* extract argc & argv. 
+     * 
+     * strok the NDRX_CLOPT on space and tabs
+     * each element shall be copied to separate variable. Base array shall be
+     * grown..
+     */
+    
+    /*
+    return (jint)Ondrx_main_integra(M_srv_ctx, int argc, char** argv, ndrxj_tpsvrinit, ndrxj_tpsvrdone);
+    */
+}
+
+/* vim: set ts=4 sw=4 et cindent: */
