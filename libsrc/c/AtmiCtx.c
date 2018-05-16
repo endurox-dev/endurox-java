@@ -33,11 +33,14 @@
 
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
+#include <errno.h>
+#include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
 #include <ondebug.h>
+#include <oatmisrv_integra.h>
 #include "libsrc.h"
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
@@ -409,6 +412,7 @@ exprivate void ndrxj_tpsvrdone(void)
     
 }
 
+
 /**
  * Run the server entry point...
  * @param env Java env
@@ -418,22 +422,88 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj)
 {
     M_srv_ctx_env = env;
     M_srv_ctx_obj = obj;
+    char **argv = NULL;
+    int argc = 0;
+    int argv_slots = 0;
+    char *saveptr1;
+    char *token;
+    char *clopt;
+    int ret = EXSUCCEED;
+    int size;
     
     if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj)))
     {
-        return EXFAIL;
+        EXFAIL_OUT(ret);
+    }
+
+    /* we have a context handler, we shall switch to it now... */
+    tpsetctxt(M_srv_ctx, 0L);
+
+    clopt = getenv(CONF_NDRX_ALTCLOPT);
+    
+    if (NULL==clopt)
+    {
+        ndrxj_atmi_throw(env, TPESYSTEM, "Missing [%s] env variable",
+                CONF_NDRX_ALTCLOPT);
+        EXFAIL_OUT(ret);
+    }
+
+    clopt = NDRX_STRDUP(clopt);
+    if (NULL==clopt)
+    {
+        int err;
+        NDRX_LOG(log_error, "Strdup failed on clopt: %s",
+           strerror(errno));
+        ndrxj_atmi_throw(env, TPESYSTEM, "Strdup failed on clopt: %s",
+           strerror(errno));
+        EXFAIL_OUT(ret);
+    }
+
+    NDRX_LOG(log_debug, "Parsing alternate command line [%s]", clopt);
+
+    token = strtok_r(clopt, " \t", &saveptr1);
+
+    while (NULL!=token)
+    {
+        argc++;
+
+        if (argc > argv_slots)
+        {
+            argv_slots+=100;
+            size = argv_slots*sizeof(char *);
+            argv = NDRX_REALLOC(argv, argv_slots*sizeof(char *));
+
+            if (NULL==argv)
+            {
+                int err = errno;
+                NDRX_LOG(log_error, "Failed to realloc %d bytes: %s",   
+                    size, strerror(err));
+                ndrxj_atmi_throw(env, TPESYSTEM, "Failed to realloc %d bytes: %s",
+                    size, strerror(err));
+                EXFAIL_OUT(ret);
+            }
+        }
+
+        argv[argc-1]=token;
+        
+        token = strtok_r(NULL, " \t", &saveptr1);
     }
     
-    /* extract argc & argv. 
-     * 
-     * strok the NDRX_CLOPT on space and tabs
-     * each element shall be copied to separate variable. Base array shall be
-     * grown..
-     */
-    
-    /*
-    return (jint)Ondrx_main_integra(M_srv_ctx, int argc, char** argv, ndrxj_tpsvrinit, ndrxj_tpsvrdone);
-    */
+    ret=Ondrx_main_integra(M_srv_ctx, argc, argv, ndrxj_tpsvrinit,
+        ndrxj_tpsvrdone, 0L);
+out:
+
+    if (NULL!=token)
+    {
+        NDRX_FREE(token);
+    }
+
+    if (NULL!=argv)
+    {
+        NDRX_FREE(argv);
+    }
+
+    return (jint)ret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
