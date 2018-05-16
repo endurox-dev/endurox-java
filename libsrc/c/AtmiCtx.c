@@ -439,6 +439,9 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj)
     /* we have a context handler, we shall switch to it now... */
     tpsetctxt(M_srv_ctx, 0L);
 
+    /* TODO: Well we might use command line passed to the process!
+     * this will make less changes to Enduro/X Core 
+     */
     clopt = getenv(CONF_NDRX_ALTCLOPT);
     
     if (NULL==clopt)
