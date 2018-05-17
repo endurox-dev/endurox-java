@@ -60,6 +60,9 @@ exprivate jobject M_srv_ctx_obj = NULL;
 /** Resolve context */
 exprivate TPCONTEXT_T M_srv_ctx = NULL;
 
+/** Command line arguments as passed to the server runner */
+exprivate jobjectArray M_jargv;
+
 /*---------------------------Prototypes---------------------------------*/
 
 /**
@@ -131,9 +134,11 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev
         jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;
+    jboolean n_file_copy = EXFALSE;
+    jboolean n_msg_copy = EXFALSE;
     
-    const char *n_file = (*env)->GetStringUTFChars(env, file, 0);
-    const char *n_msg = (*env)->GetStringUTFChars(env, msg, 0);
+    const char *n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
     
     if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
     {
@@ -149,9 +154,16 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev
         Otplog(&ctx, (int)lev, (char *)n_msg);
     }
     
-out:    
-    (*env)->ReleaseStringUTFChars(env, file, n_file);
-    (*env)->ReleaseStringUTFChars(env, msg, n_msg);   
+out:
+    if (n_file_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, file, n_file);
+    }
+
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
 }
 
 
@@ -168,9 +180,11 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogNdrxC(JNIEnv * env, jobject obj, jint
         jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;
+    jboolean n_file_copy = EXFALSE;
+    jboolean n_msg_copy = EXFALSE;
     
-    const char *n_file = (*env)->GetStringUTFChars(env, file, 0);
-    const char *n_msg = (*env)->GetStringUTFChars(env, msg, 0);
+    const char *n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
     
     if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
     {
@@ -186,9 +200,16 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogNdrxC(JNIEnv * env, jobject obj, jint
         Otplog(&ctx, (int)lev, (char *)n_msg);
     }
     
-out:    
-    (*env)->ReleaseStringUTFChars(env, file, n_file);
-    (*env)->ReleaseStringUTFChars(env, msg, n_msg);   
+out: 
+    if (n_file_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, file, n_file);
+    }
+
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
 }
 
 /**
@@ -218,8 +239,11 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     TPCONTEXT_T ctx;
     jmethodID mid;
     char *buf;
-    const char *n_btype = (*env)->GetStringUTFChars(env, btype, 0);
-    const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, 0);
+    jboolean n_btype_copy = EXFALSE;
+    jboolean n_bsubtype_copy = EXFALSE;
+    
+    const char *n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
+    const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, &n_bsubtype_copy);
     char clazz[256];
     /* get context handler */
 
@@ -318,8 +342,16 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
 
 out:
     
-    (*env)->ReleaseStringUTFChars(env, btype, n_btype);
-    (*env)->ReleaseStringUTFChars(env, bsubtype, n_bsubtype);
+    if (n_btype_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, btype, n_btype);
+    }
+
+    if (n_bsubtype_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, bsubtype, n_bsubtype);
+    }
+
     return ret;
 }
 
@@ -418,18 +450,29 @@ exprivate void ndrxj_tpsvrdone(void)
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
  */
-jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, jobjectArray jargv)
+jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, 
+        jobjectArray jargv)
 {
     M_srv_ctx_env = env;
     M_srv_ctx_obj = obj;
     char **argv = NULL;
     int argc = 0;
-    int argv_slots = 0;
-    char *saveptr1;
-    char *token;
-    char *clopt;
     int ret = EXSUCCEED;
-    int size;
+    int size = (int)(*env)->GetArrayLength(env, jargv);
+    int ctx_set = EXFALSE;
+    int i;
+    jstring jstr;
+    jboolean n_elm_copy = EXFALSE;
+    const char *n_elm;
+    
+    M_jargv = jargv;
+
+    if (size < 4)
+    {
+        ndrxj_atmi_throw(env, TPEINVAL, "Invalid argument count for server, "
+                "expected at least 4, got %d", size);
+        EXFAIL_OUT(ret);
+    }
     
     if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj)))
     {
@@ -438,67 +481,72 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, jobjectAr
 
     /* we have a context handler, we shall switch to it now... */
     tpsetctxt(M_srv_ctx, 0L);
-
-    /* TODO: Well we might use command line passed to the process!
-     * this will make less changes to Enduro/X Core 
-     */
-    clopt = getenv(CONF_NDRX_ALTCLOPT);
+    ctx_set=EXTRUE;
     
-    if (NULL==clopt)
+    argv = NDRX_CALLOC(sizeof(char *), size);
+    
+    if (NULL==argv)
     {
-        ndrxj_atmi_throw(env, TPESYSTEM, "Missing [%s] env variable",
-                CONF_NDRX_ALTCLOPT);
+        int err = errno;
+        NDRX_LOG(log_error, "Failed to realloc %d bytes: %s",   
+            size, strerror(err));
+        ndrxj_atmi_throw(env, TPESYSTEM, "Failed to realloc %d bytes: %s",
+            size, strerror(err));
         EXFAIL_OUT(ret);
     }
-
-    clopt = NDRX_STRDUP(clopt);
-    if (NULL==clopt)
+    
+    /* loop over the argument */
+    for (i=0; i<size; i++)
     {
-        int err;
-        NDRX_LOG(log_error, "Strdup failed on clopt: %s",
-           strerror(errno));
-        ndrxj_atmi_throw(env, TPESYSTEM, "Strdup failed on clopt: %s",
-           strerror(errno));
-        EXFAIL_OUT(ret);
-    }
-
-    NDRX_LOG(log_debug, "Parsing alternate command line [%s]", clopt);
-
-    token = strtok_r(clopt, " \t", &saveptr1);
-
-    while (NULL!=token)
-    {
-        argc++;
-
-        if (argc > argv_slots)
-        {
-            argv_slots+=100;
-            size = argv_slots*sizeof(char *);
-            argv = NDRX_REALLOC(argv, argv_slots*sizeof(char *));
-
-            if (NULL==argv)
-            {
-                int err = errno;
-                NDRX_LOG(log_error, "Failed to realloc %d bytes: %s",   
-                    size, strerror(err));
-                ndrxj_atmi_throw(env, TPESYSTEM, "Failed to realloc %d bytes: %s",
-                    size, strerror(err));
-                EXFAIL_OUT(ret);
-            }
-        }
-
-        argv[argc-1]=token;
+        jstr = (jstring)(*env)->GetObjectArrayElement(env, jargv, i);
         
-        token = strtok_r(NULL, " \t", &saveptr1);
+        if (NULL==jstr)
+        {
+            NDRX_LOG(log_error, "Failed to argv argument [%d]", i);
+            EXFAIL_OUT(ret);
+        }
+        
+        n_elm = (*env)->GetStringUTFChars(env, jstr, &n_elm_copy);
+        
+        if (NULL==(argv[i] = NDRX_STRDUP(n_elm)))
+        {
+            int err = errno;
+            NDRX_LOG(log_error, "Failed to strdup bytes: %s",   
+                strerror(err));
+            ndrxj_atmi_throw(env, TPESYSTEM, "Failed to strdup bytes: %s",
+                strerror(err));
+            
+            if (n_elm_copy)
+            {
+                (*env)->ReleaseStringUTFChars(env, jstr, n_elm);
+            }
+            
+            EXFAIL_OUT(ret);
+        }
+        
+        if (n_elm_copy)
+        {
+            (*env)->ReleaseStringUTFChars(env, jstr, n_elm);
+        }
+        
     }
     
     ret=Ondrx_main_integra(M_srv_ctx, argc, argv, ndrxj_tpsvrinit,
         ndrxj_tpsvrdone, 0L);
 out:
 
-    if (NULL!=token)
+    /* go to NULL context */
+    if (ctx_set)
     {
-        NDRX_FREE(token);
+        tpsetctxt(TPNULLCONTEXT, 0L);
+    }
+
+    for (i=0; i<size; i++)
+    {
+        if (NULL!=argv[i])
+        {
+            NDRX_FREE(argv[i]);
+        }
     }
 
     if (NULL!=argv)
