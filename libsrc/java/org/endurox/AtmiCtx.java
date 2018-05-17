@@ -129,14 +129,16 @@ public class AtmiCtx {
     
     /**
      * Run server in context
+     * @param arg Command line arguments passed to java
      */
-    private native int TpRunC();
+    private native int TpRunC(String[] arg);
     
     /**
      * Run server instance. Only one thread is allowed to step into this
      * @param svr 
+     * @param arg Command line argumenst passed to the Enduro/X core
      */
-    public synchronized int TpRun(Server svr)
+    public synchronized int TpRun(Server svr, String[] arg)
     {
         if (null==svr)
         {
@@ -150,7 +152,7 @@ public class AtmiCtx {
         /* Call native server entry (this should in return boot call server
          * interface 
          */
-        return TpRunC();
+        return TpRunC(arg);
     }
     
     // Test Driver

@@ -412,13 +412,13 @@ exprivate void ndrxj_tpsvrdone(void)
     
 }
 
-
 /**
  * Run the server entry point...
  * @param env Java env
  * @param obj ATMI Context
+ * @param jargv command line arguments passed to Java
  */
-jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj)
+jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, jobjectArray jargv)
 {
     M_srv_ctx_env = env;
     M_srv_ctx_obj = obj;
