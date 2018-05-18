@@ -541,16 +541,16 @@ out:
         tpsetctxt(TPNULLCONTEXT, 0L);
     }
 
-    for (i=0; i<size; i++)
-    {
-        if (NULL!=argv[i])
-        {
-            NDRX_FREE(argv[i]);
-        }
-    }
-
     if (NULL!=argv)
     {
+        for (i=0; i<size; i++)
+        {
+            if (NULL!=argv[i])
+            {
+                NDRX_FREE(argv[i]);
+            }
+        }
+
         NDRX_FREE(argv);
     }
 
