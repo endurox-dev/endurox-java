@@ -158,6 +158,7 @@ public class AtmiCtx {
         return TpRunC(arg);
     }
     
+/*
     // Test Driver
     public static void main(String[] args) {
         AtmiCtx ctx = new AtmiCtx();
@@ -177,6 +178,7 @@ public class AtmiCtx {
         ctx.tpLogInfo("Hello [%s]", "World!!!!!!!!");
 
     }
+*/
     
     /* TODO: Have some loggers! */
     

@@ -433,29 +433,13 @@ out:
  */
 exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
 {
-    /** Call the server init interface */
-
-#if 0    
-    /** Java env for server operations */
-exprivate JNIEnv *M_srv_ctx_env = NULL;
-
-/** Context object */
-exprivate jobject M_srv_ctx_obj = NULL;
-
-/** Resolve context */
-exprivate TPCONTEXT_T M_srv_ctx = NULL;
-
-/** Command line arguments as passed to the server runner */
-exprivate jobjectArray M_jargv;
-
-#endif
     int ret = EXSUCCEED;
     jclass objClass;
     jfieldID myFieldID;        
     jobject svrObj;
     
     /* Attribs of the server to invoke */
-    jclass svr_class;
+    jclass svrClass;
     jmethodID svr_mid;
     
     objClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, M_srv_ctx_obj);
@@ -488,17 +472,17 @@ exprivate jobjectArray M_jargv;
     
     /* Now invoke the interface method */
     
-    svr_class = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, svrObj);
+    svrClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, svrObj);
     
-    if (NULL==svr_class)
+    if (NULL==svrClass)
     {
         NDRX_LOG(log_error, "%s: Failed to get server object class",
                 __func__);
         EXFAIL_OUT(ret);
     }
     
-    svr_mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, svr_class, "tpSvrInit",
-            "(Lorg/endurox/AtmiCtx;[Ljava/lang/String;)V");
+    svr_mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, svrClass, "tpSvrInit",
+            "(Lorg/endurox/AtmiCtx;[Ljava/lang/String;)I");
     
     if (NULL==svr_mid)
     {
@@ -506,12 +490,21 @@ exprivate jobjectArray M_jargv;
                 __func__);
         EXFAIL_OUT(ret);
     }
+ 
+    NDRX_LOG(log_debug, "About to call server interface...");
     
-    /* TODO: Call server object */
+    /* We shall enter into NULL context, not? */
+    tpsetctxt(TPNULLCONTEXT, 0L);
     
+    /* Call server object */
+    ret = (int)(*M_srv_ctx_env)->CallIntMethod(M_srv_ctx_env, svrObj, svr_mid,
+            M_srv_ctx_obj, M_jargv);
+    
+    /* set back actual context */
+    tpsetctxt(M_srv_ctx, 0L);
     
 out:
-    
+            
     return ret;
 }
 
@@ -520,7 +513,78 @@ out:
  */
 exprivate void ndrxj_tpsvrdone(void)
 {
+    int ret = EXSUCCEED;
+    jclass objClass;
+    jfieldID myFieldID;        
+    jobject svrObj;
     
+    /* Attribs of the server to invoke */
+    jclass svrClass;
+    jmethodID svr_mid;
+    
+    objClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, M_srv_ctx_obj);
+    
+    if (NULL==objClass)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get object class for AtmiContext",
+                __func__);
+        EXFAIL_OUT(ret);   
+    }
+    
+    myFieldID = (*M_srv_ctx_env)->GetFieldID(M_srv_ctx_env, objClass, "svr", 
+            "Lorg/endurox/Server;");
+    
+    if (NULL==myFieldID)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get svr => Lorg/endurox/Server of Context obj!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    svrObj = (*M_srv_ctx_env)->GetObjectField(M_srv_ctx_env, M_srv_ctx_obj, myFieldID);
+    
+    if (NULL==svrObj)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get server interface object value!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Now invoke the interface method */
+    
+    svrClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, svrObj);
+    
+    if (NULL==svrClass)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get server object class",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    svr_mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, svrClass, "tpSvrDone",
+            "(Lorg/endurox/AtmiCtx;)V");
+    
+    if (NULL==svr_mid)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get tpSvrDone() method!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+ 
+    NDRX_LOG(log_debug, "About to call server interface (tpSvrDone)...");
+    
+    /* We shall enter into NULL context, not? */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    /* Call server object */
+    (*M_srv_ctx_env)->CallVoidMethod(M_srv_ctx_env, svrObj, svr_mid, M_srv_ctx_obj);
+    
+    /* set back actual context */
+    tpsetctxt(M_srv_ctx, 0L);
+    
+out:
+            
+    return;
 }
 
 /**
