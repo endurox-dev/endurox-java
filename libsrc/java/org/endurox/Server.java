@@ -35,8 +35,9 @@ public interface Server {
      * Server init call
      * @param ctx ATMI Context into which server is started
      * @param argv Enduro/X command line options
+     * @return 0 in case of success, -1 failed
      */
-    public void tpSvrInit(AtmiCtx ctx, String [] argv);
+    public int tpSvrInit(AtmiCtx ctx, String [] argv);
     
     /**
      * Server call when shutdown of server process is performed

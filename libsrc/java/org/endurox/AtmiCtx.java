@@ -137,6 +137,9 @@ public class AtmiCtx {
      * Run server instance. Only one thread is allowed to step into this
      * @param svr 
      * @param arg Command line argumenst passed to the Enduro/X core
+     * @return -1 (failed with out specified error) or 0 Success (finished ok)
+     * @throws  AtmiTPEINVALException invalid command line arguments or invalid
+     *  ATMI context.
      */
     public synchronized int TpRun(Server svr, String[] arg)
     {

@@ -433,7 +433,86 @@ out:
  */
 exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
 {
+    /** Call the server init interface */
+
+#if 0    
+    /** Java env for server operations */
+exprivate JNIEnv *M_srv_ctx_env = NULL;
+
+/** Context object */
+exprivate jobject M_srv_ctx_obj = NULL;
+
+/** Resolve context */
+exprivate TPCONTEXT_T M_srv_ctx = NULL;
+
+/** Command line arguments as passed to the server runner */
+exprivate jobjectArray M_jargv;
+
+#endif
+    int ret = EXSUCCEED;
+    jclass objClass;
+    jfieldID myFieldID;        
+    jobject svrObj;
     
+    /* Attribs of the server to invoke */
+    jclass svr_class;
+    jmethodID svr_mid;
+    
+    objClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, M_srv_ctx_obj);
+    
+    if (NULL==objClass)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get object class for AtmiContext",
+                __func__);
+        EXFAIL_OUT(ret);   
+    }
+    
+    myFieldID = (*M_srv_ctx_env)->GetFieldID(M_srv_ctx_env, objClass, "svr", 
+            "Lorg/endurox/Server;");
+    
+    if (NULL==myFieldID)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get svr => Lorg/endurox/Server of Context obj!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    svrObj = (*M_srv_ctx_env)->GetObjectField(M_srv_ctx_env, M_srv_ctx_obj, myFieldID);
+    
+    if (NULL==svrObj)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get server interface object value!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Now invoke the interface method */
+    
+    svr_class = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, svrObj);
+    
+    if (NULL==svr_class)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get server object class",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    svr_mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, svr_class, "tpSvrInit",
+            "(Lorg/endurox/AtmiCtx;[Ljava/lang/String;)V");
+    
+    if (NULL==svr_mid)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get tpSvrInit() method!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* TODO: Call server object */
+    
+    
+out:
+    
+    return ret;
 }
 
 /**
@@ -528,11 +607,17 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
         {
             (*env)->ReleaseStringUTFChars(env, jstr, n_elm);
         }
-        
     }
     
     ret=Ondrx_main_integra(M_srv_ctx, argc, argv, ndrxj_tpsvrinit,
         ndrxj_tpsvrdone, 0L);
+    
+    /* Throw exception if any... */
+    if (EXSUCCEED!=ret && 0!=tperrno)
+    {
+        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+    }
+    
 out:
 
     /* go to NULL context */
