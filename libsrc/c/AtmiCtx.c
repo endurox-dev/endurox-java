@@ -673,7 +673,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
         }
     }
     
-    ret=Ondrx_main_integra(M_srv_ctx, argc, argv, ndrxj_tpsvrinit,
+    ret=ndrx_main_integra(argc, argv, ndrxj_tpsvrinit,
         ndrxj_tpsvrdone, 0L);
     
     /* Throw exception if any... */
