@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<endurox>
+    <appconfig>
+        <sanity>5</sanity>
+        <brrefresh>6</brrefresh>
+        <restart_min>1</restart_min>
+        <restart_step>1</restart_step>
+        <restart_max>5</restart_max>
+        <restart_to_check>20</restart_to_check>
+        <gather_pq_stats>Y</gather_pq_stats>
+    </appconfig>
+    <defaults>
+        <min>1</min>
+        <max>2</max>
+        <autokill>1</autokill>
+        <start_max>2</start_max>
+        <pingtime>10</pingtime>
+        <ping_max>40</ping_max>
+        <end_max>30</end_max>
+        <killtime>1</killtime>
+    </defaults>
+    <servers>
+        <server name="jserver01">
+            <srvid>1</srvid>
+            <min>1</min>
+            <max>1</max>
+            <sysopt>-e /tmp/j01_SERVER.log -r</sysopt>
+            <cmdline>java -cp ${NDRX_APPHOME}/src/server/${NDRX_SVPROCNAME}.jar:${NDRX_APPHOME}/../../libsrc/enduroxjava.jar JServer01 ${NDRX_SVCLOPT}</cmdline>
+        </server>
+    </servers>
+</endurox>
+
+
