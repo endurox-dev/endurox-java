@@ -1,4 +1,5 @@
 import org.endurox.*;
+import java.util.*;
 
 public class JServer01 implements Server {
 
@@ -15,6 +16,8 @@ public class JServer01 implements Server {
     
         AtmiCtx ctx = new AtmiCtx();
         JServer01 server = new JServer01();
+
+        ctx.tpLogInfo("Started server with: %s", Arrays.toString(args));
         
         /* create new local class */
         ctx.TpRun(server, args);
