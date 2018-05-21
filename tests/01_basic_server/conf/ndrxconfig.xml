@@ -24,8 +24,8 @@
             <srvid>1</srvid>
             <min>1</min>
             <max>1</max>
-            <sysopt>-e /tmp/j01_SERVER.log -r</sysopt>
-            <cmdline>java -cp ${NDRX_APPHOME}/src/server/${NDRX_SVPROCNAME}.jar:${NDRX_APPHOME}/../../libsrc/enduroxjava.jar JServer01 ${NDRX_SVCLOPT}</cmdline>
+            <sysopt>-e /tmp/J01_SERVER.log -r</sysopt>
+            <cmdline>java -Xss10M -cp ${NDRX_APPHOME}/src/server/${NDRX_SVPROCNAME}.jar:${NDRX_APPHOME}/../../libsrc/enduroxjava.jar JServer01 ${NDRX_SVCLOPT}</cmdline>
         </server>
     </servers>
 </endurox>

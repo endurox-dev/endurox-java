@@ -65,16 +65,7 @@ add_library (exjava SHARED
 
 add_dependencies(exjava enduroxjh)
 
-
-    target_link_libraries(exjava atmisrvinteg atmi ubf nstd pthread)
-if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
-    target_link_libraries(exjava nstd)
-elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
-    target_link_libraries(eoxjava nstd)
-elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
-    # for XL tls
-    target_link_libraries(enduroxjava pthread)
-endif()
+target_link_libraries (exjava atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 
 install (TARGETS 
     exjava

@@ -627,7 +627,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
     tpsetctxt(M_srv_ctx, 0L);
     ctx_set=EXTRUE;
     
-    argv = NDRX_CALLOC(sizeof(char *), size);
+    argv = NDRX_CALLOC(sizeof(char *), size+1);
     
     if (NULL==argv)
     {
@@ -639,6 +639,9 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
         EXFAIL_OUT(ret);
     }
     
+    /* we shall get the process name as the first argument */
+    argv[0] = NDRX_STRDUP("java");
+
     /* loop over the argument */
     for (i=0; i<size; i++)
     {
@@ -652,7 +655,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
         
         n_elm = (*env)->GetStringUTFChars(env, jstr, &n_elm_copy);
         
-        if (NULL==(argv[i] = NDRX_STRDUP(n_elm)))
+        if (NULL==(argv[i+1] = NDRX_STRDUP(n_elm)))
         {
             int err = errno;
             NDRX_LOG(log_error, "Failed to strdup bytes: %s",   
@@ -673,8 +676,14 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
             (*env)->ReleaseStringUTFChars(env, jstr, n_elm);
         }
     }
+
+    for (i=0; i<size+1; i++)
+    {
+        NDRX_LOG(log_debug, "argv[%d] = [%s]", i, argv[i]);
+    }
     
     NDRX_LOG(log_info, "Booting java server..");
+    argc=size+1;
     ret=ndrx_main_integra(argc, argv, ndrxj_tpsvrinit,
         ndrxj_tpsvrdone, 0L);
     
@@ -694,7 +703,7 @@ out:
 
     if (NULL!=argv)
     {
-        for (i=0; i<size; i++)
+        for (i=0; i<size+1; i++)
         {
             if (NULL!=argv[i])
             {
