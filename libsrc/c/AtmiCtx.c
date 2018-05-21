@@ -442,6 +442,7 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     jclass svrClass;
     jmethodID svr_mid;
     
+    NDRX_LOG(log_info, "Into tpsrvinit -> java");
     objClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, M_srv_ctx_obj);
     
     if (NULL==objClass)
@@ -673,6 +674,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
         }
     }
     
+    NDRX_LOG(log_info, "Booting java server..");
     ret=ndrx_main_integra(argc, argv, ndrxj_tpsvrinit,
         ndrxj_tpsvrdone, 0L);
     
