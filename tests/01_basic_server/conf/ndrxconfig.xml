@@ -25,6 +25,7 @@
             <min>1</min>
             <max>1</max>
             <sysopt>-e /tmp/J01_SERVER.log -r</sysopt>
+            <!-- If Xss missing, then C side stack gets overflown and core dump is generated -->
             <cmdline>java -Xss10M -cp ${NDRX_APPHOME}/src/server/${NDRX_SVPROCNAME}.jar:${NDRX_APPHOME}/../../libsrc/enduroxjava.jar JServer01 ${NDRX_SVCLOPT}</cmdline>
         </server>
     </servers>
