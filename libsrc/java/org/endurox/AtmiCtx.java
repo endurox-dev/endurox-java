@@ -159,7 +159,7 @@ public class AtmiCtx {
         /* Call native server entry (this should in return boot call server
          * interface 
          */
-        return TpRunC(arg);
+        return TpRunC(arg, false);
     }
     
     /**
@@ -183,7 +183,7 @@ public class AtmiCtx {
         /* Call native server entry (this should in return boot call server
          * interface 
          */
-        return TpRunC(null);
+        return TpRunC(null, true);
     }
     
 /*
@@ -207,9 +207,6 @@ public class AtmiCtx {
 
     }
 */
-    
-    /* TODO: Have some loggers! */
-    
     /**
      * TP logger
      * @param lev log level
@@ -236,6 +233,36 @@ public class AtmiCtx {
      *  represents log level.
      */
     public native int tpLogQInfo(int lev, long flags);
+    
+    /**
+     * Call the C side of advertise. This basically performs the low level
+     * C side advertise of the internal dispatching method.
+     * During the service call dispatching method shall resolve the actual object
+     * of the "svc" and invoke tpService().
+     * @param svcname Service name
+     * @param funcname Function name
+     * @param svc interface to object implementing Service
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *    See logs i.e. user log, or debugs for more info. That could insufficient 
+     *    memory or other error.
+     */
+    private native tpAdvertiseC(String svcname, String funcname, Service svc);
+
+    /**
+     * Advertise service.
+     * @param svcname Service name
+     * @param funcname Function name
+     * @param svc interface to object implementing Service
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *    See logs i.e. user log, or debugs for more info. That could insufficient 
+     *    memory or other error.
+     */
+    public tpAdvertise void tpAdvertise(String svcname, String funcname, Service svc) {
+    
+	/* TODO: call the native interface */
+	
+	/* TODO: add service to hash list */
+    }
 
     /**
      * Write the ndrx log (for library internal use). Package level access.

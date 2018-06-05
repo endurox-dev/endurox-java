@@ -42,6 +42,7 @@
 #include <ondebug.h>
 #include <oatmisrv_integra.h>
 #include "libsrc.h"
+#include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -644,7 +645,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
     
     /* we shall get the process name as the first argument */
     /* we shall call Enduro/X libs here to get the program name */
-    argv[0] = NDRX_STRDUP("java");
+    argv[0] = NDRX_STRDUP(EX_PROGNAME);
 
     /* loop over the argument */
     for (i=0; i<size; i++)
