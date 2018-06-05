@@ -131,7 +131,7 @@ public class AtmiCtx {
      * Incoming service call dispatch to advertised service
      * @param svcInfo service call infos
      */
-    private void TpCallDispatch(TpSvcInfo svcInfo) {
+    private void tpCallDispatch(TpSvcInfo svcInfo) {
 
         /* TODO: lookup service and invoke... */
         /* catch also except - that will be assumed as service fail */
@@ -147,7 +147,6 @@ public class AtmiCtx {
     /**
      * Run server instance. Only one thread is allowed to step into this
      * @param svr server class
-     * @param svr 
      * @param arg Command line argumenst passed to the Enduro/X core. This is
      *  optional and can be NULL. In that case NDRX_SV* environment variables
      *  are used.
@@ -196,27 +195,6 @@ public class AtmiCtx {
         return tpRunC(null, true);
     }
     
-/*
-    // Test Driver
-    public static void main(String[] args) {
-        AtmiCtx ctx = new AtmiCtx();
-
-        
-        TypedUbf b = (TypedUbf)ctx.tpAlloc("UBF", "", 1024);
-
-        System.out.printf("Buffer OK!");
-
-        b = null;
-
-        System.gc();
-
-        ErrorTuple err = ctx.getAtmiError();
-        System.out.printf("%d: %s\n", err.err, err.msg);
-        
-        ctx.tpLogInfo("Hello [%s]", "World!!!!!!!!");
-
-    }
-*/
     /**
      * TP logger
      * @param lev log level
@@ -268,9 +246,11 @@ public class AtmiCtx {
      */
     public void tpAdvertise(String svcname, String funcname, Service svc) {
     
-	/* TODO: call the native interface */
+	/* call the native interface - advertise service*/
+        tpAdvertiseC(svcname, funcname);
 	
-	/* TODO: add service to hash list */
+	/* add service to hash list */
+        svcMap.put(svcname, svc);
     }
 
     /**
