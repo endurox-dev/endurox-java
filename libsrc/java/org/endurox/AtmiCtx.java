@@ -241,12 +241,11 @@ public class AtmiCtx {
      * of the "svc" and invoke tpService().
      * @param svcname Service name
      * @param funcname Function name
-     * @param svc interface to object implementing Service
      * @throws AtmiTPEOSException System failure occurred during serving. 
      *    See logs i.e. user log, or debugs for more info. That could insufficient 
      *    memory or other error.
      */
-    private native tpAdvertiseC(String svcname, String funcname, Service svc);
+    private native void tpAdvertiseC(String svcname, String funcname);
 
     /**
      * Advertise service.
@@ -257,7 +256,7 @@ public class AtmiCtx {
      *    See logs i.e. user log, or debugs for more info. That could insufficient 
      *    memory or other error.
      */
-    public tpAdvertise void tpAdvertise(String svcname, String funcname, Service svc) {
+    public void tpAdvertise(String svcname, String funcname, Service svc) {
     
 	/* TODO: call the native interface */
 	

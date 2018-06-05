@@ -510,6 +510,23 @@ out:
     return ret;
 }
 
+/*
+ * Class:     org_endurox_AtmiCtx
+ * Method:    tpAdvertiseC
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ */
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertise
+      (JNIEnv *env, jobject obj, jstring svcname, jstring funcname)
+{
+    /* TODO: Hmm we could do advertise directly here the hash table could be stored
+     * at C level, no need to proxy up to java for switching the service 
+     * only then we might have some issues with garbagde collector. So better
+     * may be still do that in java side
+     */
+}
+
+
+
 /**
  * Shutdown of the server process
  */
@@ -595,7 +612,7 @@ out:
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
  */
-jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, 
+expublic jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, 
         jobjectArray jargv, jboolean nocheck)
 {
     M_srv_ctx_env = env;
