@@ -595,7 +595,7 @@ out:
  * @param jargv command line arguments passed to Java
  */
 jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, 
-        jobjectArray jargv)
+        jobjectArray jargv, jboolean nocheck)
 {
     M_srv_ctx_env = env;
     M_srv_ctx_obj = obj;
@@ -611,11 +611,14 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
     
     M_jargv = jargv;
 
-    if (size < 4)
+    if (!nocheck)
     {
-        ndrxj_atmi_throw(env, TPEINVAL, "Invalid argument count for server, "
-                "expected at least 4, got %d", size);
-        EXFAIL_OUT(ret);
+        if (size < 4)
+        {
+            ndrxj_atmi_throw(env, TPEINVAL, "Invalid argument count for server, "
+                    "expected at least 4, got %d", size);
+            EXFAIL_OUT(ret);
+        }
     }
     
     if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj)))
@@ -640,6 +643,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj,
     }
     
     /* we shall get the process name as the first argument */
+    /* we shall call Enduro/X libs here to get the program name */
     argv[0] = NDRX_STRDUP("java");
 
     /* loop over the argument */

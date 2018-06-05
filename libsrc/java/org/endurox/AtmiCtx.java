@@ -130,13 +130,14 @@ public class AtmiCtx {
     /**
      * Run server in context
      * @param arg Command line arguments passed to java
+     * @param nocheck Do not check the arguments
      */
-    private native int TpRunC(String[] arg);
+    private native int TpRunC(String[] arg, boolean nocheck);
     
     /**
      * Run server instance. Only one thread is allowed to step into this
-     * @param svr 
-     * @param arg Command line argumenst passed to the Enduro/X core
+     * @param svr server class
+     * @param arg Command line arguments passed to the Enduro/X core
      * @return -1 (failed with out specified error) or 0 Success (finished ok)
      * @throws  AtmiTPEINVALException invalid command line arguments or invalid
      *  ATMI context.
@@ -156,6 +157,30 @@ public class AtmiCtx {
          * interface 
          */
         return TpRunC(arg);
+    }
+    
+    /**
+     * Run server using Enduro/X environment variables
+     * @param svr server class instance
+     * @return -1 (failed with out specified error) or 0 Success (finished ok)
+     * @throws  AtmiTPEINVALException invalid command line arguments or invalid
+     *  ATMI context.
+     */
+    public synchronized int TpRun(Server svr)
+    {
+        if (null==svr)
+        {
+            throw new AtmiTPEINVALException("svr argument is null!");
+        }
+        
+        this.svr = svr;
+        
+        tpLogNdrx(AtmiConstants.LOG_INFO, "Booting server");
+        
+        /* Call native server entry (this should in return boot call server
+         * interface 
+         */
+        return TpRunC(null);
     }
     
 /*
