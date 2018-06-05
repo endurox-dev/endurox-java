@@ -137,7 +137,10 @@ public class AtmiCtx {
     /**
      * Run server instance. Only one thread is allowed to step into this
      * @param svr server class
-     * @param arg Command line arguments passed to the Enduro/X core
+     * @param svr 
+     * @param arg Command line argumenst passed to the Enduro/X core. This is
+     *  optional and can be NULL. In that case NDRX_SV* environment variables
+     *  are used.
      * @return -1 (failed with out specified error) or 0 Success (finished ok)
      * @throws  AtmiTPEINVALException invalid command line arguments or invalid
      *  ATMI context.
