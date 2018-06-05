@@ -127,14 +127,16 @@ public class AtmiCtx {
        super.finalize();
     }
     
+    
+    /* TODO: Add tpreturn/tpforward. */
+    
     /**
      * Incoming service call dispatch to advertised service
      * @param svcInfo service call infos
      */
     private void tpCallDispatch(TpSvcInfo svcInfo) {
-
-        /* TODO: lookup service and invoke... */
-        /* catch also except - that will be assumed as service fail */
+        /* the exception will be captured at C side */
+        svcMap.get(svcInfo.getName()).tpService(svcInfo);
     }
 
     /**
