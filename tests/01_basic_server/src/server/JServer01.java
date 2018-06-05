@@ -20,6 +20,6 @@ public class JServer01 implements Server {
         ctx.tpLogInfo("Started server with: %s", Arrays.toString(args));
         
         /* create new local class */
-        ctx.TpRun(server, args);
+        ctx.tpRun(server, args);
     }
 }

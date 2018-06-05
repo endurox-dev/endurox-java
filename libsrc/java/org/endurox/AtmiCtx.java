@@ -128,11 +128,21 @@ public class AtmiCtx {
     }
     
     /**
+     * Incoming service call dispatch to advertised service
+     * @param svcInfo service call infos
+     */
+    private void TpCallDispatch(TpSvcInfo svcInfo) {
+
+        /* TODO: lookup service and invoke... */
+        /* catch also except - that will be assumed as service fail */
+    }
+
+    /**
      * Run server in context
      * @param arg Command line arguments passed to java
      * @param nocheck Do not check the arguments
      */
-    private native int TpRunC(String[] arg, boolean nocheck);
+    private native int tpRunC(String[] arg, boolean nocheck);
     
     /**
      * Run server instance. Only one thread is allowed to step into this
@@ -145,7 +155,7 @@ public class AtmiCtx {
      * @throws  AtmiTPEINVALException invalid command line arguments or invalid
      *  ATMI context.
      */
-    public synchronized int TpRun(Server svr, String[] arg)
+    public synchronized int tpRun(Server svr, String[] arg)
     {
         if (null==svr)
         {
@@ -159,7 +169,7 @@ public class AtmiCtx {
         /* Call native server entry (this should in return boot call server
          * interface 
          */
-        return TpRunC(arg, false);
+        return tpRunC(arg, false);
     }
     
     /**
@@ -169,7 +179,7 @@ public class AtmiCtx {
      * @throws  AtmiTPEINVALException invalid command line arguments or invalid
      *  ATMI context.
      */
-    public synchronized int TpRun(Server svr)
+    public synchronized int tpRun(Server svr)
     {
         if (null==svr)
         {
@@ -183,7 +193,7 @@ public class AtmiCtx {
         /* Call native server entry (this should in return boot call server
          * interface 
          */
-        return TpRunC(null, true);
+        return tpRunC(null, true);
     }
     
 /*

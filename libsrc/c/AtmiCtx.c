@@ -612,7 +612,7 @@ out:
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
  */
-expublic jint JNICALL Java_org_endurox_AtmiCtx_TpRunC(JNIEnv *env, jobject obj, 
+expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj, 
         jobjectArray jargv, jboolean nocheck)
 {
     M_srv_ctx_env = env;
