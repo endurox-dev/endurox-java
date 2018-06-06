@@ -239,12 +239,14 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     jclass bclz;
     TPCONTEXT_T ctx;
     jmethodID mid;
-    char *buf;
+    char *buf; 
+
     jboolean n_btype_copy = EXFALSE;
-    jboolean n_bsubtype_copy = EXFALSE;
-    
     const char *n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
+    
+    jboolean n_bsubtype_copy = EXFALSE;
     const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, &n_bsubtype_copy);
+    
     char clazz[256];
     /* get context handler */
 
@@ -510,6 +512,15 @@ out:
     return ret;
 }
 
+/**
+ * Dispatch call to Java side
+ * @param svcinfo
+ */
+exprivate void dispatch_call(TPSVCINFO *svcinfo)
+{
+    /* build the svcinfo object and invoke the service proxy of java side */
+}
+
 /*
  * Class:     org_endurox_AtmiCtx
  * Method:    tpAdvertiseC
@@ -518,13 +529,37 @@ out:
 expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertise
       (JNIEnv *env, jobject obj, jstring svcname, jstring funcname)
 {
-    /* TODO: Hmm we could do advertise directly here the hash table could be stored
+    /* Hmm we could do advertise directly here the hash table could be stored
      * at C level, no need to proxy up to java for switching the service 
      * only then we might have some issues with garbagde collector. So better
      * may be still do that in java side
      */
-}
+    jboolean n_svcname_copy = EXFALSE;
+    const char *n_svcname = (*env)->GetStringUTFChars(env, svcname, &n_svcname_copy);
+    
+    jboolean n_funcname_copy = EXFALSE;
+    const char *n_funcname = (*env)->GetStringUTFChars(env, funcname, &n_funcname_copy);
+    
+    if (EXSUCCEED!=tpadvertise_full((char *)n_svcname, dispatch_call, (char *)n_funcname))
+    {
+        NDRX_LOG(log_error, "Failed to advertise service [%s] func [%s]: %s",
+                n_svcname, n_funcname, tpstrerror(tperrno));
+        
+        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+        goto out;
+    }
+    
+out:
+    if (n_svcname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, svcname, n_svcname);
+    }
 
+    if (n_funcname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, funcname, n_funcname);
+    }   
+}
 
 
 /**
