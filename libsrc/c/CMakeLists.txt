@@ -59,6 +59,7 @@ include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 add_library (exjava SHARED
 		AtmiCtx.c
         AtmiBuf.c
+        TpSvcInfo.c
         exceptions.c
 	)
 

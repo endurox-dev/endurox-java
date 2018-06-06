@@ -107,8 +107,11 @@ public class AtmiCtx {
      *  C space.
      */
     public AtmiCtx()  {
-        // This thorws TPESYSTEM if failed.
+        /* This thorws TPESYSTEM if failed.*/
        ctx = tpnewctxt();
+        /* TODO: Add context to static synced list of context
+         * this contexts shall be terminated when JVM stops.
+         */
     }
      
     /**
