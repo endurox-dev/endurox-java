@@ -60,6 +60,7 @@ add_library (exjava SHARED
 		AtmiCtx.c
         AtmiBuf.c
         TpSvcInfo.c
+        ClientId.c
         exceptions.c
 	)
 

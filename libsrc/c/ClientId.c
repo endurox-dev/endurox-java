@@ -54,7 +54,7 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Translate TPSVCINFO to java TpSvcInfo object.
+ * Translate CLIENTID to java ClientID object.
  * 
  * CONTEXT: Assume that it is already set.
  * 
@@ -62,13 +62,10 @@
  * @param svcinfo
  * @return 
  */
-expublic jobject ndrxj_atmi_tpsvcinfo_translate(JNIEnv *env, TPSVCINFO *svcinfo)
+expublic jobject ndrxj_atmi_clientid_translate(JNIEnv *env, CLIENTID *cltid)
 {
-    /* TODO:
-     * we also need translator for AtmiBuf and ClientId
-     *  */
+    /* TODO: */
     return NULL;
 }
-
 
 
