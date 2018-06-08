@@ -61,10 +61,13 @@
  * CONTEXT: Assume that it is already set.
  * 
  * @param env java environment
+ * @param atmictx ATMI Context object
+ * @param ctxset is context set?
  * @param svcinfo
  * @return 
  */
-expublic jobject ndrxj_atmi_clientid_translate(JNIEnv *env, CLIENTID *cltid)
+expublic jobject ndrxj_atmi_clientid_translate(JNIEnv *env, 
+            jobject atmictx, int ctxset, CLIENTID *cltid)
 {
     jobject ret = NULL;
     jclass bclz;
