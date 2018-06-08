@@ -66,13 +66,18 @@
  * @param svcinfo
  * @return 
  */
-expublic jobject ndrxj_atmi_clientid_translate(JNIEnv *env, 
+expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
             jobject atmictx, int ctxset, CLIENTID *cltid)
 {
     jobject ret = NULL;
     jclass bclz;
     jmethodID mid;
     jstring jclientdata;
+
+    /* Set context if needed */
+    if (!ctxset)       
+    {
+    }
     
     NDRX_LOG(log_debug, "Allocating ClientID...");
     
