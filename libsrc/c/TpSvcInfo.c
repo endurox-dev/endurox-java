@@ -62,7 +62,7 @@
  * @param svcinfo
  * @return 
  */
-expublic jobject ndrxj_atmi_tpsvcinfo_translate(JNIEnv *env, TPSVCINFO *svcinfo)
+expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, TPSVCINFO *svcinfo)
 {
     /* TODO:
      * we also need translator for AtmiBuf and ClientId

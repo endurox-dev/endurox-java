@@ -59,12 +59,10 @@ void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj, jlong cP
     jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", "Lorg/endurox/AtmiCtx;");
     jobject atmi_ctx_obj = (*env)->GetObjectField(env, obj, atmi_ctx_fld);
     
-    if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj)))
+    if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj, EXTRUE)))
     {
         goto out;
     }
-    
-    tpsetctxt(ctx, 0L);
 
     NDRX_LOG(log_debug, "About to free up: context: %p buf: %p",
             ctx, (void *)cPtr);
@@ -77,6 +75,39 @@ void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj, jlong cP
 out:
     /* return object */
     return;
+}
+
+expublic jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env, 
+            jobject ctx_obj, int is_ctxset, char *data, long len)
+{
+    jobject ret = NULL;
+    jclass bclz;
+    jmethodID mid;
+    jstring jclientdata;
+    int we_set_ctx = EXFALSE;
+
+    /* Set context if needed */
+    if (!is_ctxset)
+    {
+        if (NULL==ndrxj_get_ctx(env, ctx_obj, EXTRUE))
+        {
+            goto out;
+        }
+        
+        we_set_ctx = EXTRUE;
+    }
+    
+    /* TODO: Re-use tpalloc's code */
+
+out:
+    
+    if (we_set_ctx)
+    {
+        /* return back to NULL */
+        tpsetctxt(TPNULLCONTEXT, 0L);
+    }
+
+    return ret;
 }
 
 

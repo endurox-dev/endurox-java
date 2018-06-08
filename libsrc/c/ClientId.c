@@ -62,21 +62,28 @@
  * 
  * @param env java environment
  * @param atmictx ATMI Context object
- * @param ctxset is context set?
- * @param svcinfo
- * @return 
+ * @param is_ctxset is context set?
+ * @param cltid C client ID which needs to be translated to 
+ * @return ClientId Object or NULL
  */
 expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
-            jobject atmictx, int ctxset, CLIENTID *cltid)
+            jobject ctx_obj, int is_ctxset, CLIENTID *cltid)
 {
     jobject ret = NULL;
     jclass bclz;
     jmethodID mid;
     jstring jclientdata;
+    int we_set_ctx = EXFALSE;
 
     /* Set context if needed */
-    if (!ctxset)       
+    if (!is_ctxset)
     {
+        if (NULL==ndrxj_get_ctx(env, ctx_obj, EXTRUE))
+        {
+            goto out;
+        }
+        
+        we_set_ctx = EXTRUE;
     }
     
     NDRX_LOG(log_debug, "Allocating ClientID...");
@@ -117,6 +124,12 @@ expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
 
 out:
     
+    if (we_set_ctx)
+    {
+        /* return back to NULL */
+        tpsetctxt(TPNULLCONTEXT, 0L);
+    }
+
     return ret;
 }
 

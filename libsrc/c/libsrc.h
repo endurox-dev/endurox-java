@@ -43,9 +43,10 @@
 extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj);
+extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
 
-/* ClientID ops: */
-extern jobject ndrxj_atmi_clientid_translate(JNIEnv *env, CLIENTID *cltid);
+/* ClientId ops: */
+extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
+            jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
 
 /* vim: set ts=4 sw=4 et cindent: */

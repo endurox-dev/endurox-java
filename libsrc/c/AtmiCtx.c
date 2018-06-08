@@ -72,7 +72,7 @@ exprivate jobjectArray M_jargv;
  * @param atmiCtxObj ATMI Context object
  * @return NULL (and expection set) or context data
  */
-expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj)
+expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 {
     TPCONTEXT_T ctx;
    
@@ -86,10 +86,13 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj)
     {
         ndrxj_atmi_throw(env, TPEINVAL, "NULL C context for ATMI Context OP!");
     }
+    else
+    {
+        tpsetctxt(ctx, 0L);
+    }
 
     return ctx;
 }
-
 
 /**
  * Query log information
@@ -105,7 +108,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_tpLogQInfo (JNIEnv *env, jobject obj,
     TPCONTEXT_T ctx;
     int ret = 0;
     
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         goto out;
     }
@@ -141,7 +144,7 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev
     const char *n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
     const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
     
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         return;
     }
@@ -187,7 +190,7 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogNdrxC(JNIEnv * env, jobject obj, jint
     const char *n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
     const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
     
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         return;
     }
@@ -251,7 +254,7 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     /* get context handler */
 
     /* exception will thown if invalid object... */
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         goto out;
     }
@@ -391,7 +394,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     jobject errObj = NULL;
     
     /* exception will thrown if invalid object... */
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         return NULL;
     }
@@ -674,7 +677,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
         }
     }
     
-    if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj)))
+    if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         EXFAIL_OUT(ret);
     }
