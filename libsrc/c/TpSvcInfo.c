@@ -70,5 +70,6 @@ expublic jobject ndrxj_atmi_tpsvcinfo_translate(JNIEnv *env, TPSVCINFO *svcinfo)
     return NULL;
 }
 
+/* vim: set ts=4 sw=4 et cindent: */
 
 

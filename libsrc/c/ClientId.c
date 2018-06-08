@@ -47,6 +47,8 @@
 #include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+
+#define CLIENTID_CLASS  "org/endurox/ClientId"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -64,8 +66,50 @@
  */
 expublic jobject ndrxj_atmi_clientid_translate(JNIEnv *env, CLIENTID *cltid)
 {
-    /* TODO: */
-    return NULL;
+    jobject ret = NULL;
+    jclass bclz;
+    jmethodID mid;
+    jstring jclientdata;
+    
+    NDRX_LOG(log_debug, "Allocating ClientID...");
+    
+    bclz = (*env)->FindClass(env, CLIENTID_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        NDRX_LOG(log_error, "Failed to find class [%s]", CLIENTID_CLASS);
+        goto out;
+    }
+    
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Ljava/lang/String;)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get %s constructor!", CLIENTID_CLASS);
+        goto out;
+    }
+    
+    /* get the string of client id */
+    
+    jclientdata = (*env)->NewStringUTF(env, cltid->clientdata);
+    
+
+    NDRX_LOG(log_debug, "About to NewObject() of ClientID");
+    
+    ret = (*env)->NewObject(env, bclz, mid, jclientdata);
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to create [%s] instance", CLIENTID_CLASS);
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "NewObject() done of ClientID");
+
+out:
+    
+    return ret;
 }
 
-
+/* vim: set ts=4 sw=4 et cindent: */

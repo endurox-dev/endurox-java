@@ -146,3 +146,4 @@ void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
     (*env)->ThrowNew(env, ex, msgfmt);
 }
 
+/* vim: set ts=4 sw=4 et cindent: */
