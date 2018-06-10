@@ -239,18 +239,14 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
         jstring btype, jstring bsubtype, jlong size)
 {
     jobject ret = NULL;
-    jclass bclz;
+    char *data;
     TPCONTEXT_T ctx;
-    jmethodID mid;
-    char *buf; 
-
     jboolean n_btype_copy = EXFALSE;
     const char *n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
     
     jboolean n_bsubtype_copy = EXFALSE;
     const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, &n_bsubtype_copy);
     
-    char clazz[256];
     /* get context handler */
 
     /* exception will thown if invalid object... */
@@ -262,11 +258,10 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     /* set context */
     tpsetctxt(ctx, 0L);
 
-
     /* allocate buffer, if error throw exception  */
-    buf = tpalloc((char *)n_btype, (char *)n_bsubtype, (long)size);
+    data = tpalloc((char *)n_btype, (char *)n_bsubtype, (long)size);
 
-    if (NULL==buf)
+    if (NULL==data)
     {
         int err = tperrno;
         /* Generate exception! */
@@ -274,78 +269,13 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
         goto out;
     }
     
-    /* allocate the object here according to the buffer type */
-    
-    if (0==strncmp(n_btype, "UBF", 3) || 
-            0==strncmp(n_btype, "FML", 3))
-    {
-        /* UBF object */
-        snprintf(clazz, sizeof(clazz), "org/endurox/TypedUbf");
-    }
-    else if (0==strcmp(n_btype, "CARRAY"))
-    {
-        /* Carray object */
-        snprintf(clazz, sizeof(clazz), "org/endurox/TypedCarray");
-    }
-    else if (0==strcmp(n_btype, "STRING"))
-    {
-        /* String object */
-        snprintf(clazz, sizeof(clazz), "org/endurox/TypedString");
-    }
-    else if (0==strcmp(n_btype, "VIEW"))
-    {
-        /* VIEW object */
-        snprintf(clazz, sizeof(clazz), "org/endurox/TypedView");
-    }
-    else if (0==strcmp(n_btype, "JSON"))
-    {
-        /* JSON object */
-        snprintf(clazz, sizeof(clazz), "org/endurox/TypedJson");
-    }
-    else
-    {
-        ndrxj_atmi_throw(env, TPEINVAL, "buffer type [%s] not supported", 
-                n_btype);
-        goto out;
-    }
-    
-    
-    NDRX_LOG(log_debug, "Allocating [%s] class", clazz);
-    
-    bclz = (*env)->FindClass(env, clazz);
-    
-    if (NULL==bclz)
-    {        
-        /* ndrxj_atmi_throw(env, TPESYSTEM, "Class not found [%s]", clazz); */
-        NDRX_LOG(log_error, "Failed to find class [%s]", clazz);
-        goto out;
-        
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
-    }
-
-    NDRX_LOG(log_debug, "About to NewObject()");
-    ret = (*env)->NewObject(env, bclz, mid, obj, JNI_TRUE, (jlong)buf, size);
-    
-    if (NULL==ret)
-    {
-        NDRX_LOG(log_error, "Failed to create [%s]", clazz);
-        goto out;
-    }
-    
-    NDRX_LOG(log_debug, "NewObject() done");
+    /* Translate the handler to Java side */
+    ret = ndrxj_atmi_AtmiBuf_translate(env,  obj, EXTRUE, data, size, 
+            (char *)n_btype, (char *)n_bsubtype);
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
     
-
 out:
     
     if (n_btype_copy)
@@ -517,11 +447,96 @@ out:
 
 /**
  * Dispatch call to Java side
- * @param svcinfo
+ * @param svcinfo 
  */
 exprivate void dispatch_call(TPSVCINFO *svcinfo)
 {
     /* build the svcinfo object and invoke the service proxy of java side */
+    jobject jsvcinfo;
+    int request_abort = EXFALSE;
+    jclass bclz;
+    jmethodID mid;
+    
+    if (NULL==(jsvcinfo = ndrxj_atmi_TpSvcInfo_translate(M_srv_ctx_env,
+            M_srv_ctx_obj, EXTRUE, svcinfo)))
+    {
+        NDRX_LOG(log_error, "Failed to translate service call to java!");
+    }
+    else
+    {
+        NDRX_LOG(log_debug, "%s: Got java service info invoke service: [%s]", 
+                __func__, svcinfo->name);
+        
+        /* Call method from Atmi Context, before that unset the C
+         * context, because we do not know in what threads java does works.
+         */
+        bclz = (*M_srv_ctx_env)->FindClass(M_srv_ctx_env, "org/endurox/AtmiCtx");
+    
+        if (NULL==bclz)
+        {        
+            /* I guess we need to abort here! */
+            NDRX_LOG(log_error, "Failed to find AtmiCtx - aborting...!");
+            /* tpreturn fail or simulate time-out? or just abort?*/
+            abort();
+        }
+
+        /* create buffer object... */
+        mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, bclz, 
+                "tpCallDispatch", "(Lorg/endurox/TpSvcInfo;)V");
+
+        if (NULL==mid)
+        {
+            NDRX_LOG(log_error, "Cannot get call dispatcher method at C side!");
+            abort();
+        }
+        
+        
+        /* unset context */
+        tpsetctxt(TPNULLCONTEXT, 0L);
+        
+        (*M_srv_ctx_env)->CallVoidMethod(M_srv_ctx_env, M_srv_ctx_obj, 
+                mid, jsvcinfo);
+        
+        /* Check exceptions, if have one, I guess we abort or return TPFAIL? 
+         * If get get exception here, log down the output and abort the process
+         * It is up to developer to handle the exceptions before doing
+         * tpreturn...
+         */
+        if ((*M_srv_ctx_env)->ExceptionCheck(M_srv_ctx_env))
+        {
+            jthrowable exc;
+            jstring s;
+            const char* utf;
+            jboolean isCopy = EXFALSE;
+            jmethodID toString = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, 
+                    (*M_srv_ctx_env)->FindClass(M_srv_ctx_env, "java/lang/Object"), 
+                    "toString", "()Ljava/lang/String;");
+            
+            exc = (*M_srv_ctx_env)->ExceptionOccurred(M_srv_ctx_env);
+            
+            s = (jstring)(*M_srv_ctx_env)->CallObjectMethod(M_srv_ctx_env, exc, toString);
+            
+            utf = (*M_srv_ctx_env)->GetStringUTFChars(M_srv_ctx_env, s, &isCopy);
+
+            userlog("Service have thrown unexpected exception - process will abort/exit: [%s]", 
+                    utf);
+            
+            request_abort = EXTRUE;
+            
+            if (isCopy)
+            {
+                (*M_srv_ctx_env)->ReleaseStringUTFChars(M_srv_ctx_env, s, utf);
+            }
+        }
+        
+        if (request_abort)
+        {
+            abort();
+        }
+        
+        /* set context back... */
+        tpsetctxt(M_srv_ctx, 0L);
+    }
 }
 
 /*
@@ -776,5 +791,36 @@ out:
 
     return (jint)ret;
 }
+
+/**
+ * Perform tpreturn
+ * @param env java env
+ * @param obj Context object
+ * @param rval return value
+ * @param rcode return code (user)
+ * @param data data buffer
+ * @param flags return flags
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpReturn
+  (JNIEnv *env, jobject obj, jint rval, jlong rcode, jobject data, jlong flags)
+{
+    /* set context */
+    char *buf = NULL;
+    long len = 0;
+    
+    tpsetctxt(M_srv_ctx, 0L);
+    
+    /* get data buffer... */
+    if (NULL!=data)
+    {
+        
+    }
+    
+    tpreturn((int)rval, (long)rcode, buf, len, (long)flags);
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
 
 /* vim: set ts=4 sw=4 et cindent: */

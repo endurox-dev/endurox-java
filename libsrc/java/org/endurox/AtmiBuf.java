@@ -7,8 +7,10 @@ public class AtmiBuf {
      */
     private AtmiCtx ctx;
     private boolean doFinalize;
-    private long len;
-    private long cPtr;
+    
+    /* Allow access from package: */
+    long len;
+    long cPtr;
 
     /**
      * Free up the given buffer

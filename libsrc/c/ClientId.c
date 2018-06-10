@@ -1,9 +1,7 @@
 /**
- * @brief Support routines for TpSvcInfo class - translate C
- *      TPSVCINFO to TpSvcInfo 
- *      
+ * @brief CLIENTID/ClientId type translations
  *
- * @file TpSvcInfo.c
+ * @file ClientId.c
  */ 
 /*
  * -----------------------------------------------------------------------------

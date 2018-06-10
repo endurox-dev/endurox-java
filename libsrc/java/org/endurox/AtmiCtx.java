@@ -130,8 +130,16 @@ public class AtmiCtx {
        super.finalize();
     }
     
-    
     /* TODO: Add tpreturn/tpforward. */
+    
+    /**
+     * Perform tp return
+     * @param rval return value (TPSUCCESS/TPFAIL)
+     * @param rcode user return code
+     * @param data data buffer to return, can be NULL to?
+     * @param flags 
+     */
+    public native void tpReturn(int rval, long rcode, AtmiBuf data, long flags);
     
     /**
      * Incoming service call dispatch to advertised service.

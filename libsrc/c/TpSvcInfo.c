@@ -47,29 +47,115 @@
 #include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+#define TPSVCINFO_CLASS     "org/endurox/TpSvcInfo"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
-
 /**
  * Translate TPSVCINFO to java TpSvcInfo object.
+ * This is complex function which also translates Client ID and 
  * 
- * CONTEXT: Assume that it is already set.
- * 
- * @param env java environment
- * @param svcinfo
- * @return 
+ * @param env Java env
+ * @param ctx_obj ATMI Context
+ * @param is_ctxset is C context set?
+ * @param svcinfo service call infos
+ * @return Java object of TpSvcInfo or NULL with exception set
  */
-expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, TPSVCINFO *svcinfo)
+expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
+            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo)
 {
-    /* TODO:
-     * we also need translator for AtmiBuf and ClientId
-     *  */
-    return NULL;
+    jobject ret = NULL;
+    jclass bclz;
+    jmethodID mid;
+    int we_set_ctx = EXFALSE;
+    
+    jobject jdata;
+    jobject jcltid;
+    
+    jstring jname;
+    jstring jfname;
+    
+    
+    /* Set context if needed */
+    if (!is_ctxset)
+    {
+        if (NULL==ndrxj_get_ctx(env, ctx_obj, EXTRUE))
+        {
+            goto out;
+        }
+        
+        we_set_ctx = EXTRUE;
+    }
+    
+    NDRX_LOG(log_debug, "Allocating TpSvcInfo...");
+    
+    bclz = (*env)->FindClass(env, TPSVCINFO_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        NDRX_LOG(log_error, "Failed to find class [%s]", TPSVCINFO_CLASS);
+        goto out;
+    }
+    
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Ljava/lang/String;"
+            "Lorg/endurox/AtmiBuf;JIJLorg/endurox/ClientId;Ljava/lang/String;)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get %s constructor!", TPSVCINFO_CLASS);
+        goto out;
+    }
+    
+    /* Translate ATMI buffer */
+    if (NULL==(jdata=ndrxj_atmi_AtmiBuf_translate(env, 
+            ctx_obj, EXTRUE, svcinfo->data, svcinfo->len,
+            NULL, NULL)))
+    {
+        NDRX_LOG(log_error, "Failed to translate ATMI buffer to Java object: %p",
+                svcinfo->data);
+        ret = NULL;
+        goto out;
+    }
+    
+    /* Translate ClientId */
+    if (NULL==(jcltid=ndrxj_atmi_ClientId_translate(env, 
+            ctx_obj, EXTRUE, &svcinfo->cltid)))
+    {
+        NDRX_LOG(log_error, "Failed to translate ClientId to Java object: [%s]",
+                svcinfo->cltid.clientdata);
+        ret = NULL;
+        goto out;
+    }
+    
+    jname = (*env)->NewStringUTF(env, svcinfo->name);
+    jfname = (*env)->NewStringUTF(env, svcinfo->fname);
+    
+    NDRX_LOG(log_debug, "About to NewObject() of TpSvcInfo");
+    
+    ret = (*env)->NewObject(env, bclz, mid, jname, jdata, 
+            (jlong)svcinfo->flags, (jint)svcinfo->cd, 
+            (jlong)svcinfo->appkey, jcltid, jfname);
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to create [%s] instance", TPSVCINFO_CLASS);
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "NewObject() done of TpSvcInfo");
+    
+out:
+    
+    if (we_set_ctx)
+    {
+        /* return back to NULL */
+        tpsetctxt(TPNULLCONTEXT, 0L);
+    }
+
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
-
-

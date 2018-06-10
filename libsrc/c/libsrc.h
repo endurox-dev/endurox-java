@@ -49,4 +49,13 @@ extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
 extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
 
+/* AtmiBuf ops: */
+extern jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env, 
+            jobject ctx_obj, int is_ctxset, char *data, long len,
+            char *type, char *subtype);
+
+/* TpSvcInfo ops: */
+extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
+            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
+
 /* vim: set ts=4 sw=4 et cindent: */
