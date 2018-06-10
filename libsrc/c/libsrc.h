@@ -40,10 +40,12 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
+/* Exception ops: */
 extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
+extern char *ndrxj_exception_backtrace(JNIEnv *env);
 
 /* ClientId ops: */
 extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
@@ -57,5 +59,8 @@ extern jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env,
 /* TpSvcInfo ops: */
 extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
+
+
+
 
 /* vim: set ts=4 sw=4 et cindent: */

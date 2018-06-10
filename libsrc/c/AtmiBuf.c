@@ -248,6 +248,31 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     
     jclass clz;
     jmethodID mid;
+    jfieldID cptr_fldid;
+    jfieldID clen_fldid;
+    
+    jlong cptr;
+    jlong clen;
+    
+    
+    
+    clz = (*env)->FindClass(env, "org/endurox/AtmiBuf");
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to get Atmi buffer class!");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
+    {
+        NDRX_LOG(log_error, "Failed to get cPtr field from AtmiBuf class: %s"
+                /* TODO: Have func for exception back-trace in C */
+                );
+        EXFAIL_OUT(ret);
+    }
+    
     
 #if 0
     

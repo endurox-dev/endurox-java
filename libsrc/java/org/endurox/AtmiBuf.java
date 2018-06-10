@@ -9,8 +9,8 @@ public class AtmiBuf {
     private boolean doFinalize;
     
     /* Allow access from package: */
-    long len;
     long cPtr;
+    long len;
 
     /**
      * Free up the given buffer

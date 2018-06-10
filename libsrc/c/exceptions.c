@@ -56,7 +56,7 @@
  * @param err ATMI Errro code
  * @param msg message
  */
-void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
+expublic void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
@@ -88,7 +88,7 @@ void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
  * @param err ATMI Errro code
  * @param msg message
  */
-void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
+expublic void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
@@ -120,7 +120,7 @@ void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
  * @param err ATMI Errro code
  * @param msg message
  */
-void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
+expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
@@ -144,6 +144,16 @@ void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
     }
         
     (*env)->ThrowNew(env, ex, msgfmt);
+}
+
+/**
+ * Return stacktrace of the exception into allocated buffer
+ * @param env Java env where exception is set
+ * @return allocated string with exception data
+ */
+expublic char *ndrxj_exception_backtrace(JNIEnv *env)
+{
+    return NULL;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
