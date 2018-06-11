@@ -453,7 +453,6 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
 {
     /* build the svcinfo object and invoke the service proxy of java side */
     jobject jsvcinfo;
-    int request_abort = EXFALSE;
     jclass bclz;
     jmethodID mid;
     
@@ -504,34 +503,11 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
          */
         if ((*M_srv_ctx_env)->ExceptionCheck(M_srv_ctx_env))
         {
-            jthrowable exc;
-            jstring s;
-            const char* utf;
-            jboolean isCopy = EXFALSE;
-            jmethodID toString = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, 
-                    (*M_srv_ctx_env)->FindClass(M_srv_ctx_env, "java/lang/Object"), 
-                    "toString", "()Ljava/lang/String;");
+            NDRXJ_LOG_EXCEPTION(M_srv_ctx_env, log_error, 
+                NDRXJ_LOGEX_ULOG, "Service have thrown unexpected exception: "
+                    "[%s] - ignoring (continue)");
             
-            exc = (*M_srv_ctx_env)->ExceptionOccurred(M_srv_ctx_env);
-            
-            s = (jstring)(*M_srv_ctx_env)->CallObjectMethod(M_srv_ctx_env, exc, toString);
-            
-            utf = (*M_srv_ctx_env)->GetStringUTFChars(M_srv_ctx_env, s, &isCopy);
-
-            userlog("Service have thrown unexpected exception - process will abort/exit: [%s]", 
-                    utf);
-            
-            request_abort = EXTRUE;
-            
-            if (isCopy)
-            {
-                (*M_srv_ctx_env)->ReleaseStringUTFChars(M_srv_ctx_env, s, utf);
-            }
-        }
-        
-        if (request_abort)
-        {
-            abort();
+            (*M_srv_ctx_env)->ExceptionClear(M_srv_ctx_env);
         }
         
         /* set context back... */

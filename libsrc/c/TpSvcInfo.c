@@ -1,7 +1,6 @@
 /**
  * @brief Support routines for TpSvcInfo class - translate C
  *      TPSVCINFO to TpSvcInfo 
- *      
  *
  * @file TpSvcInfo.c
  */ 
