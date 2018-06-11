@@ -69,7 +69,7 @@ public class AtmiCtx {
     /**
      * Context map mutex
      */
-    private static final Lock _ctxMutex = new ReentrantLock(true);
+    private static final Lock ctxMapMutex = new ReentrantLock(true);
     
     
     /**
@@ -124,13 +124,20 @@ public class AtmiCtx {
     public AtmiCtx()  {
         /* This thorws TPESYSTEM if failed.*/
        ctx = tpnewctxt();
-        /* TODO: Add context to static synced list of context
+
+        /* Add context to static synced list of context
          * this contexts shall be terminated when JVM stops.
          */
-        
         if (0x0 != ctx)
         {
             /* register this context in hash list for free up... */
+            ctxMapMutex.Lock();
+            try {
+                svcMap.put((Long)ctx, this);
+            }
+            finally {
+                ctxMapMutex.Unlock();
+            }
         }
     }
      
@@ -143,6 +150,7 @@ public class AtmiCtx {
 
        if (0x0 != ctx)
        {
+          /* TODO: Call tpterm in advance ! */
           tpfreectxt(ctx);
        }
 
