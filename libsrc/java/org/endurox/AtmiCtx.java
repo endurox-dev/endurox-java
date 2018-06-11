@@ -5,6 +5,10 @@ import java.util.Map;
 import org.endurox.exceptions.AtmiTPEINVALException;
 import org.endurox.exceptions.AtmiTPESYSTEMException;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+
 /**
  * @class AtmiCtx
  *
@@ -56,6 +60,17 @@ public class AtmiCtx {
      * Internal list of services
      */
     private static Map<String, Service> svcMap = new HashMap<String, Service>();
+    
+    /**
+     * List of ATMI Contexts currently open
+     */
+    private static Map<Long, AtmiCtx> ctxMap = new HashMap<Long, AtmiCtx>();
+    
+    /**
+     * Context map mutex
+     */
+    private static final Lock _ctxMutex = new ReentrantLock(true);
+    
     
     /**
      * Server interface (if we run in server mode)
@@ -112,6 +127,11 @@ public class AtmiCtx {
         /* TODO: Add context to static synced list of context
          * this contexts shall be terminated when JVM stops.
          */
+        
+        if (0x0 != ctx)
+        {
+            /* register this context in hash list for free up... */
+        }
     }
      
     /**
