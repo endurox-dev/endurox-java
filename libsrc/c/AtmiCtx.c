@@ -299,7 +299,7 @@ out:
  */
 jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
 {
-    TPCONTEXT_T ctx = tpnewctxt(0, 0);
+    TPCONTEXT_T ctx = tpnewctxt(0, 1);
 
     if (NULL==ctx)
     {
@@ -308,6 +308,8 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
     else
     {
         NDRX_LOG(log_debug, "New ATMI context: %p", ctx);
+        /* unset */
+        tpsetctxt(TPNULLCONTEXT, 0L);
     }
 
     return (long)ctx;

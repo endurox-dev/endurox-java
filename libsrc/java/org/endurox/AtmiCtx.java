@@ -139,7 +139,7 @@ public class AtmiCtx {
          */
         if (0x0 != ctx)
         {
-            /* register this context in hash list for free up... */
+            // register this context in hash list for free up...
             ctxMapMutex.lock();
             try {
                 ctxMap.put((Long)ctx, this);
