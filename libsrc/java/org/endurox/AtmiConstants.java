@@ -175,5 +175,12 @@ public class AtmiConstants {
     public static final int LOG_DEBUG                   = 5;
     /** Maximum log level, including binary dumps */
     public static final int LOG_DUMP                    = 6;
+    
+    /** rval in tpreturn - Service failed */
+    public static final int TPFAIL           = 0x00000001;
+    /** rval in tpreturn - Service Succeed */
+    public static final int TPSUCCESS       = 0x00000002;
+    /** rval in tpreturn - RFU */
+    public static final int TPEXIT          = 0x08000000;
 
 }

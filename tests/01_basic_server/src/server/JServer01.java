@@ -1,10 +1,16 @@
 import org.endurox.*;
 import java.util.*;
 
-public class JServer01 implements Server {
+public class JServer01 implements Server, Service {
+
+    public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
+        ctx.tpLogDebug("tpService/HELLO called");
+        ctx.tpReturn(AtmiConstants.TPSUCCESS, 0, svcinfo.getData(), 0);
+    }
 
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
         ctx.tpLogDebug("Into tpSvrInit()");
+        ctx.tpAdvertise("HELLOSVC", "HELLOFN", this);
         return AtmiConstants.SUCCEED;
     }
     

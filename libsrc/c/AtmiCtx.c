@@ -806,4 +806,21 @@ out:
     NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
 }
 
+/**
+ * Terminate C context (tpterm + tpfreectxt)
+ * @param env java env
+ * @param cls static class
+ * @param ctx C Context pointer
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
+  (JNIEnv *env, jclass cls, jlong cPtr)
+{
+    TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
+    
+    Otpterm(&ctx);
+    
+    tpfreectxt(ctx);
+    
+}
+
 /* vim: set ts=4 sw=4 et cindent: */

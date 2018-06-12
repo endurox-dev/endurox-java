@@ -1,6 +1,7 @@
 package org.endurox;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.endurox.exceptions.AtmiTPEINVALException;
 import org.endurox.exceptions.AtmiTPESYSTEMException;
@@ -47,7 +48,7 @@ public class AtmiCtx {
     /**
      * Pointer to C ATMI Context object
      */
-    private long ctx = 0;
+    long ctx = 0;
 
     static {
        System.loadLibrary("exjava"); // Load native library at runtime
@@ -148,7 +149,51 @@ public class AtmiCtx {
             }
         }
     }
-     
+    
+    /**
+     * Kill all (terminate all contexts)
+     */
+    static void destructAll()
+    {
+        ctxMapMutex.lock();
+        try
+        {
+            Iterator it = ctxMap.entrySet().iterator();
+            while (it.hasNext()) {
+                
+                Map.Entry pair = (Map.Entry)it.next();
+                Long cPtr = (Long)pair.getKey();
+                finalizeC((long)cPtr);
+                ctxMap.remove(cPtr);
+            }
+        } finally {
+            ctxMapMutex.unlock();
+        }
+    }
+    
+    /**
+     * Register shutdown hook for cleaning up ATMI context instances
+     */
+    static{
+        try{
+            
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                destructAll();
+            }
+        });
+            
+        }catch(Exception e){
+            throw new RuntimeException("Exception occured in creating singleton instance");
+        }
+    }
+    
+    /**
+     * Terminate the context at C side (tpterm + remove ctx by it self)
+     * @param cPtr ATMI Context pointer
+     */
+    private static native void finalizeC(long cPtr);
+    
     /**
      * Terminate the ATMI Context
      * @throws Throwable 
@@ -161,16 +206,19 @@ public class AtmiCtx {
            /* clean up the hash */
             ctxMapMutex.lock();
             try {
-                ctxMap.remove((Long)ctx);
+                /* terminate context at C side 
+                 * Contexts can be removed by shutdown hooks...
+                 */
+                if (ctxMap.containsKey((Long)ctx))
+                {
+                    finalizeC(ctx);
+                    ctxMap.remove((Long)ctx);
+                }
             }
             finally {
                 ctxMapMutex.unlock();
             }
        }
-       
-       /* TODO: Call Oterm() + remove context */
-       
-       
        
        //Remove ATMI context...
        super.finalize();
@@ -194,7 +242,7 @@ public class AtmiCtx {
      */
     void tpCallDispatch(TpSvcInfo svcInfo) {
         /* the exception will be captured at C side */
-        svcMap.get(svcInfo.getName()).tpService(svcInfo);
+        svcMap.get(svcInfo.getName()).tpService(this, svcInfo);
     }
 
     /**

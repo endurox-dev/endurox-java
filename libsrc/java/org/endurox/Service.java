@@ -36,7 +36,7 @@ public interface Service {
      * Service call interface
      * @param svcinfo service call information
      */
-    public void tpService(TpSvcInfo svcinfo);
+    public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo);
     
 }
 
