@@ -77,6 +77,14 @@ public class AtmiCtx {
      */
     private Server svr = null;  
     
+    /**
+     * Get server object (if any)
+     * @return 
+     */
+    public Server getSvr() {
+        return svr;
+    }
+    
     /* TODO: We need a registry with non terminated ATMI contexts
      * so that we can hook up the JVM and remove all open contexts at
      * shutdown 
