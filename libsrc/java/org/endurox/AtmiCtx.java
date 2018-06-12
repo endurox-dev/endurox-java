@@ -131,12 +131,12 @@ public class AtmiCtx {
         if (0x0 != ctx)
         {
             /* register this context in hash list for free up... */
-            ctxMapMutex.Lock();
+            ctxMapMutex.lock();
             try {
-                svcMap.put((Long)ctx, this);
+                ctxMap.put((Long)ctx, this);
             }
             finally {
-                ctxMapMutex.Unlock();
+                ctxMapMutex.unlock();
             }
         }
     }
@@ -150,10 +150,20 @@ public class AtmiCtx {
 
        if (0x0 != ctx)
        {
-          /* TODO: Call tpterm in advance ! */
-          tpfreectxt(ctx);
+           /* clean up the hash */
+            ctxMapMutex.lock();
+            try {
+                ctxMap.remove((Long)ctx);
+            }
+            finally {
+                ctxMapMutex.unlock();
+            }
        }
-
+       
+       /* TODO: Call Oterm() + remove context */
+       
+       
+       
        //Remove ATMI context...
        super.finalize();
     }

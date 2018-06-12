@@ -82,6 +82,9 @@ extern jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env,
             jobject ctx_obj, int is_ctxset, char *data, long len,
             char *type, char *subtype);
 
+extern int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env, 
+            jobject data, char **buf, long *len);
+
 /* TpSvcInfo ops: */
 extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);

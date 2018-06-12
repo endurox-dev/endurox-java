@@ -255,7 +255,6 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     jlong clen;
     
     
-    
     clz = (*env)->FindClass(env, "org/endurox/AtmiBuf");
 
     if (NULL==clz)
@@ -267,43 +266,25 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     
     if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
     {
-        NDRX_LOG(log_error, "Failed to get cPtr field from AtmiBuf class: %s"
-                /* TODO: Have func for exception back-trace in C */
-                );
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [cPtr] field from AtmiBuf: %s");
         EXFAIL_OUT(ret);
     }
     
-    
-#if 0
-    
-    /* TODO:!!! */
-    
-    jlong cPtr; = (*env)->GetFieldID(env, cls, "iVal", "I");
-    jlong cLen = (*env)->GetIntField(env, objarg, fidInt);
-    printf("iVal: %d\n", iVal);
+    cptr = (*env)->GetLongField(env, data, cptr_fldid);
     
     
-    clz = (*env)->FindClass(env, "org/endurox/AtmiBuf");
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to get Atmi buffer class!");
-        EXFAIL_OUT(ret);
-    }
-
-    /* create buffer object... */
-    mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, bclz, 
-            "tpCallDispatch", "(Lorg/endurox/TpSvcInfo;)V");
-
-    if (NULL==mid)
+    if (NULL==(clen_fldid = (*env)->GetFieldID(env, clz, "len", "J")))
     {
-        NDRX_LOG(log_error, "Cannot get call dispatcher method at C side!");
-        abort();
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [len] field from AtmiBuf: %s");
+        EXFAIL_OUT(ret);
     }
     
-#endif
-
+    clen = (*env)->GetLongField(env, data, clen_fldid);
+    
+    *buf = (char *)cptr;
+    *len = (long)clen;
     
 out:
     

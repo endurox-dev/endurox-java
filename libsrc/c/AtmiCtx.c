@@ -780,6 +780,7 @@ out:
 expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpReturn
   (JNIEnv *env, jobject obj, jint rval, jlong rcode, jobject data, jlong flags)
 {
+    int ret = EXSUCCEED;
     /* set context */
     char *buf = NULL;
     long len = 0;
@@ -789,14 +790,20 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpReturn
     /* get data buffer... */
     if (NULL!=data)
     {
-        
+        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            EXFAIL_OUT(ret);
+        }
     }
     
     tpreturn((int)rval, (long)rcode, buf, len, (long)flags);
-    
+ 
+out:
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
 }
-
 
 /* vim: set ts=4 sw=4 et cindent: */
