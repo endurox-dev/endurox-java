@@ -144,38 +144,41 @@ expublic jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env,
     
     /* allocate the object here according to the buffer type */
     
-    if (0==strcmp(type, "NULL"))
+    NDRX_LOG(log_debug, "Translating ATMI buffer: %p, type: [%s]", data,
+                        p_type);
+    
+    if (0==strcmp(p_type, "NULL"))
     {
         /* NULL buffer object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedNull");
     }
-    else if (0==strncmp(type, "UBF", 3) || 
-            0==strncmp(type, "FML", 3))
+    else if (0==strncmp(p_type, "UBF", 3) || 
+            0==strncmp(p_type, "FML", 3))
     {
         /* UBF object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedUbf");
     }
-    else if (0==strcmp(type, "CARRAY"))
+    else if (0==strcmp(p_type, "CARRAY"))
     {
         /* Carray object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedCarray");
     }
-    else if (0==strcmp(type, "STRING"))
+    else if (0==strcmp(p_type, "STRING"))
     {
         /* String object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedString");
     }
-    else if (0==strcmp(type, "VIEW"))
+    else if (0==strcmp(p_type, "VIEW"))
     {
         /* VIEW object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedView");
     }
-    else if (0==strcmp(type, "JSON"))
+    else if (0==strcmp(p_type, "JSON"))
     {
         /* JSON object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedJson");
     }
-    else if (0==strcmp(type, "TPINIT"))
+    else if (0==strcmp(p_type, "TPINIT"))
     {
         /* Init buffer */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedTpInit");
@@ -183,7 +186,7 @@ expublic jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env,
     else
     {
         ndrxj_atmi_throw(env, TPEINVAL, "buffer type [%s] not supported", 
-                type);
+                p_type);
         goto out;
     }
     

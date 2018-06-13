@@ -651,6 +651,7 @@ out:
 
 /**
  * Run the server entry point...
+ * TODO:  NewGlobalRef(JNIEnv *env, jobject obj); - use for context object?
  * @param env Java env
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
