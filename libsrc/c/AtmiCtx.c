@@ -534,7 +534,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
  * Method:    tpAdvertiseC
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertise
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertiseC
       (JNIEnv *env, jobject obj, jstring svcname, jstring funcname)
 {
     /* Hmm we could do advertise directly here the hash table could be stored
