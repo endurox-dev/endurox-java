@@ -461,6 +461,7 @@ out:
 
 /**
  * Dispatch call to Java side
+ * SEE: https://stackoverflow.com/questions/12420463/keeping-a-global-reference-to-the-jnienv-environment
  * @param svcinfo 
  */
 exprivate void dispatch_call(TPSVCINFO *svcinfo)
@@ -659,18 +660,32 @@ out:
 expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj, 
         jobjectArray jargv, jboolean nocheck)
 {
-    M_srv_ctx_env = env;
-    M_srv_ctx_obj = obj;
     char **argv = NULL;
     int argc = 0;
     int ret = EXSUCCEED;
-    int size = (int)(*env)->GetArrayLength(env, jargv);
+    int size;
     int i;
     jstring jstr;
     jboolean n_elm_copy = EXFALSE;
     const char *n_elm;
     
     M_jargv = jargv;
+        
+    if (NULL!=jargv)
+    {
+        size = (int)(*env)->GetArrayLength(env, jargv);
+    }
+    else
+    {
+        size = 0;
+    }
+
+    /* lock up th context object */
+    obj=(*env)->NewGlobalRef(env, obj);
+    /*TODO: Check the NULL? */
+
+    M_srv_ctx_env = env;
+    M_srv_ctx_obj = obj;
 
     if (!nocheck)
     {
@@ -747,7 +762,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     
     argc=size+1;
     ret=ndrx_main_integra(argc, argv, ndrxj_tpsvrinit,
-        ndrxj_tpsvrdone, 0L);
+        ndrxj_tpsvrdone, ATMI_SRVLIB_NOLONGJUMP);
     
     /* Throw exception if any... */
     if (EXSUCCEED!=ret && 0!=tperrno)
@@ -772,6 +787,8 @@ out:
 
         NDRX_FREE(argv);
     }
+
+    (*env)->DeleteGlobalRef(env, obj);
 
     return (jint)ret;
 }
@@ -808,10 +825,54 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpReturn
     tpreturn((int)rval, (long)rcode, buf, len, (long)flags);
  
 out:
+
+    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Backend for tpforward call
+ * @param env java env
+ * @param obj ATMI Context object
+ * @param svcname service name
+ * @param data data buffer
+ * @param flags RFU flags
+ */
+expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpForward
+  (JNIEnv *env, jobject obj, jstring svcname, jobject data, jlong flags)
+{
+    int ret = EXSUCCEED;
+    /* set context */
+    char *buf = NULL;
+    long len = 0;
+    jboolean n_svcname_copy = EXFALSE;
+    const char *n_svcname = (*env)->GetStringUTFChars(env, svcname, &n_svcname_copy);
+
+    tpsetctxt(M_srv_ctx, 0L);
     
+    /* get data buffer... */
+    if (NULL!=data)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            EXFAIL_OUT(ret);
+        }
+    }
+    
+    tpforward((char *)n_svcname, buf, len, (long)flags);
+ 
+out:
+
+    if (n_svcname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, svcname, n_svcname);
+    }
+
     NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
 /**

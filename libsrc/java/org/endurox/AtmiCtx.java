@@ -236,6 +236,14 @@ public class AtmiCtx {
     public native void tpReturn(int rval, long rcode, AtmiBuf data, long flags);
     
     /**
+     * Forward the call to other service for processing
+     * @param svc target service name
+     * @param data data buffer to send
+     * @param flags call flags (reserved )
+     */
+    public native void tpForward(String svcname, AtmiBuf data, long flags);
+    
+    /**
      * Incoming service call dispatch to advertised service.
      * Called by C side
      * @param svcInfo service call infos
