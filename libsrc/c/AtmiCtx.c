@@ -88,7 +88,10 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
     }
     else
     {
-        tpsetctxt(ctx, 0L);
+        if (do_set)
+        {
+            tpsetctxt(ctx, 0L);
+        }
     }
 
     return ctx;
@@ -122,6 +125,7 @@ jint JNICALL Java_org_endurox_AtmiCtx_tpLogQInfo (JNIEnv *env, jobject obj,
     }
     
 out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
     return ret;
 }
 
@@ -159,6 +163,9 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev
     }
     
 out:
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
     if (n_file_copy)
     {
         (*env)->ReleaseStringUTFChars(env, file, n_file);
@@ -204,7 +211,10 @@ void JNICALL Java_org_endurox_AtmiCtx_tpLogNdrxC(JNIEnv * env, jobject obj, jint
         Otplog(&ctx, (int)lev, (char *)n_msg);
     }
     
-out: 
+out:
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
     if (n_file_copy)
     {
         (*env)->ReleaseStringUTFChars(env, file, n_file);
@@ -273,11 +283,13 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     ret = ndrxj_atmi_AtmiBuf_translate(env,  obj, EXTRUE, data, size, 
             (char *)n_btype, (char *)n_bsubtype);
     
-    /* unset context */
-    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    
     
 out:
-    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
     if (n_btype_copy)
     {
         (*env)->ReleaseStringUTFChars(env, btype, n_btype);
@@ -527,7 +539,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertise
 {
     /* Hmm we could do advertise directly here the hash table could be stored
      * at C level, no need to proxy up to java for switching the service 
-     * only then we might have some issues with garbagde collector. So better
+     * only then we might have some issues with garbage collector. So better
      * may be still do that in java side
      */
     jboolean n_svcname_copy = EXFALSE;
@@ -652,7 +664,6 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     int argc = 0;
     int ret = EXSUCCEED;
     int size = (int)(*env)->GetArrayLength(env, jargv);
-    int ctx_set = EXFALSE;
     int i;
     jstring jstr;
     jboolean n_elm_copy = EXFALSE;
@@ -670,14 +681,10 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
         }
     }
     
-    if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
+    if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         EXFAIL_OUT(ret);
     }
-
-    /* we have a context handler, we shall switch to it now... */
-    tpsetctxt(M_srv_ctx, 0L);
-    ctx_set=EXTRUE;
     
     argv = NDRX_CALLOC(sizeof(char *), size+1);
     
@@ -736,6 +743,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     }
     
     NDRX_LOG(log_info, "Booting java server..");
+    
     argc=size+1;
     ret=ndrx_main_integra(argc, argv, ndrxj_tpsvrinit,
         ndrxj_tpsvrdone, 0L);
@@ -749,10 +757,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
 out:
 
     /* go to NULL context */
-    if (ctx_set)
-    {
-        tpsetctxt(TPNULLCONTEXT, 0L);
-    }
+    tpsetctxt(TPNULLCONTEXT, 0L);
 
     if (NULL!=argv)
     {
