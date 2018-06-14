@@ -30,6 +30,6 @@ public class JServer01 implements Server, Service {
         
         /* create new local class */
         System.out.println("About to tpRun ...");
-        ctx.tpRun(server, null);
+        ctx.tpRun(server);
     }
 }

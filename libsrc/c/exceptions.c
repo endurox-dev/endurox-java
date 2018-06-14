@@ -70,7 +70,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
     snprintf(cls, sizeof(cls), "org/endurox/exceptions/Atmi%sException", 
             tpecodestr(err));
     
-    NDRX_LOG(log_info, "Throwing: [%s]", cls);
+    NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
     ex = (*env)->FindClass(env, cls);
     

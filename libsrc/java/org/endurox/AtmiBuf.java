@@ -17,6 +17,13 @@ public class AtmiBuf {
      * @param[in] cPtr C pointer to buffer
      */
     private native void tpfree (long cPtr);
+    
+    /**
+     * Reallocate ATMI buffer
+     * @param size[in] New buffer size
+     * @throws AtmiTPEOSException Operating system exception occurred
+     */
+    private native void tpRealloc(long size);
 
     /**
      * Initialize ATMI Object

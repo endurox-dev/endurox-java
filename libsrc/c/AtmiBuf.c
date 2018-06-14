@@ -250,10 +250,8 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     int ret = EXSUCCEED;
     
     jclass clz;
-    jmethodID mid;
     jfieldID cptr_fldid;
     jfieldID clen_fldid;
-    
     jlong cptr;
     jlong clen;
     
@@ -294,6 +292,23 @@ out:
     return ret;
     
 }
+
+/**
+ * Reallocate ATMI buffer to new size
+ * @param env java env
+ * @param obj ATMI buffer object
+ * @param size new buffer size
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiBuf_tpRealloc
+  (JNIEnv *env, jobject obj, jlong size)
+{
+    /* Switch context (get from buffer) */
+    
+    /* Reallocate */
+    
+    /* Switch con */
+}
+
 
 /* vim: set ts=4 sw=4 et cindent: */
 

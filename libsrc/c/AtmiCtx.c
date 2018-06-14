@@ -68,6 +68,8 @@ exprivate jobjectArray M_jargv;
 
 /**
  * get context from current object
+ * TODO: Extend to get context from wrapper object which have a reference
+ * to context object (OPTIONAL)
  * @param env java env
  * @param atmiCtxObj ATMI Context object
  * @return NULL (and expection set) or context data
