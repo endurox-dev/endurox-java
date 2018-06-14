@@ -1,11 +1,11 @@
 ## 
-## Include sub-dirs for tests
+## Unit test for Enduro/X java
 ##
 ## @file CMakeLists.txt
 ## 
 ## -----------------------------------------------------------------------------
 ## Enduro/X Middleware Platform for Distributed Transaction Processing
-## Copyright (C) 2015, Mavimax, Ltd. All Rights Reserved.
+## Copyright (C) 2018, Mavimax, Ltd. All Rights Reserved.
 ## This software is released under one of the following licenses:
 ## GPL or Mavimax's license for commercial use.
 ## -----------------------------------------------------------------------------
@@ -29,8 +29,30 @@
 ## contact@mavimax.com
 ## -----------------------------------------------------------------------------
 ##
-cmake_minimum_required(VERSION 2.8)
 
-# Sub Dirs
-add_subdirectory (00_unit)
-add_subdirectory (01_basic_server)
+# Set minimum version
+cmake_minimum_required(VERSION 2.6)
+
+find_package(Java)
+include(UseJava)
+
+# Add debug options
+# By default if RELEASE_BUILD is not defined, then we run in debug!
+IF ($ENV{RELEASE_BUILD})
+	# do nothing
+ELSE ($ENV{RELEASE_BUILD})
+	ADD_DEFINITIONS("-D UBF_DEBUG")
+ENDIF ($ENV{RELEASE_BUILD})
+
+# Make sure the compiler can find include files from our UBF library.
+include_directories (. ${JNI_INCLUDE_DIRS})
+
+FILE(GLOB JAVASRC *.java)
+
+add_jar(jexunit00
+    SOURCES
+        ${JAVASRC}
+    INCLUDE_JARS 
+        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core-1.3.jar ${CMAKE_SOURCE_DIR}/tests/libs/junit-4.12.jar
+        )
+

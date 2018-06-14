@@ -50,6 +50,22 @@ public class AtmiCtx {
      */
     long ctx = 0;
 
+    /**
+     * Get The C Context
+     * @return 
+     */
+    public long getCtx() {
+        return ctx;
+    }
+
+    /**
+     * Set the C context
+     * @param ctx 
+     */
+    public void setCtx(long ctx) {
+        this.ctx = ctx;
+    }
+
     static {
        System.loadLibrary("exjava"); // Load native library at runtime
                             // hello.dll (Windows) or libenduroxjava.so (Unixes)
