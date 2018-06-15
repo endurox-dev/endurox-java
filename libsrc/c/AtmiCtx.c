@@ -257,8 +257,13 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     const char *n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
     
     jboolean n_bsubtype_copy = EXFALSE;
-    const char *n_bsubtype = (*env)->GetStringUTFChars(env, bsubtype, &n_bsubtype_copy);
+    char *n_bsubtype = NULL;
     
+    if (NULL!=bsubtype)
+    {
+        n_bsubtype = (char *)(*env)->GetStringUTFChars(env, bsubtype, &n_bsubtype_copy);
+    }
+
     /* get context handler */
 
     /* exception will thown if invalid object... */
