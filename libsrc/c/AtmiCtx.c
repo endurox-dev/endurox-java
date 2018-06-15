@@ -234,7 +234,7 @@ out:
  * @param cls class on which method is called (Atmi Context this case), static
  * @param cPtr pointer to context C object 
  */
-void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env, 
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env, 
         jclass cls, jlong cPtr)
 {
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
@@ -247,14 +247,14 @@ void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env,
  * Method:    tpAlloc
  * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/AtmiBuf;
  */
-jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, 
+expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, 
         jstring btype, jstring bsubtype, jlong size)
 {
     jobject ret = NULL;
     char *data;
     TPCONTEXT_T ctx;
     jboolean n_btype_copy = EXFALSE;
-    const char *n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
+    const char *n_btype;
     
     jboolean n_bsubtype_copy = EXFALSE;
     char *n_bsubtype = NULL;
@@ -263,6 +263,15 @@ jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj,
     {
         n_bsubtype = (char *)(*env)->GetStringUTFChars(env, bsubtype, &n_bsubtype_copy);
     }
+
+    if (NULL==btype)
+    {
+        ndrxj_atmi_throw(env, TPEINVAL,
+                "`type' is mandatory for tpAlloc, but got NULL!");
+        goto out;
+    }
+
+    n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
 
     /* get context handler */
 
