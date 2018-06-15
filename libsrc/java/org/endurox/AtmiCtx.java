@@ -180,8 +180,10 @@ public class AtmiCtx {
                 Map.Entry pair = (Map.Entry)it.next();
                 Long cPtr = (Long)pair.getKey();
                 finalizeC((long)cPtr);
-                ctxMap.remove(cPtr);
+                it.remove();
             }
+            
+            /* Delete all from hash map here? */
         } finally {
             ctxMapMutex.unlock();
         }
