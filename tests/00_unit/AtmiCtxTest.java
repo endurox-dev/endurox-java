@@ -9,10 +9,8 @@ public class AtmiCtxTest {
    */
   @Test
   public void newCtx() {
-
     AtmiCtx ctx = new AtmiCtx();
     assertNotEquals(ctx.getCtx(), 0x0);
-
   }
 
 }

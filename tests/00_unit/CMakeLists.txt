@@ -53,6 +53,6 @@ add_jar(jexunit00
     SOURCES
         ${JAVASRC}
     INCLUDE_JARS 
-        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core-1.3.jar ${CMAKE_SOURCE_DIR}/tests/libs/junit-4.12.jar
+        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
         )
 
