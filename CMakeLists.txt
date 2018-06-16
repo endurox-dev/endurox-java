@@ -179,6 +179,7 @@ OPTION(DEFINE_DISABLEDOC "Disable documentation generation" OFF)
 # Recurse into the project subdirectories. This does not actually
 # cause another cmake executable to run. The same process will walk through 
 # the project's entire directory structure. 
+add_subdirectory (exjcomp)
 add_subdirectory (libsrc)
 add_subdirectory (tests)
 add_subdirectory (doc)
