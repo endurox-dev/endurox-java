@@ -68,7 +68,7 @@ public class AtmiCtx {
 
     static {
        System.loadLibrary("exjava"); // Load native library at runtime
-                            // hello.dll (Windows) or libenduroxjava.so (Unixes)
+                            // *.dll (Windows) or *.so (Unixes)
     }
     
     /* Have some static hash list of the services we advertise */
@@ -241,8 +241,6 @@ public class AtmiCtx {
        //Remove ATMI context...
        super.finalize();
     }
-    
-    /* TODO: Add tpreturn/tpforward. */
     
     /**
      * Perform tp return
@@ -515,6 +513,17 @@ public class AtmiCtx {
     public void tpLogDump(String format, Object... arguments) {
         tpLog(AtmiConstants.LOG_DUMP, false, format, arguments);
     }
+    
+    /**
+     * Initialize current ATMI Context as a ATMI client
+     * @param tpinfo might be NULL. Currently not used by Enduro/X
+     * @thorws AtmiTPEINVALException environment not configured
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     * See logs i.e. user log, or debugs for more info.
+     */
+    public native void tpInit(TpInit tpinfo);
     
 }
 

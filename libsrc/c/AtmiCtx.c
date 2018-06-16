@@ -908,4 +908,29 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
     
 }
 
+/**
+ * Init the ATMI client
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param tpinfo TpInit object (infos)
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpInit
+  (JNIEnv * env, jobject atmiCtxObj, jobject tpinfo)
+{
+    TPCONTEXT_T ctx;
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpinit(NULL))
+    {
+        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+}
+
 /* vim: set ts=4 sw=4 et cindent: */
