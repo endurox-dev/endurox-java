@@ -543,13 +543,13 @@ public class AtmiCtx {
     /**
      * Call the service
      * @param svc XATMI service name to call
-     * @param ibuf input ATMI buffer
-     * @param obuf output ATMI buffer reference. As buffer can be reallocated (class changed)
+     * @param idata input ATMI buffer
+     * @param odata output ATMI buffer reference. As buffer can be reallocated (class changed)
      *  the holder class of the buffer is required which contains reference to real buffer.
      * @param flags ATMI flags; TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPTRANSUSPEND,
      *  TPNOBLOCK
      */
-    public native void tpCall(String svc, AtmiBuf ibuf, AtmiBufRef obuf, long flags);
+    public native void tpCall(String svc, AtmiBuf idata, AtmiBufRef odata, long flags);
     
 }
 

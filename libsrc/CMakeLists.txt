@@ -66,6 +66,7 @@ add_jar(enduroxjava
 create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
         org.endurox.AtmiBuf
+        org.endurox.AtmiBufRef
         org.endurox.TpInit
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     CLASSPATH enduroxjava)

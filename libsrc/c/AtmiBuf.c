@@ -294,6 +294,22 @@ out:
 }
 
 /**
+ * Get buffer from buffer reference
+ * @param env Java env reference
+ * @param data data buffer (reference to buf)
+ * @param buf[out] C buffer pointer
+ * @param len[out] C data len
+ * @return EXSUCCEED or EXFAIL (in this case Exception will bet set)
+ */
+expublic int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env, 
+            jobject dataRef, char **buf, long *len)
+{
+    /* TODO:  */
+    
+    return EXFAIL;
+}
+
+/**
  * Reallocate ATMI buffer to new size
  * @param env java env
  * @param obj ATMI buffer object
@@ -302,6 +318,8 @@ out:
 expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiBuf_tpRealloc
   (JNIEnv *env, jobject obj, jlong size)
 {
+    /* TODO: */
+    
     /* Switch context (get from buffer) */
     
     /* Reallocate */

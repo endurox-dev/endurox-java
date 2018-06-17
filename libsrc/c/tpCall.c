@@ -1,7 +1,7 @@
 /**
- * @brief Commons for Enduro/X JAVA lib
+ * @brief Perform call operations from the ATMI Context
  *
- * @file libsrc.c
+ * @file tpCall.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -30,66 +30,80 @@
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
+#include <errno.h>
+#include <stdlib.h>
+#include "org_endurox_AtmiCtx.h"
+#include "org_endurox_AtmiBuf.h"
+#include "org_endurox_AtmiBufRef.h"
 #include <atmi.h>
+#include <oatmi.h>
+#include <ndebug.h>
+#include <ondebug.h>
+#include <oatmisrv_integra.h>
+#include "libsrc.h"
+#include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
-
-/** Log exception to ndrx logger */
-#define NDRXJ_LOGEX_NDRX          0x0001
-/** Log exception to ulog logger */
-#define NDRXJ_LOGEX_ULOG          0x0002
-
-
-/**
- * Log exception
- * @param ENV__ Java Env for which exception have occurred
- * @param LEV__ log level
- * @param ULOG__ use log EXTRUE/EXFALSE
- * @param FMT__ format string. Note first argument will be %s for stack trace
- * @param ... var arguments to format
- */
-#define NDRXJ_LOG_EXCEPTION(ENV__, LEV__, FLAGS__, FMT__, ...) {\
-\
-    char *jerr__ = ndrxj_exception_backtrace(ENV__);\
-    \
-    if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
-        userlog(FMT__, jerr__, ##__VA_ARGS__);\
-    if (FLAGS__ & NDRXJ_LOGEX_ULOG)\
-        NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
-    NDRX_FREE(jerr__);\
-}
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-/* Exception ops: */
-extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
-extern char *ndrxj_exception_backtrace(JNIEnv *env);
+/**
+ * backend for tpcall
+ * @param env java env
+ * @param atmiCtxObj AtmiCtx object
+ * @param svc service name
+ * @param ibuf input buffer
+ * @param obuf output buffer
+ * @param flags 
+ */
+JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpCall
+  (JNIEnv *env, jobject atmiCtxObj, jstring svc, jobject idata, jobject odata, jlong flags)
+{
+    int ret = EXSUCCEED;
+    /* set context */
+    char *buf = NULL;
+    long len = 0;
+    jboolean n_svc_copy = EXFALSE;
+    const char *n_svc;
 
-/* ClientId ops: */
-extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
+    
+    /* TODO: get context & set */
+    tpsetctxt(M_srv_ctx, 0L);
+    
+    /* get data buffer... */
+    if (NULL!=data)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            EXFAIL_OUT(ret);
+        }
+    }
+    
+    /*  */
+    
+    (*env)->GetStringUTFChars(env, svc, &n_svcname_copy);
+    
+    tpforward((char *)n_svcname, buf, len, (long)flags);
+ 
+out:
 
-/* AtmiBuf ops: */
-extern jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, char *data, long len,
-            char *type, char *subtype);
+    if (n_svcname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, svcname, n_svcname);
+    }
 
-extern int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env, 
-            jobject data, char **buf, long *len);
+    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
 
-extern int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env, 
-            jobject dataRef, char **buf, long *len);
 
-/* TpSvcInfo ops: */
-extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
 
 /* vim: set ts=4 sw=4 et cindent: */
