@@ -67,9 +67,6 @@ public class AtmiBuf {
          this.doFinalize = doFinalize;
          this.cPtr = cPtr;
          this.len = len;
-
-         System.out.format("AtmiBuf allocated.\n");
-
     }
 
     /**
@@ -77,12 +74,6 @@ public class AtmiBuf {
      */
     @Override
     protected void finalize() {
-         //Call free from context?
-         //Or call directly the c? I guess directly as context might be already
-         //invalid
-
-         System.out.format("HELLO FINAL\n");
-
          if (doFinalize) {
              tpfree(cPtr);
          }

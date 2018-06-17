@@ -441,7 +441,7 @@ public class AtmiCtx {
             return;
         }
         
-        if ((log_config & AtmiConstants.TPLOGQI_EVAL_DETAILED) > 0) {
+        if ((log_config & AtmiConstants.TPLOGQI_RET_HAVDETAILED) > 0) {
             
             /* backtrace the file and line number */
             StackTraceElement[] s = Thread.currentThread().getStackTrace();
@@ -521,9 +521,35 @@ public class AtmiCtx {
      * @throws AtmiTPESYSTEMException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
      * @throws AtmiTPEOSException System failure occurred during serving. 
-     * See logs i.e. user log, or debugs for more info.
+     *  See logs i.e. user log, or debugs for more info.
      */
     public native void tpInit(TpInit tpinfo);
+    
+    /**
+     * Write user log message
+     * @param msg formatted message to log in user log
+     */
+    private native void userLogC(String msg);
+    
+    /**
+     * Write user log (for more critical events)
+     * @param format java format string
+     * @param arguments arguments for format string
+     */
+    public void userLog(String format, Object... arguments) {
+        userLogC(String.format(format, arguments));
+    }
+    
+    /**
+     * Call the service
+     * @param svc XATMI service name to call
+     * @param ibuf input ATMI buffer
+     * @param obuf output ATMI buffer reference. As buffer can be reallocated (class changed)
+     *  the holder class of the buffer is required which contains reference to real buffer.
+     * @param flags ATMI flags; TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPTRANSUSPEND,
+     *  TPNOBLOCK
+     */
+    public native void tpCall(String svc, AtmiBuf ibuf, AtmiBufRef obuf, long flags);
     
 }
 

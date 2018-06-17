@@ -583,7 +583,7 @@ out:
     if (n_funcname_copy)
     {
         (*env)->ReleaseStringUTFChars(env, funcname, n_funcname);
-    }   
+    }
 }
 
 
@@ -931,6 +931,37 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpInit
     
     tpsetctxt(TPNULLCONTEXT, 0L);
     
+}
+
+/**
+ * Write user log message
+ * @param env Java ENV
+ * @param atmiCtxObj ATMI Object
+ * @param msg message to log
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userLogC
+  (JNIEnv *env, jobject atmiCtxObj, jstring msg)
+{
+    jboolean n_msg_copy = EXFALSE;
+    const char *n_msg;
+    
+    TPCONTEXT_T ctx;
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+    
+    userlog("%s", n_msg);
+    
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
 /* vim: set ts=4 sw=4 et cindent: */

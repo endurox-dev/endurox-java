@@ -7,5 +7,7 @@ public class JClient01 {
     
         AtmiCtx ctx = new AtmiCtx();
         ctx.tpInit(null);
+        ctx.tpLogInfo("Client process started...");
+        ctx.userLog("Hello from Userlog");
     }
 }
