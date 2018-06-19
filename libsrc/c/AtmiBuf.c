@@ -45,6 +45,32 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
+
+/**
+ * Get ATMI Context from ATMI buffer
+ * @param env java env
+ * @param atmiBufObj ATMI buffer object
+ * @param do_set should we set the context?
+ * @return context pointer
+ */
+expublic TPCONTEXT_T ndrxj_AtmiBuf_get_ctx(JNIEnv *env, jobject atmiBufObj, int do_set)
+{
+     TPCONTEXT_T ctx;
+
+    jclass objClass = (*env)->GetObjectClass(env, atmiBufObj);
+    jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
+            "Lorg/endurox/AtmiCtx;");
+    jobject atmi_ctx_obj = (*env)->GetObjectField(env, atmiBufObj, atmi_ctx_fld);
+    
+    if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj, do_set)))
+    {
+        goto out;
+    }
+    
+out:
+    return ctx;
+}
+
 /**
  * Free up the the context
  * @param env java env
@@ -255,7 +281,6 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     jlong cptr;
     jlong clen;
     
-    
     clz = (*env)->FindClass(env, "org/endurox/AtmiBuf");
 
     if (NULL==clz)
@@ -289,8 +314,22 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     
 out:
     
-    return ret;
-    
+    return ret;   
+}
+
+/**
+ * Update the buffer pointer to C data
+ * @param env java env
+ * @param data data buffer
+ * @param buf new C pointer
+ * @param len new data size
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_atmi_AtmiBuf_set_buffer(JNIEnv *env, 
+            jobject data, char *buf, long len)
+{
+    /* TODO; */
+    return EXFAIL;
 }
 
 /**
@@ -318,13 +357,35 @@ expublic int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env,
 expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiBuf_tpRealloc
   (JNIEnv *env, jobject obj, jlong size)
 {
-    /* TODO: */
+    char *buf;
+    long len;
     
     /* Switch context (get from buffer) */
+    if (NULL==ndrxj_AtmiBuf_get_ctx(env, jobject obj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, obj, &buf, &len))
+    {
+        NDRX_LOG(log_error, "Failed to extract ATMI buffer from AtmiBuf Object");
+        goto out;
+    }
     
     /* Reallocate */
+    if (NULL==(buf = tprealloc(buf, (long)size))
+    {
+        NDRX_LOG(log_error, "Failed to reallocate buffer: %s", tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+        goto out;
+    }
+    
+    /* TODO: Set buffer back/update object */
+    
     
     /* Switch con */
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
 
