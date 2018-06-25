@@ -58,48 +58,62 @@
  * @param env java env
  * @param atmiCtxObj AtmiCtx object
  * @param svc service name
- * @param ibuf input buffer
- * @param obuf output buffer
- * @param flags 
+ * @param idata input buffer (AtmiBuffer based object)
+ * @param odata output buffer (AtmiBufferRef based object, as the return class can change)
+ * @param flags standard tpcall(3) flags
  */
 JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpCall
   (JNIEnv *env, jobject atmiCtxObj, jstring svc, jobject idata, jobject odata, jlong flags)
 {
     int ret = EXSUCCEED;
+    TPCONTEXT_T ctx;
     /* set context */
-    char *buf = NULL;
-    long len = 0;
+    char *ibuf = NULL;
+    long ilen = 0;
+    
+    char *obuf = NULL;
+    long olen = 0;
+    
     jboolean n_svc_copy = EXFALSE;
     const char *n_svc;
 
-    
     /* TODO: get context & set */
-    tpsetctxt(M_srv_ctx, 0L);
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    }
     
     /* get data buffer... */
-    if (NULL!=data)
+    if (NULL!=idata)
     {
-        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, idata, &ibuf, &ilen))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             EXFAIL_OUT(ret);
         }
     }
     
-    /*  */
+    /* TODO: Extract obuf, & olen from AtmiBufferRef */
     
-    (*env)->GetStringUTFChars(env, svc, &n_svcname_copy);
+    (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
     
-    tpforward((char *)n_svcname, buf, len, (long)flags);
+    ret = tpcall((char *)n_svc, ibuf, ilen, &obuf, &olen, (long)flags);
+    
+    /* TODO: if class is changed of the buffer, create new object... 
+     * and unset the pointer in the original AtmiBuf, so that it does not
+     * make it free.
+     */
  
 out:
 
-    if (n_svcname_copy)
+    if (n_svc_copy)
     {
-        (*env)->ReleaseStringUTFChars(env, svcname, n_svcname);
+        (*env)->ReleaseStringUTFChars(env, svc, n_svc);
     }
 
     NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
 }

@@ -83,7 +83,8 @@ expublic void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj,
     TPCONTEXT_T ctx;
 
     jclass objClass = (*env)->GetObjectClass(env, obj);
-    jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", "Lorg/endurox/AtmiCtx;");
+    jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
+            "Lorg/endurox/AtmiCtx;");
     jobject atmi_ctx_obj = (*env)->GetObjectField(env, obj, atmi_ctx_fld);
     
     if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj, EXTRUE)))
