@@ -299,9 +299,6 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject 
     ret = ndrxj_atmi_AtmiBuf_translate(env,  obj, EXTRUE, data, size, 
             (char *)n_btype, (char *)n_bsubtype);
     
-
-    
-    
 out:
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);

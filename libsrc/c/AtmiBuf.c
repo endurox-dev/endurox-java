@@ -329,8 +329,46 @@ out:
 expublic int ndrxj_atmi_AtmiBuf_set_buffer(JNIEnv *env, 
             jobject data, char *buf, long len)
 {
-    /* TODO; */
-    return EXFAIL;
+    int ret = EXSUCCEED;
+    
+    jclass clz;
+    jfieldID cptr_fldid;
+    jfieldID clen_fldid;
+    jlong cptr = (jlong)buf;
+    jlong clen = (jlong)len;
+    
+    clz = (*env)->FindClass(env, "org/endurox/AtmiBuf");
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to get Atmi buffer class!");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [cPtr] field from AtmiBuf: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    (*env)->SetLongField(env, data, cptr_fldid, cptr);
+    
+    /* Check exception... */
+            
+    if (NULL==(clen_fldid = (*env)->GetFieldID(env, clz, "len", "J")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [len] field from AtmiBuf: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    (*env)->SetLongField(env, data, cptr_fldid, clen);
+    
+out:
+    
+    return ret;
 }
 
 /**
@@ -352,39 +390,47 @@ expublic int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env,
 /**
  * Reallocate ATMI buffer to new size
  * @param env java env
- * @param obj ATMI buffer object
+ * @param data ATMI buffer object
  * @param size new buffer size
  */
 expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiBuf_tpRealloc
-  (JNIEnv *env, jobject obj, jlong size)
+  (JNIEnv *env, jobject data, jlong size)
 {
     char *buf;
     long len;
     
     /* Switch context (get from buffer) */
-    if (NULL==ndrxj_AtmiBuf_get_ctx(env, jobject obj, EXTRUE))
+    if (NULL==ndrxj_AtmiBuf_get_ctx(env, data, EXTRUE))
     {
         return;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, obj, &buf, &len))
+    if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
     {
         NDRX_LOG(log_error, "Failed to extract ATMI buffer from AtmiBuf Object");
         goto out;
     }
     
     /* Reallocate */
-    if (NULL==(buf = tprealloc(buf, (long)size))
+    if (NULL==(buf = tprealloc(buf, (long)size)))
     {
         NDRX_LOG(log_error, "Failed to reallocate buffer: %s", tpstrerror(tperrno));
         ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
         goto out;
     }
     
-    /* TODO: Set buffer back/update object */
+    /* Set buffer back/update object */
     
+    if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_set_buffer(env, data, buf, len))
+    {
+        /* Exception must be set */
+        NDRX_LOG(log_error, "Failed to update ATMI Buffer with reallocated data %p/%ld",
+                buf, len);
+        goto out;
+    }
     
-    /* Switch con */
+    NDRX_LOG(log_debug, "Atmi buffer object updated ok with %p/%ld", buf, len);
+    
 out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
