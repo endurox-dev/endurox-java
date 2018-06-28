@@ -53,7 +53,7 @@ public class AtmiBuf {
      * @param size[in] New buffer size
      * @throws AtmiTPEOSException Operating system exception occurred
      */
-    private native void tpRealloc(long size);
+    public native void tpRealloc(long size);
 
     /**
      * Initialize ATMI Object
