@@ -78,6 +78,10 @@ extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
             jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
 
 /* AtmiBuf ops: */
+
+extern int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env, 
+            jobject dataRef, char **buf, long *len);
+
 extern jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, char *data, long len,
             char *type, char *subtype);

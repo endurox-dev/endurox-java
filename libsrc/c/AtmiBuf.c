@@ -315,7 +315,7 @@ expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env,
     
 out:
     
-    return ret;   
+    return ret;
 }
 
 /**
@@ -382,9 +382,42 @@ out:
 expublic int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env, 
             jobject dataRef, char **buf, long *len)
 {
-    /* TODO:  */
+    int ret = EXSUCCEED;
     
-    return EXFAIL;
+    jclass clz;
+    jfieldID buf_fldid;
+    jobject bufobj;
+    
+    clz = (*env)->FindClass(env, "org/endurox/AtmiBufRef");
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to get AtmiBufRef class!");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (NULL==(buf_fldid = (*env)->GetFieldID(env, clz, "buf", "Lorg/endurox/AtmiBuf;")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [cPtr] field from AtmiBuf: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    bufobj = (*env)->GetObjectField(env, dataRef, buf_fldid);
+
+    
+    if (EXSUCCEED!=(ret = ndrxj_atmi_AtmiBuf_get_buffer(env, bufobj, buf, len)))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer pointer");
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    NDRX_LOG(log_debug, "%s returns %d %p %d", __func__, ret, *buf, *len);
+    
+    return ret;
 }
 
 /**
