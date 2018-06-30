@@ -3,7 +3,7 @@ package org.endurox;
 /**
  * Typed NULL buffer
  */
-public class TypedNull extends AtmiBuf {
+public class TypedNull extends TypedBuffer {
 	
    /**
     * Initialize TPINIT buffer

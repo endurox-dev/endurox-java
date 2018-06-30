@@ -139,7 +139,7 @@ public class AtmiCtx {
      * @throw AtmiTPESYSTEMException system exception occurred
      * @throw AtmiTPEOSException Operating System error occurred
      */
-    public native AtmiBuf tpAlloc(String btype, String bsubtype, long size);
+    public native TypedBuffer tpAlloc(String btype, String bsubtype, long size);
 
     /**
      * Allocate new ATMI Context
@@ -249,7 +249,7 @@ public class AtmiCtx {
      * @param data data buffer to return, can be NULL to?
      * @param flags 
      */
-    public native void tpReturn(int rval, long rcode, AtmiBuf data, long flags);
+    public native void tpReturn(int rval, long rcode, TypedBuffer data, long flags);
     
     /**
      * Forward the call to other service for processing
@@ -257,7 +257,7 @@ public class AtmiCtx {
      * @param data data buffer to send
      * @param flags call flags (reserved )
      */
-    public native void tpForward(String svcname, AtmiBuf data, long flags);
+    public native void tpForward(String svcname, TypedBuffer data, long flags);
     
     /**
      * Incoming service call dispatch to advertised service.
@@ -543,13 +543,13 @@ public class AtmiCtx {
     /**
      * Call the service
      * @param svc XATMI service name to call
-     * @param idata input ATMI buffer
-     * @param odata output ATMI buffer reference. As buffer can be reallocated (class changed)
-     *  the holder class of the buffer is required which contains reference to real buffer.
+     * @param idata Input buffer
      * @param flags ATMI flags; TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPTRANSUSPEND,
      *  TPNOBLOCK
+     * @return TpCall Result object. The inside buffer might be changed or
+     *  the same as input buffer (in case if type not changed).
      */
-    public native void tpCall(String svc, AtmiBuf idata, AtmiBufRef odata, long flags);
+    public native TpCallResult tpCall(String svc, TypedBuffer idata, long flags);
     
 }
 

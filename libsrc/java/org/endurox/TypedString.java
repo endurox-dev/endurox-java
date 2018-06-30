@@ -1,6 +1,6 @@
 package org.endurox;
 
-public class TypedString extends AtmiBuf {
+public class TypedString extends TypedBuffer {
 	
    /**
     * Initialise String buffer

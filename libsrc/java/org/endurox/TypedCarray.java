@@ -1,6 +1,6 @@
 package org.endurox;
 
-public class TypedCarray extends AtmiBuf {
+public class TypedCarray extends TypedBuffer {
 	
    /**
     * Initialise Carray buffer

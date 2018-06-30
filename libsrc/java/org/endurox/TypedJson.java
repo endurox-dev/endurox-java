@@ -3,7 +3,7 @@ package org.endurox;
 /**
  * Typed JSON ATMI buffer
  */
-public class TypedJson extends AtmiBuf {
+public class TypedJson extends TypedBuffer {
 	
    /**
     * Initialize JSON buffer

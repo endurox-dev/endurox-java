@@ -36,8 +36,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
-#include "org_endurox_AtmiBuf.h"
-#include "org_endurox_AtmiBufRef.h"
+#include "org_endurox_TypedBuffer.h"
+#include "org_endurox_TpCallResult.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -58,12 +58,12 @@
  * @param env java env
  * @param atmiCtxObj AtmiCtx object
  * @param svc service name
- * @param idata input buffer (AtmiBuffer based object)
- * @param odata output buffer (AtmiBufferRef based object, as the return class can change)
+ * @param data ATMI Buffer reference
  * @param flags standard tpcall(3) flags
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpCall
-  (JNIEnv *env, jobject atmiCtxObj, jstring svc, jobject idata, jobject odata, jlong flags)
+JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpCall
+  (JNIEnv *env, jobject atmiCtxObj, jstring svc, jobject idata, jlong flags)
+
 {
     int ret = EXSUCCEED;
     TPCONTEXT_T ctx;
@@ -82,12 +82,12 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpCall
     if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
     {
         goto out;
-    }
+    } 
     
     /* get data buffer... */
     if (NULL!=idata)
     {
-        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, idata, &ibuf, &ilen))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             EXFAIL_OUT(ret);
@@ -104,7 +104,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpCall
      * and unset the pointer in the original AtmiBuf, so that it does not
      * make it free.
      */
- 
+    
 out:
 
     if (n_svc_copy)

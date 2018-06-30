@@ -1,7 +1,7 @@
 /**
- * @brief ATMI Context backing JNI functions
+ * @brief Typed buffer operations
  *
- * @file AtmiBuf.c
+ * @file TypedBuffer.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@
  */
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
-#include "org_endurox_AtmiBuf.h"
+#include "org_endurox_TypedBuffer.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -53,13 +53,13 @@
  * @param do_set should we set the context?
  * @return context pointer
  */
-expublic TPCONTEXT_T ndrxj_AtmiBuf_get_ctx(JNIEnv *env, jobject atmiBufObj, int do_set)
+expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, jobject atmiBufObj, int do_set)
 {
      TPCONTEXT_T ctx;
 
     jclass objClass = (*env)->GetObjectClass(env, atmiBufObj);
     jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
-            "Lorg/endurox/AtmiCtx;");
+            "Lorg/endurox/TypedBuffer;");
     jobject atmi_ctx_obj = (*env)->GetObjectField(env, atmiBufObj, atmi_ctx_fld);
     
     if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj, do_set)))
@@ -77,14 +77,14 @@ out:
  * @param obj ATMI buffer Object
  * @param cPtr C pointer to ATMI Buffer
  */
-expublic void JNICALL Java_org_endurox_AtmiBuf_tpfree (JNIEnv *env, jobject obj, 
+expublic void JNICALL Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject obj, 
         jlong cPtr)
 {
     TPCONTEXT_T ctx;
 
     jclass objClass = (*env)->GetObjectClass(env, obj);
     jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
-            "Lorg/endurox/AtmiCtx;");
+            "Lorg/endurox/TypedBuffer;");
     jobject atmi_ctx_obj = (*env)->GetObjectField(env, obj, atmi_ctx_fld);
     
     if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj, EXTRUE)))
@@ -116,7 +116,7 @@ out:
  * @param subtype optional sub-type
  * @return NULL (in case of error) java object
  */
-expublic jobject ndrxj_atmi_AtmiBuf_translate(JNIEnv *env, 
+expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, char *data, long len,
             char *type, char *subtype)
 {
@@ -271,7 +271,7 @@ out:
  * @return EXSUCCEED in case of OK, EXFAIL in case of failure
  * @thorws java exceptions if any
  */
-expublic int ndrxj_atmi_AtmiBuf_get_buffer(JNIEnv *env, 
+expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
             jobject data, char **buf, long *len)
 {
     int ret = EXSUCCEED;
@@ -326,7 +326,7 @@ out:
  * @param len new data size
  * @return EXSUCCEED/EXFAIL
  */
-expublic int ndrxj_atmi_AtmiBuf_set_buffer(JNIEnv *env, 
+expublic int ndrxj_atmi_TypedBuffer_set_buffer(JNIEnv *env, 
             jobject data, char *buf, long len)
 {
     int ret = EXSUCCEED;
@@ -372,15 +372,56 @@ out:
 }
 
 /**
- * Get buffer from buffer reference
+ * Set data object of the ATMI Buffer reference
+ * @param env java env 
+ * @param dataRef data reference object
+ * @param dataObj data object
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_atmi_AtmiBufRef_set_dataobj(JNIEnv *env, 
+            jobject dataRef, jobject dataObj)
+{
+    int ret = EXSUCCEED;
+    
+    jclass clz;
+    jfieldID buf_fldid;
+    jobject bufobj;
+    
+    clz = (*env)->FindClass(env, "org/endurox/AtmiBufRef");
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to get AtmiBufRef class!");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (NULL==(buf_fldid = (*env)->GetFieldID(env, clz, "buf", "Lorg/endurox/AtmiBuf;")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [cPtr] field from AtmiBuf: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    (*env)->SetObjectField(env, dataRef, buf_fldid, dataObj);
+    
+out:
+    
+    return ret;
+}
+
+/**
+ * Get buffer from buffer reference.
+ * This shall return buffer object pointer too.
  * @param env Java env reference
  * @param data data buffer (reference to buf)
  * @param buf[out] C buffer pointer
  * @param len[out] C data len
+ * @param dataobj[out] Data object (optional
  * @return EXSUCCEED or EXFAIL (in this case Exception will bet set)
  */
 expublic int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env, 
-            jobject dataRef, char **buf, long *len)
+            jobject dataRef, char **buf, long *len, jobject *dataObj)
 {
     int ret = EXSUCCEED;
     
@@ -406,8 +447,12 @@ expublic int ndrxj_atmi_AtmiBufRef_get_buffer(JNIEnv *env,
     
     bufobj = (*env)->GetObjectField(env, dataRef, buf_fldid);
 
+    if (NULL!=dataObj)
+    {
+        *dataObj = bufobj;
+    }
     
-    if (EXSUCCEED!=(ret = ndrxj_atmi_AtmiBuf_get_buffer(env, bufobj, buf, len)))
+    if (EXSUCCEED!=(ret = ndrxj_atmi_TypedBuffer_get_buffer(env, bufobj, buf, len)))
     {
         NDRX_LOG(log_error, "Failed to get buffer pointer");
         EXFAIL_OUT(ret);
@@ -418,6 +463,21 @@ out:
     NDRX_LOG(log_debug, "%s returns %d %p %d", __func__, ret, *buf, *len);
     
     return ret;
+}
+
+/**
+ * 
+ * @param env
+ * @param dataRef
+ * @param buf
+ * @param len
+ * @param dataObj
+ * @return 
+ */
+expublic int ndrxj_atmi_AtmiBufRef_update(JNIEnv *env, 
+            jobject dataRef, char *buf, long *len, jobject *dataObj)
+{
+    
 }
 
 /**
@@ -433,12 +493,12 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiBuf_tpRealloc
     long len;
     
     /* Switch context (get from buffer) */
-    if (NULL==ndrxj_AtmiBuf_get_ctx(env, data, EXTRUE))
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
         return;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len))
     {
         NDRX_LOG(log_error, "Failed to extract ATMI buffer from AtmiBuf Object");
         goto out;
@@ -454,7 +514,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiBuf_tpRealloc
     
     /* Set buffer back/update object */
     
-    if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_set_buffer(env, data, buf, len))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_set_buffer(env, data, buf, len))
     {
         /* Exception must be set */
         NDRX_LOG(log_error, "Failed to update ATMI Buffer with reallocated data %p/%ld",

@@ -65,8 +65,8 @@ add_jar(enduroxjava
 # Create JNI headers
 create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
-        org.endurox.AtmiBuf
-        org.endurox.AtmiBufRef
+        org.endurox.TypedBuffer
+        org.endurox.TpCallResult
         org.endurox.TpInit
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     CLASSPATH enduroxjava)

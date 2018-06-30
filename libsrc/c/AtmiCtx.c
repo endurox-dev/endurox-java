@@ -245,7 +245,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env,
 /*
  * Class:     org_endurox_AtmiCtx
  * Method:    tpAlloc
- * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/AtmiBuf;
+ * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/TypedBuffer;
  */
 expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, 
         jstring btype, jstring bsubtype, jlong size)
@@ -296,7 +296,7 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject 
     }
     
     /* Translate the handler to Java side */
-    ret = ndrxj_atmi_AtmiBuf_translate(env,  obj, EXTRUE, data, size, 
+    ret = ndrxj_atmi_TypedBuffer_translate(env,  obj, EXTRUE, data, size, 
             (char *)n_btype, (char *)n_bsubtype);
     
 out:
@@ -828,7 +828,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpReturn
     /* get data buffer... */
     if (NULL!=data)
     {
-        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             EXFAIL_OUT(ret);
@@ -867,7 +867,7 @@ expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpForward
     /* get data buffer... */
     if (NULL!=data)
     {
-        if (EXSUCCEED!=ndrxj_atmi_AtmiBuf_get_buffer(env, data, &buf, &len))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             EXFAIL_OUT(ret);

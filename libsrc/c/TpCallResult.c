@@ -1,7 +1,7 @@
 /**
- * @brief Commons for Enduro/X JAVA lib
+ * @brief TpCall Result operations
  *
- * @file libsrc.c
+ * @file TpCallResult.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -32,65 +32,67 @@
  */
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
+#include "org_endurox_TypedBuffer.h"
 #include <atmi.h>
+#include <oatmi.h>
+#include <ndebug.h>
+#include "libsrc.h"
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
-
-/** Log exception to ndrx logger */
-#define NDRXJ_LOGEX_NDRX          0x0001
-/** Log exception to ulog logger */
-#define NDRXJ_LOGEX_ULOG          0x0002
-
-
-/**
- * Log exception
- * @param ENV__ Java Env for which exception have occurred
- * @param LEV__ log level
- * @param ULOG__ use log EXTRUE/EXFALSE
- * @param FMT__ format string. Note first argument will be %s for stack trace
- * @param ... var arguments to format
- */
-#define NDRXJ_LOG_EXCEPTION(ENV__, LEV__, FLAGS__, FMT__, ...) {\
-\
-    char *jerr__ = ndrxj_exception_backtrace(ENV__);\
-    \
-    if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
-        userlog(FMT__, jerr__, ##__VA_ARGS__);\
-    if (FLAGS__ & NDRXJ_LOGEX_ULOG)\
-        NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
-    NDRX_FREE(jerr__);\
-}
+#define TPCALLRESULT_CLASS  "org/endurox/TypedBuffer"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-/* Exception ops: */
-extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
-extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
-extern char *ndrxj_exception_backtrace(JNIEnv *env);
+/**
+ * Set data object of the ATMI Buffer reference
+ * @param env java env 
+ * @param dataObj data object
+ * @return Result object or 
+ */
+expublic jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env, 
+        jobject dataObj, long tprucode)
+{
+    jobject ret = NULL;
+    jclass bclz;
+    jmethodID mid;
+    
+    /* Set context if needed */
+    
+    NDRX_LOG(log_debug, "Allocating TpCallResult...");
+    
+    bclz = (*env)->FindClass(env, TPCALLRESULT_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        NDRX_LOG(log_error, "Failed to find class [%s]", TPCALLRESULT_CLASS);
+        goto out;
+    }
+    
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(L" TPCALLRESULT_CLASS ";J)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get %s constructor!", TPCALLRESULT_CLASS);
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "About to NewObject() of TpCallResult");
+    
+    ret = (*env)->NewObject(env, bclz, mid, dataObj, (jlong)tprucode);
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to create [%s] instance", TPCALLRESULT_CLASS);
+        goto out;
+    }
 
-/* ClientId ops: */
-extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
-
-/* AtmiBuf ops: */
-
-extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, char *data, long len,
-            char *type, char *subtype);
-
-extern int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
-            jobject data, char **buf, long *len);
-
-extern jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env, 
-        jobject dataObj, long tprucode);
-
-/* TpSvcInfo ops: */
-extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
-
+out:
+    return ret;
+}     
+        
+        
 /* vim: set ts=4 sw=4 et cindent: */

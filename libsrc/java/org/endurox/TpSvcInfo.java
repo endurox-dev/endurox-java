@@ -9,7 +9,7 @@ public class TpSvcInfo {
     String  name;
     
     /** ATMI data buffer */
-    AtmiBuf data;
+    TypedBuffer data;
     
     /** Call flags */
     long    flags;
@@ -32,7 +32,7 @@ public class TpSvcInfo {
     }
 
     /** @return Call data */
-    public AtmiBuf getData() {
+    public TypedBuffer getData() {
         return data;
     }
 
@@ -71,7 +71,7 @@ public class TpSvcInfo {
      * @param cltId client id object
      * @param fname function name invoked
      */
-    public TpSvcInfo(String name, AtmiBuf data, long flags, int cd, long appkey, 
+    public TpSvcInfo(String name, TypedBuffer data, long flags, int cd, long appkey, 
             ClientId cltId, String fname) {
         this.name = name;
         this.data = data;

@@ -109,7 +109,7 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     }
     
     /* Translate ATMI buffer */
-    if (NULL==(jdata=ndrxj_atmi_AtmiBuf_translate(env, 
+    if (NULL==(jdata=ndrxj_atmi_TypedBuffer_translate(env, 
             ctx_obj, EXTRUE, svcinfo->data, svcinfo->len,
             NULL, NULL)))
     {

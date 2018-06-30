@@ -1,6 +1,6 @@
 package org.endurox;
 
-public class TypedView extends AtmiBuf {
+public class TypedView extends TypedBuffer {
 	
    /**
     * Initialise VIEW Object

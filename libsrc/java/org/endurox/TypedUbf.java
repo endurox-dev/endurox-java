@@ -1,6 +1,6 @@
 package org.endurox;
 
-public class TypedUbf extends AtmiBuf {
+public class TypedUbf extends TypedBuffer {
 	
    /**
     * Initialise UBF Object
