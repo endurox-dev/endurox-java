@@ -16,6 +16,22 @@ import java.util.concurrent.locks.ReentrantLock;
  * @brief Enduro/X ATMI Context Class
  *  This is main class used for almost all operations with Enduro/X middleware
  */
+
+/*! \mainpage Enduro/X Programming main page
+ *
+ * \section standard_sec Programming standard page
+ *
+ * This section lists API practices used by Enduro/X Java package
+ *
+ * \subsection atmi_api_sec ATMI API
+ * ATMI API uses lower case function names (instead of Java camel case). This
+ * is for clener compatibility with C XATMI API.
+ *
+ * \subsection java_api_sec Java Specific API
+ * Java Specific APIs are using standard camel cases method names.
+ *
+ */
+
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
  * Copyright (C) 2018, Mavimax, Ltd. All Rights Reserved.

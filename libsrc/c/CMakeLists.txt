@@ -63,7 +63,7 @@ add_library (exjava SHARED
         TpSvcInfo.c
         ClientId.c
         exceptions.c
-        tpCall.c
+        tpcallj.c
 	)
 
 
