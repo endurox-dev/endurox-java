@@ -67,7 +67,7 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /* Exception ops: */
-extern void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...);
+extern void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt, ...);
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
@@ -77,7 +77,7 @@ extern char *ndrxj_exception_backtrace(JNIEnv *env);
 extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
 
-/* AtmiBuf ops: */
+/* TypedBuffer ops: */
 
 extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, char *data, long len,
@@ -86,8 +86,15 @@ extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
 extern int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
             jobject data, char **buf, long *len);
 
+extern jobject ndrxj_atmi_TypedBuffer_result_prep
+  (JNIEnv *env, jobject ctx_obj, jobject data, char *idata, 
+        long ilen, char *odata, long olen);
+
+
+/* TpCallResult ops: */
+
 extern jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env, 
-        jobject dataObj, long tprucode);
+        jobject ctx_obj, jobject dataObj, long tprucode);
 
 /* TpSvcInfo ops: */
 extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 

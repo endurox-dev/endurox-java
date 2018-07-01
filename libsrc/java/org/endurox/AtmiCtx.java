@@ -546,10 +546,9 @@ public class AtmiCtx {
      * @param idata Input buffer
      * @param flags ATMI flags; TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPTRANSUSPEND,
      *  TPNOBLOCK
-     * @return TpCall Result object. The inside buffer might be changed or
-     *  the same as input buffer (in case if type not changed).
+     * @return We return the buffer form the call.
      */
-    public native TpCallResult tpCall(String svc, TypedBuffer idata, long flags);
+    public native TypedBuffer tpCall(String svc, TypedBuffer idata, long flags);
     
 }
 

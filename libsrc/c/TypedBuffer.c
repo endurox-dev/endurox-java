@@ -163,7 +163,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
                     tpstrerror(tperrno));
             
             /* throw exception */
-            ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
             
             ret = NULL;
             goto out;
@@ -213,7 +213,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     }
     else
     {
-        ndrxj_atmi_throw(env, TPEINVAL, "buffer type [%s] not supported", 
+        ndrxj_atmi_throw(env, NULL, TPEINVAL, "buffer type [%s] not supported", 
                 p_type);
         goto out;
     }
@@ -401,7 +401,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedBuffer_tpRealloc
     if (NULL==(buf = tprealloc(buf, (long)size)))
     {
         NDRX_LOG(log_error, "Failed to reallocate buffer: %s", tpstrerror(tperrno));
-        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
         goto out;
     }
     
@@ -427,6 +427,7 @@ out:
  * If types are changed, the "data" object shall be marked as destructor
  * not needed and allocate new object according to the "odata" buffer
  * @param env java env
+ * @param ctx_obj ATMI Context obj
  * @param data original data object
  * @param idata input data pointer
  * @param ilen input data len
@@ -436,7 +437,8 @@ out:
  *  "data" object or new.
  */
 expublic jobject ndrxj_atmi_TypedBuffer_result_prep
-  (JNIEnv *env, jobject data, char *idata, long ilen, char *odata, long olen)
+  (JNIEnv *env, jobject ctx_obj, jobject data, char *idata, 
+        long ilen, char *odata, long olen)
 {
     jobject ret = NULL;
     char itype[XATMI_TYPE_LEN+1] = {EXEOS};
@@ -447,6 +449,12 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     
     int is_types_eq;
     
+    jclass clz;
+    jfieldID clen_fldid;
+    jfieldID cptr_fldid;
+    jfieldID dofin_fldid;
+
+
     if (idata!=odata)
     {
         if (NULL!=idata)
@@ -455,7 +463,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             {
                 NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
                         tpstrerror(tperrno));
-                ndrxj_atmi_throw(env, tperrno, "Failed to get idata type infos: %s", 
+                ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get idata type infos: %s", 
                         tpstrerror(tperrno));
                 goto out;
             }
@@ -467,7 +475,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             {
                 NDRX_LOG(log_error, "Failed to get odata type infos: %s", 
                         tpstrerror(tperrno));
-                ndrxj_atmi_throw(env, tperrno, "Failed to get odata type infos: %s", 
+                ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
                         tpstrerror(tperrno));
                 goto out;
             }
@@ -484,17 +492,11 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     }
     
     if (idata==odata || is_types_eq)
-    {
-        jclass clz;
-        jfieldID clen_fldid;
-        jfieldID cptr_fldid;
-        
-        
+    {    
         if (idata==odata && is_types_eq && ilen==olen)
         {
             NDRX_LOG(log_debug, "ptr, types and len not changed...");
             ret = data;
-            goto out;
         }
         
         clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
@@ -536,18 +538,58 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             (*env)->SetLongField(env, data, cptr_fldid, (jlong)odata);
 
         }
-        
-        return data;
     }
-    
-    /* TODO: 
-     * deactive the original buffer  and allocate new for odata (if odata is NULL
-     * then return TypedNULL
-     */
+    else
+    {
+        /* deactivate the original buffer and allocate new for odata (if odata is NULL
+         * then return TypedNULL. But we could also return NULL of the buffer object
+         */
+
+        clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
+
+        if (NULL==clz)
+        {        
+            /* I guess we need to abort here! 
+             * exception should be set already
+             */
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                        "Failed to resolve `" TYPEDBUFFER_CLASS "' class! ");
+            goto out;
+        }
+
+        /* Change the not finalize flag */
+
+        if (NULL==(dofin_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Failed to get [doFinalize] field from " TYPEDBUFFER_CLASS ": %s");
+            goto out;
+        }
+
+        (*env)->SetBooleanField(env, data, dofin_fldid, (jboolean)JNI_FALSE);
+
+        /* now allocate new typed buffer */
+
+        if (NULL==odata)
+        {
+            NDRX_LOG(log_debug, "NULL buffer");
+            ret = NULL;
+        }
+        else
+        {
+            /* exception shall be set */
+            if (NULL==(ret = ndrxj_atmi_TypedBuffer_translate(env, 
+                ctx_obj, EXTRUE, odata, olen,
+                otype, osubtype)))
+            {
+                NDRX_LOG(log_error, "Failed to translate buffer %p", odata);
+                goto out;
+            }
+        }
+    }
     
 out:
     return ret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
-

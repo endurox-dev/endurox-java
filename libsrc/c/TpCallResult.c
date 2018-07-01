@@ -52,7 +52,7 @@
  * @param dataObj data object
  * @return Result object or 
  */
-expublic jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env, 
+expublic jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env, jobject ctx_obj,
         jobject dataObj, long tprucode)
 {
     jobject ret = NULL;

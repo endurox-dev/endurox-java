@@ -86,7 +86,7 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 
     if (NULL==ctx)
     {
-        ndrxj_atmi_throw(env, TPEINVAL, "NULL C context for ATMI Context OP!");
+        ndrxj_atmi_throw(env, NULL, TPEINVAL, "NULL C context for ATMI Context OP!");
     }
     else
     {
@@ -266,7 +266,7 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject 
 
     if (NULL==btype)
     {
-        ndrxj_atmi_throw(env, TPEINVAL,
+        ndrxj_atmi_throw(env, NULL, TPEINVAL,
                 "`type' is mandatory for tpAlloc, but got NULL!");
         goto out;
     }
@@ -291,7 +291,7 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject 
     {
         int err = tperrno;
         /* Generate exception! */
-        ndrxj_atmi_throw(env, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, NULL, err, tpstrerror(err));
         goto out;
     }
     
@@ -328,7 +328,7 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
 
     if (NULL==ctx)
     {
-        ndrxj_atmi_throw(env, TPESYSTEM, "Failed to allocate new ATMI context!");
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to allocate new ATMI context!");
     }
     else
     {
@@ -567,7 +567,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertiseC
         NDRX_LOG(log_error, "Failed to advertise service [%s] func [%s]: %s",
                 n_svcname, n_funcname, tpstrerror(tperrno));
         
-        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
         goto out;
     }
     
@@ -704,7 +704,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     {
         if (size < 4)
         {
-            ndrxj_atmi_throw(env, TPEINVAL, "Invalid argument count for server, "
+            ndrxj_atmi_throw(env, NULL, TPEINVAL, "Invalid argument count for server, "
                     "expected at least 4, got %d", size);
             EXFAIL_OUT(ret);
         }
@@ -722,7 +722,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
         int err = errno;
         NDRX_LOG(log_error, "Failed to realloc %d bytes: %s",   
             size, strerror(err));
-        ndrxj_atmi_throw(env, TPESYSTEM, "Failed to realloc %d bytes: %s",
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to realloc %d bytes: %s",
             size, strerror(err));
         EXFAIL_OUT(ret);
     }
@@ -749,7 +749,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
             int err = errno;
             NDRX_LOG(log_error, "Failed to strdup bytes: %s",   
                 strerror(err));
-            ndrxj_atmi_throw(env, TPESYSTEM, "Failed to strdup bytes: %s",
+            ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to strdup bytes: %s",
                 strerror(err));
             
             if (n_elm_copy)
@@ -780,7 +780,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     /* Throw exception if any... */
     if (EXSUCCEED!=ret && 0!=tperrno)
     {
-        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
     }
     
 out:
@@ -923,7 +923,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpInit
     
     if (EXSUCCEED!=tpinit(NULL))
     {
-        ndrxj_atmi_throw(env, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);

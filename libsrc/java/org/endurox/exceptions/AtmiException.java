@@ -1,21 +1,35 @@
 package org.endurox.exceptions;
 import org.endurox.AtmiConstants;
+import org.endurox.TypedBuffer;
 
 /**
  * ATMI Base exception
  */
 public class AtmiException extends RuntimeException {
+
+    /**
+     * reference to typed buffer (if any, can be set for tpcall results)
+     */
+    TypedBuffer data;
+
+    /**
+     * Get the reply buffer (if any)
+     * @return return reply buffer from tpcall
+     */
+    public TypedBuffer getReplyBuffer() {
+        return data;
+    }
+    
+    /**
+     * Error code
+     */
+    int errorCode;
 	
-	/**
-	 * Error code
-	 */
-	private int errorCode;
-	
-	/**
-	 * Create ATMI Exception
-	 * @param tperrno tp error code
-	 * @param msg error message
-	 */
+    /**
+     * Create ATMI Exception
+     * @param tperrno tp error code
+     * @param msg error message
+     */
     public AtmiException(int tperrno, String msg) {
         super(msg);
         

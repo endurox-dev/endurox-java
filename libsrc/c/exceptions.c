@@ -39,6 +39,7 @@
 #include <oatmi.h>
 #include <ndebug.h>
 #include <nerror.h>
+#include "libsrc.h"
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 #define ERROR_MAX               1024
@@ -54,10 +55,11 @@
 /**
  * Throw ATMI error 
  * @param env java env
+ * @param data Any typed buffer associated with error / tpcall result
  * @param err ATMI Errro code
  * @param msg message
  */
-expublic void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
+expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
@@ -67,6 +69,10 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
     vsnprintf (error, sizeof(error), msgfmt, args);
     va_end (args);
     
+    jobject exception = NULL;
+    jmethodID mid;
+    jfieldID data_fldid;
+    
     snprintf(cls, sizeof(cls), "org/endurox/exceptions/Atmi%sException", 
             tpecodestr(err));
     
@@ -74,13 +80,43 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, int err, char *msgfmt, ...)
     
     ex = (*env)->FindClass(env, cls);
     
-    if (!ex)
+    mid = (*env)->GetMethodID(env, ex, "<init>", "(Ljava/lang/String;)V)V");
+    
+    if (NULL==mid)
     {
-        NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
-        abort();
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Cannot get constructor for ATMI exception: %s");
+        return;
     }
+    
+    exception = (*env)->NewObject(env, ex, mid, error);
+    
+    if (NULL==exception)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to create exception object: %s");
+        return;
+    }
+    
+    /* set data field if any */
+    
+    if (NULL!=data)
+    {
+        if (NULL==(data_fldid = (*env)->GetFieldID(env, ex, "data", "Lorg/endurox/TypedBuffer;")))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Failed to find data field in exception: %s");
+            return;
+        }
         
-    (*env)->ThrowNew(env, ex, error);
+        /* set object */
+        
+        (*env)->SetObjectField(env, exception, data_fldid, data);
+    }
+    
+    /* throw finally */
+    (*env)->Throw(env, (jthrowable)ex);
+    
 }
 
 /**
