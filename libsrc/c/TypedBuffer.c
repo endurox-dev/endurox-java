@@ -230,7 +230,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     }
     
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/TypedBuffer;ZJJ)V");
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V");
     
     if (NULL==mid)
     {
@@ -459,7 +459,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     {
         if (NULL!=idata)
         {
-            if (EXSUCCEED!=tptypes(idata, itype, isubtype))
+            if (EXFAIL==tptypes(idata, itype, isubtype))
             {
                 NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
                         tpstrerror(tperrno));
@@ -471,7 +471,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
         
         if (NULL!=odata)
         {
-            if (EXSUCCEED!=tptypes(odata, otype, osubtype))
+            if (EXFAIL==tptypes(odata, otype, osubtype))
             {
                 NDRX_LOG(log_error, "Failed to get odata type infos: %s", 
                         tpstrerror(tperrno));

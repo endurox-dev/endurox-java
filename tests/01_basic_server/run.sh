@@ -12,10 +12,10 @@ popd
 # Start the enduro/x app server (which will boot the our server executable)
 
 xadmin start -y
-rm /tmp/09_CLIENT.log 2>/dev/null
+rm /tmp/01_CLIENT.log 2>/dev/null
 
 # should print some hello world
-client 
+client.sh > /tmp/01_CLIENT.log 2>&1
 
 RET=$?
 

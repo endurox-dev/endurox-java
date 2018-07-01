@@ -80,7 +80,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     
     ex = (*env)->FindClass(env, cls);
     
-    mid = (*env)->GetMethodID(env, ex, "<init>", "(Ljava/lang/String;)V)V");
+    mid = (*env)->GetMethodID(env, ex, "<init>", "(Ljava/lang/String;)V");
     
     if (NULL==mid)
     {
@@ -115,7 +115,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     }
     
     /* throw finally */
-    (*env)->Throw(env, (jthrowable)ex);
+    (*env)->Throw(env, (jthrowable)exception);
     
 }
 

@@ -9,5 +9,9 @@ public class JClient01 {
         ctx.tpInit(null);
         ctx.tpLogInfo("Client process started...");
         ctx.userLog("Hello from Userlog");
+
+        TypedUbf u = (TypedUbf) ctx.tpAlloc("UBF", null, 1024);
+
+        u = (TypedUbf)ctx.tpCall("HELLOSVC", u, 0);
     }
 }

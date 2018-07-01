@@ -100,7 +100,7 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     
     /* create buffer object... */
     mid = (*env)->GetMethodID(env, bclz, "<init>", "(Ljava/lang/String;"
-            "Lorg/endurox/AtmiBuf;JIJLorg/endurox/ClientId;Ljava/lang/String;)V");
+            "Lorg/endurox/TypedBuffer;JIJLorg/endurox/ClientId;Ljava/lang/String;)V");
     
     if (NULL==mid)
     {

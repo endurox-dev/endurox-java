@@ -77,7 +77,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpCall
     long olen = 0;
     
     jboolean n_svc_copy = EXFALSE;
-    const char *n_svc;
+    const char *n_svc = NULL;
 
     /* get context & set */
     
@@ -96,9 +96,9 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpCall
         }
     }
     
-    /* TODO: Extract obuf, & olen from AtmiBufferRef */
+    /* Extract obuf, & olen from AtmiBufferRef */
     
-    (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
+    n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
     
     /* OK might get exception, but there could be buffer associated with it.. */
     if (EXSUCCEED!=tpcall((char *)n_svc, ibuf, ilen, &obuf, &olen, (long)flags))
