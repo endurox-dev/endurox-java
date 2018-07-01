@@ -379,7 +379,7 @@ out:
  * @param data ATMI buffer object
  * @param size new buffer size
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedBuffer_tpRealloc
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedBuffer_tprealloc
   (JNIEnv *env, jobject data, jlong size)
 {
     char *buf;

@@ -139,7 +139,7 @@ public class AtmiCtx {
      * @throw AtmiTPESYSTEMException system exception occurred
      * @throw AtmiTPEOSException Operating System error occurred
      */
-    public native TypedBuffer tpAlloc(String btype, String bsubtype, long size);
+    public native TypedBuffer tpalloc(String btype, String bsubtype, long size);
 
     /**
      * Allocate new ATMI Context
@@ -249,7 +249,7 @@ public class AtmiCtx {
      * @param data data buffer to return, can be NULL to?
      * @param flags 
      */
-    public native void tpReturn(int rval, long rcode, TypedBuffer data, long flags);
+    public native void tpreturn(int rval, long rcode, TypedBuffer data, long flags);
     
     /**
      * Forward the call to other service for processing
@@ -257,7 +257,7 @@ public class AtmiCtx {
      * @param data data buffer to send
      * @param flags call flags (reserved )
      */
-    public native void tpForward(String svcname, TypedBuffer data, long flags);
+    public native void tpforward(String svcname, TypedBuffer data, long flags);
     
     /**
      * Incoming service call dispatch to advertised service.
@@ -286,7 +286,7 @@ public class AtmiCtx {
      * @throws  AtmiTPEINVALException invalid command line arguments or invalid
      *  ATMI context.
      */
-    public synchronized int tpRun(Server svr, String[] arg)
+    public synchronized int tprun(Server svr, String[] arg)
     {
         if (null==svr)
         {
@@ -295,7 +295,7 @@ public class AtmiCtx {
         
         this.svr = svr;
         
-        tpLogNdrx(AtmiConstants.LOG_INFO, "Booting server");
+        tplogndrx(AtmiConstants.LOG_INFO, "Booting server");
         
         /* Call native server entry (this should in return boot call server
          * interface 
@@ -310,7 +310,7 @@ public class AtmiCtx {
      * @throws  AtmiTPEINVALException invalid command line arguments or invalid
      *  ATMI context.
      */
-    public synchronized int tpRun(Server svr)
+    public synchronized int tprun(Server svr)
     {
         if (null==svr)
         {
@@ -319,7 +319,7 @@ public class AtmiCtx {
         
         this.svr = svr;
         
-        tpLogNdrx(AtmiConstants.LOG_INFO, "Booting server");
+        tplogndrx(AtmiConstants.LOG_INFO, "Booting server");
         
         /* Call native server entry (this should in return boot call server
          * interface 
@@ -334,7 +334,7 @@ public class AtmiCtx {
      * @param line optional line number in file (if no metadata infos, use -1)
      * @param message log message
      */
-    private native void tpLogC(int lev, String file, long line, String message);
+    private native void tplogC(int lev, String file, long line, String message);
 
     /**
      * NDRX package internal logger
@@ -343,7 +343,7 @@ public class AtmiCtx {
      * @param line optional line number in file (if no metadata infos, use -1)
      * @param message log message
      */
-    private native void tpLogNdrxC(int lev, String file, long line, String message);
+    private native void tplogndrxC(int lev, String file, long line, String message);
     
     /**
      * Query logger information
@@ -352,7 +352,7 @@ public class AtmiCtx {
      * @return LOG_FACILITY_ bits, TPLOGQI_RET_ bits, and bits from 24..32 
      *  represents log level.
      */
-    public native int tpLogQInfo(int lev, long flags);
+    public native int tplogqinfo(int lev, long flags);
     
     /**
      * Call the C side of advertise. This basically performs the low level
@@ -365,7 +365,7 @@ public class AtmiCtx {
      *    See logs i.e. user log, or debugs for more info. That could insufficient 
      *    memory or other error.
      */
-    private native void tpAdvertiseC(String svcname, String funcname);
+    private native void tpadvertiseC(String svcname, String funcname);
 
     /**
      * Advertise service.
@@ -376,10 +376,10 @@ public class AtmiCtx {
      *    See logs i.e. user log, or debugs for more info. That could insufficient 
      *    memory or other error.
      */
-    public void tpAdvertise(String svcname, String funcname, Service svc) {
+    public void tpadvertise(String svcname, String funcname, Service svc) {
     
 	/* call the native interface - advertise service*/
-        tpAdvertiseC(svcname, funcname);
+        tpadvertiseC(svcname, funcname);
 	
 	/* add service to hash list */
         svcMap.put(svcname, svc);
@@ -392,9 +392,9 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments  format arguments
      */
-    void tpLogNdrx(int lev, String format, Object... arguments) {
+    void tplogndrx(int lev, String format, Object... arguments) {
 
-        int log_config = tpLogQInfo(lev,
+        int log_config = tplogqinfo(lev,
                 AtmiConstants.TPLOGQI_GET_NDRX | AtmiConstants.TPLOGQI_EVAL_DETAILED);
 
         String filename = "";
@@ -417,7 +417,7 @@ public class AtmiCtx {
         /* write the log according to the detail level with or with out
          * stack tracking
          */
-        tpLogNdrxC(lev, filename, line, String.format(format, arguments));
+        tplogndrxC(lev, filename, line, String.format(format, arguments));
     }
 
     /**
@@ -427,9 +427,9 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments  format arguments
      */
-    public void tpLog(int lev, boolean directCall, String format, Object... arguments) {
+    public void tplog(int lev, boolean directCall, String format, Object... arguments) {
         
-        int log_config = tpLogQInfo(lev, 
+        int log_config = tplogqinfo(lev, 
                 AtmiConstants.TPLOGQI_GET_TP | AtmiConstants.TPLOGQI_EVAL_DETAILED);
         
         String filename = "";
@@ -457,7 +457,7 @@ public class AtmiCtx {
         /* write the log according to the detail level with or with out
          * stack tracking
          */
-        tpLogC(lev, filename, line, String.format(format, arguments));
+        tplogC(lev, filename, line, String.format(format, arguments));
     }
     
     /**
@@ -465,8 +465,8 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments variable args 
      */
-    public void tpLogAlways(String format, Object... arguments) {
-        tpLog(AtmiConstants.LOG_ALWAYS, false, format, arguments);
+    public void tplogAlways(String format, Object... arguments) {
+        tplog(AtmiConstants.LOG_ALWAYS, false, format, arguments);
     }   
     
     /**
@@ -474,8 +474,8 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments variable args 
      */
-    public void tpLogError(String format, Object... arguments) {
-        tpLog(AtmiConstants.LOG_ERROR, false, format, arguments);
+    public void tplogError(String format, Object... arguments) {
+        tplog(AtmiConstants.LOG_ERROR, false, format, arguments);
     }
     
     /**
@@ -483,8 +483,8 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments variable args 
      */
-    public void tpLogWarn(String format, Object... arguments) {
-        tpLog(AtmiConstants.LOG_WARN, false, format, arguments);
+    public void tplogWarn(String format, Object... arguments) {
+        tplog(AtmiConstants.LOG_WARN, false, format, arguments);
     }
     
     /**
@@ -492,8 +492,8 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments variable args 
      */
-    public void tpLogInfo(String format, Object... arguments) {
-        tpLog(AtmiConstants.LOG_INFO, false, format, arguments);
+    public void tplogInfo(String format, Object... arguments) {
+        tplog(AtmiConstants.LOG_INFO, false, format, arguments);
     }
     
     /**
@@ -501,8 +501,8 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments variable args 
      */
-    public void tpLogDebug(String format, Object... arguments) {
-        tpLog(AtmiConstants.LOG_DEBUG, false, format, arguments);
+    public void tplogDebug(String format, Object... arguments) {
+        tplog(AtmiConstants.LOG_DEBUG, false, format, arguments);
     }
     
     /**
@@ -510,8 +510,8 @@ public class AtmiCtx {
      * @param format format string
      * @param arguments variable args 
      */
-    public void tpLogDump(String format, Object... arguments) {
-        tpLog(AtmiConstants.LOG_DUMP, false, format, arguments);
+    public void tplogDump(String format, Object... arguments) {
+        tplog(AtmiConstants.LOG_DUMP, false, format, arguments);
     }
     
     /**
@@ -523,21 +523,21 @@ public class AtmiCtx {
      * @throws AtmiTPEOSException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
      */
-    public native void tpInit(TpInit tpinfo);
+    public native void tpinit(TpInit tpinfo);
     
     /**
      * Write user log message
      * @param msg formatted message to log in user log
      */
-    private native void userLogC(String msg);
+    private native void userlogC(String msg);
     
     /**
      * Write user log (for more critical events)
      * @param format java format string
      * @param arguments arguments for format string
      */
-    public void userLog(String format, Object... arguments) {
-        userLogC(String.format(format, arguments));
+    public void userlog(String format, Object... arguments) {
+        userlogC(String.format(format, arguments));
     }
     
     /**
@@ -548,7 +548,7 @@ public class AtmiCtx {
      *  TPNOBLOCK
      * @return We return the buffer form the call.
      */
-    public native TypedBuffer tpCall(String svc, TypedBuffer idata, long flags);
+    public native TypedBuffer tpcall(String svc, TypedBuffer idata, long flags);
     
 }
 

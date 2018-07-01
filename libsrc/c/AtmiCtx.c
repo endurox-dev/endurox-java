@@ -107,7 +107,7 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
  * @param flags flags
  * @return logger configuration
  */
-jint JNICALL Java_org_endurox_AtmiCtx_tpLogQInfo (JNIEnv *env, jobject obj, 
+jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject obj, 
         jint lev, jlong flags)
 {
     TPCONTEXT_T ctx;
@@ -140,7 +140,7 @@ out:
  * @param line line number of -1 if no detailed log user
  * @param msg message to log
  */
-void JNICALL Java_org_endurox_AtmiCtx_tpLogC(JNIEnv * env, jobject obj, jint lev, 
+void JNICALL Java_org_endurox_AtmiCtx_tplogC(JNIEnv * env, jobject obj, jint lev, 
         jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;
@@ -189,7 +189,7 @@ out:
  * @param line line number of -1 if no detailed log user
  * @param msg message to log
  */
-void JNICALL Java_org_endurox_AtmiCtx_tpLogNdrxC(JNIEnv * env, jobject obj, jint lev, 
+void JNICALL Java_org_endurox_AtmiCtx_tplogndrxC(JNIEnv * env, jobject obj, jint lev, 
         jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;
@@ -244,10 +244,10 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env,
 
 /*
  * Class:     org_endurox_AtmiCtx
- * Method:    tpAlloc
+ * Method:    tpalloc
  * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/TypedBuffer;
  */
-expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpAlloc (JNIEnv *env, jobject obj, 
+expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jobject obj, 
         jstring btype, jstring bsubtype, jlong size)
 {
     jobject ret = NULL;
@@ -548,7 +548,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
  * Method:    tpAdvertiseC
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpAdvertiseC
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpadvertiseC
       (JNIEnv *env, jobject obj, jstring svcname, jstring funcname)
 {
     /* Hmm we could do advertise directly here the hash table could be stored
@@ -670,7 +670,7 @@ out:
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
  */
-expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj, 
+expublic jint JNICALL Java_org_endurox_AtmiCtx_tprunC(JNIEnv *env, jobject obj, 
         jobjectArray jargv, jboolean nocheck)
 {
     char **argv = NULL;
@@ -815,7 +815,7 @@ out:
  * @param data data buffer
  * @param flags return flags
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpReturn
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpreturn
   (JNIEnv *env, jobject obj, jint rval, jlong rcode, jobject data, jlong flags)
 {
     int ret = EXSUCCEED;
@@ -852,7 +852,7 @@ out:
  * @param data data buffer
  * @param flags RFU flags
  */
-expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpForward
+expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpforward
   (JNIEnv *env, jobject obj, jstring svcname, jobject data, jlong flags)
 {
     int ret = EXSUCCEED;
@@ -911,7 +911,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
  * @param atmiCtxObj ATMI Context object
  * @param tpinfo TpInit object (infos)
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpInit
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpinit
   (JNIEnv * env, jobject atmiCtxObj, jobject tpinfo)
 {
     TPCONTEXT_T ctx;
@@ -936,7 +936,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpInit
  * @param atmiCtxObj ATMI Object
  * @param msg message to log
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userLogC
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
   (JNIEnv *env, jobject atmiCtxObj, jstring msg)
 {
     jboolean n_msg_copy = EXFALSE;

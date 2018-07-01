@@ -63,7 +63,7 @@
  * @param data ATMI Buffer reference
  * @param flags standard tpcall(3) flags
  */
-JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpCall
+JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
   (JNIEnv *env, jobject atmiCtxObj, jstring svc, jobject idata, jlong flags)
 
 {
