@@ -25,7 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * \subsection atmi_api_sec ATMI API
  * ATMI API uses lower case function names (instead of Java camel case). This
- * is for clener compatibility with C XATMI API.
+ * is for clener compatibility with C XATMI API. The same goes with the constants.
+ * ATMI constants goes in upper case as in the C side.
  *
  * \subsection java_api_sec Java Specific API
  * Java Specific APIs are using standard camel cases method names.

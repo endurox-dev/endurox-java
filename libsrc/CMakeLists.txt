@@ -67,6 +67,7 @@ create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
         org.endurox.TypedBuffer
         org.endurox.TpCallResult
+        org.endurox.TypedUBF
         org.endurox.TpInit
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     CLASSPATH enduroxjava)

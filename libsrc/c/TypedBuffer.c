@@ -184,7 +184,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
             0==strncmp(p_type, "FML", 3))
     {
         /* UBF object */
-        snprintf(clazz, sizeof(clazz), "org/endurox/TypedUbf");
+        snprintf(clazz, sizeof(clazz), "org/endurox/TypedUBF");
     }
     else if (0==strcmp(p_type, "CARRAY"))
     {
