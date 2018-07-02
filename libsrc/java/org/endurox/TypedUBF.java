@@ -25,9 +25,10 @@ public class TypedUBF extends TypedBuffer {
     /**
      * Added Long value to UBF buffer
      * @param bfldid field id
-     * @param d 
+     * @param l long value
+     * @throws BALIGNERR, BNOTFLD, BNOSPACE
      */
-    public native void Badd(int bfldid, long d);
+    public native void Badd(int bfldid, long l);
     
     public native void Badd(int bfldid, char c);
     

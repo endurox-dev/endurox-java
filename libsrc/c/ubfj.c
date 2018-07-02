@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
 #include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TpCallResult.h"
+#include "org_endurox_TypedUBF.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -54,6 +54,17 @@
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
+
+/**
+ */
+public void JNICALL Java_org_endurox_TypedUBF_Badd__IS
+  (JNIEnv *env, jobject data, jint bfldid, jshort js)
+{
+    
+    /* perform Fadd - some common func, not, which switch the contact and
+     return the error if needed...
+     */  
+}
 
 
 /* vim: set ts=4 sw=4 et cindent: */
