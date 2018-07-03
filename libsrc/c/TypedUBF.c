@@ -55,12 +55,17 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-
 /**
- * Add field to UBF buffer. 
+ * Common field adding routine 
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid filed id (compiled)
+ * @param value field value
+ * @param len value length
+ * @param usrtype field type (see BFLD_*)
  */
 exprivate void ndrxj_ubf_CBadd(JNIEnv *env, jobject data, jint bfldid, 
-        char *buf, BFLDLEN len, int usrtype)
+        char *value, BFLDLEN len, int usrtype)
 {
     char *cdata;
     long clen;
@@ -73,28 +78,39 @@ exprivate void ndrxj_ubf_CBadd(JNIEnv *env, jobject data, jint bfldid,
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
     {
-        NDRX_LOG(log_err, "Failed to get buffer data");
+        NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;
     }
     
     /* Set the field */
     
-    /* Capture exception (if any) */
+    if (EXSUCCEED!=CBadd((UBFH*)cdata, bfldid, value, len, usrtype))
+    {
+        UBF_LOG(log_error, "%s: CBadd failed to add %d (%s): %s", 
+                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d (%s): %s", 
+                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+        goto out;
+    }
+    
+out:
     
     /* switch context back */
-out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
 /**
+ * Add field to buffer, short type
+ * @param env java env
+ * @param data TypedUBF buffer
+ * @param bfldid field id
+ * @param js short type
  */
-public void JNICALL Java_org_endurox_TypedUBF_Badd__IS
+expublic void JNICALL Java_org_endurox_TypedUBF_Badd__IS
   (JNIEnv *env, jobject data, jint bfldid, jshort js)
 {
-    
-    /* perform Fadd - some common func, not, which switch the contact and
-     return the error if needed...
-     */
+   short s = (short)js;
+   ndrxj_ubf_CBadd(env, data, bfldid, (char *)&s, 0L, BFLD_SHORT);
 }
 
 
