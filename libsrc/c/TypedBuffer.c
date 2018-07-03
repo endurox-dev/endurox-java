@@ -54,9 +54,10 @@
  * @param do_set should we set the context?
  * @return context pointer
  */
-expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, jobject atmiBufObj, int do_set)
+expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, 
+        jobject atmiBufObj, int do_set)
 {
-     TPCONTEXT_T ctx;
+    TPCONTEXT_T ctx;
 
     jclass objClass = (*env)->GetObjectClass(env, atmiBufObj);
     jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 

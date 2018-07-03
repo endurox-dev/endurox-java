@@ -83,8 +83,8 @@ extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
             jobject ctx_obj, int is_ctxset, char *data, long len,
             char *type, char *subtype);
 
-extern int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
-            jobject data, char **buf, long *len);
+extern TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, 
+        jobject atmiBufObj, int do_set);
 
 extern jobject ndrxj_atmi_TypedBuffer_result_prep
   (JNIEnv *env, jobject ctx_obj, jobject data, char *idata, 

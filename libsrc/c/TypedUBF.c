@@ -1,7 +1,7 @@
 /**
  * @brief Java UBF Backing routines
  *
- * @file ubfj.c
+ * @file TypedUBF.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -55,6 +55,37 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
+
+/**
+ * Add field to UBF buffer. 
+ */
+exprivate void ndrxj_ubf_CBadd(JNIEnv *env, jobject data, jint bfldid, 
+        char *buf, BFLDLEN len, int usrtype)
+{
+    char *cdata;
+    long clen;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return; 
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_err, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Set the field */
+    
+    /* Capture exception (if any) */
+    
+    /* switch context back */
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
 /**
  */
 public void JNICALL Java_org_endurox_TypedUBF_Badd__IS
@@ -63,7 +94,7 @@ public void JNICALL Java_org_endurox_TypedUBF_Badd__IS
     
     /* perform Fadd - some common func, not, which switch the contact and
      return the error if needed...
-     */  
+     */
 }
 
 
