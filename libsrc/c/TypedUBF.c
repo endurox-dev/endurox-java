@@ -113,5 +113,40 @@ expublic void JNICALL Java_org_endurox_TypedUBF_Badd__IS
    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&s, 0L, BFLD_SHORT);
 }
 
+/**
+ * Print the UBF buffer to STDOUT
+ * @param env java env
+ * @param data TypedUBF object
+ */
+expublic void JNICALL Java_org_endurox_TypedUBF_Bprint(JNIEnv *env, jobject data)
+{
+    char *cdata;
+    long clen;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return; 
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=Bprint(cdata))
+    {
+        UBF_LOG(log_error, "%s: failed to Bprint %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: failed to Bprint %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        goto out;
+    }
+    
+out:
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
 
 /* vim: set ts=4 sw=4 et cindent: */

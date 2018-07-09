@@ -39,5 +39,14 @@ public class TypedUBF extends TypedBuffer {
     public native void Badd(int bfldid, String s);
     
     public native void Badd(int bfldid, byte []b);
+    
+    /**
+     * Print the UBF buffer to STDOUT
+     * @throws AtmiBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
+     * @throws AtmiBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     */
+    public native void Bprint();
+    
+    
 }
 
