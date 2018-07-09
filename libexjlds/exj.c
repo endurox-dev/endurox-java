@@ -8,7 +8,7 @@
 #include <cconfig.h>
 
 /* Include generated resources */
-#include "StaticClassLoaderr.c"
+#include "StaticClassLoader.cinclude"
 
 #if 0
 #include "HelloY.c"
@@ -244,8 +244,8 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
 	}
 	
 	cl = (*env)->DefineClass(env, "org/endurox/loader/StaticClassLoaderr", loader, 
-				     (const jbyte*) ndrx_G_resource_StaticClassLoaderr, 
-				     ndrx_G_resource_StaticClassLoaderr_len);
+				     (const jbyte*) ndrx_G_resource_StaticClassLoader_len_def, 
+				     ndrx_G_resource_StaticClassLoader_len_def);
 	
 	if(!cl)
 	{

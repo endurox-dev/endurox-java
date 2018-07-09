@@ -54,10 +54,23 @@ endif()
 # Make sure the compiler can find include files from our UBF library.
 include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
+# Generate class of static loader
+add_custom_command(
+  OUTPUT StaticClassLoader.class
+  COMMAND javac StaticClassLoader.java
+  DEPENDS StaticClassLoader.java)
+
+# Generate include for static loader
+add_custom_command(
+  OUTPUT StaticClassLoader.cinclude
+  COMMAND exembedfile StaticClassLoader.class StaticClassLoader cinclude
+  DEPENDS StaticClassLoader.class)
+
+
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjlds STATIC
-                exj.c
+                exj.c StaticClassLoader.cinclude
 	)
 
 # target_link_libraries (exjld atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
