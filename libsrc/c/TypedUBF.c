@@ -135,7 +135,7 @@ expublic void JNICALL Java_org_endurox_TypedUBF_Bprint(JNIEnv *env, jobject data
         goto out;
     }
     
-    if (EXSUCCEED!=Bprint(cdata))
+    if (EXSUCCEED!=Bprint((UBFH *)cdata))
     {
         UBF_LOG(log_error, "%s: failed to Bprint %p buffer: %s", 
                 __func__, cdata, Bstrerror(Berror));

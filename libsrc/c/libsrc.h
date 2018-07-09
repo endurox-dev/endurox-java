@@ -30,6 +30,14 @@
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+
+#ifndef NDRXJ_LIBSRC_H__
+#define NDRXJ_LIBSRC_H__
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
 #include <atmi.h>
@@ -102,5 +110,13 @@ extern jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env,
 /* TpSvcInfo ops: */
 extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
+
+
+#ifdef  __cplusplus
+}
+#endif
+
+#endif  /* NDRXJ_LIBSRC_H__ */
+
 
 /* vim: set ts=4 sw=4 et cindent: */

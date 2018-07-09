@@ -181,6 +181,7 @@ OPTION(DEFINE_DISABLEDOC "Disable documentation generation" OFF)
 # the project's entire directory structure. 
 add_subdirectory (libsrc)
 add_subdirectory (libexjlds)
+add_subdirectory (exjld)
 add_subdirectory (tests)
 add_subdirectory (doc)
 
