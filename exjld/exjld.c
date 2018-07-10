@@ -107,7 +107,8 @@ int main(int argc, char **argv)
     search for all class files, generate resources from them with ndrx_N+ name
     in current directory. Firstly we need an array of all of thee resources, which
     later will be compiled and linked into the output binary.
-    the output binary too shall go to ../ 
+    the output binary too shall go to ../. Also we need to save somewhere binary name
+    so that we could quickly provide it back to user App if requested by Enduro/X APIs
     */
     /*
      * Options:
