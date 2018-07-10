@@ -64,6 +64,26 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 expublic char ndrx_G_build_cmd[PATH_MAX+1] = "buildserver";
+expublic int ndrx_G_do_test = EXTRUE;   /** shall we run testing? */
+expublic char ndrx_G_main_class[PATH_MAX+1] = "";
+expublic char ndrx_G_out_bin[PATH_MAX+1] = "a.out";
+
+/**
+ * Runtime and build library path
+ */
+expublic string_list_t* ndrx_G_libpath = NULL;
+
+/**
+ * Override libs for build
+ */
+expublic string_list_t* ndrx_G_libs = NULL;
+
+
+/** shall we keep temp files? */
+expublic int ndrx_G_keep_temp = EXFALSE;
+
+
+
 /*---------------------------Statics------------------------------------*/
 
 /**
@@ -99,7 +119,6 @@ exprivate void usage(char *progname)
 int main(int argc, char **argv)
 {
     int ret = EXSUCCEED;
-    
     opterr = 0;
     
     fprintf(stderr, "Enduro/X Java Linker\n\n");
@@ -127,7 +146,9 @@ int main(int argc, char **argv)
         switch (c)
         {
             case 'L':
-                /* Extra Library for runtime, colon separated...*/
+                /* Extra Library for runtime, colon separated...
+                 * this shall also be used for build time
+                 */
                 env = getenv(NDRX_LD_LIBRARY_PATH);
                 
                 if (NULL!=env)
@@ -142,34 +163,37 @@ int main(int argc, char **argv)
                 NDRX_LOG(log_debug, "Setting library path: [%s]", tmp);
                 
                 setenv(NDRX_LD_LIBRARY_PATH, tmp, EXTRUE);
+                        
+                if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_libpath, optarg))
+                {
+                    NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_libpath",
+                            optarg);
+                    EXFAIL_OUT(ret);
+                }
                 
                 break;
             case 'b':
                 NDRX_STRCPY_SAFE(ndrx_G_build_cmd, optarg);
                 break;
             case 'n':
-                NDRX_LOG(log_debug, "No UBF mapping processing...");
-                no_UBF = EXTRUE;
-                
-                ndrx_view_loader_configure(no_UBF);
-                        
-                break;
-            case 'd':
-                NDRX_STRCPY_SAFE(outdir, optarg);
-                NDRX_LOG(log_debug, "Changing view object output directory to: [%s]", 
-                        outdir);
-                break;
-            case 'C':
-                NDRX_LOG(log_warn, "Ignoring option C for COBOL");
+                NDRX_LOG(log_debug, "Testing not required");
+                M_do_test = EXFALSE;        
                 break;
             case 'm':
-                lang_mode = atoi(optarg);
-                NDRX_LOG(log_warn, "Language mode set to: %d", lang_mode);
-
-                if (HDR_C_LANG!=lang_mode)
+                NDRX_STRCPY_SAFE(ndrx_G_main_class, optarg);
+                NDRX_LOG(log_debug, "Main class set to: [%s]", 
+                        ndrx_G_main_class);
+                break;
+            case 'o':
+                NDRX_STRCPY_SAFE(ndrx_G_out_bin, optarg);
+                NDRX_LOG(log_debug, "Out binary set to: [%s]", 
+                        ndrx_G_out_bin);
+                break;
+            case 'l':
+                if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_libs, optarg))
                 {
-                    NDRX_LOG(log_error, "Invalid language mode, currently %d supported only", 
-                            HDR_C_LANG);
+                    NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_libs",
+                            optarg);
                     EXFAIL_OUT(ret);
                 }
 
