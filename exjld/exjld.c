@@ -84,7 +84,10 @@ exprivate void usage(char *progname)
     "                        -ljava -ljvm) \n"
     "   -L 'library_path'   Library search path for Enduro/X, System and Java\n"
     "   -b 'build_cmd'      Build command, default is Enduro/X 'buildserver'\n"
-    "   -n                  Do not perform test run (i.e. check class loader)\n\n"
+    "   -n                  Do not perform test run (i.e. check class loader)\n"
+    "   -t 'temp_dir'       Override temporary folder instead of ./<generated>.\n"
+    "                        If override is made, temp folder is not removed\n"
+    "   -k                  Keep temp files/folder when running in non -t mode\n"
     "Example.\n"
     "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\"
     "      test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
@@ -119,7 +122,7 @@ int main(int argc, char **argv)
      * n - do not run test
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:L:l:b:n")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:k")) != -1)
     {
         switch (c)
         {
