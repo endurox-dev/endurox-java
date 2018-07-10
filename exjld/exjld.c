@@ -77,13 +77,14 @@ exprivate void usage(char *progname)
     fprintf (stderr, "Usage: %s [OPTION]... JAR...\n\n", progname);
     fprintf (stdrr, 
     "Mandatory arguments.\n"
-    "   -m                  mainclass name\n\n"
+    "   -m 'class_name'     Main class name\n\n"
     "Optional arguments.\n"
-    "   -o                  output binary name. Default is 'a.out'\n"
-    "   -l                  Override Java libraries included in link (default \n"
+    "   -o 'binary_name'    Output binary name. Default is 'a.out'\n"
+    "   -l 'libs'           Override Java libraries included in link (default \n"
     "                        -ljava -ljvm) \n"
-    "   -L                  Library search path for Enduro/X, System and Java\n"
-    "   -b                  Build command, default is Enduro/X 'buildserver'\n\n"
+    "   -L 'library_path'   Library search path for Enduro/X, System and Java\n"
+    "   -b 'build_cmd'      Build command, default is Enduro/X 'buildserver'\n"
+    "   -n                  Do not perform test run (i.e. check class loader)\n\n"
     "Example.\n"
     "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\"
     "      test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
@@ -101,14 +102,23 @@ int main(int argc, char **argv)
     fprintf(stderr, "Enduro/X Java Linker\n\n");
 
     /*
+    TODO: Parse config, create temp directory, cd temp
+    extract jars(with ../ in front) to current dir
+    search for all class files, generate resources from them with ndrx_N+ name
+    in current directory. Firstly we need an array of all of thee resources, which
+    later will be compiled and linked into the output binary.
+    the output binary too shall go to ../ 
+    */
+    /*
      * Options:
      * m: - main class name
      * o: - output binary name
      * I: - include header search path
      * L: - include library search path
+     * n - do not run test
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:L:l:b:")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:n")) != -1)
     {
         switch (c)
         {
