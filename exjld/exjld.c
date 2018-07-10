@@ -85,8 +85,8 @@ exprivate void usage(char *progname)
     "   -L                  Library search path for Enduro/X, System and Java\n"
     "   -b                  Build command, default is Enduro/X 'buildserver'\n\n"
     "Example.\n"
-    "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 "
-    "test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
+    "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\"
+    "      test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
 }
 
 /**
