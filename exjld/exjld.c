@@ -74,13 +74,19 @@ expublic char ndrx_G_build_cmd[PATH_MAX+1] = "buildserver";
  */
 exprivate void usage(char *progname)
 {
-    fprintf (stderr, "Usage: %s [OPTION...]", progname);
-    
-    /*
-            ""
-            "-m main_class [-b build_command] [-o output_binary] [-I include_path1]..[-I include_pathN] [-L library_path1]...[-L library_path1] jar1 [jarN]"
-             progname);
-     * */
+    fprintf (stderr, "Usage: %s [OPTION]... JAR...\n\n", progname);
+    fprintf (stdrr, 
+    "Mandatory arguments.\n"
+    "   -m                  mainclass name\n\n"
+    "Optional arguments.\n"
+    "   -o                  output binary name. Default is 'a.out'\n"
+    "   -l                  Override Java libraries included in link (default \n"
+    "                        -ljava -ljvm) \n"
+    "   -L                  Library search path for Enduro/X, System and Java\n"
+    "   -b                  Build command, default is Enduro/X 'buildserver'\n\n"
+    "Example.\n"
+    "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 "
+    "test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
 }
 
 /**
@@ -102,7 +108,7 @@ int main(int argc, char **argv)
      * L: - include library search path
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:I:L:b:")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:")) != -1)
     {
         switch (c)
         {
