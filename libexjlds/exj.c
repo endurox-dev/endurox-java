@@ -549,7 +549,6 @@ int ndrxj_run_main(int argc, char **argv, ndrxj_class_index_t *class_index,
 
     jint res = JNI_CreateJavaVM(&vm, (void **)&env, &vm_args);
 
-
     if (res < 0) 
     { 
         NDRX_LOG(log_error, "Failed to create Java VM");

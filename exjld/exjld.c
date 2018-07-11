@@ -107,6 +107,9 @@ exprivate void usage(char *progname)
     "   -n                  Do not perform test run (i.e. check class loader)\n"
     "   -t 'temp_dir'       Override temporary folder instead of ./<generated>.\n"
     "                        If override is made, temp folder is not removed\n"
+    "   -e 'file_name'      Embed resource into exe file. Multiple occurrences\n"
+    "                        are allowed. File name must be unique among embedded.\n"
+    "                        Accessed via org.endurox.AtmiCtx.getResource(<name>);\n"
     "   -k                  Keep temp files/folder when running in non -t mode\n"
     "Example.\n"
     "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\"
@@ -141,7 +144,7 @@ int main(int argc, char **argv)
      * n - do not run test
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:k")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:")) != -1)
     {
         switch (c)
         {
