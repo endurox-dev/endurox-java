@@ -190,6 +190,7 @@ expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
  */
 expublic char *ndrxj_exception_backtrace(JNIEnv *env)
 {
+    char *ret;
     jthrowable exc;
     jstring s;
     const char* utf;
@@ -204,12 +205,14 @@ expublic char *ndrxj_exception_backtrace(JNIEnv *env)
 
     utf = (*env)->GetStringUTFChars(env, s, &isCopy);
 
+    ret = NDRX_STRDUP(utf);
+    
     if (isCopy)
     {
         (*env)->ReleaseStringUTFChars(env, s, utf);
     }
     
-    return NDRX_STRDUP(utf);
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */

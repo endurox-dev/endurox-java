@@ -46,5 +46,6 @@ public class TypedUBF extends TypedBuffer {
      * @throws AtmiBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
      */
     public native void Bprint();
+
 }
 
