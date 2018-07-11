@@ -38,28 +38,28 @@
 
 /*---------------------------Includes-----------------------------------*/
 
+#define  _POSIX_C_SOURCE 200809L
+
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <ndrx_config.h>
 #include <atmi.h>
-#include <atmi_int.h>
 #include <sys_unix.h>
 #include <ctype.h>
 
 #include <ubf.h>
-#include <ferror.h>
-#include <fieldtable.h>
-#include <fdatatype.h>
-
 #include <ndrstandard.h>
 #include <ndebug.h>
 #include <view_cmn.h>
-#include "viewc.h"
+
+#include "exjld.h"
 
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+#define TEMPDIR_MASK    "exjld.XXXXXX"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -67,6 +67,13 @@ expublic char ndrx_G_build_cmd[PATH_MAX+1] = "buildserver";
 expublic int ndrx_G_do_test = EXTRUE;   /** shall we run testing? */
 expublic char ndrx_G_main_class[PATH_MAX+1] = "";
 expublic char ndrx_G_out_bin[PATH_MAX+1] = "a.out";
+
+/** work directory where all temp files will go */
+expublic char ndrx_G_wd[PATH_MAX+1] = "";
+
+/** original work directory at startup */
+expublic char ndrx_G_owd[PATH_MAX+1] = "";
+
 
 /**
  * Runtime and build library path
@@ -79,9 +86,14 @@ expublic string_list_t* ndrx_G_libpath = NULL;
 expublic string_list_t* ndrx_G_libs = NULL;
 
 
+/**
+ * Resource files
+ */
+expublic string_list_t* ndrx_G_embedded_res = NULL;
+
+
 /** shall we keep temp files? */
 expublic int ndrx_G_keep_temp = EXFALSE;
-
 
 
 /*---------------------------Statics------------------------------------*/
@@ -95,7 +107,7 @@ expublic int ndrx_G_keep_temp = EXFALSE;
 exprivate void usage(char *progname)
 {
     fprintf (stderr, "Usage: %s [OPTION]... JAR...\n\n", progname);
-    fprintf (stdrr, 
+    fprintf (stderr, 
     "Mandatory arguments.\n"
     "   -m 'class_name'     Main class name\n\n"
     "Optional arguments.\n"
@@ -105,8 +117,7 @@ exprivate void usage(char *progname)
     "   -L 'library_path'   Library search path for Enduro/X, System and Java\n"
     "   -b 'build_cmd'      Build command, default is Enduro/X 'buildserver'\n"
     "   -n                  Do not perform test run (i.e. check class loader)\n"
-    "   -t 'temp_dir'       Override temporary folder instead of ./<generated>.\n"
-    "                        If override is made, temp folder is not removed\n"
+    "   -t 'temp_dir_pfx'   Tempdir prefix instead of './'.\n"
     "   -e 'file_name'      Embed resource into exe file. Multiple occurrences\n"
     "                        are allowed. File name must be unique among embedded.\n"
     "                        Accessed via org.endurox.AtmiCtx.getResource(<name>);\n"
@@ -122,6 +133,9 @@ exprivate void usage(char *progname)
 int main(int argc, char **argv)
 {
     int ret = EXSUCCEED;
+    int c;
+    
+    
     opterr = 0;
     
     fprintf(stderr, "Enduro/X Java Linker\n\n");
@@ -193,6 +207,9 @@ int main(int argc, char **argv)
                         ndrx_G_out_bin);
                 break;
             case 'l':
+                
+                NDRX_LOG(log_debug, "Adding library: [%s] (override)", optarg);
+                
                 if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_libs, optarg))
                 {
                     NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_libs",
@@ -200,6 +217,22 @@ int main(int argc, char **argv)
                     EXFAIL_OUT(ret);
                 }
 
+                break;
+            case 'e':
+                
+                NDRX_LOG(log_debug, "Embedding resource: [%s]", optarg);
+                if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_embedded_res, optarg))
+                {
+                    NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_embedded_res",
+                            optarg);
+                    EXFAIL_OUT(ret);
+                }
+                break            
+            case 'k':
+                ndrx_G_keep_temp = EXTRUE;
+                break;
+            case 't':
+                snprintf(ndrx_G_wd, sizeof(ndrx_G_wd), "%s/%s", optarg, TEMPDIR_MASK);
                 break;
             case 'h':
                 usage(argv[0]);
@@ -228,71 +261,99 @@ int main(int argc, char **argv)
     }
     
     NDRX_LOG(log_debug, "Build command set to: [%s]", ndrx_G_build_cmd);
+    
+    /* if libs not set, then use defaults */
+    if (NULL==ndrx_G_libs)
+    {
+        char *libs[] = {"java", "jvm"};
+        
+        for (i=0; i<N_DIM(libs); i++)
+        {
+            NDRX_LOG(log_debug, "Adding library: [%s]", libs[i]);
+
+            if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_libs, libs[i]))
+            {
+                NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_libs",
+                        optarg);
+                EXFAIL_OUT(ret);
+            }
+        }
+    }
+    
+    /* create directory */
+    
+    if (EXEOS==ndrx_G_wd[0])
+    {
+        snprintf(ndrx_G_wd, sizeof(ndrx_G_wd), "./%s", TEMPDIR_MASK);
+    }
+    
+    NDRX_LOG(log_debug, "Temp dir template set to: [%s]", ndrx_G_wd);
+    
+    if (NULL==mkdtemp (ndrx_G_wd))
+    {
+        NDRX_LOG(log_error, "Failed to create working directory by template [%s]: %s",
+                ndrx_G_wd, strerror(errno));
+        EXFAIL_OUT(ret);
+    }    
+    
+    /* save current folder.. */
+    if (NULL==getcwd(ndrx_G_owd, sizeof(ndrx_G_owd)))
+    {
+        cwd[0] = EXEOS;
+        NDRX_LOG(log_error, "Failed to get working directory: %s", 
+                strerror(errno));
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Change directory */
+    if (EXFAIL==chdir (ndrx_G_wd))
+    {
+        NDRX_LOG(log_error, "Failed to chdir to [%s]: %s", 
+                ndrx_G_wd, strerror(errno));
+        EXFAIL_OUT(ret);
+    }
+
     for (i = optind; i < argc; i++)
     {
+        char tmp[PATH_MAX];
+        int sysret;
         was_file = EXTRUE;
-        NDRX_LOG (log_debug, "Processing VIEW file [%s]", argv[i]);
+        NDRX_LOG (log_debug, "Processing JAR file [%s]", argv[i]);
         
-        /* Load the view file */
-        if (EXSUCCEED!=ndrx_view_load_file(argv[i], EXFALSE))
+        /* extract file... */
+        snprintf(tmp, "jar xf %s/%s", ndrx_G_owd, argv[i]);
+        
+        NDRX_LOG(log_debug, "%s", tmp);
+        
+        sysret = system(tmp);
+        
+        if (EXSUCCEED!=sysret)
         {
-            NDRX_LOG(log_error, "Failed to load view file [%s]: %s", 
-                    argv[i], Bstrerror(Berror));
+            NDRX_LOG(log_error, "Failed to execute: [%s]: %d", tmp, sysret);
             EXFAIL_OUT(ret);
         }
-        
-        /* get the base name of output file */
-        
-        NDRX_STRCPY_SAFE(basename, argv[i]);
-        p = strrchr(basename, '.');
-        
-        if (NULL!=p)
-        {
-            *p=EXEOS;
-        }
-        
-        if (strlen(basename) == 0)
-        {
-            NDRX_LOG(log_error, "Invalid view file name passed on CLI...");
-            EXFAIL_OUT(ret);
-        }
-        
-        /* Plot the the header */
-        if (HDR_C_LANG==lang_mode)
-        {
-            if (EXSUCCEED!=ndrx_view_plot_c_header(outdir, basename))
-            {
-                NDRX_LOG(log_error, "Failed to plot c header!");
-                EXFAIL_OUT(ret);
-            }
-        
-            /* Get the offset - generate object file & invoke */
-            
-            if (EXSUCCEED!=ndrx_view_generate_code(outdir, basename, argv[i], 
-                    Vfile, no_UBF))
-            {
-                NDRX_LOG(log_error, "Failed to generate code or invoke compiler!");
-                EXFAIL_OUT(ret);
-            }
-        }
-        
-        /* Unload the view files (remove from hashes) */
-        ndrx_view_deleteall();
-        
-        NDRX_LOG(log_info, ">>> About to test object file...");
-        
-        if (EXSUCCEED!=ndrx_view_load_file(Vfile, EXTRUE))
-        {
-            NDRX_LOG(log_error, "!!! Failed to test object file [%s] !!!", Vfile);
-            EXFAIL_OUT(ret);
-        }
-        
-        ndrx_view_deleteall();
-        
-        
-        NDRX_LOG(log_info, ">>> [%s] COMPILED & TESTED OK!", Vfile);
-        
     }
+    
+    
+    /* TODO: build list of files, with structures, allocate linear array */
+    
+    /* TODO: generate resource files with exjlib_N+.cinclude */
+    
+    /* TODO: allocate linear array for embedded resources */
+    
+    /* TODO: generate embedded resources with exjemb_N.cinclude */
+    
+    /* TODO: generate C build file (test mode on) */
+    
+    /* TODO: build */
+    
+    /* TODO: run test */
+    
+    /* TODO: generate C build file (test mode off) */
+    
+    /* TOOD: build */
+    
+    /* ... and we are done! */
     
     if (!was_file)
     {
@@ -301,6 +362,16 @@ int main(int argc, char **argv)
     }
     
 out:
+                
+    if (EXEOS!=ndrx_G_owd[0])
+    {
+        /* change dir back */
+        if (EXSUCCEED!=chdir(ndrx_G_owd))
+        {
+            NDRX_LOG(log_warn, "Failed to chdir back to [%s]: %s", 
+                    ndrx_G_owd, strerror(errno));
+        }
+    }
     /* So we need to load the view file now and generate header */
     return ret;
 }
