@@ -134,8 +134,10 @@ int main(int argc, char **argv)
 {
     int ret = EXSUCCEED;
     int c;
-    
-    
+    int was_file = EXFALSE;
+    char *env;
+    char tmp[PATH_MAX];
+    int i;
     opterr = 0;
     
     fprintf(stderr, "Enduro/X Java Linker\n\n");
@@ -194,7 +196,7 @@ int main(int argc, char **argv)
                 break;
             case 'n':
                 NDRX_LOG(log_debug, "Testing not required");
-                M_do_test = EXFALSE;        
+                ndrx_G_do_test = EXFALSE;        
                 break;
             case 'm':
                 NDRX_STRCPY_SAFE(ndrx_G_main_class, optarg);
@@ -227,7 +229,7 @@ int main(int argc, char **argv)
                             optarg);
                     EXFAIL_OUT(ret);
                 }
-                break            
+                break;
             case 'k':
                 ndrx_G_keep_temp = EXTRUE;
                 break;
@@ -299,7 +301,7 @@ int main(int argc, char **argv)
     /* save current folder.. */
     if (NULL==getcwd(ndrx_G_owd, sizeof(ndrx_G_owd)))
     {
-        cwd[0] = EXEOS;
+        ndrx_G_owd[0] = EXEOS;
         NDRX_LOG(log_error, "Failed to get working directory: %s", 
                 strerror(errno));
         EXFAIL_OUT(ret);
@@ -315,13 +317,12 @@ int main(int argc, char **argv)
 
     for (i = optind; i < argc; i++)
     {
-        char tmp[PATH_MAX];
         int sysret;
         was_file = EXTRUE;
         NDRX_LOG (log_debug, "Processing JAR file [%s]", argv[i]);
         
         /* extract file... */
-        snprintf(tmp, "jar xf %s/%s", ndrx_G_owd, argv[i]);
+        snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, argv[i]);
         
         NDRX_LOG(log_debug, "%s", tmp);
         
@@ -376,4 +377,4 @@ out:
     return ret;
 }
 
-
+/* vim: set ts=4 sw=4 et cindent: */

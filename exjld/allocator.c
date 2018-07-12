@@ -1,7 +1,7 @@
 /**
- * @brief Enduro/X Java Linker internal header
+ * @brief Resource allocator and sorter
  *
- * @file exjld.h
+ * @file allocator.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -30,42 +30,24 @@
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
-#ifndef EXJLD_H_
-#define EXJLD_H_
-/*------------------------------Includes--------------------------------------*/
-#include <sys_unix.h>
-/*------------------------------Externs---------------------------------------*/
-extern char ndrx_G_build_cmd[];
-extern int ndrx_G_do_test;
-extern char ndrx_G_main_class[];
-extern char ndrx_G_out_bin[];
-extern char ndrx_G_wd[];
-extern char ndrx_G_owd[];
-extern string_list_t* ndrx_G_libpath;
-extern string_list_t* ndrx_G_libs;
-extern string_list_t* ndrx_G_embedded_res;
-extern int ndrx_G_keep_temp;
-/*------------------------------Macros----------------------------------------*/
-/*------------------------------Enums-----------------------------------------*/
-/*------------------------------Typedefs--------------------------------------*/
 
-struct exjld_resource
-{
-    /** resource ID */
-    int id;
-    
-    /** path to resource */
-    char respath[PATH_MAX];
-    
-    /** resource name */
-    char resname[PATH_MAX];
-    
-};
+/*---------------------------Includes-----------------------------------*/
+#include <stdlib.h>
+#include <unistd.h>
+#include <ftw.h>
+#include <time.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
-typedef struct exjld_resource exjld_resource_t;
+#include <ndrstandard.h>
+#include <ndebug.h>
 
-/*------------------------------Globals---------------------------------------*/
-/*------------------------------Statics---------------------------------------*/
-/*------------------------------Prototypes------------------------------------*/
+/*---------------------------Externs------------------------------------*/
+/*---------------------------Macros-------------------------------------*/
+/*---------------------------Enums--------------------------------------*/
+/*---------------------------Typedefs-----------------------------------*/
+/*---------------------------Globals------------------------------------*/
+/*---------------------------Statics------------------------------------*/
 
-#endif /* EXJLD_H_ */
+/* vim: set ts=4 sw=4 et cindent: */

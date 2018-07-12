@@ -1,7 +1,9 @@
 /**
- * @brief Enduro/X Java Linker internal header
+ * @brief Contains routines for scanning the extracted class files in current
+ *  and sub-directories. Build the array with files list and generates the
+ *  resources.
  *
- * @file exjld.h
+ * @file findclasses.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -30,42 +32,35 @@
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
-#ifndef EXJLD_H_
-#define EXJLD_H_
-/*------------------------------Includes--------------------------------------*/
-#include <sys_unix.h>
-/*------------------------------Externs---------------------------------------*/
-extern char ndrx_G_build_cmd[];
-extern int ndrx_G_do_test;
-extern char ndrx_G_main_class[];
-extern char ndrx_G_out_bin[];
-extern char ndrx_G_wd[];
-extern char ndrx_G_owd[];
-extern string_list_t* ndrx_G_libpath;
-extern string_list_t* ndrx_G_libs;
-extern string_list_t* ndrx_G_embedded_res;
-extern int ndrx_G_keep_temp;
-/*------------------------------Macros----------------------------------------*/
-/*------------------------------Enums-----------------------------------------*/
-/*------------------------------Typedefs--------------------------------------*/
 
-struct exjld_resource
+/*---------------------------Includes-----------------------------------*/
+#define _LARGEFILE64_SOURCE
+#define _FILE_OFFSET_BITS 64 
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <ftw.h>
+#include <time.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+
+#include <ndrstandard.h>
+#include <ndebug.h>
+
+/*---------------------------Externs------------------------------------*/
+/*---------------------------Macros-------------------------------------*/
+/*---------------------------Enums--------------------------------------*/
+/*---------------------------Typedefs-----------------------------------*/
+/*---------------------------Globals------------------------------------*/
+/*---------------------------Statics------------------------------------*/
+
+/**
+ * Find the list of classes extract and put them into linear array
+ */
+expublic int exjld_build_class_list(void)
 {
-    /** resource ID */
-    int id;
-    
-    /** path to resource */
-    char respath[PATH_MAX];
-    
-    /** resource name */
-    char resname[PATH_MAX];
-    
-};
+   return EXFAIL; 
+}
 
-typedef struct exjld_resource exjld_resource_t;
-
-/*------------------------------Globals---------------------------------------*/
-/*------------------------------Statics---------------------------------------*/
-/*------------------------------Prototypes------------------------------------*/
-
-#endif /* EXJLD_H_ */
+/* vim: set ts=4 sw=4 et cindent: */
