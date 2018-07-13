@@ -34,6 +34,7 @@
 #define EXJLD_H_
 /*------------------------------Includes--------------------------------------*/
 #include <sys_unix.h>
+#include <exhash.h>
 /*------------------------------Externs---------------------------------------*/
 extern char ndrx_G_build_cmd[];
 extern int ndrx_G_do_test;
@@ -49,19 +50,31 @@ extern int ndrx_G_keep_temp;
 /*------------------------------Enums-----------------------------------------*/
 /*------------------------------Typedefs--------------------------------------*/
 
+/**
+ * Compiled resource either class or embedded resource, struct
+ */
 struct exjld_resource
 {
+    
+    /** resource name */
+    char resname[PATH_MAX+1];
+    
     /** resource ID */
     int id;
     
-    /** path to resource */
-    char respath[PATH_MAX];
+    /** real path to file */
+    char respath[PATH_MAX+1];
     
-    /** resource name */
-    char resname[PATH_MAX];
+    /** path to embedded file */
+    char embpath[PATH_MAX+1];
     
+    /** makes this structure hashable */
+    EX_hash_handle hh;
 };
 
+/**
+ * Compiled resource either class or embedded resource, type
+ */
 typedef struct exjld_resource exjld_resource_t;
 
 /*------------------------------Globals---------------------------------------*/

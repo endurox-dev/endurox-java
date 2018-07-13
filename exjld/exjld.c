@@ -85,16 +85,19 @@ expublic string_list_t* ndrx_G_libpath = NULL;
  */
 expublic string_list_t* ndrx_G_libs = NULL;
 
-
 /**
  * Resource files
  */
 expublic string_list_t* ndrx_G_embedded_res = NULL;
 
-
 /** shall we keep temp files? */
 expublic int ndrx_G_keep_temp = EXFALSE;
 
+/** List of classes used for compilation */
+expublic ndrx_growlist_t ndrx_G_classes;
+
+/** List of resources to be embedded */
+expublic ndrx_growlist_t ndrx_G_resources;
 
 /*---------------------------Statics------------------------------------*/
 

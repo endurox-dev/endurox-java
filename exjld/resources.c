@@ -1,5 +1,5 @@
 /**
- * @brief Resource allocator and sorter
+ * @brief Resource management add/find duplicate/sort
  *
  * @file allocator.c
  */ 
@@ -42,6 +42,9 @@
 
 #include <ndrstandard.h>
 #include <ndebug.h>
+#include <exhash.h>
+
+#include "exjld.h"
 
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
@@ -49,5 +52,84 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
+
+
+/**
+ * Find resource in the hash 
+ * @param head hash head
+ * @param resname resource name
+ * @return NULL (not found) or ptr to object
+ */
+expublic exjld_resource_t * exljd_res_find(exjld_resource_t *head, char *resname)
+{
+    exjld_resource_t *ret;
+    EXHASH_FIND_STR( M_tx_hash, resname, ret);
+    return ret;
+}
+
+/**
+ * Add resource to the hash. Check that record isn't duplicate. If so
+ * return an error.
+ * This function will also invoke embedded file generator
+ * @param head hash head (double ptr as can change e.g. from NULL to value)
+ * @param resname resource name
+ * @param id resource id (just unique id for resource files)
+ * @param respath resource path on disk
+ * @param emb_pfx embedded file prefix - either class or resources..
+ * @return EXSUCCEED / EXFAIL
+ */
+expublic int exljd_res_add(exjld_resource_t **head, char *resname,
+        int id, char *respath, char *emb_pfx)
+{
+    int ret = EXSUCCEED;
+    exjld_resource_t *elm;
+    
+    if (NULL!=(elm=exljd_res_find(*head, resname)))
+    {
+        NDRX_LOG(log_error, "Duplicate resource name: [%s] file: [%s] id: %d",
+                resname, elm->respath, elm->id);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Allocate the element and add */
+    if (NULL==(elm = NDRX_MALLOC(sizeof(exjld_resource_t))))
+    {
+        int err = errno;
+        
+        NDRX_LOG(log_error, "Failed to malloc %d bytes: %s", 
+                sizeof(exjld_resource_t), strerror(err));
+        userlog("Failed to malloc %d bytes: %s", 
+                sizeof(exjld_resource_t), strerror(err));
+        EXFAIL_OUT(ret);
+    }
+    
+    EXHASH_ADD_STR( *head, resname, elm);
+    
+out:
+    
+    return ret;
+}
+
+/**
+ * Sort by name
+ * @param a
+ * @param b
+ * @return -1, 0, 1
+ */
+exprivate int resname_sort(exjld_resource_t *a, exjld_resource_t *b) 
+{
+    return strcmp(a->resname,b->resname);
+}
+
+/**
+ * Sort hash list by resource name
+ * @param head double ptr to hash head
+ */
+expublic void exljd_res_sort_by_resname(exjld_resource_t **head)
+{
+    EXHASH_SORT(*head, resname_sort);
+}
+
+/* TODO: Deallocate/free... */
 
 /* vim: set ts=4 sw=4 et cindent: */
