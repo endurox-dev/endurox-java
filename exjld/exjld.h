@@ -35,17 +35,6 @@
 /*------------------------------Includes--------------------------------------*/
 #include <sys_unix.h>
 #include <exhash.h>
-/*------------------------------Externs---------------------------------------*/
-extern char ndrx_G_build_cmd[];
-extern int ndrx_G_do_test;
-extern char ndrx_G_main_class[];
-extern char ndrx_G_out_bin[];
-extern char ndrx_G_wd[];
-extern char ndrx_G_owd[];
-extern string_list_t* ndrx_G_libpath;
-extern string_list_t* ndrx_G_libs;
-extern string_list_t* ndrx_G_embedded_res;
-extern int ndrx_G_keep_temp;
 /*------------------------------Macros----------------------------------------*/
 /*------------------------------Enums-----------------------------------------*/
 /*------------------------------Typedefs--------------------------------------*/
@@ -77,8 +66,26 @@ struct exjld_resource
  */
 typedef struct exjld_resource exjld_resource_t;
 
+/*------------------------------Externs---------------------------------------*/
+extern char ndrx_G_build_cmd[];
+extern int ndrx_G_do_test;
+extern char ndrx_G_main_class[];
+extern char ndrx_G_out_bin[];
+extern char ndrx_G_wd[];
+extern char ndrx_G_owd[];
+extern string_list_t* ndrx_G_libpath;
+extern string_list_t* ndrx_G_libs;
+extern int ndrx_G_keep_temp;
+extern string_list_t* ndrx_G_embedded_res;
 /*------------------------------Globals---------------------------------------*/
 /*------------------------------Statics---------------------------------------*/
 /*------------------------------Prototypes------------------------------------*/
+
+
+extern exjld_resource_t * exljd_res_find(exjld_resource_t *head, char *resname);
+extern int exljd_res_add(exjld_resource_t **head, char *resname,
+        int id, char *respath, char *emb_pfx);
+extern void exljd_res_sort_by_resname(exjld_resource_t **head);
+extern void exljd_res_sort_by_free(exjld_resource_t **head);
 
 #endif /* EXJLD_H_ */

@@ -42,7 +42,7 @@ link_directories (${ENDUROX_BINARY_DIR}/libubf)
 # Exectuables
 add_executable (exjld   exjld.c
                         findclasses.c
-                        allocator.c
+                        resources.c
                 )
 
 # Link the executable to the UBF library & others...

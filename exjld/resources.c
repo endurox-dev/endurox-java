@@ -63,7 +63,7 @@
 expublic exjld_resource_t * exljd_res_find(exjld_resource_t *head, char *resname)
 {
     exjld_resource_t *ret;
-    EXHASH_FIND_STR( M_tx_hash, resname, ret);
+    EXHASH_FIND_STR( head, resname, ret);
     return ret;
 }
 
@@ -83,6 +83,7 @@ expublic int exljd_res_add(exjld_resource_t **head, char *resname,
 {
     int ret = EXSUCCEED;
     exjld_resource_t *elm;
+    char cmd[PATH_MAX+1];
     
     if (NULL!=(elm=exljd_res_find(*head, resname)))
     {
@@ -103,9 +104,31 @@ expublic int exljd_res_add(exjld_resource_t **head, char *resname,
         EXFAIL_OUT(ret);
     }
     
+    elm->id = id;
+    
+    NDRX_STRCPY_SAFE(elm->respath, respath);
+    
+    snprintf(elm->embpath, sizeof(elm->embpath), "%s_%d", emb_pfx, id);
+    snprintf(cmd, sizeof(cmd), "exembedfile '%s' %s cinclude", 
+            elm->respath, elm->embpath);
+    
+    NDRX_LOG(log_debug, "%s", cmd);
+    
+    if (EXSUCCEED!=(ret = system(cmd)))
+    {
+        NDRX_LOG(log_error, "%s failed: %d", cmd, ret);
+        EXFAIL_OUT(ret);
+    }
+    
+    
     EXHASH_ADD_STR( *head, resname, elm);
     
 out:
+    
+    if (EXSUCCEED!=ret && NULL!=elm)
+    {
+        NDRX_FREE(elm);
+    }
     
     return ret;
 }
@@ -130,6 +153,19 @@ expublic void exljd_res_sort_by_resname(exjld_resource_t **head)
     EXHASH_SORT(*head, resname_sort);
 }
 
-/* TODO: Deallocate/free... */
+/**
+ * Free up resources taken by hash
+ * @param head
+ */ 
+expublic void exljd_res_sort_by_free(exjld_resource_t **head)
+{
+   exjld_resource_t *el, *elt;
+   
+   EXHASH_ITER(hh, *head, el, elt)
+   {
+        EXHASH_DEL(*head, el);
+        NDRX_FREE(el);
+   }
+}
 
 /* vim: set ts=4 sw=4 et cindent: */
