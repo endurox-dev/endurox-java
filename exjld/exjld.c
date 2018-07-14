@@ -74,30 +74,23 @@ expublic char ndrx_G_wd[PATH_MAX+1] = "";
 /** original work directory at startup */
 expublic char ndrx_G_owd[PATH_MAX+1] = "";
 
-
-/**
- * Runtime and build library path
- */
+/** Runtime and build library path */
 expublic string_list_t* ndrx_G_libpath = NULL;
 
-/**
- * Override libs for build
- */
+/** Override libs for build */
 expublic string_list_t* ndrx_G_libs = NULL;
 
-/**
- * Resource files
- */
+/** Resource files*/
 expublic string_list_t* ndrx_G_embedded_res = NULL;
 
 /** shall we keep temp files? */
 expublic int ndrx_G_keep_temp = EXFALSE;
 
 /** List of classes used for compilation */
-expublic ndrx_growlist_t ndrx_G_classes;
+expublic exjld_resource_t *ndrx_G_classes_hash = NULL;
 
 /** List of resources to be embedded */
-expublic ndrx_growlist_t ndrx_G_resources;
+expublic exjld_resource_t *ndrx_G_emb_res_hash = NULL;
 
 /*---------------------------Statics------------------------------------*/
 
@@ -339,7 +332,8 @@ int main(int argc, char **argv)
     }
     
     
-    /* TODO: build list of files, with structures, allocate linear array */
+    /* Allocate embedded resources */
+    
     
     /* TODO: generate resource files with exjlib_N+.cinclude */
     

@@ -77,6 +77,10 @@ extern string_list_t* ndrx_G_libpath;
 extern string_list_t* ndrx_G_libs;
 extern int ndrx_G_keep_temp;
 extern string_list_t* ndrx_G_embedded_res;
+
+extern exjld_resource_t *ndrx_G_classes_hash;
+extern exjld_resource_t *ndrx_G_emb_res_hash;
+
 /*------------------------------Globals---------------------------------------*/
 /*------------------------------Statics---------------------------------------*/
 /*------------------------------Prototypes------------------------------------*/
@@ -87,5 +91,9 @@ extern int exljd_res_add(exjld_resource_t **head, char *resname,
         int id, char *respath, char *emb_pfx);
 extern void exljd_res_sort_by_resname(exjld_resource_t **head);
 extern void exljd_res_sort_by_free(exjld_resource_t **head);
+
+
+extern int exjld_emb_build_hash(void);
+
 
 #endif /* EXJLD_H_ */
