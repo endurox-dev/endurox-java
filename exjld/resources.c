@@ -114,13 +114,12 @@ expublic int exljd_res_add(exjld_resource_t **head, char *resname,
             elm->respath, elm->embpath);
     
     NDRX_LOG(log_debug, "%s", cmd);
-    
+    fprintf(stderr, "%s\n", cmd);
     if (EXSUCCEED!=(ret = system(cmd)))
     {
         NDRX_LOG(log_error, "%s failed: %d", cmd, ret);
         EXFAIL_OUT(ret);
     }
-    
     
     EXHASH_ADD_STR( *head, resname, elm);
     

@@ -65,7 +65,10 @@ expublic int ndrxj_codegen(int test_mode)
     int num_emb = 0;
     char buildcmd[PATH_MAX+1];
     char libs[PATH_MAX+1];
-    
+    char tmp[PATH_MAX+1];
+    char include_path[PATH_MAX+1];
+    char libpath_path[PATH_MAX+1];
+    expublic string_list_t* iter;
 #define FILENAME "jmain.c"
     
     if (NULL==(f=NDRX_FOPEN(FILENAME, "w")))
@@ -154,21 +157,163 @@ expublic int ndrxj_codegen(int test_mode)
     fprintf(f, "{\n");
     fprintf(f, "        \n");
     fprintf(f, "	return ndrxj_run_main(argc, argv, \"%s\",\n", ndrx_G_main_class);
-    fprintf(f, "		ndrxj_G_class_index, %d, ndrxj_G_emb_index, %d,\n",
-            num_class, num_emb);
+    
+    fprintf(f, "		ndrxj_G_class_index, %d, %s, %d,\n",
+            num_class, (num_emb > 0? "ndrxj_G_emb_index":"NULL"),
+            num_emb);
+    
     fprintf(f, "                %d);\n", test_mode);
     fprintf(f, "}\n");
     
+    
+    /* finish off the file */
+    NDRX_FCLOSE(f);
+    f = NULL;
     /* and now build off:
      * 
      * 
      * buildserver -n -o a -f 'exj.c -lexjlds -ljava -ljvm' -a "-I ../../include/ -L../../libexjlds -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 -L/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/"
-     *  */
+     *  
+     */
     
     /* Now build the command...! */
     
-    snprintf(buildcmd, sizeof(buildcmd), "%s -n -o '%s' -f '%s -l ....'", 
-            ndrx_G_build_cmd, ndrx_G_out_bin, FILENAME);
+    
+    
+    /*
+    char libs[PATH_MAX+1];
+    char include_path[PATH_MAX+1];
+    char libpath_path[PATH_MAX+1];
+    */
+    
+    libs[0]=EXEOS;
+    iter = ndrx_G_libs;
+    
+    first = EXTRUE;
+    while (iter)
+    {
+        if (first)
+        {
+            NDRX_STRCAT_S(libs, sizeof(libs), "-l");
+            NDRX_STRCAT_S(libs, sizeof(libs), iter->qname);
+            first=EXFALSE;
+        }
+        else
+        {
+            NDRX_STRCAT_S(libs, sizeof(libs), " ");
+            NDRX_STRCAT_S(libs, sizeof(libs), "-l");
+            NDRX_STRCAT_S(libs, sizeof(libs), iter->qname);
+        }
+        iter = iter->next;
+    }
+    
+    include_path[0]=EXEOS;
+    iter = ndrx_G_incpath;
+    
+    first = EXTRUE;
+    while (iter)
+    {
+        
+        /* if lib path is relative, then add original WD */
+        
+        if ('/'!=iter->qname[0])
+        {
+            snprintf(tmp, sizeof(tmp), "%s/%s", ndrx_G_owd, iter->qname);
+        }
+        else
+        {
+            NDRX_STRCPY_SAFE(tmp, iter->qname);
+        }
+        
+        if (first)
+        {
+            NDRX_STRCAT_S(include_path, sizeof(include_path), "-I");
+            first=EXFALSE;
+        }
+        else
+        {
+            NDRX_STRCAT_S(include_path, sizeof(include_path), " ");
+            NDRX_STRCAT_S(include_path, sizeof(include_path), "-I");
+        }
+        
+        NDRX_STRCAT_S(include_path, sizeof(include_path), tmp);
+        
+        iter = iter->next;
+    }
+    
+    libpath_path[0]=EXEOS;
+    iter = ndrx_G_libpath;
+    
+    first = EXTRUE;
+    while (iter)
+    {
+        /* if lib path is relative, then add original WD */
+        
+        if ('/'!=iter->qname[0])
+        {
+            snprintf(tmp, sizeof(tmp), "%s/%s", ndrx_G_owd, iter->qname);
+        }
+        else
+        {
+            NDRX_STRCPY_SAFE(tmp, iter->qname);
+        }
+        
+        if (first)
+        {
+            NDRX_STRCAT_S(libpath_path, sizeof(libpath_path), "-L");
+            first=EXFALSE;
+        }
+        else
+        {
+            NDRX_STRCAT_S(libpath_path, sizeof(libpath_path), " ");
+            NDRX_STRCAT_S(libpath_path, sizeof(libpath_path), "-L");
+        }
+        
+        NDRX_STRCAT_S(libpath_path, sizeof(libpath_path), tmp);
+        
+        iter = iter->next;
+    }
+    
+    if (EXEOS!=include_path[0] || EXEOS!=libpath_path[0])
+    {
+        snprintf(buildcmd, sizeof(buildcmd), "%s -n -o '%s' -f '%s %s' -a \"%s %s\"", 
+                ndrx_G_build_cmd, ndrx_G_out_bin, FILENAME, libs,
+                include_path, libpath_path);
+    }
+    else
+    {
+        snprintf(buildcmd, sizeof(buildcmd), "%s -n -o '%s' -f '%s %s'", 
+                ndrx_G_build_cmd, ndrx_G_out_bin, FILENAME, libs);
+    }
+    
+    NDRX_LOG(log_debug, "%s", buildcmd);
+    fprintf(stderr, "%s\n", buildcmd);
+    ret = system(buildcmd);
+    
+    if (EXSUCCEED!=ret)
+    {
+        NDRX_LOG(log_debug, "%s failed %d", buildcmd, ret);
+        EXFAIL_OUT(ret);
+    }
+    
+    if (test_mode)
+    {
+        NDRX_LOG(log_debug, "running int test mode -> try to startup "
+                "binary (check classes)...");
+        
+        snprintf(buildcmd, sizeof(buildcmd), "./%s", ndrx_G_out_bin);
+        
+        
+        NDRX_LOG(log_debug, "%s", buildcmd);
+        fprintf(stderr, "%s\n", buildcmd);
+        ret = system(buildcmd);
+
+        if (EXSUCCEED!=ret)
+        {
+            NDRX_LOG(log_debug, "%s failed %d", buildcmd, ret);
+            EXFAIL_OUT(ret);
+        }
+    }
     
 out:
     

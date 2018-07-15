@@ -77,6 +77,9 @@ expublic char ndrx_G_owd[PATH_MAX+1] = "";
 /** Runtime and build library path */
 expublic string_list_t* ndrx_G_libpath = NULL;
 
+/** Include pathes */
+expublic string_list_t* ndrx_G_incpath = NULL;
+
 /** Override libs for build */
 expublic string_list_t* ndrx_G_libs = NULL;
 
@@ -111,6 +114,7 @@ exprivate void usage(char *progname)
     "   -l 'libs'           Override Java libraries included in link (default \n"
     "                        -ljava -ljvm) \n"
     "   -L 'library_path'   Library search path for Enduro/X, System and Java\n"
+    "   -I 'include_path'   Include path for header (Enduro/X Java module)\n"
     "   -b 'build_cmd'      Build command, default is Enduro/X 'buildserver'\n"
     "   -n                  Do not perform test run (i.e. check class loader)\n"
     "   -t 'temp_dir_pfx'   Tempdir prefix instead of './'.\n"
@@ -156,7 +160,7 @@ int main(int argc, char **argv)
      * n - do not run test
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:I:")) != -1)
     {
         switch (c)
         {
@@ -186,6 +190,16 @@ int main(int argc, char **argv)
                     EXFAIL_OUT(ret);
                 }
                 
+                break;
+            case 'I':
+                NDRX_LOG(log_debug, "Adding [%s] to include path", optarg);
+                
+                if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_incpath, optarg))
+                {
+                    NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_incpath",
+                            optarg);
+                    EXFAIL_OUT(ret);
+                }
                 break;
             case 'b':
                 NDRX_STRCPY_SAFE(ndrx_G_build_cmd, optarg);
@@ -258,6 +272,13 @@ int main(int argc, char **argv)
         }
     }
     
+    if (EXEOS==ndrx_G_main_class[0])
+    {
+        NDRX_LOG(log_error, "Main class name (-m) must be specified!");
+        usage(argv[0]);
+        EXFAIL_OUT(ret);
+    }
+    
     NDRX_LOG(log_debug, "Build command set to: [%s]", ndrx_G_build_cmd);
     
     /* if libs not set, then use defaults */
@@ -321,7 +342,7 @@ int main(int argc, char **argv)
         snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, argv[i]);
         
         NDRX_LOG(log_debug, "%s", tmp);
-        
+        fprintf(stderr, "%s\n", tmp);
         sysret = system(tmp);
         
         if (EXSUCCEED!=sysret)
@@ -345,29 +366,37 @@ int main(int argc, char **argv)
         EXFAIL_OUT(ret);
     }
     
+    if (!was_file)
+    {
+        NDRX_LOG(log_error, "No JAR file was specified!");
+        usage(argv[0]);
+        EXFAIL_OUT(ret);
+    }
+    
     /* Sort hashes */
     
     exljd_res_sort_by_resname(&ndrx_G_classes_hash);
     exljd_res_sort_by_resname(&ndrx_G_emb_res_hash);
     
     /* generate C build file (test mode on) */
-    ndrxj_codegen(ndrx_G_do_test);
     
-    /* TODO: build */
-    
-    /* TODO: run test */
-    
-    /* TODO: generate C build file (test mode off) */
-    
-    /* TOOD: build */
-    
-    /* ... and we are done! */
-    
-    if (!was_file)
+    if (ndrx_G_do_test)
     {
-        usage(argv[0]);
+        if (EXSUCCEED!=ndrxj_codegen(EXTRUE))
+        {
+            NDRX_LOG(log_debug, "Failed to build test binary!");
+            EXFAIL_OUT(ret);
+        }
+    }
+    
+    /* final build */
+    if (EXSUCCEED!=ndrxj_codegen(EXFALSE))
+    {
+        NDRX_LOG(log_debug, "Failed to build a binary!");
         EXFAIL_OUT(ret);
     }
+    
+    NDRX_LOG(log_info, "Build ok");
     
 out:
                 
@@ -389,7 +418,7 @@ out:
         snprintf(tmp, sizeof(tmp), "rm -rf %s", ndrx_G_wd);
         
         NDRX_LOG(log_debug, "%s", tmp);
-        
+        fprintf(stderr, "%s\n", tmp);
         rm_res = system(tmp);
         
         if (EXSUCCEED!=rm_res)

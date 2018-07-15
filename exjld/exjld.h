@@ -74,6 +74,7 @@ extern char ndrx_G_out_bin[];
 extern char ndrx_G_wd[];
 extern char ndrx_G_owd[];
 extern string_list_t* ndrx_G_libpath;
+extern string_list_t* ndrx_G_incpath;
 extern string_list_t* ndrx_G_libs;
 extern int ndrx_G_keep_temp;
 extern string_list_t* ndrx_G_embedded_res;

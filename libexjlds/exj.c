@@ -172,7 +172,7 @@ expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
         {
             first = middle + 1;    
         }
-        else if (ret==0) 
+        else if (res==0) 
         {
             NDRX_LOG(log_debug, "%s found at location %d - loading...", 
                      utf, middle);
@@ -406,7 +406,7 @@ exprivate int run_ldr_main(JNIEnv *env,
         EXFAIL_OUT(ret);
     }
 
-    args = (*env)->NewObjectArray(env, argc-1, str_class, jstr); 
+    args = (*env)->NewObjectArray(env, argc, str_class, jstr); 
 
     if (NULL==args)
     {
@@ -415,7 +415,7 @@ exprivate int run_ldr_main(JNIEnv *env,
         EXFAIL_OUT(ret);
     }
 
-    for (i=0; i<argc-1; i++)
+    for (i=0; i<argc; i++)
     {
         jstring argString = (*env)->NewStringUTF(env, argv[i]);
 
@@ -486,8 +486,6 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
     JavaVM *vm = NULL;
     JNIEnv *env = NULL; 
     JavaVMInitArgs vm_args;
-    jstring jstr; 
-    jobjectArray args; 
     jint res;
 
     ndrx_inicfg_t *cfg = NULL;
@@ -581,7 +579,8 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
     }
 
     NDRX_LOG(log_debug, "Running main...");
-    if (EXSUCCEED!=run_ldr_main(env, main_class, argc, argv, test_mode))
+    /* for java args does not contain binary name... */
+    if (EXSUCCEED!=run_ldr_main(env, main_class, argc-1, &(argv[1]), test_mode))
     {
         NDRX_LOG(log_error, "Failed to run main");
         EXFAIL_OUT(ret);
