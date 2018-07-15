@@ -278,14 +278,14 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
             EXFAIL_OUT(ret);
     }
 
-    cl = (*env)->DefineClass(env, "org/endurox/loader/StaticClassLoaderr", loader, 
-                                (const jbyte*) ndrx_G_resource_StaticClassLoader_len_def, 
+    cl = (*env)->DefineClass(env, "org/endurox/loader/StaticClassLoader", loader, 
+                                (const jbyte*) ndrx_G_resource_StaticClassLoader, 
                                 ndrx_G_resource_StaticClassLoader_len_def);
 
     if(!cl)
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
-                            "Failed to load StaticClassLoaderr: %s");
+                            "Failed to load StaticClassLoader: %s");
         EXFAIL_OUT(ret);
     }
 
@@ -465,13 +465,30 @@ out:
     return ret;
 }
 
-int ndrxj_run_main(int argc, char **argv, ndrxj_class_index_t *class_index, 
-	     int class_index_len, int test_mode)
+/**
+ * Run java main
+ * @param argc command line argument count
+ * @param argv command line arguments
+ * @param main_class main class entry
+ * @param class_index index class data
+ * @param class_index_len number of entries in index
+ * @param emb_index embedded data index
+ * @param emb_index_len number of entries in embedded index
+ * @param test_mode do we run in test mode?
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
+                ndrxj_class_index_t *class_index, 
+	        int class_index_len, ndrxj_class_index_t *emb_index, int emb_index_len,
+                int test_mode)
 {
     int ret = EXSUCCEED;
-    JavaVM *vm;
-    JNIEnv *env; 
+    JavaVM *vm = NULL;
+    JNIEnv *env = NULL; 
     JavaVMInitArgs vm_args;
+    jstring jstr; 
+    jobjectArray args; 
+    jint res;
 
     ndrx_inicfg_t *cfg = NULL;
     ndrx_inicfg_section_keyval_t *out = NULL;
@@ -485,6 +502,7 @@ int ndrxj_run_main(int argc, char **argv, ndrxj_class_index_t *class_index,
     M_index = class_index;
     M_index_len = class_index_len;
 
+    NDRX_LOG(log_debug, "Loading config...");
     /* Load Enduro/X based config... with @java section */
     if (EXSUCCEED!=ndrx_cconfig_load_general(&cfg))
     {
@@ -544,10 +562,8 @@ int ndrxj_run_main(int argc, char **argv, ndrxj_class_index_t *class_index,
     vm_args.nOptions = n_opt;
     vm_args.ignoreUnrecognized = 1;
 
-    jstring jstr; 
-    jobjectArray args; 
-
-    jint res = JNI_CreateJavaVM(&vm, (void **)&env, &vm_args);
+    NDRX_LOG(log_debug, "Creating JVM...");
+    res = JNI_CreateJavaVM(&vm, (void **)&env, &vm_args);
 
     if (res < 0) 
     { 
@@ -557,13 +573,15 @@ int ndrxj_run_main(int argc, char **argv, ndrxj_class_index_t *class_index,
 
     /* prepare stream loader */
 
+    NDRX_LOG(log_debug, "Preparing class loader...");
     if (EXSUCCEED!=create_loader(env, vm))
     {
         NDRX_LOG(log_error, "Failed to prepare class loader");
         EXFAIL_OUT(ret);
     }
 
-    if (EXSUCCEED!=run_ldr_main(env, "oata.HelloWorld", argc, argv, test_mode))
+    NDRX_LOG(log_debug, "Running main...");
+    if (EXSUCCEED!=run_ldr_main(env, main_class, argc, argv, test_mode))
     {
         NDRX_LOG(log_error, "Failed to run main");
         EXFAIL_OUT(ret);

@@ -180,6 +180,7 @@ OPTION(DEFINE_DISABLEDOC "Disable documentation generation" OFF)
 # cause another cmake executable to run. The same process will walk through 
 # the project's entire directory structure. 
 add_subdirectory (libsrc)
+add_subdirectory (include)
 add_subdirectory (libexjlds)
 add_subdirectory (exjld)
 add_subdirectory (tests)

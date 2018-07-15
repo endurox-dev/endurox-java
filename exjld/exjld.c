@@ -119,7 +119,7 @@ exprivate void usage(char *progname)
     "                        Accessed via org.endurox.AtmiCtx.getResource(<name>);\n"
     "   -k                  Keep temp files/folder when running in non -t mode\n"
     "Example.\n"
-    "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\"
+    "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\\n"
     "      test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
 }
 
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
     /* if libs not set, then use defaults */
     if (NULL==ndrx_G_libs)
     {
-        char *libs[] = {"java", "jvm"};
+        char *libs[] = {"exjlds", "java", "jvm"};
         
         for (i=0; i<N_DIM(libs); i++)
         {
@@ -331,17 +331,27 @@ int main(int argc, char **argv)
         }
     }
     
-    
     /* Allocate embedded resources */
+    if (EXSUCCEED!=exjld_emb_build_hash())
+    {
+        NDRX_LOG(log_error, "Failed to generate embedded resources!");
+        EXFAIL_OUT(ret);
+    }
     
+    /* generate resource files with exjlib_N+.cinclude */
+    if (EXSUCCEED!=exjld_class_build_hash())
+    {
+        NDRX_LOG(log_error, "Failed to generate classes!");
+        EXFAIL_OUT(ret);
+    }
     
-    /* TODO: generate resource files with exjlib_N+.cinclude */
+    /* Sort hashes */
     
-    /* TODO: allocate linear array for embedded resources */
+    exljd_res_sort_by_resname(&ndrx_G_classes_hash);
+    exljd_res_sort_by_resname(&ndrx_G_emb_res_hash);
     
-    /* TODO: generate embedded resources with exjemb_N.cinclude */
-    
-    /* TODO: generate C build file (test mode on) */
+    /* generate C build file (test mode on) */
+    ndrxj_codegen(ndrx_G_do_test);
     
     /* TODO: build */
     
@@ -370,7 +380,24 @@ out:
                     ndrx_G_owd, strerror(errno));
         }
     }
-    /* So we need to load the view file now and generate header */
+
+    /* remove work directory */
+
+    if (!ndrx_G_keep_temp)
+    {
+        int rm_res;
+        snprintf(tmp, sizeof(tmp), "rm -rf %s", ndrx_G_wd);
+        
+        NDRX_LOG(log_debug, "%s", tmp);
+        
+        rm_res = system(tmp);
+        
+        if (EXSUCCEED!=rm_res)
+        {
+            NDRX_LOG(log_error, "%s failed: %d", tmp, ret);
+        }
+    }
+
     return ret;
 }
 

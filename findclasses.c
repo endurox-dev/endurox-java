@@ -1,7 +1,9 @@
 /**
- * @brief Process embedded resources
+ * @brief Contains routines for scanning the extracted class files in current
+ *  and sub-directories. Build the array with files list and generates the
+ *  resources.
  *
- * @file emb.c
+ * @file findclasses.c
  */ 
 /*
  * -----------------------------------------------------------------------------
@@ -32,6 +34,10 @@
  */
 
 /*---------------------------Includes-----------------------------------*/
+#define _LARGEFILE64_SOURCE
+#define _FILE_OFFSET_BITS 64 
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <ftw.h>
@@ -39,11 +45,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <ftw.h>
 
 #include <ndrstandard.h>
 #include <ndebug.h>
 #include "exjld.h"
-
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -52,41 +58,83 @@
 /*---------------------------Statics------------------------------------*/
 
 /**
- * Build hash of embedded resources
+ * Process directory entry callback
+ * @param filepath
+ * @param info
+ * @param typeflag
+ * @param pathinfo
+ * @return 
  */
-expublic int exjld_emb_build_hash(void)
+exprivate int process_entry(const char *filepath, const struct stat *info,
+                const int typeflag, struct FTW *pathinfo)
 {
     int ret = EXSUCCEED;
-    char path[PATH_MAX+1];
-    int id=0;
-    string_list_t* cur = ndrx_G_embedded_res;
+    int len;
+    static int id = 0;
+    char tmp[PATH_MAX];
+    char *p = tmp;
+    int i;
     
-    while (NULL!=cur)
+    id++;
+    
+    len = strlen(filepath);
+    
+    if (len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
     {
-        id++;
+        NDRX_LOG(log_debug, "Processing as class: [%s]", filepath);
         
-        if (cur->qname[0] == '/')
+        NDRX_STRCPY_SAFE(tmp, filepath);
+        
+        /* Extract class name (build from path and file name) */
+                while (*p=='.' || *p=='/')
         {
-            NDRX_STRCPY_SAFE(path, cur->qname);
-        }
-        else
-        {
-            /* so it is relative path, use org dir as prefix */
-            snprintf(path, sizeof(path), "%s/%s", ndrx_G_owd, cur->qname);
+            p++;
+            len--;
         }
         
-        if (EXSUCCEED!=exljd_res_add(&ndrx_G_emb_res_hash, cur->qname, id, 
-                path, "emb"))
+        /* replace dir sep with . */
+        for (i=0; i<len; i++)
         {
-            NDRX_LOG(log_error, "Failed to add embedded resource [%s]", path);
+            if ('/'==p[i])
+            {
+                p[i]='.';
+            }
+        }
+        
+        /* strip down lass 5 symbols */
+        p[len-6] = EXEOS;
+        
+        NDRX_LOG(log_debug, "Got class: [%s]", p);
+        
+        if (EXSUCCEED!=exljd_res_add(&ndrx_G_classes_hash, tmp, id,  
+                (char *)filepath, "class"))
+        {
+            NDRX_LOG(log_error, "Failed to add embedded resource [%s]", filepath);
             EXFAIL_OUT(ret);
         }
-        
-        cur=cur->next;
     }
-out:
     
-   return ret; 
+out:
+    return ret;    
+}
+
+/**
+ * Find the list of classes extract and put them into linear array
+ */
+expublic int exjld_class_build_hash(void)
+{
+    
+    int ret = EXSUCCEED;
+    
+    if (EXSUCCEED!=nftw("./", process_entry, 20, FTW_PHYS))
+    {
+        NDRX_LOG(log_error, "Failed to scan local directory: %s",
+                    strerror(errno));
+        EXFAIL_OUT(ret);
+    }
+
+out:
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */

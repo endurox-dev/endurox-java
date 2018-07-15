@@ -107,6 +107,7 @@ expublic int exljd_res_add(exjld_resource_t **head, char *resname,
     elm->id = id;
     
     NDRX_STRCPY_SAFE(elm->respath, respath);
+    NDRX_STRCPY_SAFE(elm->resname, resname);
     
     snprintf(elm->embpath, sizeof(elm->embpath), "%s_%d", emb_pfx, id);
     snprintf(cmd, sizeof(cmd), "exembedfile '%s' %s cinclude", 

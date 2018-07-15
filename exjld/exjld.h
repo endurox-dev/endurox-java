@@ -94,6 +94,7 @@ extern void exljd_res_sort_by_free(exjld_resource_t **head);
 
 
 extern int exjld_emb_build_hash(void);
-
+extern int exjld_class_build_hash(void);
+extern int ndrxj_codegen(int test_mode);
 
 #endif /* EXJLD_H_ */
