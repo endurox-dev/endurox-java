@@ -1,1 +1,11 @@
 Install graphviz.org for charts
+
+Install:
+
+
+$ apt-get install openjdk-8-jdk
+$ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+$ cmake .
+
+
+

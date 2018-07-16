@@ -442,6 +442,16 @@ exprivate int run_ldr_main(JNIEnv *env,
 
     }
 	
+    /* set current class loader? */
+
+jclass threadCls = (*env)->FindClass(env, "java/lang/Thread");
+jmethodID currentThreadMid = (*env)->GetStaticMethodID(env, threadCls, "currentThread", "()Ljava/lang/Thread;");
+jobject currentThread = (*env)->CallStaticObjectMethod(env, threadCls, currentThreadMid);
+
+jmethodID setCtxClsLoaderMid = (*env)->GetMethodID(env, threadCls, "setContextClassLoader", "(Ljava/lang/ClassLoader;)V");
+(*env)->CallVoidMethod(env, currentThread, setCtxClsLoaderMid, M_classLoader);
+
+
     if (!test_mode)
     {
         NDRX_LOG(log_debug, "Starting...");
