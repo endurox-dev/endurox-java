@@ -67,9 +67,8 @@ add_custom_command(
   DEPENDS StaticClassLoader.class)
 
 
-# Create a library called "UBF" which includes the source files.
-# The extension is already found. Any number of sources could be listed here. 
-add_library (exjlds STATIC
+# Shared static loader library
+add_library (exjlds SHARED
                 exj.c StaticClassLoader.cinclude
 	)
 

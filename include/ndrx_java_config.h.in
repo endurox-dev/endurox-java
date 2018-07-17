@@ -9,7 +9,7 @@
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 
-#if defined(ndrxjava_EXPORTS)
+#if defined(ndrxjava_EXPORTS) || defined(exjlds_EXPORTS) 
         /* We are building this library */
 #      define NDRX_JAVA_API __declspec(dllexport)
 #else
