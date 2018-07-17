@@ -63,7 +63,7 @@ typedef struct ndrxj_class_index ndrxj_class_index_t;
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-extern int ndrxj_run_main(int argc, char **argv,char *main_class,
+extern NDRX_JAVA_API int ndrxj_run_main(int argc, char **argv,char *main_class,
                 ndrxj_class_index_t *class_index,
                 int class_index_len, ndrxj_class_index_t *emb_index, int emb_index_len,
                 int test_mode);
