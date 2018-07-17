@@ -77,7 +77,8 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
     
     len = strlen(filepath);
     
-    if (len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
+    /* Accept files only... */
+    if (typeflag & FTW_F && len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
     {
         id++;
         NDRX_LOG(log_debug, "Processing as class: [%s]", filepath);

@@ -66,7 +66,7 @@
 expublic char ndrx_G_build_cmd[PATH_MAX+1] = "buildserver";
 expublic int ndrx_G_do_test = EXTRUE;   /** shall we run testing? */
 expublic char ndrx_G_main_class[PATH_MAX+1] = "";
-expublic char ndrx_G_out_bin[PATH_MAX+1] = "a.out";
+expublic char ndrx_G_out_bin[PATH_MAX+1] = "";
 
 /** work directory where all temp files will go */
 expublic char ndrx_G_wd[PATH_MAX+1] = "";
@@ -137,13 +137,14 @@ int main(int argc, char **argv)
     int was_file = EXFALSE;
     char *env;
     char tmp[PATH_MAX];
+    char tmp_outbin[PATH_MAX]="a.out";
     int i;
     opterr = 0;
     
     fprintf(stderr, "Enduro/X Java Linker\n\n");
 
     /*
-    TODO: Parse config, create temp directory, cd temp
+    Parse config, create temp directory, cd temp
     extract jars(with ../ in front) to current dir
     search for all class files, generate resources from them with ndrx_N+ name
     in current directory. Firstly we need an array of all of thee resources, which
@@ -214,9 +215,9 @@ int main(int argc, char **argv)
                         ndrx_G_main_class);
                 break;
             case 'o':
-                NDRX_STRCPY_SAFE(ndrx_G_out_bin, optarg);
+                NDRX_STRCPY_SAFE(tmp_outbin, optarg);
                 NDRX_LOG(log_debug, "Out binary set to: [%s]", 
-                        ndrx_G_out_bin);
+                        tmp_outbin);
                 break;
             case 'l':
                 
@@ -323,6 +324,22 @@ int main(int argc, char **argv)
                 strerror(errno));
         EXFAIL_OUT(ret);
     }
+    
+    /* compute output binary name.. */
+    
+    if (EXEOS==tmp_outbin[0])
+    {
+        /* it is full path */
+        NDRX_STRCPY_SAFE(ndrx_G_out_bin, tmp_outbin);
+    }
+    else
+    {
+        /* it is relative to  */
+        snprintf(ndrx_G_out_bin, sizeof(ndrx_G_out_bin), "%s/%s",
+                ndrx_G_owd, tmp_outbin);
+    }
+    
+    NDRX_LOG(log_debug, "Final output binary: [%s]", ndrx_G_out_bin);
     
     /* Change directory */
     if (EXFAIL==chdir (ndrx_G_wd))

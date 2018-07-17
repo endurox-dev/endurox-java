@@ -73,28 +73,6 @@ exprivate jmethodID M_class_getctors_method;
     NDRX_FREE(jerr__);\
 }
 
-#if 0
-/**
- * Sorted class data
- */
-exprivate ndrxj_class_index_t int_M_index [] = 
-{
-	
-	{
-		"oata.HelloWorld",
-		ndrx_G_resource_HelloWorld,
-		241
-	}
-	,
-	{
-		"oata.HelloY",
-		ndrx_G_resource_HelloY,
-		317
-	}
-	
-};
-#endif
-
 /* library globals... JNI does not allow mulit threading, thus
  * lets leave them for global..
  */
@@ -237,7 +215,6 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     jclass loaderClass;
     jmethodID loaderMethod;
     jobject loader;
-    jclass class_class;
     jmethodID ldr_ctor;
     jobject ldr_obj;
     JNINativeMethod m[1];
@@ -357,6 +334,11 @@ exprivate int run_ldr_main(JNIEnv *env,
     jobjectArray args; 
     int i;
     jmethodID load_class;
+    
+    jclass thread_class;
+    jmethodID cur_thread_mid;
+    jobject cur_thread;
+    jmethodID set_ctx_mid;
 
     /* boot the main method of the class */
 
@@ -443,14 +425,45 @@ exprivate int run_ldr_main(JNIEnv *env,
     }
 	
     /* set current class loader? */
-
-jclass threadCls = (*env)->FindClass(env, "java/lang/Thread");
-jmethodID currentThreadMid = (*env)->GetStaticMethodID(env, threadCls, "currentThread", "()Ljava/lang/Thread;");
-jobject currentThread = (*env)->CallStaticObjectMethod(env, threadCls, currentThreadMid);
-
-jmethodID setCtxClsLoaderMid = (*env)->GetMethodID(env, threadCls, "setContextClassLoader", "(Ljava/lang/ClassLoader;)V");
-(*env)->CallVoidMethod(env, currentThread, setCtxClsLoaderMid, M_classLoader);
-
+    thread_class = (*env)->FindClass(env, "java/lang/Thread");
+    
+    if (NULL==thread_class)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to find Thread class: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    cur_thread_mid = (*env)->GetStaticMethodID(env, thread_class, 
+            "currentThread", "()Ljava/lang/Thread;");
+    
+    if (NULL==cur_thread_mid)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to get currentThread() mid: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    cur_thread = (*env)->CallStaticObjectMethod(env, thread_class, cur_thread_mid);
+    
+    if (NULL==cur_thread)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to get current thread: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    set_ctx_mid = (*env)->GetMethodID(env, thread_class, 
+            "setContextClassLoader", "(Ljava/lang/ClassLoader;)V");
+    
+    if (NULL==set_ctx_mid)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to get setContextClassLoader() mid: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    (*env)->CallVoidMethod(env, cur_thread, set_ctx_mid, M_classLoader);
 
     if (!test_mode)
     {
