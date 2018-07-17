@@ -300,17 +300,18 @@ expublic int ndrxj_codegen(int test_mode)
     {
         NDRX_LOG(log_debug, "running int test mode -> try to startup "
                 "binary (check classes)...");
-        
+       /* 
         snprintf(buildcmd, sizeof(buildcmd), "./%s", ndrx_G_out_bin);
         
-        
-        NDRX_LOG(log_debug, "%s", buildcmd);
-        fprintf(stderr, "%s\n", buildcmd);
+       	*/
+ 
+        NDRX_LOG(log_debug, "%s", ndrx_G_out_bin);
+        fprintf(stderr, "%s\n", ndrx_G_out_bin);
         ret = system(buildcmd);
 
         if (EXSUCCEED!=ret)
         {
-            NDRX_LOG(log_debug, "%s failed %d", buildcmd, ret);
+            NDRX_LOG(log_debug, "%s failed %d", ndrx_G_out_bin, ret);
             EXFAIL_OUT(ret);
         }
     }
