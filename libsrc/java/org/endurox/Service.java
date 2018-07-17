@@ -2,7 +2,8 @@ package org.endurox;
 /**
  * @interface Service
  *
- * @brief Service call interface
+ * @brief Service call interface used for advertising and consuming
+ *  XATMI services .
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
