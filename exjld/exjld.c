@@ -112,7 +112,7 @@ exprivate void usage(char *progname)
     "Optional arguments.\n"
     "   -o 'binary_name'    Output binary name. Default is 'a.out'\n"
     "   -l 'libs'           Override Java libraries included in link (default \n"
-    "                        -ljava -ljvm) \n"
+    "                        -ljava -ljvm -lexjlds) \n"
     "   -L 'library_path'   Library search path for Enduro/X, System and Java\n"
     "   -I 'include_path'   Include path for header (Enduro/X Java module)\n"
     "   -b 'build_cmd'      Build command, default is Enduro/X 'buildserver'\n"
