@@ -429,7 +429,7 @@ out:
 
     /* remove work directory */
 
-    if (!ndrx_G_keep_temp)
+    if (!ndrx_G_keep_temp && EXEOS!=ndrx_G_wd[0])
     {
         int rm_res;
         snprintf(tmp, sizeof(tmp), "rm -rf %s", ndrx_G_wd);

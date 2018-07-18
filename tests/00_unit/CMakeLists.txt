@@ -56,6 +56,10 @@ add_jar(jexunit00
         ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
         )
 
+add_custom_target(jexunit00b ALL
+  COMMAND ../../exjld/exjld
+)
+
 #add_custom_command(OUTPUT jexunit00_bin
 #                  COMMAND ../exjld/exjld)
 
