@@ -36,6 +36,8 @@ set(VERSION "0.0.1")
 set(PROJ_NAME "Enduro/X Java")
 set(RELEASE "1")
 
+find_package(Java)
+include(UseJava)
 
 ################################################################################
 # OS Confiugration
@@ -121,6 +123,17 @@ elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
 else()
 	message( FATAL_ERROR "Unsupported OS" )
 endif()
+
+
+# Extract from:
+# JAVA_AWT_LIBRARY=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjawt.so
+# JAVA_JVM_LIBRARY=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
+
+get_filename_component(NDRX_JAVA_LIBDIR_JAVA ${JAVA_AWT_LIBRARY} DIRECTORY)
+get_filename_component(NDRX_JAVA_LIBD_JVM ${JAVA_JVM_LIBRARY} DIRECTORY)
+
+message("CMake NDRX_JAVA_LIBDIR_JAVA  = ${NDRX_JAVA_LIBDIR_JAVA}")
+message("CMake NDRX_JAVA_LIBD_JVM  = ${NDRX_JAVA_LIBD_JVM}")
 
 ################################################################################
 # "Configure"
