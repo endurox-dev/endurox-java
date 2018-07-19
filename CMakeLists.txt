@@ -39,8 +39,11 @@ set(RELEASE "1")
 find_package(Java)
 include(UseJava)
 
+# Output the project version
+set(NDRX_JAVA_VERSION_STR "${PROJ_NAME} ${VERSION}")
+
 ################################################################################
-# OS Confiugration
+# OS Configuration
 ################################################################################
 
 EXEC_PROGRAM(uname ARGS -a OUTPUT_VARIABLE _TMP_CMAKE_OS_NAME)
@@ -130,10 +133,10 @@ endif()
 # JAVA_JVM_LIBRARY=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
 
 get_filename_component(NDRX_JAVA_LIBDIR_JAVA ${JAVA_AWT_LIBRARY} DIRECTORY)
-get_filename_component(NDRX_JAVA_LIBD_JVM ${JAVA_JVM_LIBRARY} DIRECTORY)
+get_filename_component(NDRX_JAVA_LIBDIR_JVM ${JAVA_JVM_LIBRARY} DIRECTORY)
 
 message("CMake NDRX_JAVA_LIBDIR_JAVA  = ${NDRX_JAVA_LIBDIR_JAVA}")
-message("CMake NDRX_JAVA_LIBD_JVM  = ${NDRX_JAVA_LIBD_JVM}")
+message("CMake NDRX_JAVA_LIBDIR_JVM  = ${NDRX_JAVA_LIBDIR_JVM}")
 
 ################################################################################
 # "Configure"

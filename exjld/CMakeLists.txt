@@ -34,10 +34,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Make sure the compiler can find include files from UBF library
-include_directories ( ${ENDUROX_SOURCE_DIR}/include)
-
-# Make sure the linker can find the UBF library once it is built.
-link_directories (${ENDUROX_BINARY_DIR}/libubf) 
+include_directories ( ${PROJECT_SOURCE_DIR}/include)
 
 # Exectuables
 add_executable (exjld   exjld.c

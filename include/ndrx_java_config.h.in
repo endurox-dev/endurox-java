@@ -7,6 +7,8 @@
 #define NDRX_JAVA_CONFIG_H_
 
 
+#define NDRX_JAVA_VERSION   "@NDRX_JAVA_VERSION_STR@"
+
 #if defined(_WIN32) || defined(__WIN32__) || defined(__CYGWIN__)
 
 #if defined(ndrxjava_EXPORTS) || defined(exjlds_EXPORTS) 

@@ -54,6 +54,7 @@
 #include <ndrstandard.h>
 #include <ndebug.h>
 #include <view_cmn.h>
+#include <ndrx_java_config.h>
 
 #include "exjld.h"
 
@@ -141,7 +142,10 @@ int main(int argc, char **argv)
     int i;
     opterr = 0;
     
-    fprintf(stderr, "Enduro/X Java Linker\n\n");
+    /* Print Enduro/X Banner */
+    ndrx_sys_banner();
+    
+    fprintf(stderr, "\n%s, Linker\n\n", NDRX_JAVA_VERSION);
 
     /*
     Parse config, create temp directory, cd temp
@@ -356,7 +360,14 @@ int main(int argc, char **argv)
         NDRX_LOG (log_debug, "Processing JAR file [%s]", argv[i]);
         
         /* extract file... */
-        snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, argv[i]);
+        if ('/'==argv[i][0])
+        {
+            snprintf(tmp, sizeof(tmp), "jar xf %s", argv[i]);
+        }
+        else
+        {
+            snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, argv[i]);
+        }
         
         NDRX_LOG(log_debug, "%s", tmp);
         fprintf(stderr, "%s\n", tmp);

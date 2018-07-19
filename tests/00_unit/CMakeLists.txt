@@ -53,14 +53,30 @@ add_jar(jexunit00
     SOURCES
         ${JAVASRC}
     INCLUDE_JARS 
-        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
+        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar 
+        ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar 
+        ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
         )
 
-add_custom_target(jexunit00b ALL
-  COMMAND ../../exjld/exjld
-)
+#
+# TODO: Might want to add function for the binary generator:
+# https://stackoverflow.com/questions/33696412/cmake-add-custom-command-argument-based-on-variable-content
+#
 
-#add_custom_command(OUTPUT jexunit00_bin
-#                  COMMAND ../exjld/exjld)
+add_custom_command(OUTPUT jexunit00_cmd
+               COMMAND ${CMAKE_BINARY_DIR}/exjld/exjld
+                        -o jexunit00b
+                        -m org.junit.runner.JUnitCore
+                        -I ${CMAKE_SOURCE_DIR}/include
+                        -L ${CMAKE_BINARY_DIR}/libexjlds 
+                        -L ${NDRX_JAVA_LIBDIR_JAVA} 
+                        -L ${NDRX_JAVA_LIBDIR_JVM}
+                        jexunit00.jar 
+                        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar  
+                        ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar  
+                        ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
+               DEPENDS jexunit00.jar)
 
-#add_executable(jexunit00_bin)
+
+add_custom_target( jexunit00b ALL DEPENDS jexunit00_cmd )
+
