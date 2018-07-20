@@ -389,7 +389,7 @@ public class AtmiCtx {
      * @param svcname Service name
      * @param funcname Function name
      * @param svc interface to object implementing Service
-     * @throws AtmiTPEOSException System failure occurred during serving. 
+     * @throw AtmiTPEOSException System failure occurred during serving. 
      *    See logs i.e. user log, or debugs for more info. That could insufficient 
      *    memory or other error.
      */

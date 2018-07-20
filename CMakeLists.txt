@@ -236,7 +236,9 @@ function(ndrx_java_link)
 
     # We automatically depend on jars included
     add_custom_command(OUTPUT ${PARSED_ARGS_TARGET}
-                   COMMAND ${CMAKE_BINARY_DIR}/exjld/exjld
+                   COMMAND ${CMAKE_COMMAND} -E env CFLAGS=${CMAKE_C_FLAGS}
+                            CC=${CMAKE_C_COMPILER}
+                            ${CMAKE_BINARY_DIR}/exjld/exjld
                             -o ${PARSED_ARGS_TARGET}
                             -m ${PARSED_ARGS_MAINCLASS}
                             -I ${CMAKE_SOURCE_DIR}/include

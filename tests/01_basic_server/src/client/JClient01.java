@@ -12,6 +12,13 @@ public class JClient01 {
 
         TypedUBF u = (TypedUBF) ctx.tpalloc("UBF", null, 1024);
 
-        u = (TypedUBF)ctx.tpcall("HELLOSVC", u, 0);
+        try
+        {
+                u = (TypedUBF)ctx.tpcall("HELLOSVC", u, 0);
+        }
+        catch (AtmiException e)
+        {
+                ctx.tplogInfo("got exception !!!");
+        }
     }
 }
