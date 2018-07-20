@@ -56,3 +56,12 @@ add_jar(jserver01
         ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar
         )
 
+ndrx_java_link(
+            TARGET 
+                jserver01b
+            MAINCLASS 
+                JServer01
+            JARS
+                jserver01.jar
+                ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar
+)

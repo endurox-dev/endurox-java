@@ -189,6 +189,66 @@ MESSAGE( STATUS "INSTALL_LIB_DIR: " ${INSTALL_LIB_DIR} )
 OPTION(DEFINE_DISABLEDOC "Disable documentation generation" OFF) 
 ################################################################################
 
+
+
+################################################################################
+# Functions
+################################################################################
+
+include(CMakeParseArguments)
+
+# Call The Enduro/X Java linker
+# @param TARGET output binary name
+# @param MAINCLASS main class name
+# @param JARS... List of jar files to link
+function(ndrx_java_link)
+    cmake_parse_arguments(
+        PARSED_ARGS # prefix of output variables
+        "" # list of names of the boolean arguments (only defined ones will be true)
+        "TARGET;MAINCLASS;" # list of names of mono-valued arguments
+        "JARS" # list of names of multi-valued arguments (output variables are lists)
+        ${ARGN} # arguments of the function to parse, here we take the all original ones
+    )
+    # note: if it remains unparsed arguments, here, they can be found in variable PARSED_ARGS_UNPARSED_ARGUMENTS
+    if(NOT PARSED_ARGS_TARGET)
+        message(FATAL_ERROR "You must provide target name")
+    endif(NOT PARSED_ARGS_TARGET)
+
+    if(NOT PARSED_ARGS_MAINCLASS)
+        message(FATAL_ERROR "You must provide main class name")
+    endif(NOT PARSED_ARGS_MAINCLASS)
+
+    if(NOT PARSED_ARGS_JARS)
+        message(FATAL_ERROR "You must provide list of jars to link")
+    endif(NOT PARSED_ARGS_JARS)
+
+    #set(JARS_LIST " ")
+    message("Linking jars:")
+    foreach(src ${PARSED_ARGS_JARS})
+        message("- ${src}")
+    endforeach(src)
+
+    #set(DEPENDS_LIST " ")
+    message("Depends:")
+    foreach(src ${PARSED_ARGS_DEPENDS})
+        message("- ${src}")
+    endforeach(src)
+
+    # We automatically depend on jars included
+    add_custom_command(OUTPUT ${PARSED_ARGS_TARGET}
+                   COMMAND ${CMAKE_BINARY_DIR}/exjld/exjld
+                            -o ${PARSED_ARGS_TARGET}
+                            -m ${PARSED_ARGS_MAINCLASS}
+                            -I ${CMAKE_SOURCE_DIR}/include
+                            -L ${CMAKE_BINARY_DIR}/libexjlds 
+                            -L ${NDRX_JAVA_LIBDIR_JAVA} 
+                            -L ${NDRX_JAVA_LIBDIR_JVM}
+                            ${PARSED_ARGS_JARS}
+                   DEPENDS ${PARSED_ARGS_JARS})
+
+    add_custom_target( ${PARSED_ARGS_TARGET}link ALL DEPENDS ${PARSED_ARGS_TARGET} )
+endfunction(ndrx_java_link)
+
 ################################################################################
 # Submakes
 ################################################################################

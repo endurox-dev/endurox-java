@@ -9,3 +9,6 @@ $ cmake .
 
 
 
+To run unit tests do not forget to export path where libjvm and libjava are found!!
+e.g.
+export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server:/home/mvitolin/projects/endurox-java/libexjlds/:/home/mvitolin/projects/endurox-java/libsrc/c
