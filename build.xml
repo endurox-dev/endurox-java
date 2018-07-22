@@ -1,0 +1,86 @@
+<project name="endurox-java" default="build">
+
+<!--    This ANT Build script is needed for NetBeans or Eclipse IDEs
+        So that they fully can parse the project and offer full features
+        for source editing.
+-->
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="build">
+        <!-- =============================================================== -->
+        <!-- == Build for libsrc -->
+	<!-- =============================================================== -->
+        <mkdir dir="build/libsrc/classes"/>
+        <javac includeantruntime="false" srcdir="libsrc/java/org/endurox" destdir="build/libsrc/classes"/>
+        <javac includeantruntime="false" srcdir="libsrc/java/org/endurox/exceptions" destdir="build/libsrc/classes"/>
+
+        <jar destfile="libsrc/enduroxjava.jar" basedir="build/libsrc/classes">
+            <manifest>
+                <attribute name="Main-Class" value="org.endurox.AtmiCtx"/>
+            </manifest>
+        </jar>
+	
+	<!-- =============================================================== -->
+        <!-- == Build for tests/00_unit -->
+	<!-- =============================================================== -->
+        <mkdir dir="build/tests/00_unit/classes"/>
+        <javac includeantruntime="false" srcdir="tests/00_unit" destdir="build/tests/00_unit/classes">
+                <classpath>
+                        <pathelement path="tests/libs/junit.jar"/>
+                        <pathelement path="tests/libs/hamcrest-core.jar"/>
+                        <pathelement path="libsrc/enduroxjava.jar"/>
+                </classpath>
+        </javac>
+
+        <jar destfile="tests/00_unit/jexunit00.jar" basedir="build/tests/00_unit/classes">
+            <manifest>
+                <attribute name="Main-Class" value="org.junit.runner.JUnitCore"/>
+            </manifest>
+        </jar>
+	
+	<!-- =============================================================== -->
+        <!-- == Build for tests/01_basic_server/src/client -->
+	<!-- =============================================================== -->
+        <mkdir dir="build/tests/01_basic_server/src/client/classes"/>
+        <javac includeantruntime="false" srcdir="tests/01_basic_server/src/client" 
+	       destdir="build/tests/01_basic_server/src/client/classes">
+                <classpath>
+                        <pathelement path="libsrc/enduroxjava.jar"/>
+                </classpath>
+        </javac>
+
+        <jar destfile="tests/01_basic_server/src/client/jclient01.jar" 
+	     basedir="build/tests/01_basic_server/src/client/classes">
+            <manifest>
+                <attribute name="Main-Class" value="JClient01"/>
+            </manifest>
+        </jar>
+	
+	<!-- =============================================================== -->
+        <!-- == Build for tests/01_basic_server/src/server -->
+	<!-- =============================================================== -->
+        <mkdir dir="build/tests/01_basic_server/src/server/classes"/>
+        <javac includeantruntime="false" srcdir="tests/01_basic_server/src/server" 
+	       destdir="build/tests/01_basic_server/src/server/classes">
+                <classpath>
+                        <pathelement path="libsrc/enduroxjava.jar"/>
+                </classpath>
+        </javac>
+
+        <jar destfile="tests/01_basic_server/src/server/jserver01.jar" 
+	     basedir="build/tests/01_basic_server/src/server/classes">
+            <manifest>
+                <attribute name="Main-Class" value="JServer01"/>
+            </manifest>
+        </jar>
+	
+    </target>
+
+    <target name="run">
+        <java jar="enduroxjava.jar" fork="true"/>
+    </target>
+
+</project>

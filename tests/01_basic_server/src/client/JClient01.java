@@ -1,4 +1,5 @@
 import org.endurox.*;
+import org.endurox.exceptions.*;
 import java.util.*;
 
 public class JClient01 {
