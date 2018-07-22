@@ -107,6 +107,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
         jobject errdatabuf = NULL;
         char errbuf[MAX_ERROR_LEN+1];
         
+        NDRX_LOG(log_debug, "Call failed with %d", err);
         /* save the error detail, and continue */
         
         /* if it is user error, return the data buffer */

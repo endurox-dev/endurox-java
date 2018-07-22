@@ -78,9 +78,11 @@ export NDRX_LEV=5
 export PATH=$PATH:`pwd`/../bin
 
 export NDRX_CONFIG=`pwd`/ndrxconfig.xml
+export NDRX_CCONFIG=`pwd`
 export NDRX_DEBUG_CONF=`pwd`/debug.conf
 # UBFTAB
 export FLDTBLDIR=`pwd`/../src/ubftab
 export FIELDTBLS=test.fd,Exfields
 export NDRX_APPHOME=`pwd`/../
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NDRX_APPHOME/../../libsrc/c
+

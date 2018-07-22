@@ -76,8 +76,19 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     snprintf(cls, sizeof(cls), "org/endurox/exceptions/Atmi%sException", 
             tpecodestr(err));
     
-    NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
+    NDRX_LOG(log_info, "Throwing: [%s]", cls);
     
+    ex = (*env)->FindClass(env, cls);
+    
+    if (!ex)
+    {
+        NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
+        abort();
+    }
+        
+    (*env)->ThrowNew(env, ex, error);
+    
+#if 0
     ex = (*env)->FindClass(env, cls);
     
     mid = (*env)->GetMethodID(env, ex, "<init>", "(Ljava/lang/String;)V");
@@ -102,7 +113,10 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     
     if (NULL!=data)
     {
-        if (NULL==(data_fldid = (*env)->GetFieldID(env, ex, "data", "Lorg/endurox/TypedBuffer;")))
+        
+        NDRX_LOG(log_debug, "Setting data object for exception");
+        if (NULL==(data_fldid = (*env)->GetFieldID(env, ex, "data", 
+                "Lorg/endurox/TypedBuffer;")))
         {
             NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
                     "Failed to find data field in exception: %s");
@@ -116,6 +130,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     
     /* throw finally */
     (*env)->Throw(env, (jthrowable)exception);
+#endif
     
 }
 

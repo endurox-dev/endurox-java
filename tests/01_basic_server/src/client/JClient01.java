@@ -1,7 +1,9 @@
 import org.endurox.*;
-import org.endurox.exceptions.*;
-import java.util.*;
 
+/**
+ * Basic client process, calls service
+ * @author mvitolin
+ */
 public class JClient01 {
 
     public static void main(String[] args) {
@@ -12,14 +14,20 @@ public class JClient01 {
         ctx.userlog("Hello from Userlog");
 
         TypedUBF u = (TypedUBF) ctx.tpalloc("UBF", null, 1024);
-
         try
         {
-                u = (TypedUBF)ctx.tpcall("HELLOSVC", u, 0);
+            u = (TypedUBF)ctx.tpcall("HELLOSVC", u, 0);
         }
         catch (AtmiException e)
         {
-                ctx.tplogInfo("got exception !!!");
+            ctx.tplogInfo("got exception !!!: %s", e.toString());
+            System.exit(AtmiConstants.FAIL);
         }
+        
+        ctx.tplogInfo("Test OK...");
+        
+        /* Print the UBF buffer? */
+        
+        System.exit(AtmiConstants.SUCCEED);
     }
 }

@@ -15,7 +15,7 @@ xadmin start -y
 rm /tmp/01_CLIENT.log 2>/dev/null
 
 # should print some hello world
-client.sh > /tmp/01_CLIENT.log 2>&1
+jclient01b > /tmp/01_CLIENT.log 2>&1
 
 RET=$?
 
