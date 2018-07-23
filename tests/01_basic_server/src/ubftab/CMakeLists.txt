@@ -1,11 +1,11 @@
 ## 
-## Include sub-dirs for tests
+## Test01 for Java - server process
 ##
 ## @file CMakeLists.txt
 ## 
 ## -----------------------------------------------------------------------------
 ## Enduro/X Middleware Platform for Distributed Transaction Processing
-## Copyright (C) 2015, Mavimax, Ltd. All Rights Reserved.
+## Copyright (C) 2018, Mavimax, Ltd. All Rights Reserved.
 ## This software is released under one of the following licenses:
 ## GPL or Mavimax's license for commercial use.
 ## -----------------------------------------------------------------------------
@@ -29,9 +29,27 @@
 ## contact@mavimax.com
 ## -----------------------------------------------------------------------------
 ##
-cmake_minimum_required(VERSION 2.8)
 
-# Sub Dirs
-add_subdirectory (ubftab)
-add_subdirectory (server)
-add_subdirectory (client)
+# Set minimum version
+cmake_minimum_required(VERSION 2.6)
+
+find_package(Java)
+include(UseJava)
+
+# Add debug options
+# By default if RELEASE_BUILD is not defined, then we run in debug!
+IF ($ENV{RELEASE_BUILD})
+	# do nothing
+ELSE ($ENV{RELEASE_BUILD})
+	ADD_DEFINITIONS("-D UBF_DEBUG")
+ENDIF ($ENV{RELEASE_BUILD})
+
+ndrx_java_ubf(
+            TARGET 
+                ubf01
+            PACKAGE
+                test01.ubf
+            SOURCES
+                test.fd
+                Exfields
+)

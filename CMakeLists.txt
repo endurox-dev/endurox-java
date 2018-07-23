@@ -251,6 +251,58 @@ function(ndrx_java_link)
     add_custom_target( ${PARSED_ARGS_TARGET}link ALL DEPENDS ${PARSED_ARGS_TARGET} )
 endfunction(ndrx_java_link)
 
+# Generate Java UBF headers
+# @param FILES comma seperated of source files to include include in build
+# @param MAINCLASS main class name
+# @param JARS... List of jar files to link
+function(ndrx_java_ubf)
+    cmake_parse_arguments(
+        PARSED_ARGS # prefix of output variables
+        "" # list of names of the boolean arguments (only defined ones will be true)
+        "TARGET;PACKAGE" # list of names of mono-valued arguments
+        "SOURCES" # list of names of multi-valued arguments (output variables are lists)
+        ${ARGN} # arguments of the function to parse, here we take the all original ones
+    )
+    # note: if it remains unparsed arguments, here, they can be found in variable PARSED_ARGS_UNPARSED_ARGUMENTS
+    if(NOT PARSED_ARGS_TARGET)
+        message(FATAL_ERROR "You must provide target name")
+    endif(NOT PARSED_ARGS_TARGET)
+
+    if(NOT PARSED_ARGS_PACKAGE)
+        message(FATAL_ERROR "You must provide package name")
+    endif(NOT PARSED_ARGS_PACKAGE)
+
+    if(NOT PARSED_ARGS_SOURCES)
+        message(FATAL_ERROR "You must provide list of fd files to compile")
+    endif(NOT PARSED_ARGS_SOURCES)
+
+    message("Generating FDs:")
+
+    # add .java to the files
+    # PARSED_ARGS_FILES
+    SET(JAVA_LIST "")
+    SET(FD_LIST "")
+    FOREACH(f ${PARSED_ARGS_SOURCES})
+        message("- ${f}")
+        LIST(APPEND JAVA_LIST "${f}.java")
+        set(FD_LIST, "${FD_LIST},${f}")
+    ENDFOREACH(f)
+
+    # We automatically depend on jars included
+    add_custom_command(OUTPUT ${JAVA_LIST}
+                   COMMAND ${CMAKE_COMMAND} -E env FIELDTBLS=${FD_LIST}
+                            FLDTBLDIR=${CMAKE_CURRENT_SOURCE_DIR}
+                            mkfldhdr -m2 -p ${PARSED_ARGS_PACKAGE}
+                   DEPENDS ${PARSED_ARGS_SOURCES})
+
+    add_custom_target( ${PARSED_ARGS_TARGET}gen ALL DEPENDS  )
+    
+    add_jar(${PARSED_ARGS_TARGET}
+            SOURCES ${JAVA_LIST}
+            )
+
+endfunction(ndrx_java_ubf)
+
 ################################################################################
 # Submakes
 ################################################################################

@@ -63,21 +63,27 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
 {
     char cls[256];
     char error[ERROR_MAX];
+    jstring jerror;
     jclass ex;
-    va_list args;
-    va_start (args, msgfmt);
-    vsnprintf (error, sizeof(error), msgfmt, args);
-    va_end (args);
     
     jobject exception = NULL;
     jmethodID mid;
     jfieldID data_fldid;
+    
+    va_list args;
+    
+    va_start (args, msgfmt);
+    vsnprintf (error, sizeof(error), msgfmt, args);
+    va_end (args);
+    
+    jerror = (*env)->NewStringUTF(env, error);
     
     snprintf(cls, sizeof(cls), "org/endurox/exceptions/Atmi%sException", 
             tpecodestr(err));
     
     NDRX_LOG(log_info, "Throwing: [%s]", cls);
     
+    /*
     ex = (*env)->FindClass(env, cls);
     
     if (!ex)
@@ -86,10 +92,15 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, error);
+     (*env)->ThrowNew(env, ex, error); */
     
-#if 0
     ex = (*env)->FindClass(env, cls);
+    
+    if (NULL==ex)
+    {
+        NDRX_LOG(log_error, "exception  [%s] not found!!!! - aborting!", cls);
+        abort();
+    }
     
     mid = (*env)->GetMethodID(env, ex, "<init>", "(Ljava/lang/String;)V");
     
@@ -100,7 +111,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
         return;
     }
     
-    exception = (*env)->NewObject(env, ex, mid, error);
+    exception = (*env)->NewObject(env, ex, mid, jerror);
     
     if (NULL==exception)
     {
@@ -113,7 +124,6 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     
     if (NULL!=data)
     {
-        
         NDRX_LOG(log_debug, "Setting data object for exception");
         if (NULL==(data_fldid = (*env)->GetFieldID(env, ex, "data", 
                 "Lorg/endurox/TypedBuffer;")))
@@ -130,7 +140,6 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     
     /* throw finally */
     (*env)->Throw(env, (jthrowable)exception);
-#endif
     
 }
 
