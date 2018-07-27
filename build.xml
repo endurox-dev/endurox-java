@@ -12,20 +12,18 @@
     <target name="build">
         <!-- =============================================================== -->
         <!-- == Build for libsrc -->
-	<!-- =============================================================== -->
+	    <!-- =============================================================== -->
         <mkdir dir="build/libsrc/classes"/>
-        <javac includeantruntime="false" srcdir="libsrc/java/org/endurox" destdir="build/libsrc/classes"/>
-        <javac includeantruntime="false" srcdir="libsrc/java/org/endurox/exceptions" destdir="build/libsrc/classes"/>
 
-        <jar destfile="libsrc/enduroxjava.jar" basedir="build/libsrc/classes">
-            <manifest>
-                <attribute name="Main-Class" value="org.endurox.AtmiCtx"/>
-            </manifest>
-        </jar>
-	
-	<!-- =============================================================== -->
+        <javac includeantruntime="false" destdir="build/libsrc/classes">
+            <src path="libsrc/java/org/endurox" />
+            <src path="libsrc/java/org/endurox/exceptions" />
+        </javac>
+
+        <jar destfile="libsrc/enduroxjava.jar" basedir="build/libsrc/classes" />
+	    <!-- =============================================================== -->
         <!-- == Build for tests/00_unit -->
-	<!-- =============================================================== -->
+	    <!-- =============================================================== -->
         <mkdir dir="build/tests/00_unit/classes"/>
         <javac includeantruntime="false" srcdir="tests/00_unit" destdir="build/tests/00_unit/classes">
                 <classpath>
@@ -40,15 +38,26 @@
                 <attribute name="Main-Class" value="org.junit.runner.JUnitCore"/>
             </manifest>
         </jar>
+
+        <!-- =============================================================== -->
+        <!-- == Build for tests/01_basic_server/src/ubftab -->
+	    <!-- =============================================================== -->
+        <mkdir dir="build/tests/01_basic_server/src/ubftab/classes"/>
+        <javac includeantruntime="false" srcdir="tests/01_basic_server/src/ubftab" 
+	       destdir="build/tests/01_basic_server/src/ubftab/classes" />
+
+        <jar destfile="tests/01_basic_server/src/ubftab/ubf01.jar" 
+	     basedir="build/tests/01_basic_server/src/ubftab/classes" />
 	
-	<!-- =============================================================== -->
+	    <!-- =============================================================== -->
         <!-- == Build for tests/01_basic_server/src/client -->
-	<!-- =============================================================== -->
+	    <!-- =============================================================== -->
         <mkdir dir="build/tests/01_basic_server/src/client/classes"/>
         <javac includeantruntime="false" srcdir="tests/01_basic_server/src/client" 
 	       destdir="build/tests/01_basic_server/src/client/classes">
                 <classpath>
                         <pathelement path="libsrc/enduroxjava.jar"/>
+                        <pathelement path="tests/01_basic_server/src/ubftab/ubf01.jar"/>
                 </classpath>
         </javac>
 
@@ -59,14 +68,15 @@
             </manifest>
         </jar>
 	
-	<!-- =============================================================== -->
+	    <!-- =============================================================== -->
         <!-- == Build for tests/01_basic_server/src/server -->
-	<!-- =============================================================== -->
+	    <!-- =============================================================== -->
         <mkdir dir="build/tests/01_basic_server/src/server/classes"/>
         <javac includeantruntime="false" srcdir="tests/01_basic_server/src/server" 
 	       destdir="build/tests/01_basic_server/src/server/classes">
                 <classpath>
                         <pathelement path="libsrc/enduroxjava.jar"/>
+                        <pathelement path="tests/01_basic_server/src/ubftab/ubf01.jar"/>
                 </classpath>
         </javac>
 

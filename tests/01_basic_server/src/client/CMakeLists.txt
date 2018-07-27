@@ -53,7 +53,8 @@ add_jar(jclient01
     SOURCES
         ${JAVASRC}
     INCLUDE_JARS 
-        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar
+        ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+        ../ubftab/ubf01.jar
         )
 
 
@@ -64,5 +65,7 @@ ndrx_java_link(
                 JClient01
             JARS
                 jclient01.jar
-                ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar
+                ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+                ../ubftab/ubf01.jar
 )
+

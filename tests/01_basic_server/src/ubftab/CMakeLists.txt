@@ -47,8 +47,6 @@ ENDIF ($ENV{RELEASE_BUILD})
 ndrx_java_ubf(
             TARGET 
                 ubf01
-            PACKAGE
-                test01.ubf
             SOURCES
                 test.fd
                 Exfields

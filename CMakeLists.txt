@@ -268,9 +268,9 @@ function(ndrx_java_ubf)
         message(FATAL_ERROR "You must provide target name")
     endif(NOT PARSED_ARGS_TARGET)
 
-    if(NOT PARSED_ARGS_PACKAGE)
-        message(FATAL_ERROR "You must provide package name")
-    endif(NOT PARSED_ARGS_PACKAGE)
+    #if(NOT PARSED_ARGS_PACKAGE)
+    #    message(FATAL_ERROR "You must provide package name")
+    #endif(NOT PARSED_ARGS_PACKAGE)
 
     if(NOT PARSED_ARGS_SOURCES)
         message(FATAL_ERROR "You must provide list of fd files to compile")
@@ -284,15 +284,29 @@ function(ndrx_java_ubf)
     SET(FD_LIST "")
     FOREACH(f ${PARSED_ARGS_SOURCES})
         message("- ${f}")
-        LIST(APPEND JAVA_LIST "${f}.java")
-        set(FD_LIST, "${FD_LIST},${f}")
+
+        #string(REPLACE ".fd" ".java" JAVA_NAME "${f}")
+        # strip off extension...
+        string(REGEX REPLACE "\\..*$" "" JAVA_NAME "${f}")
+        
+        set(JAVA_NAME "${JAVA_NAME}.java")
+
+        message("- Java name: ${JAVA_NAME}")
+
+        LIST(APPEND JAVA_LIST "${JAVA_NAME}")
+        set(FD_LIST "${FD_LIST},${f}")
     ENDFOREACH(f)
+
+    # fix the fd list starting comma
+    string(REGEX REPLACE "^," "" FD_LIST "${FD_LIST}")
+    message("FDLIST=${FD_LIST}")
 
     # We automatically depend on jars included
     add_custom_command(OUTPUT ${JAVA_LIST}
                    COMMAND ${CMAKE_COMMAND} -E env FIELDTBLS=${FD_LIST}
                             FLDTBLDIR=${CMAKE_CURRENT_SOURCE_DIR}
-                            mkfldhdr -m2 -p ${PARSED_ARGS_PACKAGE}
+                            #mkfldhdr -m2 -p ${PARSED_ARGS_PACKAGE} - will not use package
+                            mkfldhdr -m2
                    DEPENDS ${PARSED_ARGS_SOURCES})
 
     add_custom_target( ${PARSED_ARGS_TARGET}gen ALL DEPENDS  )

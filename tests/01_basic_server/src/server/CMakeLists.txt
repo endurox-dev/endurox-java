@@ -53,15 +53,18 @@ add_jar(jserver01
     SOURCES
         ${JAVASRC}
     INCLUDE_JARS 
-        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar
+        ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+        ../ubftab/ubf01.jar
         )
 
 ndrx_java_link(
-            TARGET 
-                jserver01b
-            MAINCLASS 
-                JServer01
-            JARS
-                jserver01.jar
-                ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar
+	TARGET 
+	jserver01b
+	MAINCLASS 
+	JServer01
+	JARS
+	jserver01.jar
+	${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+	../ubftab/ubf01.jar
 )
+
