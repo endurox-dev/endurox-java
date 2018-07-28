@@ -2,6 +2,10 @@ package org.endurox;
 
 public class TypedUBF extends TypedBuffer {
 	
+    static {
+       System.loadLibrary("exjava"); // Load native library at runtime
+    }
+    
    /**
     * Initialize UBF Object
     * @param ctx[in] ATMI Context allocated this method
@@ -12,25 +16,25 @@ public class TypedUBF extends TypedBuffer {
    public TypedUBF(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
         super(ctx, doFinalize, cPtr, len);
    }
-   
-       /* TODO: Add Badd func... */
     
     /**
      * Add short value to UBF buffer
      * @param bfldid compiled field id
      * @param s short value
+     * @throw UbfBALIGNERRException Invalid Buffer
+     * @trhow UbfBNOTFLDException Invalid Buffer
+     * @throw UbfBNOSPACEException No space in buffer
      */
     public native void Badd(int bfldid, short s);
     
     /**
-     * Added Long value to UBF buffer
+     * Added Long value to UBF buffer.
      * @param bfldid field id
      * @param l long value
-     * @throws BALIGNERR, BNOTFLD, BNOSPACE
      */
     public native void Badd(int bfldid, long l);
     
-    public native void Badd(int bfldid, char c);
+    public native void Badd(int bfldid, byte c);
     
     public native void Badd(int bfldid, float f);
     
@@ -42,10 +46,26 @@ public class TypedUBF extends TypedBuffer {
     
     /**
      * Print the UBF buffer to STDOUT
-     * @throws AtmiBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
-     * @throws AtmiBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     * @throw AtmiBALIGNERRException Corrupted buffer or 
+     *  pointing to not aligned memory area.
+     * @throw AtmiBNOTFLDException Buffer not fielded, not 
+     *  correctly allocated or corrupted.
      */
     public native void Bprint();
+    
+    /**
+     * Get short value from UBF buffer
+     * @param bfldid compiled field id
+     * @param occ field occurrence
+     * @return value of the field
+     * @throw UbfBALIGNERRException Corrupted buffer or pointing to not 
+     *  aligned memory area.
+     * @throw UbfBNOTFLD Buffer not fielded, not correctly allocated or corrupted.
+     * @throw UbfBNOSPACE No space in buf.
+     * @throw UbfBBADFLD Invalid field id passed.
+     * @throw UbfBNOTPRES Field not present.
+     */
+    public native short BgetShort(int bfldid, int occ);
 
 }
 

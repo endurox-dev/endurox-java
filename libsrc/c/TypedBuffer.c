@@ -57,12 +57,35 @@
 expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, 
         jobject atmiBufObj, int do_set)
 {
-    TPCONTEXT_T ctx;
+    TPCONTEXT_T ctx = NULL;
 
     jclass objClass = (*env)->GetObjectClass(env, atmiBufObj);
+    
+    if (NULL==objClass)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to get object class: %s");
+        goto out;
+    }
+    
     jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
-            "Lorg/endurox/TypedBuffer;");
+            "Lorg/endurox/AtmiCtx;");
+    
+    if (NULL==atmi_ctx_fld)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to get context field from TypedBuffer: %s");
+        goto out;
+    }
+    
     jobject atmi_ctx_obj = (*env)->GetObjectField(env, atmiBufObj, atmi_ctx_fld);
+    
+    if (NULL==atmi_ctx_obj)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Context (ctx) is NULL for TypedBuffer: %s");
+        goto out;
+    }
     
     if (NULL==(ctx=ndrxj_get_ctx(env, atmi_ctx_obj, do_set)))
     {

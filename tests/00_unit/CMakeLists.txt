@@ -49,6 +49,14 @@ include_directories (. ${JNI_INCLUDE_DIRS})
 
 FILE(GLOB JAVASRC *.java)
 
+ndrx_java_ubf(
+            TARGET 
+                ubf00
+            SOURCES
+                test.fd
+                Exfields
+)
+
 add_jar(jexunit00
     SOURCES
         ${JAVASRC}
@@ -56,6 +64,7 @@ add_jar(jexunit00
         ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar 
         ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar 
         ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
+        ubf00.jar
         )
 
 #
@@ -79,6 +88,9 @@ add_jar(jexunit00
 
 #add_custom_target( jexunit00bb ALL DEPENDS jexunit00b )
 
+#
+# Also we want to generate so UBF tables
+#
 
 ndrx_java_link(
             TARGET 
@@ -90,5 +102,5 @@ ndrx_java_link(
                 ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar  
                 ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar  
                 ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
+                ubf00.jar
 )
-

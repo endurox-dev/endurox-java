@@ -3,7 +3,7 @@ package org.endurox;
 public class TypedView extends TypedBuffer {
 	
    /**
-    * Initialise VIEW Object
+    * Initialize VIEW Object
     * @param ctx[in] ATMI Context allocated this method
     * @param doFinalize[in] Should
     * @param cPtr[in] C pointer to allocated block

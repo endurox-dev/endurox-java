@@ -114,6 +114,152 @@ expublic void JNICALL Java_org_endurox_TypedUBF_Badd__IS
 }
 
 /**
+ * Add long to UBF buffer
+ * @param env java env
+ * @param data ubf buffer
+ * @param bfldid field id
+ * @param jl long value
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IJ
+  (JNIEnv * env, jobject data, jint bfldid, jlong jl)
+{
+    long l = (long)jl;
+    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&l, 0L, BFLD_LONG);
+}
+
+/**
+ * Add byte/char to buffer
+ * @param env java env
+ * @param data data buffer ubf
+ * @param bfldid field id
+ * @param jb char to add
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IB
+  (JNIEnv * env, jobject data, jint bfldid, jbyte jb)
+{
+    char c = (long)jb;
+    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&c, 0L, BFLD_CHAR);
+}
+
+/**
+ * Add float to UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid field id
+ * @param jf float value
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IF
+  (JNIEnv * env, jobject data, jint bfldid, jfloat jf)
+{
+    float f = (long)jf;
+    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&f, 0L, BFLD_FLOAT);
+}
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Badd
+ * Signature: (ID)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ID
+  (JNIEnv *, jobject, jint, jdouble);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Badd
+ * Signature: (ILjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ILjava_lang_String_2
+  (JNIEnv *, jobject, jint, jstring);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Badd
+ * Signature: (I[B)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__I_3B
+  (JNIEnv *, jobject, jint, jbyteArray);
+
+
+
+/**
+ * Find field value in buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid field id 
+ * @param occ occurrence to find
+ * @param value field value to return double ptr
+ * @param len field length 
+ * @param usrtype user try expected (cast to if needed)
+ * @return EXSUCCEED/EXFAIL
+ */
+exprivate int ndrxj_ubf_CBfind(JNIEnv *env, jobject data, jint bfldid, BFLDOCC occ,
+        char **value, BFLDLEN *len, int usrtype)
+{
+    char *cdata;
+    long clen;
+    int ret = EXSUCCEED;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Get the field value */
+    
+    if (NULL==(*value = CBfind((UBFH*)cdata, bfldid, occ, len, usrtype)))
+    {
+        UBF_LOG(log_error, "%s: CBfind failed to add %d (%s) occ %d: %s", 
+                __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(Berror));
+        
+        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d (%s) occ %d: %s", 
+                __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(Berror));
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
+/**
+ * Return short field value from buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return short value
+ * @throws any UBF
+ */
+expublic JNIEXPORT jshort JNICALL Java_org_endurox_TypedUBF_BgetShort
+  (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *ret;
+    short *s = NULL;
+    
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &ret, NULL, BFLD_SHORT))
+    {
+        return (jshort)EXFAIL;
+    }
+    
+    /* return the value */
+    
+    s = (short *)ret;
+    return (jshort)*s;
+}
+
+
+/**
  * Print the UBF buffer to STDOUT
  * @param env java env
  * @param data TypedUBF object

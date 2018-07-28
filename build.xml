@@ -12,7 +12,7 @@
     <target name="build">
         <!-- =============================================================== -->
         <!-- == Build for libsrc -->
-	    <!-- =============================================================== -->
+        <!-- =============================================================== -->
         <mkdir dir="build/libsrc/classes"/>
 
         <javac includeantruntime="false" destdir="build/libsrc/classes">
@@ -21,9 +21,10 @@
         </javac>
 
         <jar destfile="libsrc/enduroxjava.jar" basedir="build/libsrc/classes" />
-	    <!-- =============================================================== -->
-        <!-- == Build for tests/00_unit -->
-	    <!-- =============================================================== -->
+        
+        <!-- =============================================================== -->
+        <!-- == Build for tests/00_unit, note that FDs must be generated! -->
+        <!-- =============================================================== -->
         <mkdir dir="build/tests/00_unit/classes"/>
         <javac includeantruntime="false" srcdir="tests/00_unit" destdir="build/tests/00_unit/classes">
                 <classpath>
@@ -40,8 +41,9 @@
         </jar>
 
         <!-- =============================================================== -->
-        <!-- == Build for tests/01_basic_server/src/ubftab -->
-	    <!-- =============================================================== -->
+        <!-- == Build for tests/01_basic_server/src/ubftab, note that FDs 
+         must be gereated by running make -->
+        <!-- =============================================================== -->
         <mkdir dir="build/tests/01_basic_server/src/ubftab/classes"/>
         <javac includeantruntime="false" srcdir="tests/01_basic_server/src/ubftab" 
 	       destdir="build/tests/01_basic_server/src/ubftab/classes" />
@@ -49,9 +51,9 @@
         <jar destfile="tests/01_basic_server/src/ubftab/ubf01.jar" 
 	     basedir="build/tests/01_basic_server/src/ubftab/classes" />
 	
-	    <!-- =============================================================== -->
+        <!-- =============================================================== -->
         <!-- == Build for tests/01_basic_server/src/client -->
-	    <!-- =============================================================== -->
+        <!-- =============================================================== -->
         <mkdir dir="build/tests/01_basic_server/src/client/classes"/>
         <javac includeantruntime="false" srcdir="tests/01_basic_server/src/client" 
 	       destdir="build/tests/01_basic_server/src/client/classes">

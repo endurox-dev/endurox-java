@@ -20,6 +20,10 @@
 #./a.out AtmiCtxTest
 
 
+export FIELDTBLS=Exfields,test.fd
+export FLDTBLDIR=`pwd`
+
 source ~/ndrx_home
-./jexunit00b AtmiCtxTest
+./jexunit00b AtmiCtxTest || exit 1
+./jexunit00b BaddTest || exit 2
 

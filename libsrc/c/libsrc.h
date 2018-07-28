@@ -61,10 +61,12 @@ extern "C" {
 #define NDRXJ_LOG_EXCEPTION(ENV__, LEV__, FLAGS__, FMT__, ...) {\
 \
     char *jerr__ = ndrxj_exception_backtrace(ENV__);\
+    char *jerr_null__ = "no JNI exception";\
     \
-    if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
-        userlog(FMT__, jerr__, ##__VA_ARGS__);\
+    if (NULL==jerr__) {jerr__= jerr_null__;}\
     if (FLAGS__ & NDRXJ_LOGEX_ULOG)\
+        userlog(FMT__, jerr__, ##__VA_ARGS__);\
+    if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
         NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_FREE(jerr__);\
 }
