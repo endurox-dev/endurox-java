@@ -120,7 +120,7 @@ expublic void JNICALL Java_org_endurox_TypedUBF_Badd__IS
  * @param bfldid field id
  * @param jl long value
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IJ
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IJ
   (JNIEnv * env, jobject data, jint bfldid, jlong jl)
 {
     long l = (long)jl;
@@ -134,7 +134,7 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IJ
  * @param bfldid field id
  * @param jb char to add
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IB
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IB
   (JNIEnv * env, jobject data, jint bfldid, jbyte jb)
 {
     char c = (long)jb;
@@ -148,38 +148,66 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IB
  * @param bfldid field id
  * @param jf float value
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IF
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IF
   (JNIEnv * env, jobject data, jint bfldid, jfloat jf)
 {
     float f = (long)jf;
     ndrxj_ubf_CBadd(env, data, bfldid, (char *)&f, 0L, BFLD_FLOAT);
 }
 
-/*
- * Class:     org_endurox_TypedUBF
- * Method:    Badd
- * Signature: (ID)V
+/**
+ * Add double to UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid field id
+ * @param jd float value
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ID
-  (JNIEnv *, jobject, jint, jdouble);
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ID
+  (JNIEnv * env, jobject data, jint bfldid, jdouble jd)
+{
+    double d = (double)jd;
+    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&d, 0L, BFLD_DOUBLE);
+}
 
-/*
- * Class:     org_endurox_TypedUBF
- * Method:    Badd
- * Signature: (ILjava/lang/String;)V
+/**
+ * Add string to UBF buffer
+ * @param env java env
+ * @param data data buffer
+ * @param bfldid field id
+ * @param js java string
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ILjava_lang_String_2
-  (JNIEnv *, jobject, jint, jstring);
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ILjava_lang_String_2
+  (JNIEnv *env, jobject data, jint bfldid, jstring js)
+{
+    jboolean n_str_copy = EXFALSE;
+    const char *n_str = (*env)->GetStringUTFChars(env, js, &n_str_copy);
+    
+    ndrxj_ubf_CBadd(env, data, bfldid, (char *)n_str, 0L, BFLD_STRING);
+    
+    if (n_str_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, js, n_str);
+    }
+}
 
-/*
- * Class:     org_endurox_TypedUBF
- * Method:    Badd
- * Signature: (I[B)V
+/**
+ * Add byte array to buffer
+ * @param env java env
+ * @param data data buffer
+ * @param bfldid field id
+ * @param jb java byte array
  */
 JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__I_3B
-  (JNIEnv *, jobject, jint, jbyteArray);
-
-
+  (JNIEnv * env, jobject data, jint bfldid, jbyteArray jb)
+{
+    jboolean n_carray_copy;
+    char * n_carray = (char*)(*env)->GetByteArrayElements(env , jb, &n_carray_copy);
+    
+    if(n_carray_copy)
+    {
+       (*env)->ReleaseByteArrayElements(env, jb, n_carray, JNI_ABORT);
+    }
+}
 
 /**
  * Find field value in buffer
@@ -257,7 +285,6 @@ expublic JNIEXPORT jshort JNICALL Java_org_endurox_TypedUBF_BgetShort
     s = (short *)ret;
     return (jshort)*s;
 }
-
 
 /**
  * Print the UBF buffer to STDOUT
