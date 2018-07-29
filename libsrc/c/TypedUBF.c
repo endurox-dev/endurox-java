@@ -271,19 +271,189 @@ out:
 expublic JNIEXPORT jshort JNICALL Java_org_endurox_TypedUBF_BgetShort
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
-    char *ret;
-    short *s = NULL;
+    char *buf;
+    short *v = NULL;
     
     /* exception will be thrown in case of failure */
-    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &ret, NULL, BFLD_SHORT))
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_SHORT))
     {
         return (jshort)EXFAIL;
     }
     
     /* return the value */
+    v = (short *)buf;
+    return (jshort)*v;
+}
+
+/**
+ * get long value from buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return long value
+ * @throws any UBF
+ */
+JNIEXPORT jlong JNICALL Java_org_endurox_TypedUBF_BgetLong
+      (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *buf;
+    long *v = NULL;
     
-    s = (short *)ret;
-    return (jshort)*s;
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_LONG))
+    {
+        return (jlong)EXFAIL;
+    }
+    
+    /* return the value */
+    v = (long *)buf;
+    return (jlong)*v;
+}
+
+/**
+ * Get byte/ansi char from buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return char value
+ * @throws any UBF
+ */
+JNIEXPORT jbyte JNICALL Java_org_endurox_TypedUBF_BgetByte
+  (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *buf;
+    char *v = NULL;
+    
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_CHAR))
+    {
+        return (jbyte)EXFAIL;
+    }
+    
+    /* return the value */
+    v = (char *)buf;
+    return (jbyte)*v;
+}
+
+/**
+ * Get float value from buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return float value
+ * @throws any UBF
+ */
+JNIEXPORT jfloat JNICALL Java_org_endurox_TypedUBF_BgetFloat
+  (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *buf;
+    float *v = NULL;
+    
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_FLOAT))
+    {
+        return (jfloat)EXFAIL;
+    }
+    
+    /* return the value */
+    v = (float *)buf;
+    return (jfloat)*v;
+}
+
+/**
+ * Get double value from buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return double value
+ * @throws any UBF
+ */
+JNIEXPORT jdouble JNICALL Java_org_endurox_TypedUBF_BgetDouble
+  (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *buf;
+    double *v = NULL;
+    
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_DOUBLE))
+    {
+        return (jdouble)EXFAIL;
+    }
+    
+    /* return the value */
+    v = (double *)buf;
+    return (jdouble)*v;
+}
+
+/**
+ * Return string from buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return string value
+ * @throws any UBF
+ */
+JNIEXPORT jstring JNICALL Java_org_endurox_TypedUBF_BgetString
+  (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *buf;
+    
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_STRING))
+    {
+        return (jstring)NULL;
+    }
+    /* build java string... */
+    return (*env)->NewStringUTF(env, buf);
+}
+
+/**
+ * Return byte array from ubf buffer
+ * @param env Java env
+ * @param data UBF data buffer
+ * @param bfldid compiled field
+ * @param occ field occurrence 
+ * @return java byte array value
+ * @throws any UBF
+ */
+JNIEXPORT jbyteArray JNICALL Java_org_endurox_TypedUBF_BgetByteArr
+  (JNIEnv * env, jobject data, jint bfldid, jint occ)
+{
+    char *buf;
+    BFLDLEN len;
+    jbyteArray ret = NULL;
+    
+    /* exception will be thrown in case of failure */
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, &len, BFLD_STRING))
+    {
+        return (jstring)NULL;
+    }
+    
+    ret = (*env)->NewByteArray(env, (jsize)len);
+
+    if (NULL==ret)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to create byte array with: %s, size: %d", (int)len);
+        goto out;
+    }
+
+    (*env)->SetByteArrayRegion(env, ret, 0, len, 
+                            (jbyte*)buf);
+
+    if((*env)->ExceptionCheck(env))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to set data bytes: %s");
+        goto out;
+    }
+out:
+    return ret;
 }
 
 /**

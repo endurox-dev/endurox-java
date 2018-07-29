@@ -106,7 +106,7 @@ public class TypedUBF extends TypedBuffer {
     public native float BgetFloat(int bfldid, int occ);
     public native double BgetDouble(int bfldid, int occ);
     public native String BgetString(int bfldid, int occ);
-    public native byte[] BgetByteArray(int bfldid, int occ);
+    public native byte[] BgetByteArr(int bfldid, int occ);
     
     /** @} */ // end of Bget
 
