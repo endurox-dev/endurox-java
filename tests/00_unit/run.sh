@@ -24,6 +24,7 @@ export FIELDTBLS=Exfields,test.fd
 export FLDTBLDIR=`pwd`
 
 source ~/ndrx_home
+unset NDRX_DEBUG_CONF
 ./jexunit00b AtmiCtxTest || exit 1
 ./jexunit00b BaddTest || exit 2
 

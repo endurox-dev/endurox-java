@@ -201,7 +201,12 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__I_3B
   (JNIEnv * env, jobject data, jint bfldid, jbyteArray jb)
 {
     jboolean n_carray_copy;
-    char * n_carray = (char*)(*env)->GetByteArrayElements(env , jb, &n_carray_copy);
+    char * n_carray = (char*)(*env)->GetByteArrayElements(env, jb, &n_carray_copy);
+    jsize len = (*env)->GetArrayLength(env, jb);
+    
+    NDRX_LOG(log_error, "Adding carray len: %ld", (long)len);
+    
+    ndrxj_ubf_CBadd(env, data, bfldid, (char *)n_carray, (BFLDLEN)len, BFLD_CARRAY);
     
     if(n_carray_copy)
     {
@@ -243,11 +248,12 @@ exprivate int ndrxj_ubf_CBfind(JNIEnv *env, jobject data, jint bfldid, BFLDOCC o
     
     if (NULL==(*value = CBfind((UBFH*)cdata, bfldid, occ, len, usrtype)))
     {
+        int err = Berror;
         UBF_LOG(log_error, "%s: CBfind failed to add %d (%s) occ %d: %s", 
-                __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(Berror));
+                __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(err));
         
-        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d (%s) occ %d: %s", 
-                __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(Berror));
+        ndrxj_ubf_throw(env, err, "%s: Failed to add %d (%s) occ %d: %s", 
+                __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(err));
         EXFAIL_OUT(ret);
     }
     
@@ -425,11 +431,11 @@ JNIEXPORT jbyteArray JNICALL Java_org_endurox_TypedUBF_BgetByteArr
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
-    BFLDLEN len;
+    BFLDLEN len = 0;
     jbyteArray ret = NULL;
     
     /* exception will be thrown in case of failure */
-    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, &len, BFLD_STRING))
+    if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, &len, BFLD_CARRAY))
     {
         return (jstring)NULL;
     }

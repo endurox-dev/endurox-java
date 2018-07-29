@@ -297,7 +297,7 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jobject 
     
     /* Translate the handler to Java side */
     ret = ndrxj_atmi_TypedBuffer_translate(env,  obj, EXTRUE, data, size, 
-            (char *)n_btype, (char *)n_bsubtype);
+            (char *)n_btype, (char *)n_bsubtype, EXTRUE);
     
 out:
     /* unset context */

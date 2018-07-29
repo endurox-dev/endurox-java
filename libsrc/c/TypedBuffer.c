@@ -143,7 +143,7 @@ out:
  */
 expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, char *data, long len,
-            char *type, char *subtype)
+            char *type, char *subtype, int finalize)
 {
     jobject ret = NULL;
     jclass bclz;
@@ -264,7 +264,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
 
     NDRX_LOG(log_debug, "About to NewObject(%s)", clazz);
     
-    ret = (*env)->NewObject(env, bclz, mid, ctx_obj, JNI_TRUE, (jlong)data, len);
+    ret = (*env)->NewObject(env, bclz, mid, ctx_obj, (jboolean)finalize, (jlong)data, len);
     
     if (NULL==ret)
     {
@@ -604,7 +604,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             /* exception shall be set */
             if (NULL==(ret = ndrxj_atmi_TypedBuffer_translate(env, 
                 ctx_obj, EXTRUE, odata, olen,
-                otype, osubtype)))
+                otype, osubtype, EXTRUE)))
             {
                 NDRX_LOG(log_error, "Failed to translate buffer %p", odata);
                 goto out;

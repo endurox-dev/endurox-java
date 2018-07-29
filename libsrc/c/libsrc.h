@@ -91,7 +91,7 @@ extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
 
 extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, char *data, long len,
-            char *type, char *subtype);
+            char *type, char *subtype, int finalize);
 
 extern TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, 
         jobject atmiBufObj, int do_set);

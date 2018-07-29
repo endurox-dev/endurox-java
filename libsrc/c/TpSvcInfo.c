@@ -111,7 +111,7 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     /* Translate ATMI buffer */
     if (NULL==(jdata=ndrxj_atmi_TypedBuffer_translate(env, 
             ctx_obj, EXTRUE, svcinfo->data, svcinfo->len,
-            NULL, NULL)))
+            NULL, NULL, EXFALSE)))
     {
         NDRX_LOG(log_error, "Failed to translate ATMI buffer to Java object: %p",
                 svcinfo->data);
