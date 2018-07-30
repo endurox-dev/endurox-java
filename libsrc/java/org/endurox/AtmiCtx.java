@@ -17,18 +17,20 @@ import java.util.concurrent.locks.ReentrantLock;
  *  This is main class used for almost all operations with Enduro/X middleware
  */
 
-/*! \mainpage Enduro/X Programming main page
+/*! @mainpage Enduro/X Programming main page
  *
- * \section standard_sec Programming standard page
+ * @section standard_sec Programming standard page
  *
  * This section lists API practices used by Enduro/X Java package
  *
- * \subsection atmi_api_sec ATMI API
+ * @subsection atmi_api_sec ATMI API
  * ATMI API uses lower case function names (instead of Java camel case). This
  * is for clener compatibility with C XATMI API. The same goes with the constants.
  * ATMI constants goes in upper case as in the C side.
+ * 
+ * Class names are typed as with Java Standard.
  *
- * \subsection java_api_sec Java Specific API
+ * @subsection java_api_sec Java Specific API
  * Java Specific APIs are using standard camel cases method names.
  *
  */
@@ -534,10 +536,10 @@ public class AtmiCtx {
     /**
      * Initialize current ATMI Context as a ATMI client
      * @param tpinfo might be NULL. Currently not used by Enduro/X
-     * @thorws AtmiTPEINVALException environment not configured
-     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     * @thorw AtmiTPEINVALException environment not configured
+     * @throw AtmiTPESYSTEMException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
-     * @throws AtmiTPEOSException System failure occurred during serving. 
+     * @throw AtmiTPEOSException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
      */
     public native void tpinit(TpInit tpinfo);

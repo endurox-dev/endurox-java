@@ -109,6 +109,66 @@ public class TypedUBF extends TypedBuffer {
     public native byte[] BgetByteArr(int bfldid, int occ);
     
     /** @} */ // end of Bget
+    
+    /**
+     * Fast add field to UBF buffer
+     * @defgroup Badd function calls
+     * @param bfldid compiled field id
+     * @throw UbfBALIGNERRException Invalid Buffer
+     * @throw UbfBNOTFLDException Invalid Buffer
+     * @throw UbfBNOSPACEException No space in buffer
+     * @{
+     */
+    
+    /**
+     * Add short value to UBF buffer
+     * @param bfldid compiled field id
+     * @param s short value
+     */
+    public native void Baddfast(int bfldid, short s, BFldLocInfo next_fld);
 
+    /**
+     * Add long value to UBF
+     * @param bfldid compiled field id
+     * @param l long value
+     */
+    public native void Baddfast(int bfldid, long l, BFldLocInfo next_fld);
+    
+    /**
+     * Add byte (ANSI Char) to UBF
+     * @param bfldid compiled field id
+     * @param c ANSI char value / Java byte
+     */
+    public native void Baddfast(int bfldid, byte c, BFldLocInfo next_fld);
+    
+    /**
+     * Set float value to buffer
+     * @param bfldid compiled field id
+     * @param f float value
+     */
+    public native void Baddfast(int bfldid, float f, BFldLocInfo next_fld);
+    
+    /**
+     * Set Double value to buffer
+     * @param bfldid field id
+     * @param d  double value
+     */
+    public native void Baddfast(int bfldid, double d, BFldLocInfo next_fld);
+    
+    /**
+     * Add string to UBF buffer
+     * @param bfldid field id
+     * @param s String value
+     */
+    public native void Baddfast(int bfldid, String s, BFldLocInfo next_fld);
+    
+    /**
+     * Add byte array to UBF buffer
+     * @param bfldid field id
+     * @param b byte array
+     */
+    public native void Baddfast(int bfldid, byte []b, BFldLocInfo next_fld);
+    
+    /** @} */ // end of Badd
 }
 
