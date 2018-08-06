@@ -15,30 +15,24 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-*exjld* binary consume view files defined in format specified of *viewfile(5)*.
-The view file describes the C structure which can be mapped to *UBF* buffer. The
-view file contains also the length of the *STRING* and *CARRAY* fields. Program does
-following steps:
+*exjld* is Enduro/X java linker too. The tool is used to compile given jar files
+into single executable binary. *exjld* basically extracts all jar files, converts
+them to C resources (statically initialized byte arrays). These byte array
+global variables are indexed by class names. The application then is started by
+custom class loader which from JNI side pulls is the classes necessary. Basically
+by using this tool, the developer can distributed java programs with zero dependencies,
+except the fact that JDK and Enduro/X libraries must be installed on system.
+All other depended JARs are compiled statically into single executable. This
+can greatly help to improve product development and streamline the product
+delivery to the customer. As the all logic is encapsulated into autonomous binary.
+Thus at the production, the target system can be composed of different such kind
+of binaries, where each of them can depend on different set or version of the
+third party Jar libs.
 
-. Generates C header file with structures according to the view file
-
-. Calculates machine dependent the C field offset in the memory, calculates field
-lengths
-
-To perform offset and size calculation, exjld generates small C program which is
-compiled by 'buildclient(8)' Perl script. The generated temporary program is executed
-which updates the in-memory read view file. The view file is updated with platform
-specific data and the "object-file" is written to disk. The object file basically
-corresponds the same *viewfile(5)* format, except that additional meta data for
-each of the fields are encoded after the NULL column. Also some meta data are
-encoded in view file comments. The "object-file" can be used as original view file
-by exjld. In that case exjld will ignore the meta data and will produce new
-"object-file". Compiled view file gets extension '.V', the generated header file
-in C language mode, gets extension '.h'. If source view file passed in command
-line for compilation contains the extension, for output files it is stripped off
-and only base name is used for target output files. 
-
-*exjld* must have access to *cc* (C Compiler).
+*exjld* must have access to *cc* (C Compiler). *exjld* by default calls Enduro/X
+*buildserver* utility used for compiling sources and linking with Enduro/X libs.
+Also program uses *jar* tool for extracting the jar files. The class files to
+C resources are converted by *exembedfile(8)* utility.
 
 ENVIRONMENT
 -----------
