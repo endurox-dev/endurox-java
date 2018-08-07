@@ -111,8 +111,16 @@ public class TypedUBF extends TypedBuffer {
     /** @} */ // end of Bget
     
     /**
-     * Fast add field to UBF buffer
-     * @defgroup Badd function calls
+     * Fast add field to UBF buffer. This function is used when series of the
+     *  same field occurrences are added to buffer. This saves a pointer to
+     *  last buffer offset where data is finished to add. Thus next add operation
+     *  will continue from that position. This greatly increases the buffer
+     *  population speed. Between calls, no modifications shall be done to buffer,
+     *  otherwise that might results in corrupted UBF buffer.
+     *  When adding first field in the batch, then BFldLocInfo must be reset.
+     *  Either by creating new object or explicitly calling reset() method
+     *  on the object.
+     * @defgroup Baddfast function calls
      * @param bfldid compiled field id
      * @throw UbfBALIGNERRException Invalid Buffer
      * @throw UbfBNOTFLDException Invalid Buffer
@@ -124,6 +132,7 @@ public class TypedUBF extends TypedBuffer {
      * Add short value to UBF buffer
      * @param bfldid compiled field id
      * @param s short value
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, short s, BFldLocInfo next_fld);
 
@@ -131,6 +140,7 @@ public class TypedUBF extends TypedBuffer {
      * Add long value to UBF
      * @param bfldid compiled field id
      * @param l long value
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, long l, BFldLocInfo next_fld);
     
@@ -138,6 +148,7 @@ public class TypedUBF extends TypedBuffer {
      * Add byte (ANSI Char) to UBF
      * @param bfldid compiled field id
      * @param c ANSI char value / Java byte
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, byte c, BFldLocInfo next_fld);
     
@@ -145,6 +156,7 @@ public class TypedUBF extends TypedBuffer {
      * Set float value to buffer
      * @param bfldid compiled field id
      * @param f float value
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, float f, BFldLocInfo next_fld);
     
@@ -152,6 +164,7 @@ public class TypedUBF extends TypedBuffer {
      * Set Double value to buffer
      * @param bfldid field id
      * @param d  double value
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, double d, BFldLocInfo next_fld);
     
@@ -159,6 +172,7 @@ public class TypedUBF extends TypedBuffer {
      * Add string to UBF buffer
      * @param bfldid field id
      * @param s String value
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, String s, BFldLocInfo next_fld);
     
@@ -166,6 +180,7 @@ public class TypedUBF extends TypedBuffer {
      * Add byte array to UBF buffer
      * @param bfldid field id
      * @param b byte array
+     * @param next_fld storage for last field added pointer.
      */
     public native void Baddfast(int bfldid, byte []b, BFldLocInfo next_fld);
     

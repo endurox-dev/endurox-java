@@ -76,6 +76,7 @@ create_javah(TARGET enduroxjh CLASSES
         org.endurox.TpCallResult
         org.endurox.TypedUBF
         org.endurox.TpInit
+        org.endurox.BFldLocInfo
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     CLASSPATH enduroxjava)
 

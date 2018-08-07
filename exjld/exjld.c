@@ -165,7 +165,7 @@ int main(int argc, char **argv)
      * n - do not run test
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:I:")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:I:h")) != -1)
     {
         switch (c)
         {

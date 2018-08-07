@@ -15,12 +15,12 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-*exjld* is Enduro/X java linker too. The tool is used to compile given jar files
+*exjld* is Enduro/X Java linker too. The tool is used to compile given jar files
 into single executable binary. *exjld* basically extracts all jar files, converts
 them to C resources (statically initialized byte arrays). These byte array
 global variables are indexed by class names. The application then is started by
 custom class loader which from JNI side pulls is the classes necessary. Basically
-by using this tool, the developer can distributed java programs with zero dependencies,
+by using this tool, the developer can distributed Java programs with zero dependencies,
 except the fact that JDK and Enduro/X libraries must be installed on system.
 All other depended JARs are compiled statically into single executable. This
 can greatly help to improve product development and streamline the product
@@ -28,6 +28,11 @@ delivery to the customer. As the all logic is encapsulated into autonomous binar
 Thus at the production, the target system can be composed of different such kind
 of binaries, where each of them can depend on different set or version of the
 third party Jar libs.
+
+*exjld* linker normally links the binary two times. First time it does the test
+when class loader is instructed to load main class. If loading succeed, then
+linker re-links the binary with the final mode which includes the execution of
+the main class after it is loader.
 
 *exjld* must have access to *cc* (C Compiler). *exjld* by default calls Enduro/X
 *buildserver* utility used for compiling sources and linking with Enduro/X libs.
@@ -41,37 +46,56 @@ Optional environment variable indicating which C compiler to use. If parameter i
 not set, the *cc* command is used.
 
 *CFLAGS*::
-Optional C flags to be passed to C compiler during the *buildclient* execution.
+Optional C flags to be passed to C compiler during the *buildserver* execution.
+
+*NDRX_HOME*::
+Optional Enduro/X home directory, where to search for the *include* sub-folder
+and library folder.
 
 OPTIONS
 -------
-[*-L* 'LD_LIBRARY_PATH']::
-Additional library path for dynamic libraries. This is needed during the compiled
-code execution, so that runtime can load dynamic libraries required by Enduro/X.
 
-[*-b* 'BUILD_FLAGS']::
-Additional flags to be passed to 'cc' command line. This can be used to pass
-additional include path, library path or libraries it self.
+*JAR*::
+This is list of JAR files that must be linked into binary.
+
+*-m* 'MAIN_CLASS_NAME'::
+This is main class name into which executable will enter after the process is
+started.
+
+[*-o* 'OUTPUT_BINARY']::
+This is name of output binary.If not specified then *a.out* is used.
+
+[*-l* 'LINK_LIBRARIES']::
+Additional shared/static C libraries that shall be linked with the process. The
+'-l' argument can be repeated multiple times. The list of libraries are passed
+down to the *buildserver* (or alternative) tool into format of C style libs
+string.
+
+[*-L* 'LIBRARY_SEARCH_PATH]::
+This is link time (and also used for test runtime) the path where to search for
+libraries used by compiler. Either it is path of static or dynamic libraries.
+Can be repeated multiple times.
+
+[*-I* 'INCLUDE_PATH']::
+This is path where C compiler shall search for C include headers. Can be repeated
+multiple times.
+
+[*-b* 'BUILD_COMMAND']::
+This is override of the C build command, which by default is Enduro/X's 
+*buildserver*.
 
 [*-n*]::
-Do not process UBF mapping during compilation of the view file. This can be useful
-in cases if the environment is not configured during the build time and field
-definition files are not accessible at the time.
+Do not perform test run of the main class loader.
 
-[*-d* 'OUTPUT_DIRECTOR']::
-Optional flag for changing output directory where object file is generated. If
-parameter is not set, current directory is used.
+[*-t* 'TEMP_DIR_PREFIX']::
+The default prefix of temp dir (where JARs are extracted) is './'. With this
+parameter other directory can be chosen.
 
-[*-C*]::
-Reserved for future use.
-
-[*-m* 'LANGUAGE_MODE']::
-Language mode for header file generation. Currently defined value is 0 - C lang,
-which is default value of the parameter.
+[*-e* 'EMBED_RESOURCES']::
+Additional resource files that can be accessible via Enduro/X Java API.
 
 [*-h*]::
 Print usage.
-
 
 EXIT STATUS
 -----------
@@ -84,7 +108,7 @@ Failure
 
 EXAMPLE
 -------
-See *atmitest/test040_typedview* for sample usage.
+See *tests/00_unit/CMakeLists.txt* for sample usage.
 
 BUGS
 ----
@@ -93,7 +117,7 @@ Report bugs to support@mavimax.com
 
 SEE ALSO
 --------
-*viewfile(5)* *buildclient(8)*
+*buildserver(8)*
 
 
 COPYING
