@@ -66,6 +66,7 @@ add_library (exjava SHARED
                 exceptions.c
                 tpcallj.c
                 TypedUBF.c
+		BFldLocInfo.c
 	)
 
 

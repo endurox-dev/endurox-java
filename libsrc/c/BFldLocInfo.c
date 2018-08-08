@@ -55,4 +55,9 @@
  * and we need a setter function to update the offset
  */
 
+expublic BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc)
+{
+    return NULL;
+}
+
 /* vim: set ts=4 sw=4 et cindent: */
