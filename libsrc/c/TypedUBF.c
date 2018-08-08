@@ -498,4 +498,78 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+/**
+ * Fast add field to UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid compiled field id
+ * @param js java short value
+ * @param fldloc field location holder
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__ISLorg_endurox_BFldLocInfo_2
+  (JNIEnv * env, jobject data, jint bfldid, jshort js, jobject fldloc) 
+{
+    
+}
+
+#if 0
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (ISLorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__ISLorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jshort, jobject);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (IJLorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IJLorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jlong, jobject);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (IBLorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IBLorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jbyte, jobject);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (IFLorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IFLorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jfloat, jobject);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (IDLorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IDLorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jdouble, jobject);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (ILjava/lang/String;Lorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__ILjava_lang_String_2Lorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jstring, jobject);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Baddfast
+ * Signature: (I[BLorg/endurox/BFldLocInfo;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__I_3BLorg_endurox_BFldLocInfo_2
+  (JNIEnv *, jobject, jint, jbyteArray, jobject);
+
+
+#endif
+
 /* vim: set ts=4 sw=4 et cindent: */
