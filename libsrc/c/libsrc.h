@@ -44,6 +44,8 @@ extern "C" {
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 
+/** NULL Logger -> no logging made with exception */
+#define NDRXJ_LOGEX_NULL          0x0000
 /** Log exception to ndrx logger */
 #define NDRXJ_LOGEX_NDRX          0x0001
 /** Log exception to ulog logger */
@@ -113,6 +115,10 @@ extern jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env,
 extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
 
+
+/* BFldLocInfo ops */
+extern BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc);
+extern void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr);
 
 #ifdef  __cplusplus
 }

@@ -27,4 +27,5 @@ source ~/ndrx_home
 unset NDRX_DEBUG_CONF
 ./jexunit00b AtmiCtxTest || exit 1
 ./jexunit00b BaddTest || exit 2
+./jexunit00b BaddfastTest || exit 3
 

@@ -499,7 +499,82 @@ out:
 }
 
 /**
- * Fast add field to UBF buffer
+ * Common field adding routine 
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid filed id (compiled)
+ * @param value field value
+ * @param len value length
+ * @param usrtype field type (see BFLD_*)
+ * @param fldloc field location infos
+ */
+exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid, 
+        char *value, BFLDLEN len, int usrtype, jobject jfldloc)
+{
+    char *cdata;
+    long clen;
+    Bfld_loc_info_t loc;
+    BFLDID* ptr;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return; 
+    }
+    
+    /* check types */
+    if (Bfldtype(usrtype) !=usrtype)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Invalid field type: %s, Java function accepted: %d "
+                "but field type is %d", usrtype, Bfldtype(usrtype));
+        goto out;
+    }
+    
+    ptr = ndrxj_BFldLocInfo_ptr_get(env, jfldloc);
+    
+    /* the ptr might be a NULL, thats fine, but to continue we shall check
+     * for exception
+     */
+    
+    if ((*env)->ExceptionCheck(env))
+    {
+        goto out;
+    }
+    
+    loc.last_checked = ptr;
+    
+    /* get UBF buffer */
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Set the field */
+    
+    if (EXSUCCEED!=Baddfast((UBFH*)cdata, bfldid, value, len, &loc))
+    {
+        UBF_LOG(log_error, "%s: Baddfast failed to add %d (%s): %s", 
+                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d (%s): %s", 
+                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+        goto out;
+    }
+    
+    /* save location */
+    ndrxj_BFldLocInfo_ptr_set(env, jfldloc, loc.last_checked);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+
+/**
+ * Fast add field to UBF buffer.
+ * Also note that types must match otherwise the exception will be thrown.
  * @param env java env
  * @param data UBF buffer
  * @param bfldid compiled field id
@@ -509,6 +584,12 @@ out:
 expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__ISLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jshort js, jobject fldloc) 
 {
+    
+    short s = (short)js;
+    /* check types if not short the field id, then throw exception */
+    
+    ndrxj_ubf_Baddfast(env, data, bfldid, 
+        (char *)&s, 0L, BFLD_SHORT, fldloc);
     
 }
 

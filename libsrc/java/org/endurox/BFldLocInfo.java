@@ -1,4 +1,3 @@
-package org.endurox;
 /**
  * @class BFldLocInfo
  *
@@ -31,6 +30,8 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+package org.endurox;
+
 public class BFldLocInfo {
 
     /**
