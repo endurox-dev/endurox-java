@@ -65,7 +65,10 @@ add_library (exjava SHARED
                 ClientId.c
                 exceptions.c
                 tpcallj.c
-                TypedUBF.c
+                TypedUBF_Badd.c
+                TypedUBF_Baddfast.c
+                TypedUBF_Bget.c
+                TypedUBF_Bprint.c
 		BFldLocInfo.c
 	)
 

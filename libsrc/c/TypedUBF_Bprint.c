@@ -1,7 +1,7 @@
 /**
- * @brief Field location infos
+ * @brief Java UBF Backing routines
  *
- * @file BFldLocInfo.c
+ * @file TypedUBF_Bprint.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -36,6 +36,8 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
+#include "org_endurox_TypedBuffer.h"
+#include "org_endurox_TypedUBF.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -43,6 +45,8 @@
 #include <oatmisrv_integra.h>
 #include "libsrc.h"
 #include <sys_unix.h>
+#include "nerror.h"
+#include <ndrstandard.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -51,85 +55,40 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-/* TODO: we need a getter function for current offset 
- * and we need a setter function to update the offset
- */
-
 /**
- * Return location field offset for fastadd operations
+ * Print the UBF buffer to STDOUT
  * @param env java env
- * @param loc location object from java
- * @return NULL in case of error, 
+ * @param data TypedUBF object
  */
-expublic BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc)
+expublic void JNICALL Java_org_endurox_TypedUBF_Bprint(JNIEnv *env, jobject data)
 {
-    BFLDID *ret = NULL;
-    jclass objClass /*= (*env)->GetObjectClass(env, loc)*/;
-    jfieldID offset_fld;
-    jlong joffset;
-
-    objClass = (*env)->FindClass(env, "org/endurox/BFldLocInfo");
+    char *cdata;
+    long clen;
     
-    if (NULL==objClass)
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get object class: %s");
+       return; 
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;
     }
     
-    offset_fld = (*env)->GetFieldID(env, objClass, "cPtr_last_checked", "J");
-    
-    if (NULL==offset_fld)
+    if (EXSUCCEED!=Bprint((UBFH *)cdata))
     {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get cPtr_last_checked field from BFldLocInfo: %s");
+        UBF_LOG(log_error, "%s: failed to Bprint %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: failed to Bprint %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
         goto out;
     }
-    
-    joffset = (*env)->GetLongField(env, loc, offset_fld);
-    
-    ret = (BFLDID *)joffset;
     
 out:
-    return ret;
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
 }
-
-/**
- * Set field offset
- * @param env java env
- * @param loc java loc object
- * @param new_ptr new ptr to store
- */
-expublic void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr)
-{
-    jclass objClass = (*env)->GetObjectClass(env, loc);
-    jfieldID offset_fld;
-    jlong joffset;
-    
-    if (NULL==objClass)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get object class: %s");
-        goto out;
-    }
-    
-    offset_fld = (*env)->GetFieldID(env, objClass, "cPtr_last_checked", "J");
-    
-    if (NULL==offset_fld)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get cPtr_last_checked field from BFldLocInfo: %s");
-        goto out;
-    }
-    
-    joffset = (long)new_ptr;
-    
-    (*env)->SetLongField(env, loc, offset_fld, joffset);
-    
-    
-out:
-    return;
-}
-
 
 /* vim: set ts=4 sw=4 et cindent: */

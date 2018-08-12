@@ -1,7 +1,7 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.endurox.*;
-import org.endurox.exceptions.UbfBNOTPRESException;
+import org.endurox.exceptions.UbfBEINVALException;
 
 public class BaddfastTest {
     
@@ -30,6 +30,19 @@ public class BaddfastTest {
       assertEquals(200, ub.BgetShort(test.T_SHORT_FLD, 1));
       assertEquals(300, ub.BgetShort(test.T_SHORT_FLD, 2));
       assertEquals(400, ub.BgetShort(test.T_SHORT_FLD, 3));
+    }
+    
+    /* test invalid field case */
+    @Test(expected = UbfBEINVALException.class)
+    public void testBaddfastInvalType() {
+      AtmiCtx ctx = new AtmiCtx();
+      assertNotEquals(ctx.getCtx(), 0x0);
+      BFldLocInfo loc = new BFldLocInfo();
+      
+      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      assertNotEquals(ub, null);
+
+      ub.Baddfast(test.T_LONG_FLD, (short)100, loc);
     }
     
   
