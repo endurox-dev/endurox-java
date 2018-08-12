@@ -1,4 +1,3 @@
-package org.endurox;
 /**
  * @interface Service
  *
@@ -31,6 +30,8 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+package org.endurox;
+
 public interface Service {
     
     /**

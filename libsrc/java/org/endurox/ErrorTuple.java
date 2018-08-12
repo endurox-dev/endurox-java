@@ -1,4 +1,3 @@
-package org.endurox;
 /**
  * @class ErrorTuple
  *
@@ -30,6 +29,8 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+package org.endurox;
+
 public class ErrorTuple {
 	
     /** Error code */

@@ -1,4 +1,3 @@
-package org.endurox;
 /**
  * @class AtmiConstants
  *
@@ -30,6 +29,7 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+package org.endurox;
 public class AtmiConstants {
     /** Transaction is being aborted*/
     public static final int TPEABORT	= 1;

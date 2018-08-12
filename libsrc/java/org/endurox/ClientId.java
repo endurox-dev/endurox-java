@@ -1,4 +1,3 @@
-package org.endurox;
 /**
  * @class ClientId
  *
@@ -30,6 +29,8 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+package org.endurox;
+
 public class ClientId {
     String clientData;
 

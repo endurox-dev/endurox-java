@@ -1,4 +1,3 @@
-package org.endurox;
 /**
  * @interface Server
  *
@@ -30,6 +29,8 @@ package org.endurox;
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
+package org.endurox;
+
 public interface Server {
     /**
      * Server init call

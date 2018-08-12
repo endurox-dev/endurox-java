@@ -1,7 +1,7 @@
 /**
- * @class TypedInit
+ * @class BExprTree
  *
- * @brief Init buffer format
+ * @brief UBF Compiled expression handler
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -29,21 +29,13 @@
  * contact@mavimax.com
  * -----------------------------------------------------------------------------
  */
-package org.endurox;
+
+import org.endurox.*;
+
 
 /**
- * Typed INIT buffer
+ * UBF Buffer compiled boolean expressions handler
  */
-public class TypedTpInit extends TypedBuffer {
+public class BExprTree  {
 	
-   /**
-    * Initialize TPINIT buffer
-    * @param ctx[in] ATMI Context allocated this method
-    * @param doFinalize[in] Should
-    * @param cPtr[in] C pointer to allocated block
-    * @param len[in] Conditional buffer length
-    */
-   public TypedTpInit(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
-        super(ctx, doFinalize, cPtr, len);
-   }
 }
