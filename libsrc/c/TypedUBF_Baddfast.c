@@ -80,7 +80,7 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
     }
     
     /* check types */
-    if (Bfldtype(usrtype) !=usrtype)
+    if (Bfldtype(bfldid) !=usrtype)
     {
         /* Throw exception ! */
         ndrxj_ubf_throw(env, BEINVAL, "%s: Invalid field type passed, for type "
@@ -162,7 +162,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__ISLorg_endur
 expublic void JNICALL Java_org_endurox_TypedUBF_Baddfast__IJLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jlong jl, jobject fldloc)
 {
-    long l = (short)jl;
+    long l = (long)jl;
     /* check types if not short the field id, then throw exception */
     
     ndrxj_ubf_Baddfast(env, data, bfldid, 
@@ -196,7 +196,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IBLorg_endur
 expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IFLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jfloat jf, jobject fldloc)
 {
-    float f = (char)jf;
+    float f = (float)jf;
     ndrxj_ubf_Baddfast(env, data, bfldid, 
         (char *)&f, 0L, BFLD_FLOAT, fldloc);
 }
@@ -212,7 +212,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IFLorg_endur
 expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Baddfast__IDLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jdouble jd, jobject fldloc)
 {
-    float d = (char)jd;
+    double d = (double)jd;
     ndrxj_ubf_Baddfast(env, data, bfldid, 
         (char *)&d, 0L, BFLD_DOUBLE, fldloc);
 }

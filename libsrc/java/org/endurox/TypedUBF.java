@@ -185,5 +185,61 @@ public class TypedUBF extends TypedBuffer {
     public native void Baddfast(int bfldid, byte []b, BFldLocInfo next_fld);
     
     /** @} */ // end of Badd
-}
+    
+    /**
+     * Add/Update (change) field value at given occurrence
+     * @defgroup Bchg function calls
+     * @param bfldid compiled field id
+     * @param occ field occurrence to change
+     * @throw UbfBALIGNERRException Invalid Buffer
+     * @throw UbfBNOTFLDException Invalid Buffer
+     * @throw UbfBNOSPACEException No space in buffer
+     * @throw UbfBBADFLDException No space in buffer
+     * @{
+     */
+    
+    /**
+     * Change short value
+     * @param s short value
+     */
+    public native void Bchg(int bfldid, int occ, short s);
 
+    /**
+     * Change long value
+     * @param l long value
+     */
+    public native void Bchg(int bfldid, int occ, long l);
+    
+    /**
+     * Change byte (ANSI Char) to UBF
+     * @param c ANSI char value / Java byte
+     */
+    public native void Bchg(int bfldid, int occ, byte c);
+    
+    /**
+     * Change float value
+     * @param f float value
+     */
+    public native void Bchg(int bfldid, int occ, float f);
+    
+    /**
+     * Change Double value
+     * @param d  double value
+     */
+    public native void Bchg(int bfldid, int occ, double d);
+    
+    /**
+     * Change string
+     * @param s String value
+     */
+    public native void Bchg(int bfldid, int occ, String s);
+    
+    /**
+     * Change byte
+     * @param b byte array
+     */
+    public native void Bchg(int bfldid, int occ, byte []b);
+    
+    /** @} */ // end of Bchg
+    
+}

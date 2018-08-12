@@ -58,7 +58,7 @@ include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjava SHARED
-		AtmiCtx.c
+                AtmiCtx.c
                 TypedBuffer.c
                 TpCallResult.c
                 TpSvcInfo.c
@@ -69,7 +69,8 @@ add_library (exjava SHARED
                 TypedUBF_Baddfast.c
                 TypedUBF_Bget.c
                 TypedUBF_Bprint.c
-		BFldLocInfo.c
+                TypedUBF_Bchg.c
+                BFldLocInfo.c
 	)
 
 
@@ -84,3 +85,4 @@ install (TARGETS
     COMPONENT libraries
     )
 
+# vim: set ts=4 sw=4 et smartindent:

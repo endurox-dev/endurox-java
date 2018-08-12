@@ -1,7 +1,7 @@
 /**
- * @brief Java UBF Backing routines - add field to buffer
+ * @brief Change field value in the buffer
  *
- * @file TypedUBF_Badd.c
+ * @file TypedUBF_Bchg.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -56,15 +56,16 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Common field adding routine 
+ * Common field changing routine 
  * @param env java env
  * @param data UBF buffer
  * @param bfldid filed id (compiled)
+ * @param occ filed occurrence
  * @param value field value
  * @param len value length
  * @param usrtype field type (see BFLD_*)
  */
-exprivate void ndrxj_ubf_CBadd(JNIEnv *env, jobject data, jint bfldid, 
+exprivate void ndrxj_ubf_CBchg(JNIEnv *env, jobject data, jint bfldid, jint occ,
         char *value, BFLDLEN len, int usrtype)
 {
     char *cdata;
@@ -84,7 +85,7 @@ exprivate void ndrxj_ubf_CBadd(JNIEnv *env, jobject data, jint bfldid,
     
     /* Set the field */
     
-    if (EXSUCCEED!=CBadd((UBFH*)cdata, bfldid, value, len, usrtype))
+    if (EXSUCCEED!=CBchg((UBFH*)cdata, bfldid, (BFLDOCC)occ, value, len, usrtype))
     {
         UBF_LOG(log_error, "%s: CBadd failed to add %d (%s): %s", 
                 __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
@@ -99,90 +100,158 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+#if 0
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (IIS)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IIS
+  (JNIEnv *, jobject, jint, jint, jshort);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (IIJ)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IIJ
+  (JNIEnv *, jobject, jint, jint, jlong);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (IIB)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IIB
+  (JNIEnv *, jobject, jint, jint, jbyte);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (IIF)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IIF
+  (JNIEnv *, jobject, jint, jint, jfloat);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (IID)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IID
+  (JNIEnv *, jobject, jint, jint, jdouble);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (IILjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IILjava_lang_String_2
+  (JNIEnv *, jobject, jint, jint, jstring);
+
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bchg
+ * Signature: (II[B)V
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__II_3B
+  (JNIEnv *, jobject, jint, jint, jbyteArray);
+
+
+
+#endif
+
 /**
- * Add field to buffer, short type
+ * Change field, short type
  * @param env java env
  * @param data TypedUBF buffer
  * @param bfldid field id
+ * @param occ field occurrence
  * @param js short type
  */
-expublic void JNICALL Java_org_endurox_TypedUBF_Badd__IS
-  (JNIEnv *env, jobject data, jint bfldid, jshort js)
+expublic void JNICALL Java_org_endurox_TypedUBF_Bchg__IIS
+(JNIEnv *env, jobject data, jint bfldid, jint occ, jshort js)
 {
    short s = (short)js;
-   ndrxj_ubf_CBadd(env, data, bfldid, (char *)&s, 0L, BFLD_SHORT);
+   ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)&s, 0L, BFLD_SHORT);
 }
 
 /**
- * Add long to UBF buffer
+ * Change long field
  * @param env java env
  * @param data ubf buffer
  * @param bfldid field id
+ * @param occ occurrence to change
  * @param jl long value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IJ
-  (JNIEnv * env, jobject data, jint bfldid, jlong jl)
+expublic JNIEXPORT void Java_org_endurox_TypedUBF_Bchg__IIJ
+  (JNIEnv * env, jobject data, jint bfldid, jint occ, jlong jl)
 {
     long l = (long)jl;
-    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&l, 0L, BFLD_LONG);
+    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)&l, 0L, BFLD_LONG);
 }
 
 /**
- * Add byte/char to buffer
+ * Change char/byte field
  * @param env java env
  * @param data data buffer ubf
  * @param bfldid field id
+ * @param occ occurrence
  * @param jb char to add
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IB
-  (JNIEnv * env, jobject data, jint bfldid, jbyte jb)
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IIB
+  (JNIEnv * env, jobject data, jint bfldid, jint occ, jbyte jb)
 {
     char c = (long)jb;
-    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&c, 0L, BFLD_CHAR);
+    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)&c, 0L, BFLD_CHAR);
 }
 
 /**
- * Add float to UBF buffer
+ * Change float field
  * @param env java env
  * @param data UBF buffer
  * @param bfldid field id
+ * @param occ occurrence
  * @param jf float value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__IF
-  (JNIEnv * env, jobject data, jint bfldid, jfloat jf)
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IIF
+  (JNIEnv * env, jobject data, jint bfldid, jint occ, jfloat jf)
 {
     float f = (float)jf;
-    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&f, 0L, BFLD_FLOAT);
+    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)&f, 0L, BFLD_FLOAT);
 }
 
 /**
- * Add double to UBF buffer
+ * Change double field
  * @param env java env
  * @param data UBF buffer
  * @param bfldid field id
+ * @param occ occurrence
  * @param jd float value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ID
-  (JNIEnv * env, jobject data, jint bfldid, jdouble jd)
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IID
+  (JNIEnv * env, jobject data, jint bfldid, jint occ, jdouble jd)
 {
     double d = (double)jd;
-    ndrxj_ubf_CBadd(env, data, bfldid, (char *)&d, 0L, BFLD_DOUBLE);
+    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)&d, 0L, BFLD_DOUBLE);
 }
 
 /**
- * Add string to UBF buffer
+ * Change string field
  * @param env java env
  * @param data data buffer
  * @param bfldid field id
+ * @param occ occurrence
  * @param js java string
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ILjava_lang_String_2
-  (JNIEnv *env, jobject data, jint bfldid, jstring js)
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__IILjava_lang_String_2
+  (JNIEnv *env, jobject data, jint bfldid, jint occ, jstring js)
 {
     jboolean n_str_copy = EXFALSE;
     const char *n_str = (*env)->GetStringUTFChars(env, js, &n_str_copy);
     
-    ndrxj_ubf_CBadd(env, data, bfldid, (char *)n_str, 0L, BFLD_STRING);
+    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)n_str, 0L, BFLD_STRING);
     
     if (n_str_copy)
     {
@@ -195,10 +264,11 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__ILjava_lang_Stri
  * @param env java env
  * @param data data buffer
  * @param bfldid field id
+ * @param occ occurrence
  * @param jb java byte array
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__I_3B
-  (JNIEnv * env, jobject data, jint bfldid, jbyteArray jb)
+JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Bchg__II_3B
+  (JNIEnv * env, jobject data, jint bfldid,  jint occ, jbyteArray jb)
 {
     jboolean n_carray_copy;
     char * n_carray = (char*)(*env)->GetByteArrayElements(env, jb, &n_carray_copy);
@@ -206,7 +276,8 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUBF_Badd__I_3B
     
     NDRX_LOG(log_error, "Adding carray len: %ld", (long)len);
     
-    ndrxj_ubf_CBadd(env, data, bfldid, (char *)n_carray, (BFLDLEN)len, BFLD_CARRAY);
+    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)n_carray, (BFLDLEN)len, 
+            BFLD_CARRAY);
     
     if(n_carray_copy)
     {

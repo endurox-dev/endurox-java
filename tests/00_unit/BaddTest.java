@@ -17,7 +17,7 @@ public class BaddTest {
 
       short s = 100;
       ub.Badd(test.T_SHORT_FLD, s);
-      ub.Badd(test.T_SHORT_FLD, 201);
+      ub.Badd(test.T_SHORT_FLD, (short)201);
 
       /* print some buffer */
       ub.Bprint();
@@ -50,8 +50,8 @@ public class BaddTest {
       TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
-      ub.Badd(test.T_LONG_FLD, 888800);
-      ub.Badd(test.T_LONG_FLD, 888811);
+      ub.Badd(test.T_LONG_FLD, (long)888800);
+      ub.Badd(test.T_LONG_FLD, (long)888811);
 
       /* print some buffer */
       ub.Bprint();
@@ -71,8 +71,8 @@ public class BaddTest {
       TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
-      ub.Badd(test.T_CHAR_FLD, 0);
-      ub.Badd(test.T_CHAR_FLD, 1);
+      ub.Badd(test.T_CHAR_FLD, (byte)0);
+      ub.Badd(test.T_CHAR_FLD, (byte)1);
 
       /* print some buffer */
       ub.Bprint();
@@ -92,15 +92,17 @@ public class BaddTest {
       TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
-      ub.Badd(test.T_FLOAT_FLD, 0.005);
-      ub.Badd(test.T_FLOAT_FLD, 1.2);
+      ub.Badd(test.T_FLOAT_FLD, (float)0.5);
+      ub.Badd(test.T_FLOAT_FLD, (float)1.2);
 
       /* print some buffer */
       ub.Bprint();
 
       /* get the field value and verify it */
-      assertEquals(0.005f, ub.BgetFloat(test.T_FLOAT_FLD, 0), 0.001);
-      assertEquals(1.2f, ub.BgetFloat(test.T_FLOAT_FLD, 1), 0.001);
+      ctx.tplogError("Got 0 = %f", ub.BgetFloat(test.T_FLOAT_FLD, 0));
+      ctx.tplogError("Got 1 = %f", ub.BgetFloat(test.T_FLOAT_FLD, 1));
+      assertEquals(0.5f, ub.BgetFloat(test.T_FLOAT_FLD, 0), 0.01);
+      assertEquals(1.2f, ub.BgetFloat(test.T_FLOAT_FLD, 1), 0.01);
     }
 
     /**
@@ -113,8 +115,8 @@ public class BaddTest {
       TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
-      ub.Badd(test.T_DOUBLE_FLD, 0.005);
-      ub.Badd(test.T_DOUBLE_FLD, 1.2);
+      ub.Badd(test.T_DOUBLE_FLD, (double)0.005);
+      ub.Badd(test.T_DOUBLE_FLD, (double)1.2);
 
       /* print some buffer */
       ub.Bprint();
