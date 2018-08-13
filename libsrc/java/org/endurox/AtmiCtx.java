@@ -586,10 +586,7 @@ public class AtmiCtx {
     
     public native void Bboolpr(BExprTree cexpr, FileDescriptor fd);
     
-    /* 
-    int Bboolsetcbf (char funcname, long (functionPtr)(UBFH *p_ub, char
-       *funcname));
-    */
+    public native void Bboolsetcbf (String funcname, Bboolcbf callback);
     
     /** @} */ // end of Bbool
     

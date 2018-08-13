@@ -99,3 +99,4 @@ extern int exjld_class_build_hash(void);
 extern int ndrxj_codegen(int test_mode);
 
 #endif /* EXJLD_H_ */
+/* vim: set ts=4 sw=4 et smartindent: */

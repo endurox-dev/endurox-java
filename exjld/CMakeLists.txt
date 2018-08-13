@@ -51,3 +51,4 @@ target_link_libraries (exjld atmiclt atmi ubf m nstd ${RT_LIB} pthread)
 install (TARGETS 
     exjld
     DESTINATION bin)
+# vim: set ts=4 sw=4 et smartindent:

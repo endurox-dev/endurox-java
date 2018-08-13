@@ -81,7 +81,7 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
     if (FTW_F == typeflag && len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
     {
         id++;
-        NDRX_LOG(log_debug, "Processing as class: [%s]", filepath);
+        NDRX_LOG(log_dump, "Processing as class: [%s]", filepath);
         
         NDRX_STRCPY_SAFE(tmp, filepath);
         
@@ -104,7 +104,7 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
         /* strip down lass 5 symbols */
         p[len-6] = EXEOS;
         
-        NDRX_LOG(log_debug, "Got class: [%s]", p);
+        NDRX_LOG(log_dump, "Got class: [%s]", p);
         
         if (EXSUCCEED!=exljd_res_add(&ndrx_G_classes_hash, p, id,  
                 (char *)filepath, "class"))
@@ -137,4 +137,4 @@ out:
     return ret;
 }
 
-/* vim: set ts=4 sw=4 et cindent: */
+/* vim: set ts=4 sw=4 et smartindent: */

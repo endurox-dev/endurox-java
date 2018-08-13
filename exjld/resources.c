@@ -113,7 +113,7 @@ expublic int exljd_res_add(exjld_resource_t **head, char *resname,
     snprintf(cmd, sizeof(cmd), "exembedfile '%s' %s cinclude", 
             elm->respath, elm->embpath);
     
-    NDRX_LOG(log_debug, "%s", cmd);
+    NDRX_LOG(log_dump, "%s", cmd);
     fprintf(stderr, "%s\n", cmd);
     if (EXSUCCEED!=(ret = system(cmd)))
     {
@@ -168,4 +168,4 @@ expublic void exljd_res_sort_by_free(exjld_resource_t **head)
    }
 }
 
-/* vim: set ts=4 sw=4 et cindent: */
+/* vim: set ts=4 sw=4 et smartindent: */

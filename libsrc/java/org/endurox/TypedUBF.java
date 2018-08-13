@@ -274,5 +274,32 @@ public class TypedUBF extends TypedBuffer {
     
     /** @} */ // end of Bchg
     
+    /**
+     * @defgroup Bboolubf UBF boolean operations 
+     */
+    /**
+     * Evalue boolean expression by given expressino tree
+     * @param tree compiled boolean expression
+     * @return true or false
+     * @{
+     */
+    public native boolean Bboolev(BExprTree tree);
+
+    /**
+     * Evaluate the boolean expression immediately
+     * and the release the compiled expression
+     * @param expr boolean expression string
+     * @return true or false
+     */
+    public native boolean Bqboolev(String expr);
+
+    /**
+     * Evaluate the boolean expression with respect to return value
+     * @param tree compiled boolean expression
+     * @return evaluated floating point value
+     */
+    public native double Bfloatev(BExprTree tree);
+
+    /** @} */ // end of Bboolubf
 }
 /* vim: set ts=4 sw=4 et smartindent: */
