@@ -120,6 +120,11 @@ extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
 extern BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc);
 extern void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr);
 
+/* BExprTree ops */
+
+extern char* ndrxj_BExprTree_ptr_get(JNIEnv *env, jobject ptrO);
+extern void ndrxj_BExprTree_ptr_set(JNIEnv *env, jobject ptrO, char *new_ptr);
+
 #ifdef  __cplusplus
 }
 #endif

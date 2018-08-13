@@ -33,6 +33,7 @@
  */
 package org.endurox;
 
+import java.io.FileDescriptor;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,6 +42,7 @@ import org.endurox.exceptions.AtmiTPESYSTEMException;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.endurox.exceptions.AtmiTPEOSException;
 
  /*! @mainpage Enduro/X Programming main page
  *
@@ -567,6 +569,29 @@ public class AtmiCtx {
      * @return We return the buffer form the call.
      */
     public native TypedBuffer tpcall(String svc, TypedBuffer idata, long flags);
+    
+    
+    /**
+     * Group of boolean expression routines
+     * @defgroup Bbool boolean expression handling routines
+     * @{
+     */
+    
+    /**
+     * Compile boolean expression
+     * @param expr UBF boolean expression
+     * @return Compiled boolean expression handler
+     */
+    public native BExprTree Bboolco(String expr);
+    
+    public native void Bboolpr(BExprTree cexpr, FileDescriptor fd);
+    
+    /* 
+    int Bboolsetcbf (char funcname, long (functionPtr)(UBFH *p_ub, char
+       *funcname));
+    */
+    
+    /** @} */ // end of Bbool
     
 }
 

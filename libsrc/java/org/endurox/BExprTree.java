@@ -31,15 +31,26 @@
  * -----------------------------------------------------------------------------
  */
 
-import org.endurox.*;
+package org.endurox;
 
 
 /**
  * UBF Buffer compiled boolean expressions handler
+ * TODO: We need automatic cleanup of the resource / GC
  */
 public class BExprTree  {
     
     /* ptr to char *tree */
     long cPtr = 0;
+    
+    @Override
+    protected void finalize() throws Throwable {
+
+        //TODO: Call tree free!!!
+        //Remove expression object
+        super.finalize();
+    }
+    
+    
 }
 /* vim: set ts=4 sw=4 et smartindent: */

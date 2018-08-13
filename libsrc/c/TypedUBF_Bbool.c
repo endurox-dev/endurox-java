@@ -1,7 +1,7 @@
 /**
- * @brief Boolean expression backend
+ * @brief Java UBF Backing routines
  *
- * @file TypedUBF_Bbool.c
+ * @file TypedUBF_Bprint.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -55,7 +55,40 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-
-
+/**
+ * Print the UBF buffer to STDOUT
+ * @param env java env
+ * @param data TypedUBF object
+ */
+expublic void JNICALL Java_org_endurox_TypedUBF_Bprint(JNIEnv *env, jobject data)
+{
+    char *cdata;
+    long clen;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return; 
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=Bprint((UBFH *)cdata))
+    {
+        UBF_LOG(log_error, "%s: failed to Bprint %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: failed to Bprint %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        goto out;
+    }
+    
+out:
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
 
 /* vim: set ts=4 sw=4 et cindent: */
