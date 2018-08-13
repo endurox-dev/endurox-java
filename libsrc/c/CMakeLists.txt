@@ -71,6 +71,7 @@ add_library (exjava SHARED
                 TypedUBF_Bprint.c
                 TypedUBF_Bchg.c
                 BFldLocInfo.c
+                BExprTree.c
 	)
 
 

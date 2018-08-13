@@ -1,11 +1,12 @@
 /**
- * @class AtmiConstants
- *
  * @brief Class holding list of ATMI Constants
+ *
+ * @class AtmiConstants
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
- * Copyright (C) 2018, Mavimax, Ltd. All Rights Reserved.
+ * Copyright (C) 2009-2016, ATR Baltic, Ltd. All Rights Reserved.
+ * Copyright (C) 2017-2018, Mavimax, Ltd. All Rights Reserved.
  * This software is released under one of the following licenses:
  * GPL or Mavimax's license for commercial use.
  * -----------------------------------------------------------------------------
@@ -13,7 +14,7 @@
  * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
+ * Foundation; either version 3 of the License, or (at your option) any later
  * version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
@@ -184,3 +185,4 @@ public class AtmiConstants {
     public static final int TPEXIT          = 0x08000000;
 
 }
+/* vim: set ts=4 sw=4 et smartindent: */
