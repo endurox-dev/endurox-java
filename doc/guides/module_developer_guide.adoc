@@ -1,0 +1,71 @@
+Enduro/X Java Internal Developer Guide
+======================================
+Madars Vitolins
+v1.0, 2018-08:
+        Initial draft
+:doctype: book
+
+== Intro
+
+This document is for internal purposes of the Enduro/X Java module developer.
+It contains solutions for main pitfalls found during the development process.
+Also document contains main configuration steps to get the development IDE
+working.
+
+== NetBeans configuration
+
+For Enduro/X and other related modules, NetBeans is preferred IDE for development.
+As module is programmed in Java and C languages, two projects in NetBeans are
+required. As NetBeans does not allow to project to co-exist in the same folder,
+some play with symbolic links into separate folder are required. This document
+will guide you for setting up the environment for developing Enduro/X for Java.
+
+=== Packages for Java
+
+This document assumes that NetBeans for C/C++ are installed. Thus to get
+Java projects working, following additional plugins must be installed. As
+plugins require JDK to be present for NetBeans, the IDE must be started with
+'--jdkhome' attribute. In particular case NetBeans 8.2 was installed on Linux Mint
+Mate 19 as a root. For this document we will use "java-8-openjdk-amd64".
+
+--------------------------------------------------------------------------------
+
+$  /usr/local/netbeans-8.2/bin/netbeans --jdkhome /usr/lib/jvm/java-8-openjdk-amd64
+
+--------------------------------------------------------------------------------
+
+Once NetBeans are started, go to: *Tools > Plugins > Available Plugins* and select
+following ones for install:
+
+image:images/netbeans_java_install[caption="Figure 1: ", title="NetBeans Java Plugin Install", alt="NetBeans Java Plugin Install"]
+
+
+numbered!:
+
+[bibliography]
+Additional documentation 
+------------------------
+This section lists additional related documents.
+
+[bibliography]
+.Internet resources
+- [[[ATMI-API]]] http://docs.oracle.com/cd/E13203_01/tuxedo/tux71/html/pgint6.htm
+- [[[FML-API]]] http://docs.oracle.com/cd/E13203_01/tuxedo/tux91/fml/index.htm
+
+[glossary]
+Glossary
+--------
+This section lists
+
+[glossary]
+ATMI::
+  Application Transaction Monitor Interface
+
+UBF::
+  Unified Buffer Format it is similar API as Tuxedo's FML
+
+
+////////////////////////////////////////////////////////////////
+The index is normally left completely empty, it's contents being
+generated automatically by the DocBook toolchain.
+////////////////////////////////////////////////////////////////
