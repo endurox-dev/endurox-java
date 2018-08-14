@@ -37,10 +37,9 @@ $  /usr/local/netbeans-8.2/bin/netbeans --jdkhome /usr/lib/jvm/java-8-openjdk-am
 Once NetBeans are started, go to: *Tools > Plugins > Available Plugins* and select
 following ones for install:
 
-image:images/netbeans_java_install[caption="Figure 1: ", title="NetBeans Java Plugin Install", alt="NetBeans Java Plugin Install"]
+image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install", alt="NetBeans Java Plugin Install"]
 
-
-numbered!:
+:numbered!:
 
 [bibliography]
 Additional documentation 
