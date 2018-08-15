@@ -89,6 +89,45 @@ And then select the folder which checked out sources:
 
 image:images/select_c_sources.png[caption="Figure 4: ", title="Select sources"]
 
+=== Opening Java project in NetBeans
+
+The Java project shall be based on folder where symlinks are produced. That is
+"endurox-j" folder. The project type is "Standard" Java free-form project. The
+project contains an Ant script which is not normally used for build purposes, but
+that is used for NetBeans (or Eclipse) to parse the project structure (CMake
+is not supported yet for Java projects). Also during the development the
+ant script (endurox-java/build.xml) must be maintained.
+
+Create a new project:
+
+image:images/new_java_project.png[caption="Figure 5: ", title="New Java Project"]
+
+
+Select project folder:
+
+image:images/select_java_folder.png[caption="Figure 5: ", title="Select Java folder"]
+
+Ant commands:
+
+image:images/ant_commands.png[caption="Figure 6: ", title="Ant commands"]
+
+Ant next screen is significant one, as here all Java directories must be manually
+added, as the libsrc only is added by default. All unit tests which will be
+changed/added during the development must be added here:
+
+image:images/java_sources.png[caption="Figure 7: ", title="Java sources"]
+
+Once project is created, this list can be altered in 
+*project properties > Java Sources*
+
+Also the class path shall include the Junit JARS. The next screen shows how
+to do it when project is configured, but that can be done during the initial
+wizard too.
+
+The class path attributes:
+
+image:images/java_classpath.png[caption="Figure 8: ", title="Java class path"]
+
 
 :numbered!:
 
