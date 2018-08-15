@@ -39,6 +39,33 @@ following ones for install:
 
 image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install", alt="NetBeans Java Plugin Install"]
 
+
+== Checking out Enduro/X Java project
+
+With this step we will prepare two folders for the project. The first one is
+default project folder "endurox-java" checked out from source repository. The
+second one (which will be actually used by Java part for NetBeans) is created.
+And symbolic links are added
+
+--------------------------------------------------------------------------------
+
+$ git clone https://github.com/endurox-dev/endurox-java
+$ mkdir endurox-j
+$ cd endurox-j
+$ ln -s ../endurox-java/build.xml .
+$ ln -s ../endurox-java/tests .
+$ ln -s ../endurox-java/libsrc .
+
+--------------------------------------------------------------------------------
+
+== Opening projects in NetBeans
+
+The main project is "endurox-java" which is processed by CMake. The CMake build
+performs building of all parts Java and C. But for IDE we open this project for
+as the C project.
+
+
+
 :numbered!:
 
 [bibliography]
