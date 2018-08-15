@@ -37,8 +37,12 @@ $  /usr/local/netbeans-8.2/bin/netbeans --jdkhome /usr/lib/jvm/java-8-openjdk-am
 Once NetBeans are started, go to: *Tools > Plugins > Available Plugins* and select
 following ones for install:
 
-image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install", alt="NetBeans Java Plugin Install"]
+image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install"]
 
+Once modules are installed, it is recommended to update the NetBeans launcher 
+shortcut, because the jdkhome argument is mandatory in order to use java projects
+
+image:images/update_shortcut.png[caption="Figure 2: ", title="NetBeans Shortcut update"]
 
 == Checking out Enduro/X Java project
 
@@ -64,6 +68,26 @@ The main project is "endurox-java" which is processed by CMake. The CMake build
 performs building of all parts Java and C. But for IDE we open this project for
 as the C project.
 
+=== Opening C project in NetBeans
+Before opening the project in NetBeans, the cmake shall be run from shell, so
+that it performs initial configuration, as with NetBeans the configuration
+is little bit different:
+
+--------------------------------------------------------------------------------
+
+$ cd endurox-java
+$ cmake .
+
+--------------------------------------------------------------------------------
+
+After this step is done, start the NetBeans, and create new project with existing
+source code:
+
+image:images/new_c_project.png[caption="Figure 3: ", title="New C Project"]
+
+And then select the folder which checked out sources:
+
+image:images/select_c_sources.png[caption="Figure 4: ", title="Select sources"]
 
 
 :numbered!:
