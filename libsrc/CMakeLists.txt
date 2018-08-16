@@ -73,7 +73,6 @@ add_jar(enduroxjava
 create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
         org.endurox.TypedBuffer
-        org.endurox.TpCallResult
         org.endurox.TypedUBF
         org.endurox.TpInit
         org.endurox.BFldLocInfo

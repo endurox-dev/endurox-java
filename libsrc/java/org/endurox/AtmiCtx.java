@@ -33,7 +33,7 @@
  */
 package org.endurox;
 
-import java.io.FileDescriptor;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -61,8 +61,6 @@ import org.endurox.exceptions.AtmiTPEOSException;
  * Java Specific APIs are using standard camel cases method names.
  *
  */
-
-
 public class AtmiCtx {
 	
     /**
@@ -584,9 +582,26 @@ public class AtmiCtx {
      */
     public native BExprTree Bboolco(String expr);
     
-    public native void Bboolpr(BExprTree cexpr, FileDescriptor fd);
+    /**
+     * Print compiled expression to output stream
+     * @param cexpr compiled expression
+     * @param ostream output stream
+     */
+    public native void Bboolpr(BExprTree cexpr, OutputStream ostream);
     
-    public native void Bboolsetcbf (String funcname, Bboolcbf callback);
+    /**
+     * Set callback function from the expression, so that this function
+     * can be referenced/called from the compiled script/evaluated UBF boolean
+     * expression script.
+     * The function registers the callbacks at the java side into hashmap.
+     * and registration is done at C side too. The mapping is done in a singleton
+     * as it might be used by different contexts.
+     * @param funcname function name (C style function name)
+     * @param callback interface to callback object
+     */
+    public void Bboolsetcbf (String funcname, Bboolcbf callback) {
+        
+    }
     
     /** @} */ // end of Bbool
     
