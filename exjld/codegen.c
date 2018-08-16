@@ -172,7 +172,9 @@ expublic int ndrxj_codegen(int test_mode)
     /* and now build off:
      * 
      * 
-     * buildserver -n -o a -f 'exj.c -lexjlds -ljava -ljvm' -a "-I ../../include/ -L../../libexjlds -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 -L/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/"
+     * buildserver -n -o a -f 'exj.c -lexjlds -ljava -ljvm' -a "-I ../../include/ \
+     *  -L../../libexjlds -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \
+     *  -L/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/"
      *  
      */
     
