@@ -77,6 +77,7 @@ create_javah(TARGET enduroxjh CLASSES
         org.endurox.TpInit
         org.endurox.BFldLocInfo
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
+    DEPENDS enduroxjava
     CLASSPATH enduroxjava)
 
 # Create a library called "UBF" which includes the source files.
