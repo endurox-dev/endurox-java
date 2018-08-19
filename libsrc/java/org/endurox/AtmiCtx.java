@@ -589,6 +589,14 @@ public class AtmiCtx {
      */
     public native void Bboolpr(BExprTree cexpr, OutputStream ostream);
     
+    
+    /**
+     * Set Expression evaluator function callback.
+     * Then C will proxy back to java side for actual function invoke
+     * @param funcname function name to register for evaluator
+     */
+    native void BboolsetcbfC (String funcname);
+    
     /**
      * Set callback function from the expression, so that this function
      * can be referenced/called from the compiled script/evaluated UBF boolean
