@@ -969,9 +969,31 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
  * @return 
  */
 expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco 
-    (JNIEnv * env, jobject ctx, jstring jexpr)
+    (JNIEnv * env, jobject atmiCtxObj, jstring jexpr)
 {
-    
+    jboolean n_expr_copy = EXFALSE;
+    const char *n_expr;
+
+    /* set context */    
+    TPCONTEXT_T ctx;
+
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return NULL;
+    }
+
+    n_expr = (*env)->GetStringUTFChars(env, jexpr, &n_expr_copy);
+
+    /* compile it! */
+
+out:
+    if (n_expr_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, jexpr, n_expr);
+    }
+
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
