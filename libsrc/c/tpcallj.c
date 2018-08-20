@@ -37,7 +37,6 @@
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
 #include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TpCallResult.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>

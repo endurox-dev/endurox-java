@@ -1,11 +1,12 @@
-## 
-## Enduro/X JNI Backing library
+##
+## @brief Enduro/X JNI Backing library
 ##
 ## @file CMakeLists.txt
-## 
+##
 ## -----------------------------------------------------------------------------
 ## Enduro/X Middleware Platform for Distributed Transaction Processing
-## Copyright (C) 2018, Mavimax, Ltd. All Rights Reserved.
+## Copyright (C) 2009-2016, ATR Baltic, Ltd. All Rights Reserved.
+## Copyright (C) 2017-2018, Mavimax, Ltd. All Rights Reserved.
 ## This software is released under one of the following licenses:
 ## GPL or Mavimax's license for commercial use.
 ## -----------------------------------------------------------------------------
@@ -13,7 +14,7 @@
 ## 
 ## This program is free software; you can redistribute it and/or modify it under
 ## the terms of the GNU General Public License as published by the Free Software
-## Foundation; either version 2 of the License, or (at your option) any later
+## Foundation; either version 3 of the License, or (at your option) any later
 ## version.
 ##
 ## This program is distributed in the hope that it will be useful, but WITHOUT ANY
@@ -64,13 +65,20 @@ include_directories (. ${JNI_INCLUDE_DIRS})
 FILE(GLOB JAVASRC java/org/endurox/*.java)
 FILE(GLOB JAVASRC_EXCEPTIONS java/org/endurox/exceptions/*.java)
 
+if(Java_VERSION VERSION_EQUAL 1.10 OR Java_VERSION VERSION_GREATER 1.10 )
+    message (STATUS "Java Version >=10")
+    set(CMAKE_JAVA_COMPILE_FLAGS -h ${PROJECT_SOURCE_DIR}/include)
+endif()
+
 add_jar(enduroxjava
         ${JAVASRC}
         ${JAVASRC_EXCEPTIONS}
         )
 
-# Create JNI headers
-create_javah(TARGET enduroxjh CLASSES
+if(Java_VERSION VERSION_LESS 1.10)
+    # Create JNI headers
+    # this is superseeded in new version with compilers -h argument where to plot the headers.
+    create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
         org.endurox.TypedBuffer
         org.endurox.TypedUBF
@@ -79,6 +87,7 @@ create_javah(TARGET enduroxjh CLASSES
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     DEPENDS enduroxjava
     CLASSPATH enduroxjava)
+endif()
 
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
@@ -111,3 +120,4 @@ add_subdirectory (c)
 #    COMPONENT libraries
 #    )
 
+# vim: set ts=4 sw=4 et smartindent:
