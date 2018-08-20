@@ -125,4 +125,15 @@ out:
     return;
 }
 
+/**
+ * Allocate new java object for storing the compiled boolean expression handler
+ * @param env java env
+ * @param ptr[in] ptr to save in java object
+ * @return allocate java object or NULL (and exception is set)
+ */
+expublic jobject ndrxj_BExprTree_new(JNIEnv *env, char *ptr)
+{
+    /* TODO:! */
+}
+
 /* vim: set ts=4 sw=4 et cindent: */

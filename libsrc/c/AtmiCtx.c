@@ -961,4 +961,18 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+/**
+ * Compile Enduro/X UBF boolean expression
+ * @param env Java env
+ * @param ctx ATMI Context object
+ * @param jexpr boolean expression string to compile
+ * @return 
+ */
+expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco 
+    (JNIEnv * env, jobject ctx, jstring jexpr)
+{
+    
+}
+
 /* vim: set ts=4 sw=4 et cindent: */
+
