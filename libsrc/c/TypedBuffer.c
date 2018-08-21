@@ -185,8 +185,9 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
             NDRX_LOG(log_error, "Failed to get type for buffer: %s", 
                     tpstrerror(tperrno));
             
-            /* throw exception */
-            ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
+            /* throw exception - format is required as if message will contain
+             * some format symbols, then we get corrupted output.*/
+            ndrxj_atmi_throw(env, NULL, tperrno, "%s", tpstrerror(tperrno));
             
             ret = NULL;
             goto out;

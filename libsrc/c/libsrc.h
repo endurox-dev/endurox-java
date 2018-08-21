@@ -124,6 +124,7 @@ extern void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr)
 
 extern char* ndrxj_BExprTree_ptr_get(JNIEnv *env, jobject ptrO);
 extern void ndrxj_BExprTree_ptr_set(JNIEnv *env, jobject ptrO, char *new_ptr);
+extern jobject ndrxj_BExprTree_new(JNIEnv *env, jobject atmiCtxObj, char *ptr);
 
 #ifdef  __cplusplus
 }
