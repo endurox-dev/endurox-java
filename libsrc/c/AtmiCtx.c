@@ -1032,33 +1032,67 @@ struct Bboolpr_ctl
 
 /**
  * Just add the data/concat data buffer to dataptr...
- * TODO: maybe we need a return code so that we could terminate the printing
- * if callback failed?
  * @param buffer token to print
  * @param datalen token len including EOS byte
  * @param dataptr1 output byte
+ * @return EXSUCCEED/EXFAIL
  */
 exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
 {
-    Bboolpr_ctl_t *data = (Bboolpr_ctl_t *)dataptr1;
+    Bboolpr_ctl_t *ctl = (Bboolpr_ctl_t *)dataptr1;
     jbyteArray ba = NULL;
-    
-    /* TODO: call the output stream for writing the data buffer */
+    jclass clazz;
+    jmethodID mid;
+    int ret = EXSUCCEED;
     
     /* create java byte array from received buffer */
-     ret = (*env)->NewByteArray(env, (jsize)datalen);
+    ba = (*(ctl->env))->NewByteArray(ctl->env, (jsize)datalen);
 
-    if (NULL==ret)
+    if (NULL==ba)
     {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION((ctl->env), log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to create byte array with: %s, size: %d", (int)datalen);
-        goto out;
+        EXFAIL_OUT(ret);
     }
     
+    /* setup byte array */
+    (*(ctl->env))->SetByteArrayRegion(ctl->env, ba, 0, datalen, 
+                            (jbyte*)buffer);
+
+    if((*(ctl->env))->ExceptionCheck(ctl->env))
+    {
+        NDRXJ_LOG_EXCEPTION((ctl->env), log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to set data bytes: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* locate write method of output stream class */
+    
+    clazz = (*(ctl->env))->GetObjectClass(ctl->env, ctl->outstream);
+    
+    if (NULL==clazz)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get output stream class",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+    
+    mid = (*(ctl->env))->GetMethodID(ctl->env, clazz, "write",
+            "([B)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "%s: Failed to get write(byte[]) output stream method!",
+                __func__);
+        EXFAIL_OUT(ret);
+    }
+
+    /* Call server object */
+    (*(ctl->env))->CallVoidMethod(ctl->env, ctl->outstream, mid, ba);
+
 out:
     
-    return;
-    
+    return ret;
 }
 
 /**
