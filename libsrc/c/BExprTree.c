@@ -178,4 +178,27 @@ out:
     return ret;
 }
 
+/**
+ * Free up expression tree
+ * @param env java env
+ * @param exptree expression tree object onto which this method is called
+ * @param atmiCtxObj ATMI Object
+ * @param cPtr C pointer
+ */
+expublic void JNICALL Java_org_endurox_BExprTree_Btreefree
+  (JNIEnv * env, jobject exptree, jobject atmiCtxObj, jlong cPtr)
+{
+    /* switch contexts & perform free */
+    
+    if (NULL==(ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    Btreefree((char *)cPtr);
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+}
+
 /* vim: set ts=4 sw=4 et cindent: */
