@@ -283,8 +283,16 @@ public class AtmiCtx {
      * @param svcInfo service call infos
      */
     void tpCallDispatch(TpSvcInfo svcInfo) {
-        /* the exception will be captured at C side */
-        svcMap.get(svcInfo.getName()).tpService(this, svcInfo);
+        try
+        {
+            /* the exception will be captured at C side */
+            svcMap.get(svcInfo.getName()).tpService(this, svcInfo);
+        }
+        catch (Exception e)
+        {
+            //Return fail with the same buffer in case of exception!
+            tpreturn(AtmiConstants.TPFAIL, ctx, svcInfo.data, ctx);
+        }
     }
 
     /**

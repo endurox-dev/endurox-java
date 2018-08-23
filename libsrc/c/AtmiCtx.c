@@ -971,9 +971,10 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
 expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco 
     (JNIEnv * env, jobject atmiCtxObj, jstring jexpr)
 {
+    jobject ret = NULL;
     jboolean n_expr_copy = EXFALSE;
     const char *n_expr;
-
+    char *comp = NULL;
     /* set context */    
     TPCONTEXT_T ctx;
 
@@ -985,8 +986,30 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco
     n_expr = (*env)->GetStringUTFChars(env, jexpr, &n_expr_copy);
 
     /* compile it! */
+    comp = Bboolco((char *)n_expr);
+    
+    if (NULL==comp)
+    {
+        UBF_LOG(log_error, "Failed to compile [%s]: %s", Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "Failed to compile [%s]: %s", 
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+    /* create object.. */
+    if (NULL==(ret = ndrxj_BExprTree_new(env, atmiCtxObj, comp)))
+    {
+        UBF_LOG(log_error, "Failed to compile expression - object NULL!");
+        goto out;
+    }
 
 out:
+    
+    if (NULL==ret)
+    {
+        Btreefree(comp);
+    }
+
     if (n_expr_copy)
     {
         (*env)->ReleaseStringUTFChars(env, jexpr, n_expr);

@@ -45,6 +45,7 @@
 #include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+#define BEXPRTREE_CLASS "org/endurox/BExprTree"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -127,13 +128,54 @@ out:
 
 /**
  * Allocate new java object for storing the compiled boolean expression handler
+ * This assumes that context is set
  * @param env java env
+ * @param ctx ATMI Context that will be associated with the object.
+ *  needed for deallocation/free of the Expression Tree C handler
  * @param ptr[in] ptr to save in java object
  * @return allocate java object or NULL (and exception is set)
  */
-expublic jobject ndrxj_BExprTree_new(JNIEnv *env, char *ptr)
+expublic jobject ndrxj_BExprTree_new(JNIEnv *env, jobject atmiCtxObj, char *ptr)
 {
-    /* TODO:! */
+    jobject ret = NULL;
+    jclass bclz;
+    jmethodID mid;
+    
+    /* Set context if needed */
+    
+    NDRX_LOG(log_debug, "Allocating [%s]", BEXPRTREE_CLASS);
+    
+    bclz = (*env)->FindClass(env, BEXPRTREE_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        NDRX_LOG(log_error, "Failed to find class [%s]", BEXPRTREE_CLASS);
+        goto out;
+    }
+    
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/AtmiCtx;J)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        goto out;
+    }
+
+    NDRX_LOG(log_debug, "About to NewObject(%s)", BEXPRTREE_CLASS);
+    
+    ret = (*env)->NewObject(env, bclz, mid, atmiCtxObj, (jlong)ptr);
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to create [%s]", BEXPRTREE_CLASS);
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "NewObject() done");
+    
+out:
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
