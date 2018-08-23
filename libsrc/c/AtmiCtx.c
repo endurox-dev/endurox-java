@@ -996,5 +996,69 @@ out:
 
 }
 
+/**
+ * Control data for compiled boolean expression printing
+ */
+typedef struct Bboolpr_ctl Bboolpr_ctl_t;
+struct Bboolpr_ctl
+{
+    JNIEnv * env;
+    jobject atmiCtxObj;
+    jobject outstream;
+};
+
+/**
+ * Just add the data/concat data buffer to dataptr...
+ * @param buffer token to print
+ * @param datalen token len including EOS byte
+ * @param dataptr1 output byte
+ */
+exprivate void bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
+{
+    Bboolpr_ctl_t *data = (Bboolpr_ctl_t *)dataptr1;
+    
+    /* TODO: call the output stream for writing the data buffer */
+}
+
+/**
+ * Print boolean expression to output stream
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param compexpr compiled expression
+ * @param outstream output stream object
+ */
+JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_Bboolpr
+  (JNIEnv * env, jobject atmiCtxObj, jobject compexpr, jobject outstream)
+{
+    /* set context */    
+    TPCONTEXT_T ctx;
+    char *tree;
+    Bboolpr_ctl_t ctl;
+
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    /* extract tree: compexpr */
+    if (NULL==(tree = ndrxj_BExprTree_ptr_get(env, compexpr)))
+    {
+        UBF_LOG(log_error, "Failed to get expression handler!");
+        goto out;
+    }
+    
+    ctl.env = env;
+    ctl.atmiCtxObj = atmiCtxObj;
+    ctl.outstream = outstream;
+    
+    
+    Bboolprcb(tree, bboolprcb_callback, &ctl);
+    
+out:
+
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+
 /* vim: set ts=4 sw=4 et cindent: */
 
