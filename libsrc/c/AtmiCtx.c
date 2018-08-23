@@ -1032,15 +1032,33 @@ struct Bboolpr_ctl
 
 /**
  * Just add the data/concat data buffer to dataptr...
+ * TODO: maybe we need a return code so that we could terminate the printing
+ * if callback failed?
  * @param buffer token to print
  * @param datalen token len including EOS byte
  * @param dataptr1 output byte
  */
-exprivate void bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
+exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
 {
     Bboolpr_ctl_t *data = (Bboolpr_ctl_t *)dataptr1;
+    jbyteArray ba = NULL;
     
     /* TODO: call the output stream for writing the data buffer */
+    
+    /* create java byte array from received buffer */
+     ret = (*env)->NewByteArray(env, (jsize)datalen);
+
+    if (NULL==ret)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to create byte array with: %s, size: %d", (int)datalen);
+        goto out;
+    }
+    
+out:
+    
+    return;
+    
 }
 
 /**
