@@ -277,6 +277,18 @@ public class TypedUBF extends TypedBuffer {
     /**
      * @defgroup Bboolubf UBF boolean operations 
      */
+    
+    /**
+     * Dispatch callback function. The callback object must be registered
+     * in the ubfcbMap. If not there, then AtmiTPENOENTException exception
+     * is thrown
+     * @param funcname function name received from expression evaluator.
+     * @throws AtmiTPENOENTException if function is not registered in the system
+     */
+    void BboolcbfDispatch (String funcname) {
+        /* This will use singleton functions registered in the ATMI Context */
+    }
+    
     /**
      * Evalue boolean expression by given expressino tree
      * @param tree compiled boolean expression

@@ -605,7 +605,6 @@ public class AtmiCtx {
      */
     native void BboolsetcbfC (String funcname);
     
-    
     /**
      * UBF expression callback mappings 
      */
@@ -628,6 +627,24 @@ public class AtmiCtx {
      * @param callback interface to callback object
      */
     public void Bboolsetcbf (String funcname, Bboolcbf callback) {
+        
+        if (null==callback) {
+            throw new AtmiTPEINVALException("callback argument must not be null!");
+        }
+        
+        /* register the callback func down to C level */
+        BboolsetcbfC(funcname);
+                
+        /* Register at java level */
+        ubfcbMapMutex.lock();
+        try
+        {
+            ubfcbMap.put(funcname, callback);
+        }
+        finally
+        {
+            ubfcbMapMutex.unlock();
+        }
         
     }
     
