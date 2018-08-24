@@ -591,9 +591,10 @@ public class AtmiCtx {
     public native BExprTree Bboolco(String expr);
     
     /**
-     * Print compiled expression to output stream
+     * Print compiled expression to output stream.
      * @param cexpr compiled expression
-     * @param ostream output stream
+     * @param ostream output stream. write(byte[] bytes) is used for printing
+     *  the output.
      */
     public native void Bboolpr(BExprTree cexpr, OutputStream ostream);
     
@@ -603,6 +604,18 @@ public class AtmiCtx {
      * @param funcname function name to register for evaluator
      */
     native void BboolsetcbfC (String funcname);
+    
+    
+    /**
+     * UBF expression callback mappings 
+     */
+    private static Map<String, Bboolcbf> ubfcbMap = new HashMap<String, Bboolcbf>();
+    
+    /**
+     * Lock for hashmap of the UBF callback
+     */
+    private static final Lock ubfcbMapMutex = new ReentrantLock(true);
+    
     
     /**
      * Set callback function from the expression, so that this function
