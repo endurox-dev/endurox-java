@@ -36,7 +36,6 @@ package org.endurox;
 
 /**
  * UBF Buffer compiled boolean expressions handler
- * TODO: We need automatic cleanup of the resource / GC
  */
 public class BExprTree  {
     
@@ -47,8 +46,7 @@ public class BExprTree  {
     AtmiCtx ctx;
     
     /**
-     * Deallocate the 
-     * TODO!
+     * Deallocate the tree
      * @param cPtr 
      */
     native void Btreefree(AtmiCtx ctx, long cPtr);

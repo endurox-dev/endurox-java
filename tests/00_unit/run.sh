@@ -29,4 +29,5 @@ unset NDRX_DEBUG_CONF
 ./jexunit00b BaddTest || exit 2
 ./jexunit00b BaddfastTest || exit 3
 ./jexunit00b BchgTest || exit 4
+./jexunit00b BboolTest || exit 5
 

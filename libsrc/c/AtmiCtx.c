@@ -1017,6 +1017,7 @@ out:
 
     tpsetctxt(TPNULLCONTEXT, 0L);
 
+    return ret;
 }
 
 /**
