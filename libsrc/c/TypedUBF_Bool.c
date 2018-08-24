@@ -56,6 +56,16 @@
 /*---------------------------Prototypes---------------------------------*/
 
 
-
+/*
+ * Class:     org_endurox_TypedUBF
+ * Method:    Bboolev
+ * Signature: (Lorg/endurox/BExprTree;)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
+  (JNIEnv * env, jobject data, jobject jexpr) {
+    /* TODO! */
+    
+    return (jboolean)0;
+}
 
 /* vim: set ts=4 sw=4 et cindent: */

@@ -32,6 +32,8 @@
  */
 package org.endurox;
 
+import org.endurox.exceptions.AtmiTPENOENTException;
+
 public class TypedUBF extends TypedBuffer {
 	
     static {
@@ -285,8 +287,16 @@ public class TypedUBF extends TypedBuffer {
      * @param funcname function name received from expression evaluator.
      * @throws AtmiTPENOENTException if function is not registered in the system
      */
-    void BboolcbfDispatch (String funcname) {
+    long BboolcbfDispatch (String funcname) {
         /* This will use singleton functions registered in the ATMI Context */
+        Bboolcbf cbf = ctx.BoolgetcbfObj(funcname);
+        
+        if (null==cbf) {
+            throw new AtmiTPENOENTException(String.format("Function not found: "+
+                    "[%s] in java space", 
+                    funcname));
+        }
+        return cbf.bboolCallBack(ctx, this, funcname);
     }
     
     /**

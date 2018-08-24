@@ -608,13 +608,31 @@ public class AtmiCtx {
     /**
      * UBF expression callback mappings 
      */
-    private static Map<String, Bboolcbf> ubfcbMap = new HashMap<String, Bboolcbf>();
+    static Map<String, Bboolcbf> ubfcbMap = new HashMap<String, Bboolcbf>();
     
     /**
      * Lock for hashmap of the UBF callback
      */
-    private static final Lock ubfcbMapMutex = new ReentrantLock(true);
+    static final Lock ubfcbMapMutex = new ReentrantLock(true);
     
+    /**
+     * Get the boolean expression callback object in synchronized way
+     * @param funcname function for which to lookup
+     * @return null if  not found, not null if object found
+     */
+    static Bboolcbf BoolgetcbfObj(String funcname) {
+        
+        ubfcbMapMutex.lock();
+        
+        try
+        {
+            return ubfcbMap.get(funcname);
+        }
+        finally
+        {
+            ubfcbMapMutex.unlock();
+        }
+    }
     
     /**
      * Set callback function from the expression, so that this function
