@@ -1135,6 +1135,43 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+/**
+ * Register callback function
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param funcname funcname
+ */
+expublic void JNICALL Java_org_endurox_AtmiCtx_BboolsetcbfC
+  (JNIEnv * env, jobject jobject atmiCtxObj, jstring funcname)
+{
+    TPCONTEXT_T ctx;
+    jboolean n_funcname_copy = EXFALSE;
+    const char *n_funcname = (*env)->GetStringUTFChars(env, funcname, 
+    &n_funcname_copy);
 
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    /* Register callback */
+    
+    if (EXSUCCEED!=Bboolsetcbf((char *)n_funcname,  Bbool_callback_function))
+    {
+        UBF_LOG(log_error, "Failed to call Bboolsetcbf(): %s", Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "Failed to call Bboolsetcbf(): %s", 
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+out:
+
+    if (n_funcname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, funcname, n_funcname);
+    }
+
+    tpsetctxt(TPNULLCONTEXT, 0L);    
+}
 /* vim: set ts=4 sw=4 et cindent: */
 

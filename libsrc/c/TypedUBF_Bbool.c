@@ -53,6 +53,20 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
+
+/* These bellow are used by callback. Set by evaluator */
+
+/** 
+ * Java env for server operations 
+ */
+exprivate __thread JNIEnv *M_cb_env = NULL;
+
+/**
+ * This is current UBF buffer running for the expressions
+ */
+exprivate __thread jobject M_cb_ubf;
+
+
 /*---------------------------Prototypes---------------------------------*/
 
 /**
@@ -90,5 +104,25 @@ out:
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
+
+/**
+ * When performing eval on UBF buffer, we must save in current thread
+ * local stored variable an object pointer to UBF buffer.
+ * @param p_ub
+ * @param funcname
+ * @return long value returned from function
+ */
+expublic long Bbool_callback_function(UBFH *p_ub, char *funcname)
+{
+    /* TODO: suspend ATMI context as java might perform some other actions
+     * on given thread.
+     */
+    
+    /* call java & get result, restore ATMI context */
+    
+    return 1;
+}
+
+
 
 /* vim: set ts=4 sw=4 et cindent: */

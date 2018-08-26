@@ -637,7 +637,9 @@ public class AtmiCtx {
     /**
      * Set callback function from the expression, so that this function
      * can be referenced/called from the compiled script/evaluated UBF boolean
-     * expression script.
+     * expression script. This function is not thread safe. meaning that
+     * any other thread shall not execute Boolean expressions while the
+     * callback are being registered.
      * The function registers the callbacks at the java side into hashmap.
      * and registration is done at C side too. The mapping is done in a singleton
      * as it might be used by different contexts.

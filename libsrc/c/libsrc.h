@@ -126,6 +126,9 @@ extern char* ndrxj_BExprTree_ptr_get(JNIEnv *env, jobject ptrO);
 extern void ndrxj_BExprTree_ptr_set(JNIEnv *env, jobject ptrO, char *new_ptr);
 extern jobject ndrxj_BExprTree_new(JNIEnv *env, jobject atmiCtxObj, char *ptr);
 
+/* Bbool ops */
+extern long Bbool_callback_function(UBFH *p_ub, char *funcname);
+
 #ifdef  __cplusplus
 }
 #endif

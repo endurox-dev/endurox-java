@@ -300,7 +300,7 @@ public class TypedUBF extends TypedBuffer {
     }
     
     /**
-     * Evalue boolean expression by given expressino tree
+     * Evaluate boolean expression by given expression tree
      * @param tree compiled boolean expression
      * @return true or false
      * @{
