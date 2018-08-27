@@ -966,7 +966,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
  * @param env Java env
  * @param ctx ATMI Context object
  * @param jexpr boolean expression string to compile
- * @return 
+ * @return BExprTree object ptr
  */
 expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco 
     (JNIEnv * env, jobject atmiCtxObj, jstring jexpr)
@@ -997,7 +997,7 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco
     }
     
     /* create object.. */
-    if (NULL==(ret = ndrxj_BExprTree_new(env, atmiCtxObj, comp)))
+    if (NULL==(ret = ndrxj_BExprTree_new(env, comp)))
     {
         UBF_LOG(log_error, "Failed to compile expression - object NULL!");
         goto out;

@@ -42,29 +42,29 @@ public class BExprTree  {
     /** ptr to char *tree */
     long cPtr = 0;
     
-    /** ATMI Context by which expression was allocated */
-    AtmiCtx ctx;
+    
+    /** ATMI Context by which expression was allocated 
+    AtmiCtx ctx;*/
     
     /**
      * Deallocate the tree
      * @param cPtr 
      */
-    native void Btreefree(AtmiCtx ctx, long cPtr);
+    native void Btreefree(long cPtr);
     
     /**
      * Package level visibility
      * @param cPtr C pointer to compiled boolean expression
      */
-    BExprTree(AtmiCtx ctx, long cPtr) {
+    BExprTree(long cPtr) {
         this.cPtr = cPtr;
-        this.ctx = ctx;
     }
     
     @Override
     protected void finalize() throws Throwable {
 
         //Call tree free!!!
-        Btreefree(this.ctx, this.cPtr);
+        Btreefree(this.cPtr);
         
         //Remove expression object
         super.finalize();

@@ -76,9 +76,9 @@ public class TypedBuffer {
      */
     @Override
     protected void finalize() {
-         if (doFinalize) {
-             tpfree(cPtr);
-         }
+        if (doFinalize) {
+            tpfree(cPtr);
+        }
     }
     
     /**

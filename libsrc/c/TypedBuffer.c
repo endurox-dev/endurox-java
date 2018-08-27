@@ -106,6 +106,14 @@ expublic void JNICALL Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject 
 {
     TPCONTEXT_T ctx;
 
+    /* WARNING !!!!
+     * 
+     * we get some problems with finalizers - thus better allocate new context
+     * Looks like java is killing AtmiContexts in the same time with the buffer
+     * free. And the AtmiContext is no more accessible 
+     * !!!! WARNING
+     * 
+     *
     jclass objClass = (*env)->GetObjectClass(env, obj);
     jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
             "Lorg/endurox/TypedBuffer;");
@@ -115,16 +123,20 @@ expublic void JNICALL Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject 
     {
         goto out;
     }
-
+*/
+    
     NDRX_LOG(log_debug, "About to free up: context: %p buf: %p",
             ctx, (void *)cPtr);
+    
+    ctx = tpnewctxt(EXFALSE, EXTRUE);
     
     tpfree((char *)cPtr);
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
-
-out:
+    
+    tpfreectxt(ctx);
+    
     /* return object */
     return;
 }

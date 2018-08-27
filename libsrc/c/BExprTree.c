@@ -131,11 +131,10 @@ out:
  * This assumes that context is set
  * @param env java env
  * @param ctx ATMI Context that will be associated with the object.
- *  needed for deallocation/free of the Expression Tree C handler
  * @param ptr[in] ptr to save in java object
  * @return allocate java object or NULL (and exception is set)
  */
-expublic jobject ndrxj_BExprTree_new(JNIEnv *env, jobject atmiCtxObj, char *ptr)
+expublic jobject ndrxj_BExprTree_new(JNIEnv *env, char *ptr)
 {
     jobject ret = NULL;
     jclass bclz;
@@ -154,7 +153,7 @@ expublic jobject ndrxj_BExprTree_new(JNIEnv *env, jobject atmiCtxObj, char *ptr)
     }
     
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/AtmiCtx;J)V");
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(J)V");
     
     if (NULL==mid)
     {
@@ -164,7 +163,7 @@ expublic jobject ndrxj_BExprTree_new(JNIEnv *env, jobject atmiCtxObj, char *ptr)
 
     NDRX_LOG(log_debug, "About to NewObject(%s)", BEXPRTREE_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, atmiCtxObj, (jlong)ptr);
+    ret = (*env)->NewObject(env, bclz, mid, (jlong)ptr);
     
     if (NULL==ret)
     {
@@ -182,22 +181,28 @@ out:
  * Free up expression tree
  * @param env java env
  * @param exptree expression tree object onto which this method is called
- * @param atmiCtxObj ATMI Object
  * @param cPtr C pointer
  */
 expublic void JNICALL Java_org_endurox_BExprTree_Btreefree
-  (JNIEnv * env, jobject exptree, jobject atmiCtxObj, jlong cPtr)
+  (JNIEnv * env, jobject exptree, jlong cPtr)
 {
-    /* switch contexts & perform free */
+    /* switch contexts & perform free 
     
     if (NULL==(ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
     {
         return;
     }
+    */
+    
+    TPCONTEXT_T ctx;
+    
+    ctx = tpnewctxt(EXFALSE, EXTRUE);
     
     Btreefree((char *)cPtr);
     
     tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    tpfreectxt(ctx);
 
 }
 

@@ -94,6 +94,8 @@ public class BboolTest {
             ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD1");
 
             assertEquals(ub.Bboolev(tree), false);
+            
+            System.gc();
         }
     }
     
