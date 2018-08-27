@@ -159,10 +159,11 @@ expublic void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
     vsnprintf (error, sizeof(error), msgfmt, args);
     va_end (args);
     
-    snprintf(cls, sizeof(cls), "org/endurox/exceptions/Nstd%sException", ndrx_Necodestr(err));
+    snprintf(cls, sizeof(cls), "org/endurox/exceptions/Nstd%sException", 
+            ndrx_Necodestr(err));
     
     
-    NDRX_LOG(log_info, "Throwing: [%s]", cls);
+    NDRX_LOG(log_info, "Throwing: [%s]", cls, error);
     
     ex = (*env)->FindClass(env, cls);
     
@@ -204,7 +205,7 @@ expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, msgfmt);
+    (*env)->ThrowNew(env, ex, error);
 }
 
 /**

@@ -990,8 +990,8 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco
     
     if (NULL==comp)
     {
-        UBF_LOG(log_error, "Failed to compile [%s]: %s", Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "Failed to compile [%s]: %s", 
+        UBF_LOG(log_error, "Failed to compile: %s", Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "Failed to compile: %s", 
                 Bstrerror(Berror));
         goto out;
     }

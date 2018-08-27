@@ -70,42 +70,6 @@ exprivate __thread jobject M_cb_ubf;
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Print the UBF buffer to STDOUT
- * @param env java env
- * @param data TypedUBF object
- */
-expublic void JNICALL Java_org_endurox_TypedUBF_Bprint(JNIEnv *env, jobject data)
-{
-    char *cdata;
-    long clen;
-    
-    /* get the context, switch */
-    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
-    {
-       return; 
-    }
-    
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
-    {
-        NDRX_LOG(log_error, "Failed to get buffer data");
-        goto out;
-    }
-    
-    if (EXSUCCEED!=Bprint((UBFH *)cdata))
-    {
-        UBF_LOG(log_error, "%s: failed to Bprint %p buffer: %s", 
-                __func__, cdata, Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "%s: failed to Bprint %p buffer: %s", 
-                __func__, cdata, Bstrerror(Berror));
-        goto out;
-    }
-    
-out:
-    /* switch context back */
-    tpsetctxt(TPNULLCONTEXT, 0L);
-}
-
-/**
  * When performing eval on UBF buffer, we must save in current thread
  * local stored variable an object pointer to UBF buffer.
  * @param p_ub
@@ -136,7 +100,7 @@ expublic long Bbool_callback_function(UBFH *p_ub, char *funcname)
                 __func__);
         /* we shall throw exception here! */
         
-        ndrxj_ubf_throw(M_cb_env, NULL, BEUNIX, "%s: Failed to get UBF buffer class",
+        ndrxj_ubf_throw(M_cb_env, BEUNIX, "%s: Failed to get UBF buffer class",
                 __func__);
         
         EXFAIL_OUT(ret);
@@ -149,7 +113,7 @@ expublic long Bbool_callback_function(UBFH *p_ub, char *funcname)
     
     if (NULL==mid)
     {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION(M_cb_env, log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to get boolcbfDispatch method: %s");
         EXFAIL_OUT(ret);
     }
@@ -158,7 +122,7 @@ expublic long Bbool_callback_function(UBFH *p_ub, char *funcname)
     
     if((*M_cb_env)->ExceptionCheck(M_cb_env))
     {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION(M_cb_env, log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to allocate string: %s (funcname: %s)", funcname);
         EXFAIL_OUT(ret);
     }
@@ -183,7 +147,9 @@ out:
 JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
   (JNIEnv * env, jobject data, jobject jexpr) {
     
-    jboolean ret = JNI_FALSE;
+    jboolean jret = JNI_FALSE;
+    int ret = EXSUCCEED;
+    
     char *tree;
     char *cdata;
     long clen;
@@ -200,7 +166,6 @@ JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
     M_cb_env = env;
     M_cb_ubf = data;
     
-    
     /* set context (from UBF buffer) */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
@@ -208,7 +173,7 @@ JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
     }
     
     /* get expression ptr */
-    if (NULL==(tree = ndrxj_BExprTree_ptr_get(JNIEnv *env, jexpr)))
+    if (NULL==(tree = ndrxj_BExprTree_ptr_get(env, jexpr)))
     {
         UBF_LOG(log_error, "Failed to get compiled expression ptr!");
         goto out;
@@ -221,14 +186,28 @@ JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
     }
     
     /* evaluate */
-    ret = Bboolev((UBFH *)data, tree);
+    if (EXFAIL==(ret = Bboolev((UBFH *)cdata, tree)))
+    {
+        ndrxj_ubf_throw(M_cb_env, Berror, "Failed to execute Bboolev(): %s",
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+    if (EXTRUE==ret)
+    {
+        jret = JNI_TRUE;
+    }
+    else
+    {
+        jret = JNI_FALSE;
+    }
 
 out:
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
-    return (jboolean)ret;
+    return jret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */

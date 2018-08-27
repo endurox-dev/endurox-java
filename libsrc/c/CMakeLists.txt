@@ -71,6 +71,7 @@ add_library (exjava SHARED
                 TypedUBF_Bchg.c
                 BFldLocInfo.c
                 BExprTree.c
+                TypedUBF_Bbool.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)
