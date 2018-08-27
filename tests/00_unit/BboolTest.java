@@ -68,30 +68,34 @@ public class BboolTest {
     @Test
     public void testBboolev() {
         
-        AtmiCtx ctx = new AtmiCtx();
-        assertNotEquals(ctx.getCtx(), 0x0);
-        
-        //Compile an expression
-        BExprTree tree = ctx.Bboolco("T_STRING_FLD=='HELLO WORLD' && T_LONG_FLD==551");
-        assertNotEquals(tree, null);
-        
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
-        assertNotEquals(ub, null);
+        for (int i=0; i<10000; i++)
+        {
+            AtmiCtx ctx = new AtmiCtx();
+            assertNotEquals(ctx.getCtx(), 0x0);
+            
+            //Compile an expression
+            BExprTree tree = ctx.Bboolco("T_STRING_FLD=='HELLO WORLD' && T_LONG_FLD==551");
+            assertNotEquals(tree, null);
 
-        ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD");
-        ub.Bchg(test.T_LONG_FLD, 0, 551);
+            TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+            assertNotEquals(ub, null);
 
-        
-        ctx.tplogError("Buffer print ----------------");
-        ub.Bprint();
-        ctx.tplogError("END ------------------------");
-        
-        assertEquals(ub.Bboolev(tree), true);
+            ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD");
+            ub.Bchg(test.T_LONG_FLD, 0, 551);
 
-        
-        ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD1");
-        
-        assertEquals(ub.Bboolev(tree), false);
+
+            ctx.tplogError("Buffer print ----------------");
+            ub.Bprint();
+            ctx.tplogError("END ------------------------");
+
+            assertEquals(ub.Bboolev(tree), true);
+
+
+            ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD1");
+
+            assertEquals(ub.Bboolev(tree), false);
+        }
     }
+    
     
 }

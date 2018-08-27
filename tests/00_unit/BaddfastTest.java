@@ -4,6 +4,9 @@ import org.endurox.*;
 import org.endurox.exceptions.UbfBEINVALException;
 import org.endurox.exceptions.UbfBNOTPRESException;
 
+/**
+ * TODO: Might want to add repeated tests so that we can test GC...
+ */
 public class BaddfastTest {
     
     /**
