@@ -1142,7 +1142,7 @@ out:
  * @param funcname funcname
  */
 expublic void JNICALL Java_org_endurox_AtmiCtx_BboolsetcbfC
-  (JNIEnv * env, jobject jobject atmiCtxObj, jstring funcname)
+  (JNIEnv * env, jobject atmiCtxObj, jstring funcname)
 {
     TPCONTEXT_T ctx;
     jboolean n_funcname_copy = EXFALSE;

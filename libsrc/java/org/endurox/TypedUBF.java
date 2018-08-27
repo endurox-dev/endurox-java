@@ -287,7 +287,7 @@ public class TypedUBF extends TypedBuffer {
      * @param funcname function name received from expression evaluator.
      * @throws AtmiTPENOENTException if function is not registered in the system
      */
-    long BboolcbfDispatch (String funcname) {
+    long boolcbfDispatch (String funcname) {
         /* This will use singleton functions registered in the ATMI Context */
         Bboolcbf cbf = ctx.BoolgetcbfObj(funcname);
         
