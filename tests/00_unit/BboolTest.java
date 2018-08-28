@@ -100,6 +100,77 @@ public class BboolTest {
             tree.cleanup();
             ub.cleanup();
         }
+        
+    }
+    
+    /**
+     * Callback class for boolean expression evaluation...
+     */
+    private class GiveMeFive implements Bboolcbf {
+        
+        /**
+         * This function is called as a result of boolean expression evaluation
+         * @param ctx ATMI Context into which evaluation is done
+         * @param ub UBF buffer onto which expression is evaluated
+         * @param funcname function name called
+         * @return result long value
+         */
+        public long bboolCallBack(AtmiCtx ctx, TypedUBF ub, String funcname) {
+            
+            if (funcname.equals("give_me_five")) {
+                return ub.BgetLong(test.T_LONG_FLD, 0);
+            } else if (funcname.equals("give_me_six")) {
+                return ub.BgetLong(test.T_LONG_2_FLD, 0);
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    }
+    /**
+     * Test Simple version of boolean expression evaluation
+     */
+    @Test
+    public void testBboolsetcbf() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        GiveMeFive cb = new GiveMeFive();
+        
+        assertNotEquals(ctx.getCtx(), 0x0);
+            
+        ctx.Bboolsetcbf ("give_me_five", cb);
+        ctx.Bboolsetcbf ("give_me_six", cb);
+        
+        for (int i=0; i<1000; i++)
+        {
+            BExprTree tree = ctx.Bboolco("give_me_five()==5 && give_me_six()==6");
+            assertNotEquals(tree, null);
+
+            TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+            assertNotEquals(ub, null);
+
+            ub.Bchg(test.T_LONG_FLD, 0, 5);
+            ub.Bchg(test.T_LONG_2_FLD, 0, 6);
+
+            ctx.tplogError("Buffer print ----------------");
+            ub.Bprint();
+            ctx.tplogError("END ------------------------");
+
+            assertEquals(ub.Bboolev(tree), true);
+
+            ub.Bchg(test.T_LONG_2_FLD, 0, 7);
+
+            assertEquals(ub.Bboolev(tree), false);
+
+            ctx.tplogError("Buffer print ----------------");
+            ub.Bprint();
+            ctx.tplogError("END ------------------------");
+            
+            tree.cleanup();
+            ub.cleanup();
+        }
+    }
     /*    
         try
         {
@@ -110,7 +181,6 @@ public class BboolTest {
             
         }
     */
-    }
     
     
 }
