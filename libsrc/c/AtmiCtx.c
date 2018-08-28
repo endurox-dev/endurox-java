@@ -899,7 +899,12 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
 {
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
     
-    Otpterm(&ctx);
+    tpsetctxt(ctx, 0L);
+    
+    NDRX_LOG(log_debug, "About to free ctx %p", ctx);
+    tpterm();
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
     
     tpfreectxt(ctx);
     

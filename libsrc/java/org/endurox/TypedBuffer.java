@@ -72,13 +72,27 @@ public class TypedBuffer {
     }
 
     /**
+     * Clean up the object (basically this is destructor) as we cannot relay
+     * on finalize() auto call of from the Garbage Collector. Thus we object
+     * goes out of the scope,
+     */
+    public void cleanup() {
+        
+        ctx = null;
+        if (doFinalize && 0!=cPtr) {
+            tpfree(cPtr);
+            cPtr = 0;
+        }
+    }
+    
+    /**
      * Finish of this ATMI buffer
      */
     @Override
-    protected void finalize() {
-        if (doFinalize) {
-            tpfree(cPtr);
-        }
+    protected void finalize() throws Throwable{
+        
+        cleanup();
+        super.finalize();
     }
     
     /**

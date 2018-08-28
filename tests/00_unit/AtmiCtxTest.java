@@ -10,14 +10,21 @@ public class AtmiCtxTest {
    */
   @Test
   public void newCtx() {
-    AtmiCtx ctx = new AtmiCtx();
-    assertNotEquals(ctx.getCtx(), 0x0);
-    TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
-    assertNotEquals(ub, null);
+      
+    for (int i=0; i<10000; i++) {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
 
-    /* test sub-type NULL */
-    ub = (TypedUBF)ctx.tpalloc("UBF", null, 1024);
-    assertNotEquals(ub, null);
+        /* test sub-type NULL */
+        ub = (TypedUBF)ctx.tpalloc("UBF", null, 1024);
+        assertNotEquals(ub, null);
+        
+        ub.cleanup();
+        ctx.cleanup();
+    }
+    
   }
 
   /**

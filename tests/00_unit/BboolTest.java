@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
@@ -72,7 +73,7 @@ public class BboolTest {
         {
             AtmiCtx ctx = new AtmiCtx();
             assertNotEquals(ctx.getCtx(), 0x0);
-            
+
             //Compile an expression
             BExprTree tree = ctx.Bboolco("T_STRING_FLD=='HELLO WORLD' && T_LONG_FLD==551");
             assertNotEquals(tree, null);
@@ -95,8 +96,20 @@ public class BboolTest {
 
             assertEquals(ub.Bboolev(tree), false);
             
-            System.gc();
+            ctx.cleanup();
+            tree.cleanup();
+            ub.cleanup();
         }
+    /*    
+        try
+        {
+            TimeUnit.SECONDS.sleep(9999);
+        }
+        catch (Exception e)
+        {
+            
+        }
+    */
     }
     
     

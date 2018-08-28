@@ -63,11 +63,22 @@ public class BExprTree  {
     @Override
     protected void finalize() throws Throwable {
 
-        //Call tree free!!!
-        Btreefree(this.cPtr);
-        
+        cleanup();
         //Remove expression object
         super.finalize();
+    }
+    
+    /**
+     * Clean up the object (basically this is destructor) as we cannot relay
+     * on finalize() auto call of from the Garbage Collector. Thus we object
+     * goes out of the scope,
+     */
+    public void cleanup() {
+        
+        if (0!=cPtr) {
+            Btreefree(cPtr);
+        }
+        cPtr = 0;
     }
     
 }

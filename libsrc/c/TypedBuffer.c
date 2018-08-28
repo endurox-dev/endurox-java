@@ -125,10 +125,10 @@ expublic void JNICALL Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject 
     }
 */
     
-    NDRX_LOG(log_debug, "About to free up: context: %p buf: %p",
-            ctx, (void *)cPtr);
-    
     ctx = tpnewctxt(EXFALSE, EXTRUE);
+    
+    NDRX_LOG(log_debug, "About to free up buf: %p",
+            (void *)cPtr);
     
     tpfree((char *)cPtr);
     

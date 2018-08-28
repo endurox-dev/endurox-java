@@ -44,7 +44,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.endurox.exceptions.AtmiTPEOSException;
 
- /*! @mainpage Enduro/X Programming main page
+/*! @mainpage Enduro/X Programming main page
  *
  * @section standard_sec Programming standard page
  *
@@ -59,6 +59,11 @@ import org.endurox.exceptions.AtmiTPEOSException;
  *
  * @subsection java_api_sec Java Specific API
  * Java Specific APIs are using standard camel cases method names.
+ * @subsection garbage_collection Java Specific API
+ * All classes which are linked with C resources have the finalize() method
+ * overriden, but due mostly undefined logic of GC's finalize() invocation
+ * frequency, Enduro/X Java API implements cleanup() method, so that in code
+ * explicitly resources could be free'd up.
  *
  */
 public class AtmiCtx {
@@ -99,7 +104,7 @@ public class AtmiCtx {
     /**
      * List of ATMI Contexts currently open
      */
-    private static Map<Long, AtmiCtx> ctxMap = new HashMap<Long, AtmiCtx>();
+    private static Map<Long, Long> ctxMap = new HashMap<Long, Long>();
     
     /**
      * Context map mutex
@@ -176,9 +181,51 @@ public class AtmiCtx {
             // register this context in hash list for free up...
             ctxMapMutex.lock();
             try {
-                ctxMap.put((Long)ctx, this);
+                //Hmm seems this does not allow to perform GC on object...
+                //as we are in the list...
+                ctxMap.put((Long)ctx, (Long)ctx);
             }
             finally {
+                ctxMapMutex.unlock();
+            }
+        }
+    }
+    
+    /**
+     * Terminate XATMI Session. This does not remove the context.
+     * To remove context (including XATMI terminate), use \ref cleanup() method.
+     * @throws AtmiTPEPROTOException Called from XATMI server (main thread)
+     * @throws AtmiTPESYSTEMException Failed to close conversations
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. 
+     *  That could insufficient memory or other error
+     */
+    public native void tpterm();
+    
+    /**
+     * Clean up the object (basically this is destructor) as we cannot relay
+     * on finalize() auto call of from the Garbage Collector. Thus we object
+     * goes out of the scope, this method needs to be called. This automatically
+     * invokes \ref tpterm() too.
+     */
+    public void cleanup() {
+        if (0x0 != ctx)
+        {
+            /* clean up the hash */
+            ctxMapMutex.lock();
+            try {
+                /* terminate context at C side 
+                 * Contexts can be removed by shutdown hooks...
+                 */
+                if (ctxMap.get((Long)ctx) != 0)
+                {
+                   tplogError(">>> About to GC: %x!!!", ctx);
+                   finalizeC(ctx);
+                   ctxMap.remove((Long)ctx);
+                }
+            }
+            finally {
+                ctx = 0;
                 ctxMapMutex.unlock();
             }
         }
@@ -237,27 +284,10 @@ public class AtmiCtx {
     @Override
     protected void finalize() throws Throwable {
 
-       if (0x0 != ctx)
-       {
-           /* clean up the hash */
-            ctxMapMutex.lock();
-            try {
-                /* terminate context at C side 
-                 * Contexts can be removed by shutdown hooks...
-                 */
-                if (ctxMap.containsKey((Long)ctx))
-                {
-                    finalizeC(ctx);
-                    ctxMap.remove((Long)ctx);
-                }
-            }
-            finally {
-                ctxMapMutex.unlock();
-            }
-       }
-       
-       //Remove ATMI context...
-       super.finalize();
+        cleanup();
+
+        //Remove ATMI context...
+        super.finalize();
     }
     
     /**
