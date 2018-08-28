@@ -147,7 +147,6 @@ out:
 JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
   (JNIEnv * env, jobject data, jobject jexpr) 
 {
-    
     jboolean jret = JNI_FALSE;
     int ret = EXSUCCEED;
     
@@ -220,9 +219,84 @@ out:
 expublic jboolean JNICALL Java_org_endurox_TypedUBF_Bqboolev
   (JNIEnv * env, jobject data, jstring jexprstr)
 {
-    /* TODO! */
+    jboolean jret = JNI_FALSE;
+    int ret = EXSUCCEED;
+    jboolean n_jexprstr_copy = EXFALSE;
+    const char *n_jexprstr;
     
-    return JNI_FALSE;
+    char *tree = NULL;
+    char *cdata;
+    long clen;
+    
+    /* check arguments */
+    if (NULL==jexprstr)
+    {
+        ndrxj_ubf_throw(env, Berror, "compiled expression must not be NULL: %s");
+        goto out;
+    }
+    
+    n_jexprstr = (*env)->GetStringUTFChars(env, jexprstr, &n_jexprstr_copy);
+    
+    /* save in thread vars the java environment data and UBF ptr */
+    M_cb_env = env;
+    M_cb_ubf = data;
+    
+    /* set context (from UBF buffer) */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        goto out;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Compile the expression: */
+    
+    tree = Bboolco((char *)n_jexprstr);
+    
+    if (NULL==tree)
+    {
+        UBF_LOG(log_error, "Failed to compile: %s", Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "Failed to compile: %s", 
+                Bstrerror(Berror));
+        goto out;
+    }
+
+    /* Evaluate the expression: */
+    
+    if (EXFAIL==(ret = Bboolev((UBFH *)cdata, tree)))
+    {
+        ndrxj_ubf_throw(M_cb_env, Berror, "Failed to execute Bboolev(): %s",
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+    
+    if (EXTRUE==ret)
+    {
+        jret = JNI_TRUE;
+    }
+    else
+    {
+        jret = JNI_FALSE;
+    }
+    
+out:
+    
+    if (NULL!=tree)
+    {
+        Btreefree(tree);
+    }
+
+    if (n_jexprstr_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, jexprstr, n_jexprstr);
+    }
+    
+    return jret;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
