@@ -675,6 +675,8 @@ public class AtmiCtx {
      * as it might be used by different contexts.
      * @param funcname function name (C style function name)
      * @param callback interface to callback object
+     * @throws AtmiBBADNAMEException Invalid function name. See Bboolsetcbf(3)
+     *  manpage.
      */
     public void Bboolsetcbf (String funcname, Bboolcbf callback) {
         
