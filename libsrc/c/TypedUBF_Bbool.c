@@ -145,7 +145,8 @@ out:
  * @return JNI_TRUE, JNI_FALSE
  */
 JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
-  (JNIEnv * env, jobject data, jobject jexpr) {
+  (JNIEnv * env, jobject data, jobject jexpr) 
+{
     
     jboolean jret = JNI_FALSE;
     int ret = EXSUCCEED;
@@ -208,6 +209,20 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 
     return jret;
+}
+
+/**
+ * Quick boolean expression evaluate
+ * @param env java env
+ * @param data UBF buffer
+ * @param jexprstr boolean expression string
+ */
+expublic jboolean JNICALL Java_org_endurox_TypedUBF_Bqboolev
+  (JNIEnv * env, jobject data, jstring jexprstr)
+{
+    /* TODO! */
+    
+    return JNI_FALSE;
 }
 
 /* vim: set ts=4 sw=4 et cindent: */
