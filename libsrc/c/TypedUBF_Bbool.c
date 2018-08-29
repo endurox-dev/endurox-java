@@ -211,6 +211,71 @@ out:
 }
 
 /**
+ * Evaluate expression and return float result
+ * @param env java env
+ * @param data UBF buffer
+ * @param jexpr compiled boolean expression
+ * @return  evaluated float value
+ */
+expublic jdouble JNICALL Java_org_endurox_TypedUBF_Bfloatev
+  (JNIEnv *env, jobject data, jobject jexpr)
+{
+    jdouble jret = EXFAIL;
+    
+    char *tree;
+    char *cdata;
+    long clen;
+    
+    /* check arguments */
+    
+    if (NULL==jexpr)
+    {
+        ndrxj_ubf_throw(env, Berror, "compiled expression must not be NULL: %s");
+        goto out;
+    }
+    
+    /* save in thread vars the java environment data and UBF ptr */
+    M_cb_env = env;
+    M_cb_ubf = data;
+    
+    /* set context (from UBF buffer) */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        goto out;
+    }
+    
+    /* get expression ptr */
+    if (NULL==(tree = ndrxj_BExprTree_ptr_get(env, jexpr)))
+    {
+        UBF_LOG(log_error, "Failed to get compiled expression ptr!");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* evaluate */
+    jret = (jdouble)Bfloatev((UBFH *)cdata, tree);
+    
+    if (BMINVAL!=Berror)
+    {
+        ndrxj_ubf_throw(M_cb_env, Berror, "Failed to execute Bfloatev(): %s",
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+out:
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return jret;
+}
+
+/**
  * Quick boolean expression evaluate
  * @param env java env
  * @param data UBF buffer
@@ -296,6 +361,10 @@ out:
         (*env)->ReleaseStringUTFChars(env, jexprstr, n_jexprstr);
     }
     
+
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+            
     return jret;
 }
 
