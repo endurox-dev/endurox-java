@@ -314,7 +314,7 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfBBADNAMEException Bad field name specified.
      * @defgroup Bboolev boolean expression handling routines
      * @{
-     */    
+     */
     /**
      * Evaluate boolean expression by given expression tree. 
      * For more information see Bboolev(3) manpage.
@@ -344,6 +344,11 @@ public class TypedUbf extends TypedBuffer {
     /** @} */ // end of Bboolubf
     
     /**
+     * Group of methods related with data erase from the UBF buffer.
+     * @defgroup Bdelete field erase methods from UBF buffer
+     * @{
+     */
+    /**
      * Delete field occurrence from UBF buffer.
      * For more information see Bdel(3) manpage.
      * @param bfldid compiled field id
@@ -354,6 +359,44 @@ public class TypedUbf extends TypedBuffer {
      * UbfBNOTPRESException Field not present.
      */
     public native void Bdel(int bfldid, int occ);
+    
+    /**
+     * Delete all occurrences from the UBF buffer.
+     * For more information see Bdelall(3) manpage.
+     * @param bfldid compiled field id
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *      not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *      allocated or corrupted.
+     * @throws UbfBBADFLDException Invalid field id passed.
+
+     * @throws UbfBNOTPRESException Field not present thus not deleted.
+     */
+    public native void Bdelall(int bfldid);
+    
+    /**
+     * Delete list of fields from UBF buffer
+     * For more information see Bdelete(3) manpage.
+     * @param bfldid array of fields which needs to be deleted. Note that as Java
+     *  have array length information, no BBADFLDID is required at the end of
+     *  the array.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *      not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *      allocated or corrupted.
+     */
+    public native void Bdelete(int [] bfldid);
+    
+    
+    /**
+     * Test for field presence in UBF buffer.
+     * For more information see Bpres(3) manpage.
+     * @param bfldid compiled UBF buffer id
+     * @param occ field occurrence (0 based).
+     * @return true - field present, false - field not present or error occurred
+     */
+    public native boolean Bpres(int bfldid, int occ);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

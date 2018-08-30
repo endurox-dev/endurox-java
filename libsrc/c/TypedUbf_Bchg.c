@@ -87,9 +87,9 @@ exprivate void ndrxj_ubf_CBchg(JNIEnv *env, jobject data, jint bfldid, jint occ,
     
     if (EXSUCCEED!=CBchg((UBFH*)cdata, bfldid, (BFLDOCC)occ, value, len, usrtype))
     {
-        UBF_LOG(log_error, "%s: CBadd failed to add %d (%s): %s", 
+        UBF_LOG(log_error, "%s: CBchg failed to change field %d (%s): %s", 
                 __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d (%s): %s", 
+        ndrxj_ubf_throw(env, Berror, "%s: CBchg failed to change field %d (%s): %s", 
                 __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
         goto out;
     }
@@ -99,68 +99,6 @@ out:
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
-
-#if 0
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (IIS)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIS
-  (JNIEnv *, jobject, jint, jint, jshort);
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (IIJ)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIJ
-  (JNIEnv *, jobject, jint, jint, jlong);
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (IIB)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIB
-  (JNIEnv *, jobject, jint, jint, jbyte);
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (IIF)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIF
-  (JNIEnv *, jobject, jint, jint, jfloat);
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (IID)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IID
-  (JNIEnv *, jobject, jint, jint, jdouble);
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (IILjava/lang/String;)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IILjava_lang_String_2
-  (JNIEnv *, jobject, jint, jint, jstring);
-
-/*
- * Class:     org_endurox_TypedUbf
- * Method:    Bchg
- * Signature: (II[B)V
- */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__II_3B
-  (JNIEnv *, jobject, jint, jint, jbyteArray);
-
-
-
-#endif
 
 /**
  * Change field, short type

@@ -69,6 +69,7 @@ add_library (exjava SHARED
                 TypedUbf_Bget.c
                 TypedUbf_Bprint.c
                 TypedUbf_Bchg.c
+                TypedUbf_Del.c
                 BFldLocInfo.c
                 BExprTree.c
                 TypedUbf_Bbool.c
