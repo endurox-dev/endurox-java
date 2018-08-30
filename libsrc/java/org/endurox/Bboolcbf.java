@@ -46,7 +46,7 @@ public interface Bboolcbf  {
      * @param funcname function name called
      * @return value to be injected back into expression
      */
-    public long bboolCallBack(AtmiCtx ctx, TypedUBF ub, String funcname);
+    public long bboolCallBack(AtmiCtx ctx, TypedUbf ub, String funcname);
     
 }
 /* vim: set ts=4 sw=4 et smartindent: */

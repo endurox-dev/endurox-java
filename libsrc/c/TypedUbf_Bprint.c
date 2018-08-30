@@ -1,7 +1,7 @@
 /**
  * @brief Java UBF Backing routines
  *
- * @file TypedUBF_Bprint.c
+ * @file TypedUbf_Bprint.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
 #include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUBF.h"
+#include "org_endurox_TypedUbf.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -58,9 +58,9 @@
 /**
  * Print the UBF buffer to STDOUT
  * @param env java env
- * @param data TypedUBF object
+ * @param data TypedUbf object
  */
-expublic void JNICALL Java_org_endurox_TypedUBF_Bprint(JNIEnv *env, jobject data)
+expublic void JNICALL Java_org_endurox_TypedUbf_Bprint(JNIEnv *env, jobject data)
 {
     char *cdata;
     long clen;

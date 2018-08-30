@@ -64,14 +64,14 @@ add_library (exjava SHARED
                 ClientId.c
                 exceptions.c
                 tpcallj.c
-                TypedUBF_Badd.c
-                TypedUBF_Baddfast.c
-                TypedUBF_Bget.c
-                TypedUBF_Bprint.c
-                TypedUBF_Bchg.c
+                TypedUbf_Badd.c
+                TypedUbf_Baddfast.c
+                TypedUbf_Bget.c
+                TypedUbf_Bprint.c
+                TypedUbf_Bchg.c
                 BFldLocInfo.c
                 BExprTree.c
-                TypedUBF_Bbool.c
+                TypedUbf_Bbool.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

@@ -14,11 +14,11 @@ public class AtmiCtxTest {
     for (int i=0; i<10000; i++) {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         /* test sub-type NULL */
-        ub = (TypedUBF)ctx.tpalloc("UBF", null, 1024);
+        ub = (TypedUbf)ctx.tpalloc("UBF", null, 1024);
         assertNotEquals(ub, null);
         
         ub.cleanup();
@@ -34,7 +34,7 @@ public class AtmiCtxTest {
   public void testInvalidBuffer() {
     AtmiCtx ctx = new AtmiCtx();
     assertNotEquals(ctx.getCtx(), 0x0);
-    TypedUBF ub = (TypedUBF)ctx.tpalloc(null, "", 1024);
+    TypedUbf ub = (TypedUbf)ctx.tpalloc(null, "", 1024);
   }
 
 }

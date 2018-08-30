@@ -1,6 +1,6 @@
 import org.endurox.AtmiConstants;
 import org.endurox.AtmiCtx;
-import org.endurox.TypedUBF;
+import org.endurox.TypedUbf;
 import org.endurox.exceptions.AtmiException;
 import org.endurox.exceptions.AtmiTPENOENTException;
 
@@ -19,19 +19,19 @@ public class JClient01 {
         ctx.tplogInfo("Client process started...");
         ctx.userlog("Hello from Userlog");
 
-        TypedUBF u = (TypedUBF) ctx.tpalloc("UBF", null, 1024);
+        TypedUbf u = (TypedUbf) ctx.tpalloc("UBF", null, 1024);
         
         /* set some fields in buffer */
         
         try
         {
-            u = (TypedUBF)ctx.tpcall("NOSVC", u, 0);
+            u = (TypedUbf)ctx.tpcall("NOSVC", u, 0);
         }
         catch (AtmiTPENOENTException e)
         {
             got_noent = true;
             ctx.tplogInfo("got exception !!!: %s", e.toString());
-            u = (TypedUBF)e.getReplyBuffer();
+            u = (TypedUbf)e.getReplyBuffer();
         }
         if (!got_noent)
         {

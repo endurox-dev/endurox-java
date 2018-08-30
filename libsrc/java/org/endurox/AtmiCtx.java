@@ -65,6 +65,13 @@ import org.endurox.exceptions.AtmiTPEOSException;
  * frequency, Enduro/X Java API implements cleanup() method, so that in code
  * explicitly resources could be free'd up.
  *
+ * @subsection errorhandling_sec Error handling
+ * In Enduro/X Java module error handling is done in a Java native way exceptions
+ * are thrown. Non checked exceptions are used and exceptions which might be
+ * throw by underlaying Enduro/X C API calls are denoted in documentation.
+ * There might be other exceptions thrown by the APIs, in case if there are
+ * some issues with JNI calls, like out of memory or missing classes. This
+ * normally shall not happen.
  */
 public class AtmiCtx {
 	
@@ -614,14 +621,23 @@ public class AtmiCtx {
      */
     
     /**
-     * Compile boolean expression
+     * Compile boolean expression.
+     * For more information see Bboolco(3) manpage
      * @param expr UBF boolean expression
      * @return Compiled boolean expression handler
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     * @throws UbfBBADFLDException Invalid field id passed.
+     * @throws UbfBNOTPRESException Field not present.
+     * @throws UbfFMALLOCException Malloc failed.
+     * @throws UbfBSYNTAXException Synax error in script.
+     * @throws UbfBBADNAMEException Bad field name specified.
      */
     public native BExprTree Bboolco(String expr);
     
     /**
      * Print compiled expression to output stream.
+     * For more information see Bboolpr(3) manpage
      * @param cexpr compiled expression
      * @param ostream output stream. write(byte[] bytes) is used for printing
      *  the output.
@@ -630,7 +646,7 @@ public class AtmiCtx {
     
     /**
      * Set Expression evaluator function callback.
-     * Then C will proxy back to java side for actual function invoke
+     * Then C will proxy back to java side for actual function invoke.
      * @param funcname function name to register for evaluator
      */
     native void BboolsetcbfC (String funcname);
@@ -673,9 +689,10 @@ public class AtmiCtx {
      * The function registers the callbacks at the java side into hashmap.
      * and registration is done at C side too. The mapping is done in a singleton
      * as it might be used by different contexts.
+     * For more information see Bboolsetcbf(3) manpage.
      * @param funcname function name (C style function name)
      * @param callback interface to callback object
-     * @throws AtmiBBADNAMEException Invalid function name. See Bboolsetcbf(3)
+     * @throws UbfBBADNAMEException Invalid function name. See Bboolsetcbf(3)
      *  manpage.
      */
     public void Bboolsetcbf (String funcname, Bboolcbf callback) {

@@ -11,7 +11,7 @@ public class BchgTest {
     public void testBchgShort() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         short s = 100;
@@ -33,7 +33,7 @@ public class BchgTest {
     public void testBchgLong() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Bchg(test.T_LONG_FLD, 0, (long)888800);
@@ -54,7 +54,7 @@ public class BchgTest {
     public void testBchgByte() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Bchg(test.T_CHAR_FLD, 0, (byte)0);
@@ -75,7 +75,7 @@ public class BchgTest {
     public void testBchgFloat() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Bchg(test.T_FLOAT_FLD, 0, (float)0.5);
@@ -98,7 +98,7 @@ public class BchgTest {
     public void testBchgDouble() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Bchg(test.T_DOUBLE_FLD, 0, (double)0.005);
@@ -119,7 +119,7 @@ public class BchgTest {
     public void testBchgString() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Bchg(test.T_STRING_FLD, 0, "HELLO");
@@ -140,7 +140,7 @@ public class BchgTest {
     public void testBchgByteArr() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Bchg(test.T_CARRAY_FLD, 0, "HELLO".getBytes());

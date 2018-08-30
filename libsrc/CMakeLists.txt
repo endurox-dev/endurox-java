@@ -81,7 +81,7 @@ if(Java_VERSION VERSION_LESS 1.10)
     create_javah(TARGET enduroxjh CLASSES
         org.endurox.AtmiCtx
         org.endurox.TypedBuffer
-        org.endurox.TypedUBF
+        org.endurox.TypedUbf
         org.endurox.TpInit
         org.endurox.BFldLocInfo
         org.endurox.BExprTree

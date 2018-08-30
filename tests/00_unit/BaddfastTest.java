@@ -18,7 +18,7 @@ public class BaddfastTest {
         assertNotEquals(ctx.getCtx(), 0x0);
         BFldLocInfo loc = new BFldLocInfo();
 
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Baddfast(test.T_SHORT_FLD, (short)100, loc);
@@ -43,7 +43,7 @@ public class BaddfastTest {
         assertNotEquals(ctx.getCtx(), 0x0);
         BFldLocInfo loc = new BFldLocInfo();
 
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         ub.Baddfast(test.T_LONG_FLD, (short)100, loc);
@@ -56,7 +56,7 @@ public class BaddfastTest {
     public void testBaddfastLong() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
         BFldLocInfo loc = new BFldLocInfo();
 
@@ -79,7 +79,7 @@ public class BaddfastTest {
     public void testBaddfastByte() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
         BFldLocInfo loc = new BFldLocInfo();
 
@@ -101,7 +101,7 @@ public class BaddfastTest {
     public void testBaddfastFloat() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         BFldLocInfo loc = new BFldLocInfo();
@@ -124,7 +124,7 @@ public class BaddfastTest {
     public void testBaddfastDouble() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         BFldLocInfo loc = new BFldLocInfo();
@@ -147,7 +147,7 @@ public class BaddfastTest {
     public void testBaddfastString() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         BFldLocInfo loc = new BFldLocInfo();
@@ -170,7 +170,7 @@ public class BaddfastTest {
     public void testBaddfastByteArr() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
         BFldLocInfo loc = new BFldLocInfo();

@@ -78,7 +78,7 @@ public class BboolTest {
             BExprTree tree = ctx.Bboolco("T_STRING_FLD=='HELLO WORLD' && T_LONG_FLD==551");
             assertNotEquals(tree, null);
 
-            TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);
 
             ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD");
@@ -118,7 +118,7 @@ public class BboolTest {
             BExprTree tree = ctx.Bboolco("T_LONG_FLD + 1.3");
             assertNotEquals(null, tree);
 
-            TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(null, ub);
 
             ub.Bchg(test.T_LONG_FLD, 0, 551);
@@ -156,7 +156,7 @@ public class BboolTest {
             AtmiCtx ctx = new AtmiCtx();
             assertNotEquals(ctx.getCtx(), 0x0);
 
-            TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);
 
             ub.Bchg(test.T_STRING_FLD, 0, "HELLO WORLD");
@@ -190,7 +190,7 @@ public class BboolTest {
          * @param funcname function name called
          * @return result long value
          */
-        public long bboolCallBack(AtmiCtx ctx, TypedUBF ub, String funcname) {
+        public long bboolCallBack(AtmiCtx ctx, TypedUbf ub, String funcname) {
             
             if (funcname.equals("give_me_five")) {
                 return ub.BgetLong(test.T_LONG_FLD, 0);
@@ -222,7 +222,7 @@ public class BboolTest {
             BExprTree tree = ctx.Bboolco("give_me_five()==5 && give_me_six()==6");
             assertNotEquals(tree, null);
 
-            TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);
 
             ub.Bchg(test.T_LONG_FLD, 0, 5);

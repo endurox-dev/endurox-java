@@ -1,7 +1,7 @@
 /**
  * @brief UBF buffer type
  *
- * @class TypedUBF
+ * @class TypedUbf
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -34,7 +34,7 @@ package org.endurox;
 
 import org.endurox.exceptions.AtmiTPENOENTException;
 
-public class TypedUBF extends TypedBuffer {
+public class TypedUbf extends TypedBuffer {
 	
     static {
        System.loadLibrary("exjava"); // Load native library at runtime
@@ -47,7 +47,7 @@ public class TypedUBF extends TypedBuffer {
      * @param cPtr[in] C pointer to allocated block
      * @param len[in] Conditional buffer length
      */
-    public TypedUBF(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
+    public TypedUbf(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
          super(ctx, doFinalize, cPtr, len);
     }
     
@@ -298,9 +298,26 @@ public class TypedUBF extends TypedBuffer {
         }
         return cbf.bboolCallBack(ctx, this, funcname);
     }
-    
+
     /**
-     * Evaluate boolean expression by given expression tree
+     * Group of methods related to executing the boolean expression on UBF buffer.
+     * In case if compiled boolean expression is used, then \ref AtmiCtx.Bboolco()
+     * shall be used.
+     * @throws UbfBNOTFLDException p_ub is not fielded buffer or argument NULL.
+     * @throws UbfBEINVALException tree parameter is NULL.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     * @throws UbfBBADFLDException Invalid field id passed.
+     * @throws UbfBNOTPRESException Field not present.
+     * @throws UbfFMALLOCException Malloc failed.
+     * @throws UbfBSYNTAXException Synax error in script.
+     * @throws UbfBBADNAMEException Bad field name specified.
+     * @defgroup Bboolev boolean expression handling routines
+     * @{
+     */    
+    /**
+     * Evaluate boolean expression by given expression tree. 
+     * For more information see Bboolev(3) manpage.
      * @param tree compiled boolean expression
      * @return true or false
      * @{
@@ -309,19 +326,34 @@ public class TypedUBF extends TypedBuffer {
 
     /**
      * Evaluate the boolean expression immediately
-     * and the release the compiled expression
+     * and the release the compiled expression. 
+     * For more information see Bboolco(3) and Bboolev(3) manpages.
      * @param expr boolean expression string
      * @return true or false
      */
     public native boolean Bqboolev(String expr);
 
     /**
-     * Evaluate the boolean expression with respect to return value
+     * Evaluate compiled expression and return the result as a float value.
+     * For more information see Bfloatev(3) manpage
      * @param tree compiled boolean expression
      * @return evaluated floating point value
      */
     public native double Bfloatev(BExprTree tree);
 
     /** @} */ // end of Bboolubf
+    
+    /**
+     * Delete field occurrence from UBF buffer.
+     * For more information see Bdel(3) manpage.
+     * @param bfldid compiled field id
+     * @param occ occurrence to erase
+     * UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
+     * UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     * UbfBBADFLDException Invalid field id passed.
+     * UbfBNOTPRESException Field not present.
+     */
+    public native void Bdel(int bfldid, int occ);
 }
+
 /* vim: set ts=4 sw=4 et smartindent: */

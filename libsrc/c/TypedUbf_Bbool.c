@@ -1,7 +1,7 @@
 /**
  * @brief Java UBF Backing routines
  *
- * @file TypedUBF_Bprint.c
+ * @file TypedUbf_Bprint.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
 #include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUBF.h"
+#include "org_endurox_TypedUbf.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -144,7 +144,7 @@ out:
  * @param jexpr compiled boolean expression
  * @return JNI_TRUE, JNI_FALSE
  */
-JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUBF_Bboolev
+JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUbf_Bboolev
   (JNIEnv * env, jobject data, jobject jexpr) 
 {
     jboolean jret = JNI_FALSE;
@@ -217,7 +217,7 @@ out:
  * @param jexpr compiled boolean expression
  * @return  evaluated float value
  */
-expublic jdouble JNICALL Java_org_endurox_TypedUBF_Bfloatev
+expublic jdouble JNICALL Java_org_endurox_TypedUbf_Bfloatev
   (JNIEnv *env, jobject data, jobject jexpr)
 {
     jdouble jret = EXFAIL;
@@ -281,7 +281,7 @@ out:
  * @param data UBF buffer
  * @param jexprstr boolean expression string
  */
-expublic jboolean JNICALL Java_org_endurox_TypedUBF_Bqboolev
+expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bqboolev
   (JNIEnv * env, jobject data, jstring jexprstr)
 {
     jboolean jret = JNI_FALSE;

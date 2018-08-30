@@ -12,7 +12,7 @@ public class BaddTest {
     public void testBaddShort() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       short s = 100;
@@ -32,7 +32,7 @@ public class BaddTest {
         
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
       
       // This will throw exception
@@ -47,7 +47,7 @@ public class BaddTest {
     public void testBaddLong() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       ub.Badd(test.T_LONG_FLD, (long)888800);
@@ -68,7 +68,7 @@ public class BaddTest {
     public void testBaddByte() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       ub.Badd(test.T_CHAR_FLD, (byte)0);
@@ -89,7 +89,7 @@ public class BaddTest {
     public void testBaddFloat() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       ub.Badd(test.T_FLOAT_FLD, (float)0.5);
@@ -112,7 +112,7 @@ public class BaddTest {
     public void testBaddDouble() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       ub.Badd(test.T_DOUBLE_FLD, (double)0.005);
@@ -133,7 +133,7 @@ public class BaddTest {
     public void testBaddString() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       ub.Badd(test.T_STRING_FLD, "HELLO");
@@ -154,7 +154,7 @@ public class BaddTest {
     public void testBaddByteArr() {
       AtmiCtx ctx = new AtmiCtx();
       assertNotEquals(ctx.getCtx(), 0x0);
-      TypedUBF ub = (TypedUBF)ctx.tpalloc("UBF", "", 1024);
+      TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
       assertNotEquals(ub, null);
 
       ub.Badd(test.T_CARRAY_FLD, "HELLO".getBytes());
