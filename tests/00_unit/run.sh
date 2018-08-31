@@ -26,10 +26,11 @@ export NDRX_CCONFIG=`pwd`/settings.ini
 export FIELDTBLS=Exfields,test.fd
 export FLDTBLDIR=`pwd`
 unset NDRX_DEBUG_CONF
-./jexunit00b AtmiCtxTest || exit 1
-./jexunit00b BaddTest || exit 2
-./jexunit00b BaddfastTest || exit 3
-./jexunit00b BchgTest || exit 4
+#./jexunit00b AtmiCtxTest || exit 1
+#./jexunit00b BaddTest || exit 2
+#./jexunit00b BaddfastTest || exit 3
+#./jexunit00b BchgTest || exit 4
 #valgrind --leak-check=full ./jexunit00b BboolTest || exit 5
-./jexunit00b BboolTest || exit 5
+#./jexunit00b BboolTest || exit 5
+./jexunit00b BDelTest || exit 6
 
