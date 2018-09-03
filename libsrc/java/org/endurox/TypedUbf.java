@@ -32,6 +32,7 @@
  */
 package org.endurox;
 
+import java.io.InputStream;
 import org.endurox.exceptions.AtmiTPENOENTException;
 
 public class TypedUbf extends TypedBuffer {
@@ -387,7 +388,6 @@ public class TypedUbf extends TypedBuffer {
      */
     public native void Bdelete(int [] bfldid);
     
-    
     /**
      * Test for field presence in UBF buffer.
      * For more information see Bpres(3) manpage.
@@ -396,6 +396,22 @@ public class TypedUbf extends TypedBuffer {
      * @return true - field present, false - field not present or error occurred
      */
     public native boolean Bpres(int bfldid, int occ);
+    
+    /**
+     * Restore UBF buffer from printed text buffer in
+     * the stream. For data format description
+     * see Bextread(3) manpage. Basically format is:
+     * <FIELDNAME>\t<VALUE>\n
+     * @param istream input stream interface. The stream will be read line by line
+     * @thows UbfBALIGNERRException Corrupted buffer or pointing 
+     *  to not aligned memory area.
+     * @thows UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted.
+     * @thows UbfBSYNTAXException Missing tab between field id 
+     *  or missing newline.
+     * @thows UbfBBADNAMEException Field not found in field table.
+     */
+    public native void Bextread(InputStream istream);
     
 }
 
