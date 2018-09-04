@@ -5,6 +5,7 @@ import java.nio.CharBuffer;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.endurox.*;
+import java.util.Locale;
 
 /**
  * Buffer printing, read & write tests.
@@ -56,7 +57,7 @@ public class BprintTest {
                 case 3:
                     return "T_CHAR_FLD\tc\n";
                 case 4:
-                    return "T_FLOAT_2_FLD\t1227.00000";
+                    return "T_FLOAT_2_FLD\t1227.10000";
                 case 5:
                     return "T_DOUBLE_2_FLD\t1233";
                 case 6:
@@ -78,6 +79,7 @@ public class BprintTest {
         
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
+	Locale.setDefault(new Locale("en", "US"));
         
         for (int i=0; i<100; i++)
         {
@@ -97,7 +99,7 @@ public class BprintTest {
 
             assertEquals(-2, ub.BgetLong(test.T_LONG_FLD, 0));
             assertEquals(0x63, ub.BgetByte(test.T_CHAR_FLD, 0));
-            assertEquals(1227.0f, ub.BgetFloat(test.T_FLOAT_2_FLD, 0), 0.01f);
+            assertEquals(1227.1f, ub.BgetFloat(test.T_FLOAT_2_FLD, 0), 0.01f);
             /* not using Dsep here as we have under java differnt comma seperator
              * thus avoid it at the moment
              */
