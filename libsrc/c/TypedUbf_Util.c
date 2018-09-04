@@ -132,5 +132,42 @@ out:
     return ret;
 }
 
+/**
+ * Return field length in bytes
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid compiled field id
+ * @param occ field occurrence
+ * @return field length in bytes
+ */
+expublic jint JNICALL Java_org_endurox_TypedUbf_Blen
+  (JNIEnv *env, jobject data, jint bfldid, jint occ)
+{
+    char *cdata;
+    long clen;
+    jint ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Delete the field */
+    ret = (jint) Blen((UBFH*)cdata, (BFLDID)bfldid, (BFLDOCC)occ);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
 
 /* vim: set ts=4 sw=4 et cindent: */

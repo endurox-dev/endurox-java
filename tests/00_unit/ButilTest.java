@@ -24,6 +24,21 @@ public class ButilTest {
         assertNotEquals(null, ub);
         assertEquals(true, ub.Bisubf());
     }
-
+    
+    /**
+     * Test field length
+     */
+    @Test
+    public void testBlen() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(null, ub);
+        
+        ub.Badd(test.T_STRING_FLD, "HELLO WORLD");
+        ub.Badd(test.T_STRING_FLD, "HELLO WORLD1");
+        assertEquals(13, ub.Blen(test.T_STRING_FLD, 1));
+    }
 }
   
