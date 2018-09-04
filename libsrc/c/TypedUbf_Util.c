@@ -95,4 +95,42 @@ out:
     return ret;
 }
 
+/**
+ * Test the buffer correspondence to the UBF format
+ * @param env java env
+ * @param data UBF buffer object
+ * @return JNI_TRUE if buffer is UBF, JNI_FALSE buffer is not UBF.
+ */
+expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bisubf
+  (JNIEnv * env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jboolean ret = JNI_FALSE;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Delete the field */
+    
+    ret = (jboolean) Bisubf((UBFH*)cdata);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
+
 /* vim: set ts=4 sw=4 et cindent: */

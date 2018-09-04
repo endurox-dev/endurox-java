@@ -407,7 +407,7 @@ public class TypedUbf extends TypedBuffer {
      * the stream. For data format description
      * see Bextread(3) manpage. Basically format is:
      * <FIELDNAME>\t<VALUE>\n
-     * @param istream input stream interface. The stream will be read line by line
+     * @param reader input stream interface. The stream will be read line by line
      * @thows UbfBALIGNERRException Corrupted buffer or pointing 
      *  to not aligned memory area.
      * @thows UbfBNOTFLDException Buffer not fielded, not correctly 
@@ -417,6 +417,13 @@ public class TypedUbf extends TypedBuffer {
      * @thows UbfBBADNAMEException Field not found in field table.
      */
     public native void Bextread(BufferedReader reader);
+    
+    /**
+     * Test UBF buffer to see does underlying memory corresponds to the UBF format.
+      For more information see Bisubf(3) manpage.
+     * @return true - buffer is UBF, false - buffer is not UBF
+     */
+    public native boolean Bisubf();
     
 }
 
