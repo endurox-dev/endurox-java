@@ -32,8 +32,12 @@
  */
 package org.endurox;
 
-import java.io.InputStream;
+import java.io.BufferedReader;
 import org.endurox.exceptions.AtmiTPENOENTException;
+import org.endurox.exceptions.UbfBALIGNERRException;
+import org.endurox.exceptions.UbfBBADFLDException;
+import org.endurox.exceptions.UbfBNOTFLDException;
+import org.endurox.exceptions.UbfBNOTPRESException;
 
 public class TypedUbf extends TypedBuffer {
 	
@@ -397,6 +401,7 @@ public class TypedUbf extends TypedBuffer {
      */
     public native boolean Bpres(int bfldid, int occ);
     
+    
     /**
      * Restore UBF buffer from printed text buffer in
      * the stream. For data format description
@@ -411,7 +416,7 @@ public class TypedUbf extends TypedBuffer {
      *  or missing newline.
      * @thows UbfBBADNAMEException Field not found in field table.
      */
-    public native void Bextread(InputStream istream);
+    public native void Bextread(BufferedReader reader);
     
 }
 

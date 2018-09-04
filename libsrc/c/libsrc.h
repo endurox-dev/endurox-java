@@ -50,6 +50,8 @@ extern "C" {
 #define NDRXJ_LOGEX_NDRX          0x0001
 /** Log exception to ulog logger */
 #define NDRXJ_LOGEX_ULOG          0x0002
+/** Log exception to UBF logger */
+#define NDRXJ_LOGEX_UBF           0x0004
 
 
 /**
@@ -70,6 +72,8 @@ extern "C" {
         userlog(FMT__, jerr__, ##__VA_ARGS__);\
     if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
         NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+    if (FLAGS__ & NDRXJ_LOGEX_UBF)\
+        UBF_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_FREE(jerr__);\
 }
 /*---------------------------Enums--------------------------------------*/

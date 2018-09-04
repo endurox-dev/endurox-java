@@ -1050,6 +1050,7 @@ exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
     jclass clazz;
     jmethodID mid;
     int ret = EXSUCCEED;
+    TPCONTEXT_T context;
     
     /* create java byte array from received buffer */
     ba = (*(ctl->env))->NewByteArray(ctl->env, (jsize)datalen);
@@ -1093,8 +1094,16 @@ exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
         EXFAIL_OUT(ret);
     }
 
+    /* suspend ATMI context as java might perform some other actions
+     * on given thread.
+     */
+    tpgetctxt(&context, 0L);
+    
     /* Call server object */
     (*(ctl->env))->CallVoidMethod(ctl->env, ctl->outstream, mid, ba);
+    
+    /* restore ATMI context */
+    tpsetctxt(context, 0L);
 
 out:
     
