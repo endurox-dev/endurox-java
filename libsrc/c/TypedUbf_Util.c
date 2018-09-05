@@ -170,4 +170,64 @@ out:
     return ret;
 }
 
+/**
+ * Loop over the UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @param first do we restart the iteration?
+ * @return BNextResult
+ */
+expublic jobject JNICALL Java_org_endurox_TypedUbf_Bnext
+  (JNIEnv *env, jobject data, jboolean first)
+{
+    char *cdata;
+    long clen;
+    jobject ret = NULL;
+    BFLDID bfldid;
+    BFLDOCC occ;
+    BFLDLEN len;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (first)
+    {
+        bfldid = BFIRSTFLDID;
+    }
+    else
+    {
+        /* continue to loop... */
+        bfldid = BFIRSTFLDID+1;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=Bnext ((UBFH *)cdata, &bfldid, &occ, NULL, &len))
+    {
+        /* throw exception */
+        ndrxj_ubf_throw(env, Berror, "%s: failed to Bnext %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        goto out;
+    }
+    
+    /* TODO: Build up the response object with
+     * with bfldid, occ, len
+     *  
+     */
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
 /* vim: set ts=4 sw=4 et cindent: */

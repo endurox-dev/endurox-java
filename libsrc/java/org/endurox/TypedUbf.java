@@ -439,6 +439,19 @@ public class TypedUbf extends TypedBuffer {
      */
     public native int Blen(int bfldid, int occ);
     
+    /**
+     * Iterate over the UBF buffer fields. This method returns all field ids and
+     * their corresponding occurrences in the buffer.
+     * @param first Restart the iteration.
+     * @return Iteration result
+     * @thorws UbfBALIGNERRException Corrupted buffer or pointing to not 
+     *  aligned memory area.
+     * @thorws UbfBNOTFLD Buffer not fielded, not correctly allocated 
+     *  or corrupted.
+     * @thorws UbfBNOSPACE No space in buf.
+     */
+    public native BNextResult Bnext(boolean first);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
