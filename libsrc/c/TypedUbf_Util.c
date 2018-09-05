@@ -217,10 +217,10 @@ expublic jobject JNICALL Java_org_endurox_TypedUbf_Bnext
         goto out;
     }
     
-    /* TODO: Build up the response object with
-     * with bfldid, occ, len
-     *  
+    /* Build up the response object with
+     * with bfldid, occ, len 
      */
+    ret = ndrxj_BNextResult_new(env, bfldid, occ, len);
     
 out:
     
