@@ -53,14 +53,15 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Allocate new java object for storing the compiled boolean expression handler
- * This assumes that context is set
+ * Allocate iteration result
  * @param env java env
- * @param ctx ATMI Context that will be associated with the object.
- * @param ptr[in] ptr to save in java object
- * @return allocate java object or NULL (and exception is set)
+ * @param[in] bfldid  compiled filed id
+ * @param[in] occ field occurrence
+ * @param[in] len field length 
+ * @return Result object
  */
-expublic jobject ndrxj_BNextResult_new(JNIEnv *env, char *ptr)
+expublic jobject ndrxj_BNextResult_new(JNIEnv *env, 
+        BFLDID bfldid, BFLDOCC occ, BFLDLEN len)
 {
     jobject ret = NULL;
     jclass bclz;
@@ -68,7 +69,7 @@ expublic jobject ndrxj_BNextResult_new(JNIEnv *env, char *ptr)
     
     /* Set context if needed */
     
-    NDRX_LOG(log_debug, "Allocating [%s]", BNEXTRESULT_CLASS);
+    UBF_LOG(log_debug, "Allocating [%s]", BNEXTRESULT_CLASS);
     
     bclz = (*env)->FindClass(env, BNEXTRESULT_CLASS);
     
@@ -79,7 +80,7 @@ expublic jobject ndrxj_BNextResult_new(JNIEnv *env, char *ptr)
     }
     
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(J)V");
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(III)V");
     
     if (NULL==mid)
     {
@@ -87,13 +88,13 @@ expublic jobject ndrxj_BNextResult_new(JNIEnv *env, char *ptr)
         goto out;
     }
 
-    NDRX_LOG(log_debug, "About to NewObject(%s)", BEXPRTREE_CLASS);
+    NDRX_LOG(log_debug, "About to NewObject(%s)", BNEXTRESULT_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, (jlong)ptr);
+    ret = (*env)->NewObject(env, bclz, mid, (jint)bfldid, (jint)occ, (jint)len);
     
     if (NULL==ret)
     {
-        NDRX_LOG(log_error, "Failed to create [%s]", BEXPRTREE_CLASS);
+        NDRX_LOG(log_error, "Failed to create [%s]", BNEXTRESULT_CLASS);
         goto out;
     }
     

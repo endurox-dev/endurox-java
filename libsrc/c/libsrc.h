@@ -133,6 +133,10 @@ extern jobject ndrxj_BExprTree_new(JNIEnv *env, char *ptr);
 /* Bbool ops */
 extern long Bbool_callback_function(UBFH *p_ub, char *funcname);
 
+/* Bnext ops */
+extern jobject ndrxj_BNextResult_new(JNIEnv *env, 
+        BFLDID bfldid, BFLDOCC occ, BFLDLEN len);
+
 #ifdef  __cplusplus
 }
 #endif

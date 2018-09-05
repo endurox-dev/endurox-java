@@ -40,7 +40,19 @@ public class BNextResult {
     /** Field occurrence */
     public int occ;
     /** Field length */
-    public int len;         
+    public int len;
+
+    /**
+     * Create result object
+     * @param bfldid compiled field id
+     * @param occ occurrence
+     * @param len field length
+     */
+    BNextResult(int bfldid, int occ, int len) {
+        this.bfldid = bfldid;
+        this.occ = occ;
+        this.len = len;
+    }
     
 }
 
