@@ -74,6 +74,7 @@ add_library (exjava SHARED
                 BExprTree.c
                 TypedUbf_Bbool.c
                 TypedUbf_Util.c
+                BNextResult.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

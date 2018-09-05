@@ -183,9 +183,10 @@ expublic jobject JNICALL Java_org_endurox_TypedUbf_Bnext
     char *cdata;
     long clen;
     jobject ret = NULL;
+    int retBnext;
     BFLDID bfldid;
     BFLDOCC occ;
-    BFLDLEN len;
+    BFLDLEN len = 0;
     
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
@@ -209,11 +210,19 @@ expublic jobject JNICALL Java_org_endurox_TypedUbf_Bnext
         goto out;
     }
     
-    if (EXSUCCEED!=Bnext ((UBFH *)cdata, &bfldid, &occ, NULL, &len))
+    retBnext=Bnext ((UBFH *)cdata, &bfldid, &occ, NULL, &len);
+    
+    if (EXFAIL==retBnext)
     {
         /* throw exception */
         ndrxj_ubf_throw(env, Berror, "%s: failed to Bnext %p buffer: %s", 
                 __func__, cdata, Bstrerror(Berror));
+        goto out;
+    }
+    else if (0==retBnext)
+    {
+        /* EOF reached */
+        UBF_LOG(log_debug, "jeof");
         goto out;
     }
     
