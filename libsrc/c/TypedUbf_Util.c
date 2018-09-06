@@ -239,4 +239,41 @@ out:
     return ret;
 }
 
+/**
+ * Get number of occurrences of the field in UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @param bfldid compiled field id
+ * @return number of occurrences of field
+ */
+expublic jint JNICALL Java_org_endurox_TypedUbf_Boccur
+  (JNIEnv *env, jobject data, jint bfldid)
+{
+    char *cdata;
+    long clen;
+    jint ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Delete the field */
+    ret = (jint) Boccur((UBFH*)cdata, (BFLDID)bfldid);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
 /* vim: set ts=4 sw=4 et cindent: */

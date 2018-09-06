@@ -188,5 +188,24 @@ public class ButilTest {
         assertEquals(null, res);
         
     }
+    
+    /**
+     * Test Boccur
+     */
+    @Test
+    public void testBoccur() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(null, ub);
+        
+        /* load some test data.. */
+        loadTestData1(ub);
+        
+        assertEquals(ub.Boccur(test.T_STRING_FLD), 3);
+        assertEquals(ub.Boccur(test.T_SHORT_FLD), 2);
+        
+    }
 }
   

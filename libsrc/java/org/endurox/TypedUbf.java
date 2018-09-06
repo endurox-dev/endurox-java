@@ -442,6 +442,7 @@ public class TypedUbf extends TypedBuffer {
     /**
      * Iterate over the UBF buffer fields. This method returns all field ids and
      * their corresponding occurrences in the buffer.
+     * see Bnext(3) manpage for more infos.
      * @param first Restart the iteration.
      * @return Iteration result
      * @thorws UbfBALIGNERRException Corrupted buffer or pointing to not 
@@ -451,6 +452,18 @@ public class TypedUbf extends TypedBuffer {
      * @thorws UbfBNOSPACE No space in buf.
      */
     public native BNextResult Bnext(boolean first);
+    
+    /**
+     * Get number of field occurrences in UBF buffer
+     * see Boccur(3) manpage for more infos.
+     * @param bfldid compiled field id
+     * @param UbfBALIGNERRException Corrupted buffer or pointing to 
+     *  not aligned memory area.
+     * @param UbfBNOTFLDException Buffer not fielded, not correctly allocated 
+     *  or corrupted. Or C buffer ptr is NULL.
+     * @param UbfFBADFLDException Invalid field type.
+     */
+    public native int Boccur(int bfldid);
     
 }
 
