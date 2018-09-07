@@ -465,6 +465,20 @@ public class TypedUbf extends TypedBuffer {
      */
     public native int Boccur(int bfldid);
     
+    /**
+     * This method removes any un-needed field from UBF buffer and keeps only 
+     * the list of field identifiers found in bfldlist array. 
+     * As Java keeps the array length internally, the array shall not be 
+     * terminated with BBADFLDID as in case for C.
+     * see Boccur(3) manpage for more infos.
+     * @param bfldid array of 
+     * @thorws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *  not aligned memory area.
+     * @thorws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted.
+     */
+    public native void Bproj(int bfldid[]);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

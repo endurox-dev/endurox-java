@@ -74,6 +74,7 @@ add_library (exjava SHARED
                 BExprTree.c
                 TypedUbf_Bbool.c
                 TypedUbf_Util.c
+                TypedUbf_Proj.c
                 BNextResult.c
 	)
 
@@ -86,7 +87,8 @@ target_link_libraries (exjava atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 install (TARGETS 
     exjava
     DESTINATION "${INSTALL_LIB_DIR}"
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE 
+                GROUP_EXECUTE WORLD_EXECUTE
     COMPONENT libraries
     )
 
