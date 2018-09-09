@@ -479,6 +479,37 @@ public class TypedUbf extends TypedBuffer {
      */
     public native void Bproj(int bfldid[]);
     
+    /**
+     * Read the UBF buffer from input stream. This read binary/platform specific
+     * version of the UBF buffer, produced either by memory dump or by
+     * \ref Bwrite() method.
+     * see Bread(3) manpage for more infos.
+     * @param data byte array containing the buffer image
+     * @param UbfBALIGNERRException Corrupted buffer or pointing to not 
+     *  aligned memory area.
+     * @param UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted.
+     * @param UbfBEINVALException internal error (invalid read function)
+     * @param UbfBEUNIXException Failed to read from stream.
+     */
+    public native void Bread(byte[] data);
+    
+    /**
+     * Write the buffer to byte array. The produced result is platform specific
+     * version of buffer dump. For cross platform dump, use either \ref Bfprint()
+     * or Bprint().
+     * @return buffer dump
+     * @param UbfBALIGNERRException Corrupted buffer or pointing to 
+     *  not aligned memory area.
+     * @param UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted.
+     * @param UbfBEINVALException internal error.
+     * @param UbfBEUNIXException Failed to read 
+     *  from stream.
+     * @param UbfBNOSPACEException No space in UBF buffer.
+     */
+    public native byte[] Bwrite();
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
