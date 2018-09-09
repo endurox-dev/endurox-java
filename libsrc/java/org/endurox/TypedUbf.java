@@ -498,12 +498,13 @@ public class TypedUbf extends TypedBuffer {
      * Write the buffer to byte array. The produced result is platform specific
      * version of buffer dump. For cross platform dump, use either \ref Bfprint()
      * or Bprint().
+     * see Bwrite(3) manpage for more infos.
      * @return buffer dump
      * @param UbfBALIGNERRException Corrupted buffer or pointing to 
      *  not aligned memory area.
      * @param UbfBNOTFLDException Buffer not fielded, not correctly 
      *  allocated or corrupted.
-     * @param UbfBEINVALException internal error.
+     * @param UbfBEINVALException Internal error.
      * @param UbfBEUNIXException Failed to read 
      *  from stream.
      * @param UbfBNOSPACEException No space in UBF buffer.
