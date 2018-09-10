@@ -35,6 +35,6 @@ unset NDRX_DEBUG_CONF
 #valgrind --leak-check=full ./jexunit00b BboolTest || exit 5
 #./jexunit00b BboolTest || exit 5
 #./jexunit00b BDelTest || exit 6
-#./jexunit00b BprintTest || exit 7
+./jexunit00b BprintTest || exit 7
 #./jexunit00b ButilTest || exit 8
-./jexunit00b BProjTest || exit 9
+#./jexunit00b BProjTest || exit 9

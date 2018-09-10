@@ -109,6 +109,36 @@ public class BprintTest {
                     ub.BgetByteArr(test.T_CARRAY_2_FLD, 0));
         }
     }
+    
+    /**
+     * Test buffer write/read functions
+     */
+    @Test
+    public void testWriteRead() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+	Locale.setDefault(new Locale("en", "US"));
+        
+        for (int i=0; i<100; i++)
+        {
+            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+            assertNotEquals(ub, null);
+            
+            /* Load UBF data. */
+            ButilTest.loadTestData1(ub);
+            
+            /* write buffer */
+            byte[] data = ub.Bwrite();
+            
+            /* read buffer */
+            TypedUbf ub2 = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+            assertNotEquals(ub, null);
+            
+            ub2.Bread(data);
+            ButilTest.validateTestData(ub2);
+        }
+    }
 
 }
   

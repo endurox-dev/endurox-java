@@ -265,8 +265,9 @@ exprivate long Bread_readf(char *buffer, long bufsz, void *dataptr1)
     }
     else
     {
+        ret = ctl->size - ctl->offset;
         /* just copy off what we have left here */
-        memcpy(buffer, ctl->buf+ctl->offset, ctl->size - ctl->offset);
+        memcpy(buffer, ctl->buf+ctl->offset, ret);
     }
     
 out:

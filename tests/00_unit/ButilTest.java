@@ -26,7 +26,6 @@ public class ButilTest {
         ub.Bchg(test.T_LONG_FLD, 0, 111455);
         ub.Bchg(test.T_LONG_FLD, 1, -2225);
         
-        
         ub.Bchg(test.T_CHAR_FLD, 0, 124);
         ub.Bchg(test.T_CHAR_FLD, 1, 253);
         
@@ -42,7 +41,43 @@ public class ButilTest {
         
         ub.Bchg(test.T_CARRAY_FLD, 0, new byte[]{0,1,2,3});
         ub.Bchg(test.T_CARRAY_FLD, 1, new byte[]{0,4,5,6,7});
-    }       
+    }
+    
+    /**
+     * Validate test data produced by loadTestData1
+     * @param ub UBF buffer with data
+     */
+    public static void validateTestData(TypedUbf ub) {
+        
+        assertEquals(455, ub.BgetShort(test.T_SHORT_FLD, 0));
+        assertEquals(-5, ub.BgetShort(test.T_SHORT_FLD, 1));
+        assertEquals(false, ub.Bpres(test.T_SHORT_FLD, 2));
+        
+        assertEquals(111455, ub.BgetLong(test.T_LONG_FLD, 0));
+        assertEquals(-2225, ub.BgetLong(test.T_LONG_FLD, 1));
+        assertEquals(false, ub.Bpres(test.T_LONG_FLD, 2));
+        
+        assertEquals(124, ub.BgetByte(test.T_CHAR_FLD, 0));
+        assertEquals((byte)253, ub.BgetByte(test.T_CHAR_FLD, 1));
+        assertEquals(false, ub.Bpres(test.T_CHAR_FLD, 2));
+        
+        assertEquals(33.11, ub.BgetFloat(test.T_FLOAT_FLD, 0), 0.01);
+        assertEquals(-500.63, ub.BgetFloat(test.T_FLOAT_FLD, 1), 0.01);
+        assertEquals(false, ub.Bpres(test.T_FLOAT_FLD, 2));
+        
+        assertEquals(1133.11, ub.BgetDouble(test.T_DOUBLE_FLD, 0), 0.01);
+        assertEquals(-22500.63, ub.BgetDouble(test.T_DOUBLE_FLD, 1), 0.01);
+        assertEquals(false, ub.Bpres(test.T_DOUBLE_FLD, 2));
+        
+        assertEquals("HELLO", ub.BgetString(test.T_STRING_FLD, 0));
+        assertEquals("WORLD", ub.BgetString(test.T_STRING_FLD, 1));
+        assertEquals("OK", ub.BgetString(test.T_STRING_FLD,2));
+        assertEquals(false, ub.Bpres(test.T_STRING_FLD, 3));
+        
+        assertArrayEquals(new byte[]{0,1,2,3}, ub.BgetByteArr(test.T_CARRAY_FLD, 0));
+        assertArrayEquals(new byte[]{0,4,5,6,7}, ub.BgetByteArr(test.T_CARRAY_FLD, 1));
+        assertEquals(false, ub.Bpres(test.T_CARRAY_FLD, 2));        
+    }
     
     /**
      * Test is buffer UBF?
