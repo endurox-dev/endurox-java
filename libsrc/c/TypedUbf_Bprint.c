@@ -218,6 +218,246 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+/**
+ * Test data holder for bfprintcb_data
+ */
+typedef struct rw_data rw_data_t;
+struct rw_data
+{
+    long offset; /**< current offset in UBF */
+    char *buf; /**< currently allocate buffer (can realloc to extend)  */
+    long size;  /**< array size */
+    JNIEnv * env; /**< for exception generating */
+};
+
+
+/**
+ * Callback for read function. In first call the full bufz size must be
+ * read. For second call the number of bytes we have left in buffer must be read.
+ * @param buffer buffer to put data into
+ * @param bufsz requested size (for first call full bytes must be read)
+ * @param dataptr1 user ptr
+ * @return  number of bytes written to buffer
+ */
+exprivate long Bread_readf(char *buffer, long bufsz, void *dataptr1)
+{
+    long ret = EXFAIL;
+    rw_data_t *ctl = (rw_data_t *)dataptr1;
+    
+    if (0==ctl->offset)
+    {
+        if (ctl->size < bufsz)
+        {
+            /*  */
+            UBF_LOG(log_error, "ERROR ! Requested %ld bytes, "
+                    "but our array has only %ld",
+                    bufsz, ctl->size);
+            
+            /* generate exception */
+            ndrxj_ubf_throw(ctl->env, BEINVAL, "ERROR ! Requested %ld bytes, "
+                    "but our array has only %ld", bufsz, ctl->size);
+            EXFAIL_OUT(ret);
+        }
+        
+        memcpy(buffer, ctl->buf, bufsz);
+        ctl->offset+=bufsz;
+        ret = bufsz;
+    }
+    else
+    {
+        /* just copy off what we have left here */
+        memcpy(buffer, ctl->buf+ctl->offset, ctl->size - ctl->offset);
+    }
+    
+out:
+    return ret;
+}
+
+/**
+ * Read UBF buffer from byte array
+ * @param env java env
+ * @param data UBF buffer
+ * @param jb platform specific UBF bytes to read from
+ */
+expublic void JNICALL Java_org_endurox_TypedUbf_Bread
+  (JNIEnv * env, jobject data, jbyteArray jb)
+{
+    rw_data_t ctl;
+    char *cdata;
+    long clen;
+    jboolean n_array_copy;
+    char * n_array = (char*)(*env)->GetByteArrayElements(env, jb, &n_array_copy);
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return; 
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* read the buffer from interface */
+    
+    memset(&ctl, 0, sizeof(ctl));
+    
+    ctl.env = env;
+    ctl.buf = n_array;
+    ctl.size = (*env)->GetArrayLength(env, jb);
+    
+    NDRX_LOG(log_error, "Reading buffer len: %ld", (long)ctl.size);
+    
+    if (EXSUCCEED!=Breadcb ((UBFH *)cdata, Bread_readf, (void *)&ctl))
+    {
+        UBF_LOG(log_error, "Failed to call Breadcb(): %s", Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "Failed to call Breadcb(): %s", 
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+out:
+    
+    if(n_array_copy)
+    {
+       (*env)->ReleaseByteArrayElements(env, jb, n_array, JNI_ABORT);
+    }
+
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Realloc/Fill the memory block callback
+ * @param buffer data to write
+ * @param bufsz data size
+ * @param dataptr1 user ptr
+ * @return number of bytes written, must match bufsz in case of succeed
+ */
+exprivate long Bwrite_writef(char *buffer, long bufsz, void *dataptr1)
+{
+    long ret = EXFAIL;
+    rw_data_t *ctl = (rw_data_t *)dataptr1;
+    
+    if (NULL==ctl->buf)
+    {
+        if (NULL==(ctl->buf = NDRX_MALLOC(bufsz)))
+        {
+            int err = errno;
+            UBF_LOG(log_error, "Failed to malloc %ld bytes: %s", 
+                    bufsz, strerror(err));
+            userlog("Failed to malloc %ld bytes: %s", 
+                    bufsz, strerror(err));
+            
+            ndrxj_ubf_throw(ctl->env, BEUNIX, "%s: Failed to malloc %ld bytes: %s", 
+                    bufsz, strerror(err));
+            
+            EXFAIL_OUT(ret);
+            goto out;
+        }
+    }
+    else 
+    {
+        long newsz = ctl->offset+bufsz;
+        if (NULL==(ctl->buf = NDRX_REALLOC(ctl->buf, newsz)))
+        {
+            int err = errno;
+            UBF_LOG(log_error, "Failed to realloc %ld bytes: %s", 
+                    newsz, strerror(err));
+            userlog("Failed to realloc %ld bytes: %s", 
+                    newsz, strerror(err));
+            
+             ndrxj_ubf_throw(ctl->env, BEUNIX, "%s: Failed to realloc %ld bytes: %s", 
+                    newsz, strerror(err));
+            
+            EXFAIL_OUT(ret);
+            goto out;
+        }
+    }
+    
+    memcpy(ctl->buf+ctl->offset, buffer, bufsz);
+    
+    ctl->offset+=bufsz;
+    ret = bufsz;
+    
+out:
+    return ret;
+}
+
+/**
+ * Write UBF buffer to byte array
+ * @param env java env
+ * @param data UBF buffer
+ * @return byte array of the serialized platform specific UBF 
+ */
+expublic jbyteArray JNICALL Java_org_endurox_TypedUbf_Bwrite
+  (JNIEnv * env, jobject data)
+{
+    rw_data_t ctl;
+    char *cdata;
+    long clen;
+    jbyteArray ret = NULL;
+    
+    memset(&ctl, 0, sizeof(ctl));
+    
+    ctl.env = env;
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return NULL; 
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=Bwritecb ((UBFH *)cdata, Bwrite_writef, (void *)&ctl))
+    {
+        UBF_LOG(log_error, "Failed to call Bwritecb(): %s", Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "Failed to call Bwritecb(): %s", 
+                Bstrerror(Berror));
+        goto out;
+    }
+    
+    /* now we shall return java byte array */
+    
+    ret = (*env)->NewByteArray(env, (jsize)ctl.offset);
+
+    if (NULL==ret)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to create byte array with: %s, size: %ld", 
+                (long)ctl.offset);
+        goto out;
+    }
+    
+    (*env)->SetByteArrayRegion(env, ret, 0, ctl.offset, 
+			(jbyte*)ctl.buf);
+    
+    if((*env)->ExceptionCheck(env))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to set data bytes: %s");
+        goto out;
+    }
+    
+    
+out:
+    
+    if (NULL!=ctl.buf)
+    {
+        NDRX_FREE(ctl.buf);
+    }
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
 
 /* vim: set ts=4 sw=4 et cindent: */
 
