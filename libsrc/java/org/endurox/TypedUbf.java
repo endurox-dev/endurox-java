@@ -432,17 +432,17 @@ public class TypedUbf extends TypedBuffer {
      * @return occupied bytes
      * @throws UbfBALIGNERRException Corrupted buffer or pointing to not 
      *  aligned memory area.
-     * @throws UbfBNOTFLD Buffer not fielded, not correctly allocated or 
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated or 
      *  corrupted. p_ub is NULL.
-     * @throws UbfBBADFLD Invalid field id passed.
-     * @throws UbfBNOTPRES Field not present.
+     * @throws UbfBBADFLDException Invalid field id passed.
+     * @throws UbfBNOTPRESException Field not present.
      */
     public native int Blen(int bfldid, int occ);
     
     /**
      * Iterate over the UBF buffer fields. This method returns all field ids and
      * their corresponding occurrences in the buffer.
-     * see Bnext(3) manpage for more infos.
+     * see Bnext(3) manpage for more information.
      * @param first Restart the iteration.
      * @return Iteration result
      * @thorws UbfBALIGNERRException Corrupted buffer or pointing to not 
@@ -455,13 +455,13 @@ public class TypedUbf extends TypedBuffer {
     
     /**
      * Get number of field occurrences in UBF buffer
-     * see Boccur(3) manpage for more infos.
+     * see Boccur(3) manpage for more information.
      * @param bfldid compiled field id
-     * @param UbfBALIGNERRException Corrupted buffer or pointing to 
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
      *  not aligned memory area.
-     * @param UbfBNOTFLDException Buffer not fielded, not correctly allocated 
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated 
      *  or corrupted. Or C buffer ptr is NULL.
-     * @param UbfFBADFLDException Invalid field type.
+     * @throws UbfFBADFLDException Invalid field type.
      */
     public native int Boccur(int bfldid);
     
@@ -470,7 +470,7 @@ public class TypedUbf extends TypedBuffer {
      * the list of field identifiers found in bfldlist array. 
      * As Java keeps the array length internally, the array shall not be 
      * terminated with BBADFLDID as in case for C.
-     * see Boccur(3) manpage for more infos.
+     * see Boccur(3) manpage for more information.
      * @param bfldid array of 
      * @thorws UbfBALIGNERRException Corrupted buffer or pointing to 
      *  not aligned memory area.
@@ -483,14 +483,14 @@ public class TypedUbf extends TypedBuffer {
      * Read the UBF buffer from input stream. This read binary/platform specific
      * version of the UBF buffer, produced either by memory dump or by
      * \ref Bwrite() method.
-     * see Bread(3) manpage for more infos.
+     * see Bread(3) manpage for more information.
      * @param data byte array containing the buffer image
-     * @param UbfBALIGNERRException Corrupted buffer or pointing to not 
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not 
      *  aligned memory area.
-     * @param UbfBNOTFLDException Buffer not fielded, not correctly 
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
      *  allocated or corrupted.
-     * @param UbfBEINVALException internal error (invalid read function)
-     * @param UbfBEUNIXException Failed to read from stream.
+     * @throws UbfBEINVALException internal error (invalid read function)
+     * @throws UbfBEUNIXException Failed to read from stream.
      */
     public native void Bread(byte[] data);
     
@@ -498,18 +498,62 @@ public class TypedUbf extends TypedBuffer {
      * Write the buffer to byte array. The produced result is platform specific
      * version of buffer dump. For cross platform dump, use either \ref Bfprint()
      * or Bprint().
-     * see Bwrite(3) manpage for more infos.
+     * See Bwrite(3) manpage for more information.
      * @return buffer dump
-     * @param UbfBALIGNERRException Corrupted buffer or pointing to 
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
      *  not aligned memory area.
-     * @param UbfBNOTFLDException Buffer not fielded, not correctly 
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
      *  allocated or corrupted.
-     * @param UbfBEINVALException Internal error.
-     * @param UbfBEUNIXException Failed to read 
+     * @throws UbfBEINVALException Internal error.
+     * @throws UbfBEUNIXException Failed to read 
      *  from stream.
-     * @param UbfBNOSPACEException No space in UBF buffer.
+     * @throws UbfBNOSPACEException No space in UBF buffer.
      */
     public native byte[] Bwrite();
+    
+    /**
+     * Return buffer size in bytes, this includes the header data too.
+     * See Bsizeof(3) manpage for more information.
+     * @return bufer size in bytes
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *  not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted. p_ub is NULL.
+     */
+    public native long Bsizeof();
+    
+    /**
+     * Return field type in string format. The possible values are following:
+     * 'short', 'long', 'char', 'float', 'double', 'string', 'carray'
+     * See Btype(3) manpage for more information.
+     * @param bfldid compiled field ied.
+     * @return returns field type string
+     * @throws UbfBTYPERRException Invalid field - 
+     *  bad type extracted from oldest bits.
+     */
+    public native String Btype(int bfldid);
+    
+    /**
+     * Return free space of the UBF buffer. The number is given in bytes.
+     * See Bunused(3) manpage for more information.
+     * @return free bytes in UBF buffer
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *  not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated 
+     *  or corrupted.
+     */
+    public native long Bunused();
+    
+    /**
+     * Return number of bytes used by UBF buffer.
+     * See Bused(3) manpage for more information.
+     * @return number of used bytes of UBF buffer, this includes header too.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not 
+     *  aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated 
+     *  or corrupted. Internal ptr is NULL.
+     */
+    public native long Bused();
     
 }
 
