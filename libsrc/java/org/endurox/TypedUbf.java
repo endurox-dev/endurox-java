@@ -380,19 +380,6 @@ public class TypedUbf extends TypedBuffer {
     public native void Bdelall(int bfldid);
     
     /**
-     * Delete list of fields from UBF buffer
-     * For more information see Bdelete(3) manpage.
-     * @param bfldid array of fields which needs to be deleted. Note that as Java
-     *  have array length information, no BBADFLDID is required at the end of
-     *  the array.
-     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
-     *      not aligned memory area.
-     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
-     *      allocated or corrupted.
-     */
-    public native void Bdelete(int [] bfldid);
-    
-    /**
      * Test for field presence in UBF buffer.
      * For more information see Bpres(3) manpage.
      * @param bfldid compiled UBF buffer id
@@ -544,6 +531,41 @@ public class TypedUbf extends TypedBuffer {
      */
     public native long Bused();
     
+    /**
+     * Initialize UBF buffer to allocated size. This can be effectively used
+     * to reset the UBF buffer to initial state - erase all infos from the buffer.
+     * @return returns the un-used/free space of the UBF buffer
+     * @throws UbfBNOTFLDException internal error, buffer NULL.
+     * @throws UbfBNOSPACEException buffer too short. The sizeof(UBF_header_t) 
+     *  is minimum size of buffer.
+     */
+    public native long Binit();
+    
+    /**
+     * This includes various UBF buffer "batch" manipulations, that
+     * modify list of UBF buffer fields.
+     * @defgroup Bbatchops Batch buffer/high level buffer manipulations
+     */
+    
+    /**
+     * Delete list of fields from UBF buffer
+     * For more information see Bdelete(3) manpage.
+     * @param bfldid array of fields which needs to be deleted. Note that as Java
+     *  have array length information, no BBADFLDID is required at the end of
+     *  the array.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *      not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *      allocated or corrupted.
+     */
+    public native void Bdelete(int [] bfldid);
+    
+    public native void Bconcat(TypedUbf src);
+    public native void Bcpy(TypedUbf src);
+    public native void Bprojcpy(TypedUbf src, int [] bfldid);
+    public native void Bupdate(TypedUbf src);
+            
+    /** @} */ // end of Bboolubf
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
