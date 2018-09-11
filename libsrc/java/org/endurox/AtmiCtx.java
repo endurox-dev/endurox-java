@@ -719,6 +719,18 @@ public class AtmiCtx {
     
     /** @} */ // end of Bbool
     
+    
+    /**
+     * Return field type in string format. The possible values are following:
+     * 'short', 'long', 'char', 'float', 'double', 'string', 'carray'
+     * See Btype(3) manpage for more information.
+     * @param bfldid compiled field ied.
+     * @return returns field type string
+     * @throws UbfBTYPERRException Invalid field - 
+     *  bad type extracted from oldest bits.
+     */
+    public native String Btype(int bfldid);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

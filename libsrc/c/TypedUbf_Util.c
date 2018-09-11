@@ -276,4 +276,123 @@ out:
     return ret;
 }
 
+/**
+ * Return total size of the allocated buffer size in bytes
+ * @param env java env
+ * @param data UBF buffer object
+ * @return size in bytes
+ */
+expublic jlong JNICALL Java_org_endurox_TypedUbf_Bsizeof
+  (JNIEnv * env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jlong ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Delete the field */
+    ret = (jlong) Bsizeof((UBFH*)cdata);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
+/**
+ * Return free space of UBF buffer
+ * @param env java env
+ * @param data UBF data
+ * @return free space in bytes
+ */
+expublic jlong JNICALL Java_org_endurox_TypedUbf_Bunused
+  (JNIEnv * env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jlong ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Delete the field */
+    ret = (jlong) Bunused((UBFH*)cdata);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
+/**
+ * Used bytes in UBF buffer
+ * @param env java env
+ * @param data UBF buffer obj
+ * @return used bytes
+ */
+expublic jlong JNICALL Java_org_endurox_TypedUbf_Bused
+  (JNIEnv * env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jlong ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* Delete the field */
+    ret = (jlong) Bused((UBFH*)cdata);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
+/*
+ * TODO:
+ * executed on DEST object:
+BConcat
+BCpy
+BInit
+BProjCpy
+BUpdate
+ 
+ */
+
 /* vim: set ts=4 sw=4 et cindent: */

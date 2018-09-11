@@ -523,17 +523,6 @@ public class TypedUbf extends TypedBuffer {
     public native long Bsizeof();
     
     /**
-     * Return field type in string format. The possible values are following:
-     * 'short', 'long', 'char', 'float', 'double', 'string', 'carray'
-     * See Btype(3) manpage for more information.
-     * @param bfldid compiled field ied.
-     * @return returns field type string
-     * @throws UbfBTYPERRException Invalid field - 
-     *  bad type extracted from oldest bits.
-     */
-    public native String Btype(int bfldid);
-    
-    /**
      * Return free space of the UBF buffer. The number is given in bytes.
      * See Bunused(3) manpage for more information.
      * @return free bytes in UBF buffer
