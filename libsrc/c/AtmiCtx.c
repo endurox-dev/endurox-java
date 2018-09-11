@@ -107,18 +107,18 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
  * @param flags flags
  * @return logger configuration
  */
-jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject obj, 
+expublic jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject obj, 
         jint lev, jlong flags)
 {
     TPCONTEXT_T ctx;
     int ret = 0;
     
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         goto out;
     }
     
-    ret = Otplogqinfo(&ctx, (int)lev, (long)flags);
+    ret = tplogqinfo((int)lev, (long)flags);
     
     if (ret < 0)
     {

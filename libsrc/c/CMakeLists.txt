@@ -59,6 +59,7 @@ include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjava SHARED
                 AtmiCtx.c
+                AtmiCtx_Util.c
                 TypedBuffer.c
                 TpSvcInfo.c
                 ClientId.c
