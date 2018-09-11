@@ -242,5 +242,29 @@ public class ButilTest {
         assertEquals(ub.Boccur(test.T_SHORT_FLD), 2);
         
     }
+    
+    /**
+     * Test buffer sizes
+     */
+    @Test
+    public void testBsize() {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(null, ub);
+        
+        /* load some test data.. */
+        loadTestData1(ub);
+        
+        assertTrue(ub.Bsizeof()>=1024);
+        
+        assertTrue(ub.Bused()>=16);
+        assertTrue(ub.Bunused()>=16);
+        
+        assertEquals(ub.Bsizeof(), ub.Bused()+ub.Bunused());
+        
+    }
+    
+    
 }
   
