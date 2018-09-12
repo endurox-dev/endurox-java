@@ -265,6 +265,34 @@ public class ButilTest {
         
     }
     
+    /**
+     * Test buffer init routine
+     */
+    @Test
+    public void testBinit() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(null, ub);
+        
+        /* load some test data.. */
+        loadTestData1(ub);
+        
+        long size=ub.Binit();
+        
+        assertEquals(ub.Bsizeof(), size);
+        
+        /* test that fields are not present */
+        assertEquals(false, ub.Bpres(test.T_SHORT_FLD, 0));
+        assertEquals(false, ub.Bpres(test.T_LONG_FLD, 0));
+        assertEquals(false, ub.Bpres(test.T_CHAR_FLD, 0));
+        assertEquals(false, ub.Bpres(test.T_FLOAT_FLD, 0));
+        assertEquals(false, ub.Bpres(test.T_DOUBLE_FLD, 0));
+        assertEquals(false, ub.Bpres(test.T_STRING_FLD, 0));
+        assertEquals(false, ub.Bpres(test.T_CARRAY_FLD, 0));   
+        
+    }
     
 }
   

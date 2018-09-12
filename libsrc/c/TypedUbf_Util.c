@@ -384,6 +384,58 @@ out:
     return ret;
 }
 
+/**
+ * Reset/Initialize UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @return total size of the buffer
+ */
+expublic jlong JNICALL Java_org_endurox_TypedUbf_Binit
+  (JNIEnv *env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jlong ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* get size of the buffer */
+    ret = (jlong) Bsizeof((UBFH*)cdata);
+    
+    if (EXFAIL==ret)
+    {
+        /* throw exception */
+        ndrxj_ubf_throw(env, Berror, "%s: Failed to get %p buffer size: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        goto out;        
+    }
+    
+    if (EXSUCCEED!=Binit((UBFH *)cdata, (BFLDLEN)ret))
+    {
+        /* throw exception */
+        ndrxj_ubf_throw(env, Berror, "%s: Failed to init %p buffer to size %d: %s", 
+                __func__, cdata, (int)ret, Bstrerror(Berror));
+        goto out;       
+    }
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
+
 /*
  * TODO:
  * executed on DEST object:
