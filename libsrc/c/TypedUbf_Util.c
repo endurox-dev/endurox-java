@@ -162,6 +162,13 @@ expublic jint JNICALL Java_org_endurox_TypedUbf_Blen
     /* Delete the field */
     ret = (jint) Blen((UBFH*)cdata, (BFLDID)bfldid, (BFLDOCC)occ);
     
+    if (EXFAIL==ret)
+    {
+        ndrxj_ubf_throw(env, Berror, "%s: Blen failed on %p buffer: %s", 
+                __func__, cdata, Bstrerror(Berror));
+        goto out;
+    }
+    
 out:
     
     /* switch context back */

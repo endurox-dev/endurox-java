@@ -536,6 +536,7 @@ public class TypedUbf extends TypedBuffer {
      * to reset the UBF buffer to initial state - erase all infos from the buffer.
      * @return returns the un-used/free space of the UBF buffer
      * @throws UbfBNOTFLDException internal error, buffer NULL.
+     * @throws UbfBALIGNERRException align error (internal err).
      * @throws UbfBNOSPACEException buffer too short. The sizeof(UBF_header_t) 
      *  is minimum size of buffer.
      */
@@ -544,7 +545,7 @@ public class TypedUbf extends TypedBuffer {
     /**
      * This includes various UBF buffer "batch" manipulations, that
      * modify list of UBF buffer fields.
-     * @defgroup Bbatchops Batch buffer/high level buffer manipulations
+     * @defgroup Bproj Projection related - high level batch operations.
      */
     
     /**
@@ -560,9 +561,56 @@ public class TypedUbf extends TypedBuffer {
      */
     public native void Bdelete(int [] bfldid);
     
+    /**
+     * Concatenate source buffer from \p src to this object buffer. 
+     * Method will add any field from source buffer to destination buffer by 
+     * using Badd(3) function call.
+     * See Bsizeof(3) manpage for more information.
+     * @param src source buffer to copy from.
+     * @throws UbfBALIGNERRException Source or dest buffer corrupted or 
+     *  pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Source or dest buffer not fielded, 
+     *  not correctly allocated or corrupted.
+     * @throws UbfBNOSPACEException No space left in target buffer.
+     */
     public native void Bconcat(TypedUbf src);
+    
+    /**
+     * Copy buffer from source (\p src) to this objects buffer.
+     * See Bcpy(3) manpage for more information.
+     * @param src source buffer copy data from
+     * @throws UbfBNOTFLDException Source or dest buffer not fielded, 
+     *  not correctly allocated or corrupted.
+     * @throws UbfBNOSPACEException No space left in target buffer.
+     */
     public native void Bcpy(TypedUbf src);
-    public native void Bprojcpy(TypedUbf src, int [] bfldid);
+    
+    /**
+     * Copy a list from \p src buffer fields to this buffer.
+     * This list of fields is marked in \p bfldid argument. This list shall not
+     * be terminated with BBADFLDID as for Java arrays are self describing.
+     * See Bprojcpy(3) manpage for more information.
+     * @param src source UBF buffer to copy fields from
+     * @param bfldida list of fields to copy to this buffer/object
+     * @throws UbfBALIGNERRException Source or dest buffer corrupted or 
+     *  pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Source or dest buffer not fielded, not 
+     *  correctly allocated or corrupted.
+     * @throws UbfBNOSPACEException No space left in target buffer.
+     */
+    public native void Bprojcpy(TypedUbf src, int [] bfldida);
+    
+    /**
+     * Update this object from source buffer. Any matching field occurrences
+     * are replaced or added from \p src buffer to this buffer.
+     * See Bupdate(3) manpage for more information.
+     * @param src source buffer to take data from
+     * @throws UbfBALIGNERRException Source or dest buffer corrupted or 
+     *  pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Source or dest buffer not fielded, 
+     *  not correctly allocated or corrupted.
+     * @throws UbfBNOSPACEException No space left in target buffer.
+     */
     public native void Bupdate(TypedUbf src);
             
     /** @} */ // end of Bboolubf
