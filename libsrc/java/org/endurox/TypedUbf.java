@@ -630,6 +630,39 @@ public class TypedUbf extends TypedBuffer {
     public native int Bcmp(TypedUbf ub2);
             
     /** @} */ // end of Bboolubf
+    
+    //func (u *TypedUBF) Marshal(v interface{}) UBFError
+    
+    /**
+     * Copy this UBF buffer to given \p o object which is decorated 
+     *  with annotations.
+     * @param o 
+     */
+    public native void marshal(Object o);
+    
+    /**
+     * Copy this UBF buffer to given \p o object which is decorated 
+     *  with annotations.
+     * @param o 
+     * @param occ
+     */
+    public native void marshal(Object o, int occ);
+    
+    /**
+     * Copy data from \p o object decorated with annotations to this UBF buffer.
+     * This buffer is reset before filling in with data from \p o.
+     * @param o 
+     */
+    public native void unMarshal(Object o);
+    
+    /**
+     * Copy data from \p o object decorated with annotations to this UBF buffer.
+     * This buffer is reset before filling in with data from \p o.
+     * @param o 
+     * @param occ
+     */
+    public native void unMarshal(Object o, int occ);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
