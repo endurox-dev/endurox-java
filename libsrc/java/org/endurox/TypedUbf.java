@@ -628,11 +628,28 @@ public class TypedUbf extends TypedBuffer {
      *  not correctly allocated or corrupted - corrupted buffer.
      */
     public native int Bcmp(TypedUbf ub2);
+    
+    /**
+     * Test that UBF buffer 2 (present in \p needle) is part of the this UBF buffer.
+     * @param needle to search in this buffer
+     * @return true - the \p needle is part of the this buffer, false - needle
+     *  is not part of this UBF buffer.
+     * @throws UbfBEINVALException this buffer or \p needle are NULL pointers - 
+     *  corrupted UBF buffer.
+     * @throws UbfBNOTFLDException this buffer or \p needle buffers not fielded, 
+     *  not correctly allocated or corrupted - corrupted buffers.
+     */
+    public native boolean Bsubset(TypedUbf needle);
             
-    /** @} */ // end of Bboolubf
+    /** @} */ // end of Bproj
     
     //func (u *TypedUBF) Marshal(v interface{}) UBFError
     
+    /**
+     * This section defines functions that are used for UBF buffer serialization
+     * to native Java structures and vice versa
+     * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
+     */
     /**
      * Copy this UBF buffer to given \p o object which is decorated 
      *  with annotations.
@@ -662,6 +679,16 @@ public class TypedUbf extends TypedBuffer {
      * @param occ
      */
     public native void unMarshal(Object o, int occ);
+    
+    /** @} */ // end of UbfMarshalling
+    
+    /**
+     * 
+     * 
+     * 7.10.37. TypedUBF.TpJSONToUBF()
+7.10.38. TypedUBF.TpLogPrintUBF()
+7.10.40. TypedUBF.TpUBFToJSON()
+* /
     
 }
 
