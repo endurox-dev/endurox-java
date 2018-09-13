@@ -612,6 +612,22 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfBNOSPACEException No space left in target buffer.
      */
     public native void Bupdate(TypedUbf src);
+    
+    /**
+     * Compare this UBF buffer with second UBF buffer passed in the argument.
+     * See Bcmp(3) manpage for more information.
+     * @param ub2 UBF buffer to compare this with given buffer.
+     * @return If buffer are equal, value 0 is returned. If this have 
+     *  lesser fields, field id is lesser than \p ub2 or value of field is lesser 
+     *  than \p ub2 then -1 is returned. 
+     *  In the same way if this buffer is greater \p ub2, then value 1 is
+     *  returned.
+     * @throws UbfBEINVALException this buffer or \p ub2 are have NULL pointers
+     *  wrapped in the objects - corrupted buffer.
+     * @throws UbfBNOTFLDException this buffer or \p ub2 buffers not fielded, 
+     *  not correctly allocated or corrupted - corrupted buffer.
+     */
+    public native int Bcmp(TypedUbf ub2);
             
     /** @} */ // end of Bboolubf
 }

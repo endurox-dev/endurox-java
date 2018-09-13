@@ -159,7 +159,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bconcat
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
-        return ret;
+        return;
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
@@ -177,7 +177,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bconcat
     }
     
     /* Delete the field */
-    if (EXSUCCEED!=Bconcat(cdata_dst, cdata_src))
+    if (EXSUCCEED!=Bconcat((UBFH *)cdata_dst, (UBFH *)cdata_src))
     {
         ndrxj_ubf_throw(env, Berror, "%s: Blen failed on %p buffer: %s", 
                 __func__, cdata_dst, Bstrerror(Berror));
@@ -189,7 +189,7 @@ out:
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
-    return ret;
+    return;
 }
 
 /**
@@ -212,7 +212,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bcpy
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
-        return ret;
+        return;
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
@@ -230,7 +230,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bcpy
     }
     
     /* Delete the field */
-    if (EXSUCCEED!=Bcpy(cdata_dst, cdata_src))
+    if (EXSUCCEED!=Bcpy((UBFH *)cdata_dst, (UBFH *)cdata_src))
     {
         ndrxj_ubf_throw(env, Berror, "%s: Bcpy failed on %p buffer: %s", 
                 __func__, cdata_dst, Bstrerror(Berror));
@@ -242,7 +242,7 @@ out:
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
-    return ret;
+    return;
 }
 
 /**
@@ -348,7 +348,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bupdate
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
-        return ret;
+        return;
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
@@ -366,7 +366,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bupdate
     }
     
     /* Delete the field */
-    if (EXSUCCEED!=Bupdate(cdata_dst, cdata_src))
+    if (EXSUCCEED!=Bupdate((UBFH *)cdata_dst, (UBFH *)cdata_src))
     {
         ndrxj_ubf_throw(env, Berror, "%s: Bcpy failed on %p buffer: %s", 
                 __func__, cdata_dst, Bstrerror(Berror));
@@ -378,10 +378,63 @@ out:
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
-    return ret;
+    return;
 }
 
+/**
+ * Compare UBF buffer
+ * @param env java env
+ * @param data this UBF buffer/ub1
+ * @param ub2 that UBF buffer
+ * @return -1, 0, 1
+ */
+JNIEXPORT jint JNICALL Java_org_endurox_TypedUbf_Bcmp
+  (JNIEnv *env, jobject data, jobject ub2)
+{
+    char *cdata;
+    long clen;
+    
+    char *cdata_ub2;
+    long clen_ub2;
+    
+    jint ret = EXSUCCEED;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, 
+            &clen))
+    {
+        UBF_LOG(log_error, "Failed to get ub1/data buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_ub2, 
+            &clen_ub2))
+    {
+        UBF_LOG(log_error, "Failed to get ub2 buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Delete the field */
+    ret=Bcmp((UBFH *)cdata, (UBFH *)cdata_ub2);
+    
+    if (EXSUCCEED!=Berror)
+    {
+        ndrxj_ubf_throw(env, Berror, "%s: Bcmp failed on %p vs %p: %s", 
+                __func__, cdata, cdata_ub2, Bstrerror(Berror));
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
 
-
+    return ret;
+}
 
 /* vim: set ts=4 sw=4 et cindent: */
