@@ -222,7 +222,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bcpy
         EXFAIL_OUT(ret);
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_src, 
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
             &clen_src))
     {
         UBF_LOG(log_error, "Failed to get source buffer");

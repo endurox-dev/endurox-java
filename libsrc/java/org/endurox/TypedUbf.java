@@ -688,7 +688,7 @@ public class TypedUbf extends TypedBuffer {
      * 7.10.37. TypedUBF.TpJSONToUBF()
 7.10.38. TypedUBF.TpLogPrintUBF()
 7.10.40. TypedUBF.TpUBFToJSON()
-* /
+*/
     
 }
 
