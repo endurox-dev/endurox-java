@@ -646,6 +646,14 @@ public class TypedUbf extends TypedBuffer {
     /**
      * This section defines functions that are used for UBF buffer serialization
      * to native Java structures and vice versa
+     * 
+     * Marshaling is done via annotations. The annotations shall be set of the
+     * class fields (can be private). The access for setting or getting is done
+     * by use of camel case access to getter and setters. Following annotations
+     * are available: @UbfField(Compiled_field_ID[, Access: UBF_MAND|OBJ_MAND])
+     * where UBF_MAND says that at least one UBF field must be transfered to
+     * Object. The OBJ_MAND says, that at least one Object field must be transfered
+     * to UBF buffer.
      * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
      */
     /**
