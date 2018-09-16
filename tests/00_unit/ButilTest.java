@@ -12,7 +12,6 @@ import java.util.Locale;
  */
 public class ButilTest {
     
-    
     /**
      * Have some common test data loader
      * @param ub UBF buffer to load data. Assumes there is enough space

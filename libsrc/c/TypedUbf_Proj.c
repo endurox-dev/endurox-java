@@ -140,7 +140,7 @@ out:
 }
 
 /**
- * Contactenate two UBF buffer
+ * Concatenate two UBF buffer
  * @param env java env
  * @param data dest buffer/this
  * @param src source buffer
@@ -169,17 +169,17 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bconcat
         EXFAIL_OUT(ret);
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_src, 
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
             &clen_src))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
     }
     
-    /* Delete the field */
+    /* contact the buffers */
     if (EXSUCCEED!=Bconcat((UBFH *)cdata_dst, (UBFH *)cdata_src))
     {
-        ndrxj_ubf_throw(env, Berror, "%s: Blen failed on %p buffer: %s", 
+        ndrxj_ubf_throw(env, Berror, "%s: Bconcat failed on %p buffer: %s", 
                 __func__, cdata_dst, Bstrerror(Berror));
         EXFAIL_OUT(ret);
     }
@@ -274,6 +274,20 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bprojcpy
        return; 
     }
     
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
+            &clen_dst))
+    {
+        UBF_LOG(log_error, "Failed to get dest/data buffer");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
+            &clen_src))
+    {
+        UBF_LOG(log_error, "Failed to get source buffer");
+        goto out;
+    }
+    
     len = (*env)->GetArrayLength(env, bfldida);
     
     UBF_LOG(log_debug, "%s: Number of fields to copy: %d", __func__, len);
@@ -358,7 +372,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bupdate
         EXFAIL_OUT(ret);
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_src, 
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
             &clen_src))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
@@ -368,7 +382,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bupdate
     /* Delete the field */
     if (EXSUCCEED!=Bupdate((UBFH *)cdata_dst, (UBFH *)cdata_src))
     {
-        ndrxj_ubf_throw(env, Berror, "%s: Bcpy failed on %p buffer: %s", 
+        ndrxj_ubf_throw(env, Berror, "%s: Bupdate failed on %p buffer: %s", 
                 __func__, cdata_dst, Bstrerror(Berror));
         EXFAIL_OUT(ret);
     }
@@ -389,13 +403,14 @@ out:
  * @return -1, 0, 1
  */
 JNIEXPORT jint JNICALL Java_org_endurox_TypedUbf_Bcmp
-  (JNIEnv *env, jobject data, jobject ub2)
+  (JNIEnv *env, jobject data, jobject src)
 {
-    char *cdata;
-    long clen;
+    char *cdata_dst;
+    long clen_dst;
     
-    char *cdata_ub2;
-    long clen_ub2;
+    char *cdata_src;
+    long clen_src;
+    
     
     jint ret = EXSUCCEED;
     
@@ -405,27 +420,27 @@ JNIEXPORT jint JNICALL Java_org_endurox_TypedUbf_Bcmp
         return ret;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, 
-            &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
+            &clen_dst))
     {
-        UBF_LOG(log_error, "Failed to get ub1/data buffer");
+        UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_ub2, 
-            &clen_ub2))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
+            &clen_src))
     {
-        UBF_LOG(log_error, "Failed to get ub2 buffer");
+        UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
     }
     
     /* Delete the field */
-    ret=Bcmp((UBFH *)cdata, (UBFH *)cdata_ub2);
+    ret=Bcmp((UBFH *)cdata_dst, (UBFH *)cdata_src);
     
     if (EXSUCCEED!=Berror)
     {
         ndrxj_ubf_throw(env, Berror, "%s: Bcmp failed on %p vs %p: %s", 
-                __func__, cdata, cdata_ub2, Bstrerror(Berror));
+                __func__, cdata_dst, cdata_src, Bstrerror(Berror));
         EXFAIL_OUT(ret);
     }
     
@@ -436,5 +451,63 @@ out:
 
     return ret;
 }
+
+/**
+ * Test either \p src is subset of data
+ * @param env java env
+ * @param data UBF data buffer/this
+ * @param src data to search for
+ * @return true - is subset, false - not a subset
+ */
+expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bsubset
+  (JNIEnv * env, jobject data, jobject src)
+{
+    char *cdata_dst;
+    long clen_dst;
+    
+    char *cdata_src;
+    long clen_src;
+    
+    int ret = EXSUCCEED;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
+            &clen_dst))
+    {
+        UBF_LOG(log_error, "Failed to get dest/data buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
+            &clen_src))
+    {
+        UBF_LOG(log_error, "Failed to get source buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Delete the field */
+    ret=Bsubset((UBFH *)cdata_dst, (UBFH *)cdata_src);
+    
+    if (EXFAIL==ret)
+    {
+        ndrxj_ubf_throw(env, Berror, "%s: Bsubset failed on haystack %p"
+                " needle %p: %s", 
+                __func__, cdata_dst, cdata_src, Bstrerror(Berror));
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return (jboolean)ret;
+}
+
 
 /* vim: set ts=4 sw=4 et cindent: */

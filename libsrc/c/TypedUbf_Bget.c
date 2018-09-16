@@ -90,10 +90,10 @@ exprivate int ndrxj_ubf_CBfind(JNIEnv *env, jobject data, jint bfldid, BFLDOCC o
     if (NULL==(*value = CBfind((UBFH*)cdata, bfldid, occ, len, usrtype)))
     {
         int err = Berror;
-        UBF_LOG(log_error, "%s: CBfind failed to add %d (%s) occ %d: %s", 
+        UBF_LOG(log_error, "%s: CBfind failed to find %d (%s) occ %d: %s", 
                 __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(err));
         
-        ndrxj_ubf_throw(env, err, "%s: Failed to add %d (%s) occ %d: %s", 
+        ndrxj_ubf_throw(env, err, "%s: Failed to find %d (%s) occ %d: %s", 
                 __func__, bfldid, Bfname(bfldid), (int)occ, Bstrerror(err));
         EXFAIL_OUT(ret);
     }

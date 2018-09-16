@@ -643,8 +643,6 @@ public class TypedUbf extends TypedBuffer {
             
     /** @} */ // end of Bproj
     
-    //func (u *TypedUBF) Marshal(v interface{}) UBFError
-    
     /**
      * This section defines functions that are used for UBF buffer serialization
      * to native Java structures and vice versa
