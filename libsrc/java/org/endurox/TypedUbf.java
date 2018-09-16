@@ -654,6 +654,9 @@ public class TypedUbf extends TypedBuffer {
      * where UBF_MAND says that at least one UBF field must be transfered to
      * Object. The OBJ_MAND says, that at least one Object field must be transfered
      * to UBF buffer.
+     * Supported field types are as usual: short, byte, long, float, double
+     * string and byte array. To support nulls for primitive types,
+     * types Short, Byte, Long, Float and Double are supported too.
      * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
      */
     /**
