@@ -664,7 +664,10 @@ public class TypedUbf extends TypedBuffer {
      *  with annotations.
      * @param o 
      */
-    public native void marshal(Object o);
+    public void marshal(Object o) {
+        /* TODO: do this logic in java code, it will be simpler */
+    }
+            
     
     /**
      * Copy this UBF buffer to given \p o object which is decorated 
@@ -672,14 +675,18 @@ public class TypedUbf extends TypedBuffer {
      * @param o 
      * @param occ
      */
-    public native void marshal(Object o, int occ);
+    public void marshal(Object o, int occ) {
+        /* TODO: do this logic in java code, it will be simpler */
+    }
     
     /**
      * Copy data from \p o object decorated with annotations to this UBF buffer.
      * This buffer is reset before filling in with data from \p o.
      * @param o 
      */
-    public native void unMarshal(Object o);
+    public void unMarshal(Object o) {
+        /* TODO: do this logic in java code, it will be simpler */
+    }
     
     /**
      * Copy data from \p o object decorated with annotations to this UBF buffer.
@@ -687,7 +694,9 @@ public class TypedUbf extends TypedBuffer {
      * @param o 
      * @param occ
      */
-    public native void unMarshal(Object o, int occ);
+    public void unMarshal(Object o, int occ) {
+        /* TODO: do this logic in java code, it will be simpler */
+    }
     
     /** @} */ // end of UbfMarshalling
     
