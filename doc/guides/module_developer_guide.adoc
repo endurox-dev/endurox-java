@@ -129,6 +129,88 @@ The class path attributes:
 image:images/java_classpath.png[caption="Figure 8: ", title="Java class path"]
 
 
+
+== Distributed transaction processing architecture
+
+The nice thing about Java is that their JDBC drivers, are that they provide
+two phase commit interfaces. The basic principle for the operations are the
+same which are used by X/Open XA interface. See 
+https://docs.oracle.com/javaee/5/api/javax/transaction/xa/XAResource.html.
+
+Enduro/X by it self uses following architecture for the XA two phase transactions:
+
+1. There is driver library needed (as a frontend) for XATMI sub-system to
+acquire a XA Resource Manager (RM) switch (structure with callbacks defined
+inside). The driver usually is provided by Enduro/X. The driver is configured
+in the *NDRX_XA_DRIVERLIB* environment/global variable.
+
+2. The second shared library is back-end or resource manager by it self, this
+also implements XA switch functions. This goes into *NDRX_XA_RMLIB* environment
+variable.
+
+With respect to Java module, the developer would expect that JDBC transactions
+firstly would be managed by Enduro/X ATMI Context, as it provides tpbegin(),
+tpcommit(), etc. methods. This would mean, that if developer opens the database
+connection and would expect to start working with DB, some handler needs to
+registered with given ATMI context, so that XATMI sub-system could manage the
+state of the given connection.
+
+Also here raises the question, how long the object is able to work with given
+DB connection? Is the session open or not? As the transaction is not associated
+with the thread as in X/Open standard, but it is being associated with the 
+connection object. Thus according the Oracle examples:
+https://docs.oracle.com/cd/B19306_01/java.102/b14355/xadistra.htm#i1066952
+once begin is issued, the connection is able to work with the database, by using
+connection object:
+
+--------------------------------------------------------------------------------
+OracleXADataSource oxds1 = new OracleXADataSource();
+XAConnection pc1  = oxds1.getXAConnection();
+Connection conn1 = pc1.getConnection();
+...
+oxar1.start (xid1, XAResource.TMNOFLAGS);
+>> DO JDBC WORK <<<
+oxar1.end(xid1, XAResource.TMSUCCESS);
+conn1.close();
+pc1.close();
+--------------------------------------------------------------------------------
+
+The start/end/close etc shall be handled by RM shared library. Also the commit
+actually shall be done by transaction manager (TMSRV) process and not by the
+java client it self.
+
+Thus we need following libs:
+
+a) libndrxxajavX.so, where X is "s" - static reg, or "d" - dynamic registration.
+Library is configured for java based applications. This is configured into
+*NDRX_XA_DRIVERLIB*.
+
+b) libexjdbcxa.so, JDBC XA interface which would perform the JNI calls. This
+would be configured into *NDRX_XA_RMLIB*. And would go for java app and *tmsrv*.
+
+c) As *tmsrv* does not know anything about java, we need a different 
+*NDRX_XA_DRIVERLIB* here, as it needs to start embedded java process and
+should configure the environment for the "libexjdbcxa.so".
+
+As from JNI side to work probably with java env following data is required:
+
+- ptr to JNIEnv 
+
+- ptr to XAConnection as from this we want to manage the transaction.
+
+
+Thus we need to store somewhere when running at C side all the above data.
+Question is only where, because our calls can be done in two ways:
+
+1. Directly from Java in case of normal java Ops
+
+2. Directly from C, when TMSRV will be running. Here question, is about shared
+java env and ATMI context.
+
+To solve above problem, the requirement from "libexjdbcxa.so" would be that
+current thread is associated with ATMI TLS data where the above pointers are
+stored. It could be some kind of structure and ATMI tls specific pointer.
+
 :numbered!:
 
 [bibliography]
