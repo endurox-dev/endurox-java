@@ -48,10 +48,14 @@ public @interface UbfField {
     int bfldid();
     
     /**
-     * Specific flags for annotated field
-     * UBF_MAND - At least one UBF field must be un-marshaled
-     * OBJ_MAND - At least one Object field must be marshaled
+     * Minimum number of UBF fields to be transfered to object (unmarshal)
      * @return 
      */
-    long flags() default 0;   
+    int ubfmin() default 0;   
+    
+    /**
+     * Minimum number of Object fields to be transfered to UBF (marshal)
+     * @return 
+     */
+    int ojbmin() default 0;   
 }

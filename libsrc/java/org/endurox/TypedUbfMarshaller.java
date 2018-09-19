@@ -32,8 +32,63 @@
  */
 package org.endurox;
 
+import com.sun.xml.internal.ws.util.StringUtils;
+import java.lang.reflect.Field;
+
 public class TypedUbfMarshaller {
     
+    
+    
+    /**
+    * Capitalizes the field name unless one of the first two characters are uppercase. This is in accordance with java
+    * bean naming conventions in JavaBeans API spec section 8.8.
+    *
+    * @param fieldName
+    * @return the capitalised field name
+    * @see Introspector#decapitalize(String)
+    */
+   public static String capatalizeFieldName(String fieldName) {
+       final String result;
+       if (fieldName != null && !fieldName.isEmpty()
+               && Character.isLowerCase(fieldName.charAt(0))
+               && (fieldName.length() == 1 || Character.isLowerCase(fieldName.charAt(1)))) {
+           result = StringUtils.capitalize(fieldName);
+       } else {
+           result = fieldName;
+       }
+       return result;
+   }
+
+    /**
+     * Unmarshal engine copy data from UBF to local struct
+     * @param o object to process
+     * @param occ -1 all occurrences, >=0 specified occurrence 
+     */
+    static void unmarshal(Object o, int occ) {
+        
+        Field[] fields = o.getClass().getDeclaredFields();
+        
+        for (Field field : fields) {
+            
+            if (field.isAnnotationPresent(UbfField.class)) {
+                UbfField fAnno = field.getAnnotation(UbfField.class);
+                
+                int occsProc = 0;
+                
+                /* process annotation... */
+                
+                /* TODO: Get the setter of the field */
+                
+                /* Check the field type  
+                field.getType()
+                we shall get the instance of the field.
+                Also if it is array, then we shall create number of array
+                elements which matches the occurrences.
+                */
+                
+            }
+        }
+    }
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
