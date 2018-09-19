@@ -211,6 +211,11 @@ To solve above problem, the requirement from "libexjdbcxa.so" would be that
 current thread is associated with ATMI TLS data where the above pointers are
 stored. It could be some kind of structure and ATMI tls specific pointer.
 
+For "libexjdbcxa.so" we would like to avoid any jar dependencies, except
+the actual JDBC driver. Thus one way would be to compile these resources
+in similar way as done with "exjld" binary linker.
+
+
 :numbered!:
 
 [bibliography]
