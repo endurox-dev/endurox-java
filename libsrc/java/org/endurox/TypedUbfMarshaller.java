@@ -85,6 +85,10 @@ public class TypedUbfMarshaller {
                 Also if it is array, then we shall create number of array
                 elements which matches the occurrences.
                 */
+                if (field.getType().getName().equals(o))
+                {
+                    
+                }
                 
             }
         }
