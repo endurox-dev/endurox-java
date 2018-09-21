@@ -32,15 +32,13 @@
  */
 package org.endurox;
 
-import com.sun.xml.internal.ws.util.StringUtils;
 import java.lang.reflect.Field;
 
 public class TypedUbfMarshaller {
     
-    
-    
     /**
-    * Capitalizes the field name unless one of the first two characters are uppercase. This is in accordance with java
+    * Capitalizes the field name unless one of the first two characters are 
+    * uppercase. This is in accordance with java
     * bean naming conventions in JavaBeans API spec section 8.8.
     *
     * @param fieldName
@@ -48,6 +46,8 @@ public class TypedUbfMarshaller {
     * @see Introspector#decapitalize(String)
     */
    public static String capatalizeFieldName(String fieldName) {
+       
+       /*
        final String result;
        if (fieldName != null && !fieldName.isEmpty()
                && Character.isLowerCase(fieldName.charAt(0))
@@ -57,6 +57,8 @@ public class TypedUbfMarshaller {
            result = fieldName;
        }
        return result;
+       */
+       return "";
    }
 
     /**
@@ -85,11 +87,14 @@ public class TypedUbfMarshaller {
                 Also if it is array, then we shall create number of array
                 elements which matches the occurrences.
                 */
-                if (field.getType().getName().equals(o))
+                
+                /*
+                if (field.getType().getName().equals(""))
                 {
                     
                 }
-                
+                */
+                System.out.println(field.getType().getName());
             }
         }
     }
