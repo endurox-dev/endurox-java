@@ -685,7 +685,7 @@ public class TypedUbf extends TypedBuffer {
      * @param o 
      */
     public void unMarshal(Object o) {
-        TypedUbfMarshaller.unmarshal(o, -1);
+        TypedUbfMarshaller.unmarshal(o, -1, this);
     }
     
     /**

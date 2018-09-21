@@ -731,6 +731,16 @@ public class AtmiCtx {
      */
     public native String Btype(int bfldid);
     
+    /**
+     * Get field name by give compiled field id. If field tables are bad
+     * or field is not found, then output id is formatted as: "((BFLDID32)%d)"
+     * where "%d" is filled with \p bfldid
+     * See BFname(3) manpage for more information.
+     * @param bfldid compiled filed
+     * @return String name of the field
+     */
+    public native String Bfname(int bfldid);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

@@ -86,5 +86,41 @@ out:
     return ret;
 }
 
+/**
+ * Return field name 
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param bfldid compiled field id
+ * @return field name instring
+ */
+expublic jstring JNICALL Java_org_endurox_AtmiCtx_Bfname
+  (JNIEnv * env, jobject atmiCtxObj, jint bfldid)
+{
+    TPCONTEXT_T ctx;
+    jstring ret = NULL;
+    char *cret = NULL;
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    }
+    
+    cret = Bfname((BFLDID)bfldid);
+    
+    if (ret < 0)
+    {
+        /* throw exception */
+        ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
+    }
+    
+    /* create new UTF */
+    ret=(jstring)((*env)->NewStringUTF(env, cret) );
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    return ret;
+}
+
+
 /* vim: set ts=4 sw=4 et cindent: */
 
