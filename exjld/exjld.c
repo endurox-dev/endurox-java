@@ -47,7 +47,7 @@
 #include <stdlib.h>
 #include <ndrx_config.h>
 #include <atmi.h>
-#include <sys_unix.h>
+/* #include <sys_unix.h> */
 #include <ctype.h>
 
 #include <ubf.h>
