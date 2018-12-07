@@ -78,8 +78,7 @@ public class TypedUbfMarshaller {
    }
     
     /**
-     * Unmarshal engine copy data from UBF to local struct
-     * for minimum field this counts number of UBF fields read.
+     * Copy UBF to object
      * @param o object to process
      * @param occ -1 all occurrences, >=0 specified occurrence 
      */
@@ -100,7 +99,9 @@ public class TypedUbfMarshaller {
                         
                 /* process annotation... */
                 
-                /* TODO: Get the setter of the field */
+                /* TODO: Get the setter of the field 
+                 * TODO: Needs array implementation for all elms
+                 */
                 
                 /* Check the field type  
                 field.getType()
@@ -131,10 +132,11 @@ public class TypedUbfMarshaller {
                         minFlds = 1;
                     }
                 }
+                
+                String fldtyp = field.getType().getName();
+                System.out.println(fldtyp);
                         
                 for (occi=occ; occi<occs; occi++) {
-                    String fldtyp = field.getType().getName();
-                    System.out.println(fldtyp);
                     
                     occsProc++;
                        
@@ -221,6 +223,7 @@ public class TypedUbfMarshaller {
             } /* if have UbfField annotation */
         } /* for each field */
     }
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

@@ -660,18 +660,15 @@ public class TypedUbf extends TypedBuffer {
      * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
      */
     /**
-     * Copy this UBF buffer to given \p o object which is decorated 
-     *  with annotations.
+     * Copy object fields to UBF
      * @param o 
      */
     public void marshal(Object o) {
         /* TODO: do this logic in java code, it will be simpler */
     }
             
-    
     /**
-     * Copy this UBF buffer to given \p o object which is decorated 
-     *  with annotations.
+     * Copy object fields to UBF
      * @param o 
      * @param occ
      */
@@ -680,7 +677,7 @@ public class TypedUbf extends TypedBuffer {
     }
     
     /**
-     * Copy data from \p o object decorated with annotations to this UBF buffer.
+     * Copy UBF fields to object
      * This buffer is reset before filling in with data from \p o.
      * @param o 
      */
@@ -689,13 +686,13 @@ public class TypedUbf extends TypedBuffer {
     }
     
     /**
-     * Copy data from \p o object decorated with annotations to this UBF buffer.
-     * This buffer is reset before filling in with data from \p o.
-     * @param o 
-     * @param occ
+     * Copy UBF fields to object
+     * @param o object to copy data from
+     * @param occ array element occurrence to copy
      */
     public void unMarshal(Object o, int occ) {
-        /* TODO: do this logic in java code, it will be simpler */
+        /* do this logic in java code, it will be simpler */
+        TypedUbfMarshaller.unmarshal(o, occ, this);
     }
     
     /** @} */ // end of UbfMarshalling
