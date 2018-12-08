@@ -90,6 +90,7 @@ public class TypedUbfMarshaller {
         int occStop;
         int occs;
         int minFlds;
+        int totalEls;
         
         Field[] fields = o.getClass().getDeclaredFields();
         
@@ -134,9 +135,108 @@ public class TypedUbfMarshaller {
                 }
                 
                 String fldtyp = field.getType().getName();
+                
+                System.out.println("YOPT111111111111111111");
+                
                 System.out.println(fldtyp);
+                   
+                System.out.println("YOPT111111111111111111, END");
+                
+                totalEls = occStop - occStart;
+                
+                if (fldtyp.equals("[S") || fldtyp.equals("[Ljava.lang.Short;")) {
+                    
+                        /* allocate the array, load fields and set the data */
                         
-                for (occi=occ; occi<occs; occi++) {
+                        short [] arr = new short[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            occsProc++;
+                            arr[occi] = ub.BgetShort(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        long [] arr = new long[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetShort(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        long [] arr = new long[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetLong(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[F") || fldtyp.equals("[Ljava.lang.Float;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        float [] arr = new float[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetFloat(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[D") || fldtyp.equals("[Ljava.lang.Double;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        double [] arr = new double[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetDouble(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[Ljava.lang.String;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        String [] arr = new String[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetString(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[[B") || fldtyp.equals("[[java.lang.Byte")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        String [] arr = new String[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetString(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else for (occi=occStart; occi<occStop; occi++) {
                     
                     occsProc++;
                        
@@ -168,6 +268,10 @@ public class TypedUbfMarshaller {
                         
                         /* get short and set */
                         byte b = ub.BgetByte(fAnno.bfldid(), occi);
+                        
+                        //System.out.println("YOPTELLLL", b);
+                        System.out.printf("YOPTELLLL %d",  b);
+                        
                         /* set field to struct */
                         invokeSetter(o, field.getName(), b);
                         break; //Just fetch first, next no where to store...
@@ -180,14 +284,6 @@ public class TypedUbfMarshaller {
                         invokeSetter(o, field.getName(), d);
                         break; //Just fetch first, next no where to store...
                     }
-                    else if (fldtyp.equals("string")) {
-                        
-                        /* get short and set */
-                        String s = ub.BgetString(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), s);
-                        break; //Just fetch first, next no where to store...
-                    }
                     else if (fldtyp.equals("java.lang.String")) {
                         
                         /* get short and set */
@@ -196,10 +292,26 @@ public class TypedUbfMarshaller {
                         invokeSetter(o, field.getName(), s);
                         break; //Just fetch first, next no where to store...
                     }
+                    //else if (fldtyp.equals("[B")) {
                     else if (fldtyp.equals("[B")) {
                         
                         /* get short and set */
                         byte [] ba = ub.BgetByteArr(fAnno.bfldid(), occi);
+                        /* set field to struct */
+                        invokeSetter(o, field.getName(), ba);
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("[Ljava.lang.Byte;")) {
+                        
+                        /* get short and set */
+                        byte[] tmp = ub.BgetByteArr(fAnno.bfldid(), occi);
+                        
+                        Byte[] ba = new Byte[tmp.length];
+                        
+                        int i=0;
+                        for(byte b: tmp)
+                            ba[i++] = b;
+                        
                         /* set field to struct */
                         invokeSetter(o, field.getName(), ba);
                         break; //Just fetch first, next no where to store...
@@ -216,9 +328,9 @@ public class TypedUbfMarshaller {
                 //check that mandatory fields succeeded?
                 if (occsProc < minFlds) {
                     throw new UbfBNOTPRESException(String.format("Min fields %d, found %d "+
-                                "for Object field [%s], UBF fields [%s]", 
+                                "for Object field [%s], UBF fields %d, [%s]", 
                                 minFlds, occsProc, field.getName(), 
-                                ub.ctx.Bfname(fAnno.bfldid()  )));
+                                fAnno.bfldid(), ub.ctx.Bfname(fAnno.bfldid()  )));
                 }
             } /* if have UbfField annotation */
         } /* for each field */
