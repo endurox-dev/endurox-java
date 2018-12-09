@@ -48,8 +48,8 @@ public class BMarshalTest {
 
         assertEquals("HELLO", sing.tstring);
 
-        assertArrayEquals(new byte[]{0,1,2,3}, sing.tcarray);
-        assertArrayEquals(new Byte[]{0,1,2,3}, sing.tcarray2);
+        assertArrayEquals(new byte[][]{{0,1,2,3}}, sing.tcarray);
+        assertArrayEquals(new Byte[][]{{0,1,2,3}}, sing.tcarray2);
       
         ub.unMarshal(sing, 1);
         
@@ -73,8 +73,8 @@ public class BMarshalTest {
 
         assertEquals("WORLD", sing.tstring);
 
-        assertArrayEquals(new byte[]{0,4,5,6,7}, sing.tcarray);
-        assertArrayEquals(new Byte[]{0,4,5,6,7}, sing.tcarray2);
+        assertArrayEquals(new byte[][]{{0,4,5,6,7}}, sing.tcarray);
+        assertArrayEquals(new Byte[][]{{0,4,5,6,7}}, sing.tcarray2);
               
         /*
         BMarshalClassArray arr = new BMarshalClassArray();
@@ -159,8 +159,8 @@ public class BMarshalTest {
         assertEquals((byte)253, (byte)arr.tchar[1]);
         
         assertEquals(2, arr.tchar2.length);
-        assertEquals((long)124, (long)arr.tchar2[0]);
-        assertEquals((long)253, (long)arr.tchar2[1]);
+        assertEquals((byte)124, (byte)arr.tchar2[0]);
+        assertEquals((byte)253, (byte)arr.tchar2[1]);
         
         /* float tests: */
         assertEquals(2, arr.tfloat.length);

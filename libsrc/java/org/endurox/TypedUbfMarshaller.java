@@ -171,20 +171,7 @@ public class TypedUbfMarshaller {
                         
                         invokeSetter(o, field.getName(), arr);
                 }
-                else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
-                         
-                        /* allocate the array, load fields and set the data */
-                        
-                        long [] arr = new long[occStop];
-                        
-                        for (occi=occStart; occi<occStop; occi++)
-                        {
-                            arr[occi] = ub.BgetShort(fAnno.bfldid(), occi);
-                        }
-                        
-                        invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
+                else if (fldtyp.equals("[J")) {
                          
                         /* allocate the array, load fields and set the data */
                         
@@ -197,7 +184,43 @@ public class TypedUbfMarshaller {
                         
                         invokeSetter(o, field.getName(), arr);
                 }
-                else if (fldtyp.equals("[F") || fldtyp.equals("[Ljava.lang.Float;")) {
+                else if (fldtyp.equals("[Ljava.lang.Long;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        Long [] arr = new Long[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetLong(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[B")) {
+                        
+                        /* allocate the array, load fields and set the data */
+                        byte [] arr = new byte[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetByte(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[Ljava.lang.Byte;")) {
+
+                    /* allocate the array, load fields and set the data */
+                    Byte [] arr = new Byte[occStop];
+
+                    for (occi=occStart; occi<occStop; occi++)
+                    {
+                        arr[occi] = ub.BgetByte(fAnno.bfldid(), occi);
+                    }
+
+                    invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[F")) {
                          
                         /* allocate the array, load fields and set the data */
                         
@@ -210,11 +233,37 @@ public class TypedUbfMarshaller {
                         
                         invokeSetter(o, field.getName(), arr);
                 }
-                else if (fldtyp.equals("[D") || fldtyp.equals("[Ljava.lang.Double;")) {
+                else if (fldtyp.equals("[Ljava.lang.Float;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        Float [] arr = new Float[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetFloat(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[D")) {
                          
                         /* allocate the array, load fields and set the data */
                         
                         double [] arr = new double[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi] = ub.BgetDouble(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[Ljava.lang.Double;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        Double [] arr = new Double[occStop];
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
@@ -236,15 +285,40 @@ public class TypedUbfMarshaller {
                         
                         invokeSetter(o, field.getName(), arr);
                 }
-                else if (fldtyp.equals("[[B") || fldtyp.equals("[[java.lang.Byte")) {
+                /* We cannot distinguish between carray
+                 * and byte array of single entries.
+                 * thus if array of single bytes needs to read
+                 * needs to use som short or long for data storage.
+                 */
+                else if (fldtyp.equals("[[B")) {
                          
                         /* allocate the array, load fields and set the data */
                         
-                        String [] arr = new String[occStop];
+                        byte [][] arr = new byte[occStop][];
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetString(fAnno.bfldid(), occi);
+                            arr[occi] = ub.BgetByteArr(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[[Ljava.lang.Byte;")) {
+                         
+                        /* allocate the array, load fields and set the data */
+                        
+                        Byte [][] arr = new Byte[occStop][];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            byte[] tmp = ub.BgetByteArr(fAnno.bfldid(), occi);
+                            Byte[] ba = new Byte[tmp.length];
+
+                            int i=0;
+                            for(byte b: tmp)
+                                ba[i++] = b;
+
+                            arr[occi] = ba;
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -269,14 +343,6 @@ public class TypedUbfMarshaller {
                         invokeSetter(o, field.getName(), l);
                         break; //Just fetch first, next no where to store...
                     }
-                    else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
-                        
-                        /* get short and set */
-                        float f = ub.BgetFloat(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), f);
-                        break; //Just fetch first, next no where to store...
-                    }
                     else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
                         
                         /* get short and set */
@@ -284,6 +350,14 @@ public class TypedUbfMarshaller {
                         
                         /* set field to struct */
                         invokeSetter(o, field.getName(), b);
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
+                        
+                        /* get short and set */
+                        float f = ub.BgetFloat(fAnno.bfldid(), occi);
+                        /* set field to struct */
+                        invokeSetter(o, field.getName(), f);
                         break; //Just fetch first, next no where to store...
                     }
                     else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
@@ -300,30 +374,6 @@ public class TypedUbfMarshaller {
                         String s = ub.BgetString(fAnno.bfldid(), occi);
                         /* set field to struct */
                         invokeSetter(o, field.getName(), s);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    //else if (fldtyp.equals("[B")) {
-                    else if (fldtyp.equals("[B")) {
-                        
-                        /* get short and set */
-                        byte [] ba = ub.BgetByteArr(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), ba);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else if (fldtyp.equals("[Ljava.lang.Byte;")) {
-                        
-                        /* get short and set */
-                        byte[] tmp = ub.BgetByteArr(fAnno.bfldid(), occi);
-                        
-                        Byte[] ba = new Byte[tmp.length];
-                        
-                        int i=0;
-                        for(byte b: tmp)
-                            ba[i++] = b;
-                        
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), ba);
                         break; //Just fetch first, next no where to store...
                     }
                     else

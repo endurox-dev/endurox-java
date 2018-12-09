@@ -1,5 +1,3 @@
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.endurox.*;
 import java.lang.Short;
 import java.lang.Long;
@@ -40,20 +38,32 @@ public class BMarshalClassSingle {
     
     @UbfField(bfldid=test.T_STRING_FLD)
     String tstring;
-    
-    @UbfField(bfldid=test.T_CARRAY_FLD)
-    byte [] tcarray;
-    
-    @UbfField(bfldid=test.T_CARRAY_FLD)
-    Byte [] tcarray2;
 
-    public Byte[] getTcarray2() {
+    public byte[][] getTcarray() {
+        return tcarray;
+    }
+
+    public void setTcarray(byte[][] tcarray) {
+        this.tcarray = tcarray;
+    }
+
+    public Byte[][] getTcarray2() {
         return tcarray2;
     }
 
-    public void setTcarray2(Byte[] tcarray2) {
+    public void setTcarray2(Byte[][] tcarray2) {
         this.tcarray2 = tcarray2;
     }
+    
+    /**
+     * NOTE! 
+     * CARRAY Is double array by default!
+     */
+    @UbfField(bfldid=test.T_CARRAY_FLD)
+    byte [][] tcarray;
+    
+    @UbfField(bfldid=test.T_CARRAY_FLD)
+    Byte [][] tcarray2;
     
     public short getTshort() {
         return tshort;
@@ -142,14 +152,5 @@ public class BMarshalClassSingle {
     public void setTstring(String tstring) {
         this.tstring = tstring;
     }
-
-    public byte[] getTcarray() {
-        return tcarray;
-    }
-
-    public void setTcarray(byte[] tcarray) {
-        this.tcarray = tcarray;
-    }
-    
     
 }
