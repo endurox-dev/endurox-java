@@ -111,12 +111,11 @@ public class TypedUbfMarshaller {
                 elements which matches the occurrences.
                 */
                 
-                occs = ub.Boccur(fAnno.bfldid());
-                
                 minFlds = fAnno.ubfmin();
                 
                 if (-1==occ)
                 {
+                    occs = ub.Boccur(fAnno.bfldid());
                     occStart = 0;
                     occStop = occs;
                 }
@@ -144,11 +143,25 @@ public class TypedUbfMarshaller {
                 
                 totalEls = occStop - occStart;
                 
-                if (fldtyp.equals("[S") || fldtyp.equals("[Ljava.lang.Short;")) {
+                if (fldtyp.equals("[S")) {
                     
                         /* allocate the array, load fields and set the data */
                         
                         short [] arr = new short[occStop];
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            occsProc++;
+                            arr[occi] = ub.BgetShort(fAnno.bfldid(), occi);
+                        }
+                        
+                        invokeSetter(o, field.getName(), arr);
+                }
+                else if (fldtyp.equals("[Ljava.lang.Short;"))
+                {
+                        /* allocate the array, load fields and set the data */
+                        
+                        Short [] arr = new Short[occStop];
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
@@ -268,9 +281,6 @@ public class TypedUbfMarshaller {
                         
                         /* get short and set */
                         byte b = ub.BgetByte(fAnno.bfldid(), occi);
-                        
-                        //System.out.println("YOPTELLLL", b);
-                        System.out.printf("YOPTELLLL %d",  b);
                         
                         /* set field to struct */
                         invokeSetter(o, field.getName(), b);

@@ -134,6 +134,8 @@ public class TypedUbf extends TypedBuffer {
      * @param bfldid compiled field id
      * @param occ field occurrence
      * @return casted data type
+     * @throw UbfBBADFLDException Bad field id requested
+     * @thorw UbfBNOTPRESException Field not present
      * @throw UbfBALIGNERRException Invalid Buffer
      * @throw UbfBNOTFLDException Invalid Buffer
      * @throw UbfBNOSPACEException No space in buffer

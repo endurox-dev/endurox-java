@@ -13,35 +13,55 @@ import java.lang.Double;
 public class BMarshalClassArray {
              
     /* standard types: */
-    @UbfField(bfldid=test.T_SHORT_FLD, ubfmin=1, ojbmin = 0)
+    @UbfField(bfldid=test.T_SHORT_FLD/*, ubfmin=1, ojbmin = 0*/)
     short[] tshort;
-    @UbfField(bfldid=test.T_SHORT_2_FLD, ubfmin=0, ojbmin = 1)
+    @UbfField(bfldid=test.T_SHORT_FLD)
     Short[] tshort2;
     
-    @UbfField(bfldid=test.T_LONG_FLD, ubfmin=1, ojbmin = 1)
+    @UbfField(bfldid=test.T_LONG_FLD)
     long[] tlong;
-    @UbfField(bfldid=test.T_LONG_2_FLD, ubfmin=1, ojbmin = 0)
+    @UbfField(bfldid=test.T_LONG_FLD)
     Long[] tlong2;
     
-    @UbfField(bfldid=test.T_CHAR_FLD, ubfmin=1, ojbmin = 1)
+    @UbfField(bfldid=test.T_CHAR_FLD)
     byte[] tchar;
-    @UbfField(bfldid=test.T_CHAR_2_FLD, ubfmin=1, ojbmin = 0)
+    @UbfField(bfldid=test.T_CHAR_FLD)
     Byte[] tchar2;
     
-    @UbfField(bfldid=test.T_FLOAT_FLD, ubfmin=0, ojbmin = 1)
+    @UbfField(bfldid=test.T_FLOAT_FLD)
     float[] tfloat;
-    @UbfField(bfldid=test.T_FLOAT_2_FLD, ubfmin=1, ojbmin = 0)
+    @UbfField(bfldid=test.T_FLOAT_FLD)
     Float[] tfloat2;
     
-    @UbfField(bfldid=test.T_DOUBLE_FLD, ubfmin=0, ojbmin = 1)
+    @UbfField(bfldid=test.T_DOUBLE_FLD)
     double[] tdouble;
-    @UbfField(bfldid=test.T_DOUBLE_2_FLD, ubfmin=1, ojbmin = 1)
+    @UbfField(bfldid=test.T_DOUBLE_FLD)
     Double[] tdouble2;
     
-    @UbfField(bfldid=test.T_STRING_FLD, ubfmin=0, ojbmin = 0)
+    @UbfField(bfldid=test.T_STRING_FLD)
     String[] tstring;
-    @UbfField(bfldid=test.T_CARRAY_FLD, ubfmin=0, ojbmin = 1)
+    
+    @UbfField(bfldid=test.T_CARRAY_FLD)
     byte [][] tcarray;
+    
+    @UbfField(bfldid=test.T_CARRAY_FLD)
+    Byte [][] tcarray2;
+
+    public Byte[] getTchar2() {
+        return tchar2;
+    }
+
+    public void setTchar2(Byte[] tchar2) {
+        this.tchar2 = tchar2;
+    }
+
+    public Byte[][] getTcarray2() {
+        return tcarray2;
+    }
+
+    public void setTcarray2(Byte[][] tcarray2) {
+        this.tcarray2 = tcarray2;
+    }
 
     public short[] getTshort() {
         return tshort;
