@@ -135,11 +135,7 @@ public class TypedUbfMarshaller {
                 
                 String fldtyp = field.getType().getName();
                 
-                System.out.println("YOPT111111111111111111");
-                
-                System.out.println(fldtyp);
-                   
-                System.out.println("YOPT111111111111111111, END");
+                //System.out.println(fldtyp);
                 
                 totalEls = occStop - occStart;
                 
