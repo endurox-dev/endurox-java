@@ -139,6 +139,10 @@ public class TypedUbfMarshaller {
                 
                 totalEls = occStop - occStart;
                 
+                /**
+                 * We start array unmarshal always from element 0
+                 * even if specific occurrence was given.
+                 */
                 if (fldtyp.equals("[S")) {
                     
                         /* allocate the array, load fields and set the data */
@@ -148,7 +152,7 @@ public class TypedUbfMarshaller {
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             occsProc++;
-                            arr[occi] = ub.BgetShort(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetShort(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -162,7 +166,7 @@ public class TypedUbfMarshaller {
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             occsProc++;
-                            arr[occi] = ub.BgetShort(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetShort(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -175,7 +179,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetLong(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetLong(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -187,19 +191,18 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetLong(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetLong(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
                 }
                 else if (fldtyp.equals("[B")) {
                         
-                        /* allocate the array, load fields and set the data */
                         byte [] arr = new byte[occStop];
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetByte(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetByte(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -211,7 +214,7 @@ public class TypedUbfMarshaller {
 
                     for (occi=occStart; occi<occStop; occi++)
                     {
-                        arr[occi] = ub.BgetByte(fAnno.bfldid(), occi);
+                        arr[occi-occStart] = ub.BgetByte(fAnno.bfldid(), occi);
                     }
 
                     invokeSetter(o, field.getName(), arr);
@@ -224,7 +227,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetFloat(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetFloat(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -237,7 +240,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetFloat(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetFloat(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -250,7 +253,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetDouble(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetDouble(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -263,7 +266,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetDouble(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetDouble(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -276,7 +279,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetString(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetString(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -294,7 +297,7 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            arr[occi] = ub.BgetByteArr(fAnno.bfldid(), occi);
+                            arr[occi-occStart] = ub.BgetByteArr(fAnno.bfldid(), occi);
                         }
                         
                         invokeSetter(o, field.getName(), arr);
@@ -314,7 +317,7 @@ public class TypedUbfMarshaller {
                             for(byte b: tmp)
                                 ba[i++] = b;
 
-                            arr[occi] = ba;
+                            arr[occi-occStart] = ba;
                         }
                         
                         invokeSetter(o, field.getName(), arr);
