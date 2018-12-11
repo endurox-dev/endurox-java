@@ -1,12 +1,12 @@
 import org.endurox.*;
 
 /**
- * Test basically mandatory field
+ * Test optional field
  */
-public class BMarshalClassMand {
+public class BMarshalClassOpt {
              
     /* standard types: */
-    @UbfField(bfldid=test.T_SHORT_FLD, ubfmin=1, ojbmin=1)
+    @UbfField(bfldid=test.T_SHORT_FLD, ubfmin=0, ojbmin=0)
     short tshort;
 
     public short getTshort() {

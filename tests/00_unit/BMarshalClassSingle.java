@@ -1,9 +1,5 @@
 import org.endurox.*;
-import java.lang.Short;
-import java.lang.Long;
-import java.lang.Byte;
-import java.lang.Float;
-import java.lang.Double;
+
 /**
  * Marshal testing class
  * will list all fields supported fields here

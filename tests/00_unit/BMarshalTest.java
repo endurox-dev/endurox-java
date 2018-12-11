@@ -1,11 +1,6 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
-import java.lang.Short;
-import java.lang.Long;
-import java.lang.Byte;
-import java.lang.Float;
-import java.lang.Double;
 /**
  * Perform marshalling tests...
  */
@@ -48,8 +43,8 @@ public class BMarshalTest {
 
         assertEquals("HELLO", sing.tstring);
 
-        assertArrayEquals(new byte[][]{{0,1,2,3}}, sing.tcarray);
-        assertArrayEquals(new Byte[][]{{0,1,2,3}}, sing.tcarray2);
+        assertArrayEquals(new byte[]{0,1,2,3}, sing.tcarray[0]);
+        assertArrayEquals(new Byte[]{0,1,2,3}, sing.tcarray2[0]);
       
         ub.unMarshal(sing, 1);
         
@@ -73,8 +68,8 @@ public class BMarshalTest {
 
         assertEquals("WORLD", sing.tstring);
 
-        assertArrayEquals(new byte[][]{{0,4,5,6,7}}, sing.tcarray);
-        assertArrayEquals(new Byte[][]{{0,4,5,6,7}}, sing.tcarray2);
+        assertArrayEquals(new byte[]{0,4,5,6,7}, sing.tcarray[0]);
+        assertArrayEquals(new Byte[]{0,4,5,6,7}, sing.tcarray2[0]);
               
         /*
         BMarshalClassArray arr = new BMarshalClassArray();
@@ -107,6 +102,40 @@ public class BMarshalTest {
         
         ub.unMarshal(sing, 2);
         
+    }
+    
+    /**
+     * Shall get error as field is missing in buffer
+     */
+    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    public void testUnMarshalMandMiss() {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+
+        BMarshalClassMand sing = new BMarshalClassMand();
+
+        System.out.println("About to list... Single/miss");
+        
+        ub.unMarshal(sing);
+    }
+    
+    /**
+     * Field marked as optional and is missing, no error.
+     */
+    @Test
+    public void testUnMarshalOptMiss() {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+
+        BMarshalClassOpt sing = new BMarshalClassOpt();
+
+        System.out.println("About to list... Single/opt/miss -> no error");
+        
+        ub.unMarshal(sing);
     }
     
     /**
