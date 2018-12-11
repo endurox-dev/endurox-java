@@ -11,7 +11,7 @@ import java.lang.Double;
  */
 public class BMarshalTest {
     
-    //@Test
+    @Test
     public void testUnMarshal() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -87,7 +87,7 @@ public class BMarshalTest {
     /**
      * The occurrence is missing, error
      */
-    //@Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
     public void testUnMarshalNoOcc() {
         
         AtmiCtx ctx = new AtmiCtx();
