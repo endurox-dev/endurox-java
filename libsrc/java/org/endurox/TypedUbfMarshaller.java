@@ -34,6 +34,7 @@ package org.endurox;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import org.endurox.exceptions.UbfBNOTPRESException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -86,7 +87,7 @@ public class TypedUbfMarshaller {
      * @param ub UBF buffer to load data to. It is assumed that there is
      *  enough space there.
      */
-    static void marshal(Object o, int occ, TypedUbf ub) {
+    static void marshal(Object o, int occ, TypedUbf ub) throws IllegalAccessException{
         int occi;
         int occsProc = 0;
         int occStart;
@@ -94,7 +95,8 @@ public class TypedUbfMarshaller {
         int occs;
         int minFlds;
         int totalEls;
-
+        Object fldVal;
+        
         Field[] fields = o.getClass().getDeclaredFields();
 
         for (Field field : fields) {
@@ -108,7 +110,29 @@ public class TypedUbfMarshaller {
                 /* TODO: Detect type is it array, or what?
                  * if array, get the length 
                 */
-
+                fldVal = field.get(o);
+                
+                /**
+                 * For arrays we assume that all elements are filled.
+                 * if we get null for boxed type, then empty value will be
+                 * set in UBF
+                 */
+                if (field.getType().isArray()) {
+                    occs = Array.getLength(field.get(o));
+                    
+                    /* Check the array type and if boxed fields */
+                    
+                }
+                /* check if field is boxed and not NULL,
+                    if NULL, then occs = 0 
+                */
+                else if (null==fldVal)
+                {
+                    occs = 0;
+                } else {
+                    occs = 1;
+                }
+                
                 //https://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Array.html
                 //field.getClass()
                 if (-1==occ)
@@ -154,7 +178,7 @@ public class TypedUbfMarshaller {
         for (Field field : fields) {
             if (field.isAnnotationPresent(UbfField.class)) {
                 UbfField fAnno = field.getAnnotation(UbfField.class);
-                        
+                
                 /* process annotation... */
                 
                 /* TODO: Get the setter of the field 
