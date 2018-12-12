@@ -74,8 +74,65 @@ public class TypedUbfMarshaller {
         throw new UbfBEUNIXException(String.format("Got IntrospectionException "+
                 "while setting [%s] field", variableName), e);
       }
-      
-   }
+
+    }
+    
+    /**
+     * Copy Object data to UBF.
+     * Loop over the object meta data in set any ubf fields if found.
+     * @param o object to take data from
+     * @param occ array occurrence to load into buffer, or -1 to load all
+     *  the data is loaded from 0 occ in UBF anyway
+     * @param ub UBF buffer to load data to. It is assumed that there is
+     *  enough space there.
+     */
+    static void marshal(Object o, int occ, TypedUbf ub) {
+        int occi;
+        int occsProc = 0;
+        int occStart;
+        int occStop;
+        int occs;
+        int minFlds;
+        int totalEls;
+
+        Field[] fields = o.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(UbfField.class)) {
+                UbfField fAnno = field.getAnnotation(UbfField.class);
+
+                minFlds = fAnno.ubfmin();
+                
+                String fldtyp = field.getType().getName();
+                
+                /* TODO: Detect type is it array, or what?
+                 * if array, get the length 
+                */
+
+                //https://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Array.html
+                //field.getClass()
+                if (-1==occ)
+                {
+                    occs = ub.Boccur(fAnno.bfldid());
+                    occStart = 0;
+                    occStop = occs;
+                }
+                else
+                {
+                    occStart = occ;
+                    occStop = occ+1; /* just one element */
+
+                    /* here if MIN was 0, then leave 0,
+                     * if MIN > 0, then we require 1
+                     */
+
+                    if (minFlds > 1) {
+                        minFlds = 1;
+                    }
+                }
+            }
+        } /* for each field */
+    }
     
     /**
      * Copy UBF to object
