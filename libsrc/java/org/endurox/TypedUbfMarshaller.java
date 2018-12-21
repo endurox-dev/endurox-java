@@ -188,6 +188,60 @@ public class TypedUbfMarshaller {
                     
                 } else {
                     
+                    /* Any signle item is loaded in occ 0 */
+                    if (fldtyp.equals("short") || fldtyp.equals("java.lang.Short")) {
+                        
+                        /* get short and set */
+                        Short s = (Short)fldVal;
+                        
+                        /* set field to struct */
+                        ub.Bchg(fAnno.bfldid(), 0, s);
+                        
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("long")  || fldtyp.equals("java.lang.Long")) {
+                        
+                        /* get long */
+                        Long l = (Long)fldVal;
+                        
+                        ub.Bchg(fAnno.bfldid(), 0, l);
+                        
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
+                        
+                        Byte b = (Byte)fldVal;
+                        ub.Bchg(fAnno.bfldid(), 0, b);
+                        
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
+                        
+                        Float f = (Float)fldVal;
+                        ub.Bchg(fAnno.bfldid(), 0, f);
+
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
+                        
+                        Double d = (Double)fldVal;
+                        ub.Bchg(fAnno.bfldid(), 0, d);
+                        
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else if (fldtyp.equals("java.lang.String")) {
+                        
+                        String s = (String)fldVal;
+                        ub.Bchg(fAnno.bfldid(), 0, s);
+                        
+                        break; //Just fetch first, next no where to store...
+                    }
+                    else
+                    {
+                        throw new UbfBSYNTAXException(String.format("Field type [%s] not "+
+                                "supported for unmarshal op, field [%s] of class [%s]", 
+                                fldtyp, field.getName(), o.getClass().toString()));
+                    }
                 }
                 
                 /* In case of non array items, access in different way */
