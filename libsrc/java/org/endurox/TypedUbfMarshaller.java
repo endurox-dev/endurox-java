@@ -89,7 +89,7 @@ public class TypedUbfMarshaller {
      */
     static void marshal(Object o, int occ, TypedUbf ub) throws IllegalAccessException{
         int occi;
-        int occsProc = 0;
+        int occsProc;
         int occStart;
         int occStop;
         int occs;
@@ -102,8 +102,8 @@ public class TypedUbfMarshaller {
         for (Field field : fields) {
             if (field.isAnnotationPresent(UbfField.class)) {
                 UbfField fAnno = field.getAnnotation(UbfField.class);
-
-                minFlds = fAnno.ubfmin();
+                occsProc = occsProc=0;
+                minFlds = fAnno.ojbmin();
                 
                 String fldtyp = field.getType().getName();
                 
@@ -137,7 +137,6 @@ public class TypedUbfMarshaller {
                 //field.getClass()
                 if (-1==occ)
                 {
-                    occs = ub.Boccur(fAnno.bfldid());
                     occStart = 0;
                     occStop = occs;
                 }
@@ -153,6 +152,51 @@ public class TypedUbfMarshaller {
                     if (minFlds > 1) {
                         minFlds = 1;
                     }
+                }
+                
+                /* pre check conditions */
+                
+                if ( minFlds > occs) {
+                    /* TODO: Raise exception -> minimum X but in array Y */
+                } else if ( occStop > occs ) {
+                    /* TODO: max index requested: occStop-1, but have occs-1 */
+                }
+                
+                /* In case of array, access in one way */
+                if (null==fldVal) {
+                    /* not items in array..., just skip */
+                }
+                else if (field.getType().isArray()) {
+                    
+                    Object[] values;
+                    
+                    if(fldVal instanceof Object[])
+                    {
+                        values = (Object[])fldVal;
+                    }
+                    else // box primitive arrays
+                    {
+                        final Object[] boxedArray = new Object[Array.getLength(fldVal)];
+                        for(int index=0;index<boxedArray.length;index++)
+                        {
+                            boxedArray[index] = Array.get(fldVal, index); // automatic boxing
+                        }
+                        values = (Object[])boxedArray;
+                    }
+                    
+                    /* process items one by one... */
+                    
+                } else {
+                    
+                }
+                
+                /* In case of non array items, access in different way */
+                
+                if (occsProc < minFlds) {
+                    throw new UbfBNOTPRESException(String.format("Min fields %d, found %d "+
+                                "for Object field [%s], UBF fields %d, [%s]", 
+                                minFlds, occsProc, field.getName(), 
+                                fAnno.bfldid(), ub.ctx.Bfname(fAnno.bfldid()  )));
                 }
             }
         } /* for each field */
@@ -180,6 +224,7 @@ public class TypedUbfMarshaller {
                 UbfField fAnno = field.getAnnotation(UbfField.class);
                 
                 /* process annotation... */
+                occsProc = 0;
                 
                 /* TODO: Get the setter of the field 
                  * TODO: Needs array implementation for all elms
