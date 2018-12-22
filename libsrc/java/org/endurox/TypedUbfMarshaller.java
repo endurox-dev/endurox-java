@@ -154,6 +154,8 @@ public class TypedUbfMarshaller {
                         minFlds = 1;
                     }
                 }
+                
+                /* validate minimu occurrences */
             }
         } /* for each field */
     }
