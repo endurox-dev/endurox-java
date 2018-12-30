@@ -15,27 +15,27 @@ public class BMarshalClassArray {
     /* standard types: */
     @UbfField(bfldid=test.T_SHORT_FLD/*, ubfmin=1, ojbmin = 0*/)
     short[] tshort;
-    @UbfField(bfldid=test.T_SHORT_FLD)
+    @UbfField(bfldid=test.T_SHORT_2_FLD)
     Short[] tshort2;
     
     @UbfField(bfldid=test.T_LONG_FLD)
     long[] tlong;
-    @UbfField(bfldid=test.T_LONG_FLD)
+    @UbfField(bfldid=test.T_LONG_2_FLD)
     Long[] tlong2;
     
     @UbfField(bfldid=test.T_CHAR_FLD)
     byte[] tchar;
-    @UbfField(bfldid=test.T_CHAR_FLD)
+    @UbfField(bfldid=test.T_CHAR_2_FLD)
     Byte[] tchar2;
     
     @UbfField(bfldid=test.T_FLOAT_FLD)
     float[] tfloat;
-    @UbfField(bfldid=test.T_FLOAT_FLD)
+    @UbfField(bfldid=test.T_FLOAT_2_FLD)
     Float[] tfloat2;
     
     @UbfField(bfldid=test.T_DOUBLE_FLD)
     double[] tdouble;
-    @UbfField(bfldid=test.T_DOUBLE_FLD)
+    @UbfField(bfldid=test.T_DOUBLE_2_FLD)
     Double[] tdouble2;
     
     @UbfField(bfldid=test.T_STRING_FLD)
@@ -44,7 +44,7 @@ public class BMarshalClassArray {
     @UbfField(bfldid=test.T_CARRAY_FLD)
     byte [][] tcarray;
     
-    @UbfField(bfldid=test.T_CARRAY_FLD)
+    @UbfField(bfldid=test.T_CARRAY_2_FLD)
     Byte [][] tcarray2;
 
     public Byte[] getTchar2() {
@@ -151,5 +151,36 @@ public class BMarshalClassArray {
         this.tcarray = tcarray;
     }
     
+    /**
+     * Load test data
+     * @return prepared BMarshalClassArray object
+     */
+    public static BMarshalClassArray getTestData() {
+        
+        BMarshalClassArray ret = new BMarshalClassArray();
+        
+        /* short tests */
+        ret.tshort = new short[3];
+        ret.tshort[0] = 155;
+        ret.tshort[1] = 667;
+        ret.tshort[2] = -225;
+        
+        ret.tshort2 = new Short[4];
+        ret.tshort2[0] = -155;
+        ret.tshort2[1] = 0;
+        ret.tshort2[2] = 225;
+        ret.tshort2[3] = 2;
+        
+        /* long tests */
+        
+        ret.tlong = new long[2];
+        ret.tlong[0] = 100000000L;
+        ret.tlong[1] = -1000000000L;
+        
+        ret.tlong2 = new Long[1];
+        ret.tlong2[0] = -99999999L;
+        
+        return ret;
+    }
 }
 

@@ -17,22 +17,37 @@ public class ButilTest {
      * @param ub UBF buffer to load data. Assumes there is enough space
      */
     public static void loadTestData1(TypedUbf ub) {
-        
+            
         /* shorts */
         ub.Bchg(test.T_SHORT_FLD, 0, 455);
         ub.Bchg(test.T_SHORT_FLD, 1, -5);
         
+        ub.Bchg(test.T_SHORT_2_FLD, 0, 455);
+        ub.Bchg(test.T_SHORT_2_FLD, 1, -5);
+        
         ub.Bchg(test.T_LONG_FLD, 0, 111455);
         ub.Bchg(test.T_LONG_FLD, 1, -2225);
+        
+        ub.Bchg(test.T_LONG_2_FLD, 0, 111455);
+        ub.Bchg(test.T_LONG_2_FLD, 1, -2225);
         
         ub.Bchg(test.T_CHAR_FLD, 0, 124);
         ub.Bchg(test.T_CHAR_FLD, 1, 253);
         
+        ub.Bchg(test.T_CHAR_2_FLD, 0, 124);
+        ub.Bchg(test.T_CHAR_2_FLD, 1, 253);
+        
         ub.Bchg(test.T_FLOAT_FLD, 0, 33.11);
         ub.Bchg(test.T_FLOAT_FLD, 1, -500.63);
         
+        ub.Bchg(test.T_FLOAT_2_FLD, 0, 33.11);
+        ub.Bchg(test.T_FLOAT_2_FLD, 1, -500.63);
+        
         ub.Bchg(test.T_DOUBLE_FLD, 0, 1133.11);
         ub.Bchg(test.T_DOUBLE_FLD, 1, -22500.63);
+        
+        ub.Bchg(test.T_DOUBLE_2_FLD, 0, 1133.11);
+        ub.Bchg(test.T_DOUBLE_2_FLD, 1, -22500.63);
         
         ub.Bchg(test.T_STRING_FLD, 0, "HELLO");
         ub.Bchg(test.T_STRING_FLD, 1, "WORLD");
@@ -40,6 +55,9 @@ public class ButilTest {
         
         ub.Bchg(test.T_CARRAY_FLD, 0, new byte[]{0,1,2,3});
         ub.Bchg(test.T_CARRAY_FLD, 1, new byte[]{0,4,5,6,7});
+        
+        ub.Bchg(test.T_CARRAY_2_FLD, 0, new byte[]{0,1,2,3});
+        ub.Bchg(test.T_CARRAY_2_FLD, 1, new byte[]{0,4,5,6,7});
     }
     
     /**

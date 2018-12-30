@@ -75,7 +75,39 @@ public class TypedUbfMarshaller {
         throw new UbfBEUNIXException(String.format("Got IntrospectionException "+
                 "while setting [%s] field", variableName), e);
       }
-
+    }
+    
+    /**
+     * Invoke field getter value
+     * @param variableName variable to read value from
+     */
+    private static Object invokeGetter(Object obj, String variableName) {
+      /* variableValue is Object because value can be an Object, Integer, String, etc... */
+      try {
+        /**
+         * Get object of PropertyDescriptor using variable name and class
+         * Note: To use PropertyDescriptor on any field/variable, 
+         * the field must have both `Setter` and `Getter` method.
+         */
+         PropertyDescriptor objPropertyDescriptor = new PropertyDescriptor(variableName, 
+                 obj.getClass());
+         /* Set field/variable value using getWriteMethod() */
+         return objPropertyDescriptor.getReadMethod().invoke(obj);
+      } 
+      catch (IllegalAccessException e) {
+        throw new UbfBEUNIXException(String.format("Got IllegalAccessException "+
+                "while setting [%s] field", variableName), e);
+      } catch (IllegalArgumentException e) {
+        throw new UbfBEUNIXException(String.format("Got IllegalArgumentException "+
+                "while setting [%s] field", variableName), e);
+      } catch (InvocationTargetException e) {
+        throw new UbfBEUNIXException(String.format("Got InvocationTargetException "+
+                "while setting [%s] field", variableName), e);
+      } catch (IntrospectionException e) {
+        throw new UbfBEUNIXException(String.format("Got IntrospectionException "+
+                "while setting [%s] field", variableName), e);
+      }
+      
     }
     
     /**
@@ -87,7 +119,7 @@ public class TypedUbfMarshaller {
      * @param ub UBF buffer to load data to. It is assumed that there is
      *  enough space there.
      */
-    static void marshal(Object o, int occ, TypedUbf ub) throws IllegalAccessException{
+    static void marshal(Object o, int occ, TypedUbf ub) {
         int occi;
         int occsProc;
         int occStart;
@@ -104,38 +136,35 @@ public class TypedUbfMarshaller {
                 UbfField fAnno = field.getAnnotation(UbfField.class);
                 occsProc = occsProc=0;
                 minFlds = fAnno.ojbmin();
-                
                 String fldtyp = field.getType().getName();
+                        
                 
                 /* TODO: Detect type is it array, or what?
                  * if array, get the length 
                 */
-                fldVal = field.get(o);
+                fldVal = invokeGetter(o, field.getName());
                 
-                /**
+                
+                /* check if field is boxed and not NULL,
+                    if NULL, then occs = 0 
+                */
+                if (null==fldVal)
+                {
+                    occs = 0;
+                } else /**
                  * For arrays we assume that all elements are filled.
                  * if we get null for boxed type, then empty value will be
                  * set in UBF
                  */
                 if (field.getType().isArray()) {
-                    occs = Array.getLength(field.get(o));
-                    
-                    /* Check the array type and if boxed fields */
-                    
-                }
-                /* check if field is boxed and not NULL,
-                    if NULL, then occs = 0 
-                */
-                else if (null==fldVal)
-                {
-                    occs = 0;
+                    occs = Array.getLength(fldVal);
                 } else {
                     occs = 1;
                 }
                 
                 //https://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Array.html
                 //field.getClass()
-                if (-1==occ)
+                if (occ==-1)
                 {
                     occStart = 0;
                     occStop = occs;
@@ -157,9 +186,18 @@ public class TypedUbfMarshaller {
                 /* pre check conditions */
                 
                 if ( minFlds > occs) {
-                    /* TODO: Raise exception -> minimum X but in array Y */
+                    /* Raise exception -> minimum X but in array Y */
+                    throw new UbfBNOTPRESException(String.format("Minimum fields %d "
+                            + "but array have %d, java field: [%s], UBF field: [%s]", 
+                               minFlds, occs, field.getName(), 
+                              ub.ctx.Bfname(fAnno.bfldid()  )));
                 } else if ( occStop > occs ) {
-                    /* TODO: max index requested: occStop-1, but have occs-1 */
+                    /* max index requested: occStop-1, but have occs-1 */
+                    /* Raise exception -> minimum X but in array Y */
+                    throw new UbfBNOTPRESException(String.format("Range end pos %d "
+                            + "but array have of max index %d, java field: [%s], UBF field: [%s]", 
+                              occStop-1, occs-1, field.getName(), 
+                              ub.ctx.Bfname(fAnno.bfldid()  )));
                 }
                 
                 /* In case of array, access in one way */
@@ -168,7 +206,13 @@ public class TypedUbfMarshaller {
                 }
                 else if (field.getType().isArray()) {
                     
+                    /*
                     Object[] values;
+                    int arrayLen = Array.getLength(fldVal);
+                    
+                    System.out.println(String.format("array ty START p: (%s)\n", 
+                            fldVal.getClass().getName()));
+                    
                     
                     if(fldVal instanceof Object[])
                     {
@@ -176,7 +220,7 @@ public class TypedUbfMarshaller {
                     }
                     else // box primitive arrays
                     {
-                        final Object[] boxedArray = new Object[Array.getLength(fldVal)];
+                        final Object[] boxedArray = new Object[arrayLen];
                         for(int index=0;index<boxedArray.length;index++)
                         {
                             boxedArray[index] = Array.get(fldVal, index); // automatic boxing
@@ -184,7 +228,32 @@ public class TypedUbfMarshaller {
                         values = (Object[])boxedArray;
                     }
                     
-                    /* process items one by one... */
+                    */
+                    
+                    System.out.println(String.format("array ty START p: (%s)\n", 
+                            fldVal.getClass().getName()));
+                    
+                    /* process items one by one... -> load into buffer */
+                    if (fldtyp.equals("[S") || fldtyp.equals("[Ljava.lang.Short;")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            /* at which occ we will perform loading? 
+                             * well only if the position is NULL?
+                             * shall we put exception?
+                             * I guess so...
+                             */
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
+                                    (Short)Array.get(fldVal, occi));
+                        }
+                    } else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
+                                    (Long)Array.get(fldVal, occi));
+                        }
+                    }
                     
                 } else {
                     

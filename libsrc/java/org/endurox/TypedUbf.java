@@ -663,19 +663,19 @@ public class TypedUbf extends TypedBuffer {
      */
     /**
      * Copy object fields to UBF
-     * @param o 
+     * @param o object which shall be copied to this UBF
      */
     public void marshal(Object o) {
-        /* TODO: do this logic in java code, it will be simpler */
+        TypedUbfMarshaller.marshal(o, -1, this);
     }
             
     /**
      * Copy object fields to UBF
-     * @param o 
-     * @param occ
+     * @param o object which shall be copied to this UBF
+     * @param occ occurrence to serialize
      */
     public void marshal(Object o, int occ) {
-        /* TODO: do this logic in java code, it will be simpler */
+        TypedUbfMarshaller.marshal(o, occ, this);
     }
     
     /**

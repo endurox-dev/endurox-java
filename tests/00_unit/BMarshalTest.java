@@ -223,6 +223,57 @@ public class BMarshalTest {
         assertEquals(2, arr.tcarray2.length);
         assertArrayEquals(new Byte[]{0,1,2,3}, arr.tcarray2[0]);
         assertArrayEquals(new Byte[]{0,4,5,6,7}, arr.tcarray2[1]);
+    }
+    
+    /**
+     * Test array marshaller, null ptr exception in array
+     */
+    @Test(expected = java.lang.NullPointerException.class)
+    public void testMarshalArrayNullExcpetion() {
         
+        BMarshalClassArray a = BMarshalClassArray.getTestData();
+                
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+       
+        a.tshort2[2] = null;
+        ub.marshal(a);
+    }
+    
+    /**
+     * Test array marshaller
+     */
+    @Test
+    public void testMarshalArray() {
+        
+        BMarshalClassArray a = BMarshalClassArray.getTestData();
+                
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+        
+        ub.marshal(a);
+        
+        ub.Bprint();
+        
+        /* test the values with expressions (will be simpler)... */
+        
+        /* test short: */
+        assertEquals(ub.Bqboolev("T_SHORT_FLD==155 && T_SHORT_FLD[1]==667 && "+
+                "T_SHORT_FLD[2]==-225 && !T_SHORT_FLD[3]" ), true);
+        
+        assertEquals(ub.Bqboolev("T_SHORT_2_FLD==-155 && T_SHORT_2_FLD[1]==0 && "+
+                "T_SHORT_2_FLD[2]==225 && T_SHORT_2_FLD[3]==2 && !T_SHORT_2_FLD[4]" ), true);
+        
+        
+        /* test long fields: */
+        assertEquals(ub.Bqboolev("T_LONG_FLD==100000000 && T_LONG_FLD[1]==-1000000000 && "+
+                "!T_LONG_FLD[2]" ), true);
+        
+        assertEquals(ub.Bqboolev("T_LONG_2_FLD==-99999999 && !T_LONG_2_FLD[1]"), true);
+                
     }
 }
