@@ -264,16 +264,41 @@ public class BMarshalTest {
         /* test short: */
         assertEquals(ub.Bqboolev("T_SHORT_FLD==155 && T_SHORT_FLD[1]==667 && "+
                 "T_SHORT_FLD[2]==-225 && !T_SHORT_FLD[3]" ), true);
-        
         assertEquals(ub.Bqboolev("T_SHORT_2_FLD==-155 && T_SHORT_2_FLD[1]==0 && "+
                 "T_SHORT_2_FLD[2]==225 && T_SHORT_2_FLD[3]==2 && !T_SHORT_2_FLD[4]" ), true);
-        
         
         /* test long fields: */
         assertEquals(ub.Bqboolev("T_LONG_FLD==100000000 && T_LONG_FLD[1]==-1000000000 && "+
                 "!T_LONG_FLD[2]" ), true);
-        
         assertEquals(ub.Bqboolev("T_LONG_2_FLD==-99999999 && !T_LONG_2_FLD[1]"), true);
-                
+        
+        /* test char fields: */
+        assertEquals(ub.Bqboolev("T_CHAR_FLD=='A' && !T_CHAR_FLD[1]" ), true);
+        assertEquals(ub.Bqboolev("T_CHAR_2_FLD=='B' && T_CHAR_2_FLD[1]==0 && !T_CHAR_FLD[2]" ), true);
+        
+        /* Float tests: */
+        assertEquals(ub.Bqboolev("T_FLOAT_FLD==-11.22" ), true);
+        assertEquals(ub.Bqboolev("T_FLOAT_2_FLD==15.4 && T_FLOAT_2_FLD[1]==-1.99" ), true);
+        
+        /* Double tests: */
+        assertEquals(ub.Bqboolev("T_DOUBLE_FLD==-1111.22" ), true);
+        assertEquals(ub.Bqboolev("T_DOUBLE_2_FLD==15511.4 && T_DOUBLE_2_FLD[1]==-1011.99" ), true);
+        
+        /* String tests: */
+        assertEquals(ub.Bqboolev("T_STRING_FLD=='hello' && T_STRING_FLD[1]=='world'" ), true);
+        
+        /* carrays will extract from the buffer for testing... */
+        byte[] b1 = ub.BgetByteArr(test.T_CARRAY_FLD, 0);
+        assertArrayEquals(new byte[]{0,1,2,3}, b1);
+        
+        byte[] b1_2 = ub.BgetByteArr(test.T_CARRAY_FLD, 1);
+        assertArrayEquals(new byte[]{3,2,1,3}, b1_2);
+        
+        byte[] b2 = ub.BgetByteArr(test.T_CARRAY_2_FLD, 0);
+        assertArrayEquals(new byte[]{0,1,2,3}, b2);
+        
+        byte[] b2_2 = ub.BgetByteArr(test.T_CARRAY_2_FLD, 1);
+        assertArrayEquals(new byte[]{3,2,1,3}, b2_2);
+        
     }
 }

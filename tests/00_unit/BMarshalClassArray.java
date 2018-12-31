@@ -33,6 +33,17 @@ public class BMarshalClassArray {
     @UbfField(bfldid=test.T_FLOAT_2_FLD)
     Float[] tfloat2;
     
+    @UbfField(bfldid=test.T_FLOAT_3_FLD)
+    Float[] tfloat3;
+
+    public Float[] getTfloat3() {
+        return tfloat3;
+    }
+
+    public void setTfloat3(Float[] tfloat3) {
+        this.tfloat3 = tfloat3;
+    }
+    
     @UbfField(bfldid=test.T_DOUBLE_FLD)
     double[] tdouble;
     @UbfField(bfldid=test.T_DOUBLE_2_FLD)
@@ -172,13 +183,55 @@ public class BMarshalClassArray {
         ret.tshort2[3] = 2;
         
         /* long tests */
-        
         ret.tlong = new long[2];
         ret.tlong[0] = 100000000L;
         ret.tlong[1] = -1000000000L;
         
         ret.tlong2 = new Long[1];
         ret.tlong2[0] = -99999999L;
+        
+        /* char tests */
+        ret.tchar = new byte[1];
+        ret.tchar[0] = 0x41; /* A */
+        
+        ret.tchar2 = new Byte[2];
+        ret.tchar2[0] = 0x42; /* B */
+        ret.tchar2[1] = 0x0; /* NUL */
+        
+        /* float tests */
+        ret.tfloat = new float[2];
+        ret.tfloat[0] = -11.22f;
+        
+        ret.tfloat2 = new Float[2];
+        ret.tfloat2[0] = 15.4f;
+        ret.tfloat2[1] = -1.99f;
+        
+        ret.tfloat3 = new Float[0];
+        
+        /* double tests */
+        ret.tdouble = new double[2];
+        ret.tdouble[0] = -1111.22d;
+        
+        ret.tdouble2 = new Double[2];
+        ret.tdouble2[0] = 15511.4d;
+        ret.tdouble2[1] = -1011.99d;
+        
+        /* string tests */
+        
+        ret.tstring = new String[3];
+        ret.tstring[0] = "hello";
+        ret.tstring[1] = "world";
+        ret.tstring[2] = "";
+        
+        /* carry tests */
+        
+        ret.tcarray = new byte[2][];
+        ret.tcarray[0] = new byte[]{0,1,2,3};
+        ret.tcarray[1] = new byte[]{3,2,1,3};
+        
+        ret.tcarray2 = new Byte[2][];
+        ret.tcarray2[0] = new Byte[]{0,1,2,3};
+        ret.tcarray2[1] = new Byte[]{3,2,1,3};
         
         return ret;
     }

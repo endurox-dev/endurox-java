@@ -65,13 +65,16 @@ public class TypedUbfMarshaller {
       catch (IllegalAccessException e) {
         throw new UbfBEUNIXException(String.format("Got IllegalAccessException "+
                 "while setting [%s] field", variableName), e);
-      } catch (IllegalArgumentException e) {
+      } 
+      catch (IllegalArgumentException e) {
         throw new UbfBEUNIXException(String.format("Got IllegalArgumentException "+
                 "while setting [%s] field", variableName), e);
-      } catch (InvocationTargetException e) {
+      } 
+      catch (InvocationTargetException e) {
         throw new UbfBEUNIXException(String.format("Got InvocationTargetException "+
                 "while setting [%s] field", variableName), e);
-      } catch (IntrospectionException e) {
+      } 
+      catch (IntrospectionException e) {
         throw new UbfBEUNIXException(String.format("Got IntrospectionException "+
                 "while setting [%s] field", variableName), e);
       }
@@ -97,13 +100,16 @@ public class TypedUbfMarshaller {
       catch (IllegalAccessException e) {
         throw new UbfBEUNIXException(String.format("Got IllegalAccessException "+
                 "while setting [%s] field", variableName), e);
-      } catch (IllegalArgumentException e) {
+      } 
+      catch (IllegalArgumentException e) {
         throw new UbfBEUNIXException(String.format("Got IllegalArgumentException "+
                 "while setting [%s] field", variableName), e);
-      } catch (InvocationTargetException e) {
+      } 
+      catch (InvocationTargetException e) {
         throw new UbfBEUNIXException(String.format("Got InvocationTargetException "+
                 "while setting [%s] field", variableName), e);
-      } catch (IntrospectionException e) {
+      } 
+      catch (IntrospectionException e) {
         throw new UbfBEUNIXException(String.format("Got IntrospectionException "+
                 "while setting [%s] field", variableName), e);
       }
@@ -151,21 +157,22 @@ public class TypedUbfMarshaller {
                 if (null==fldVal)
                 {
                     occs = 0;
-                } else /**
+                } 
+                else /**
                  * For arrays we assume that all elements are filled.
                  * if we get null for boxed type, then empty value will be
                  * set in UBF
                  */
                 if (field.getType().isArray()) {
                     occs = Array.getLength(fldVal);
-                } else {
+                } 
+                else {
                     occs = 1;
                 }
                 
                 //https://docs.oracle.com/javase/6/docs/api/java/lang/reflect/Array.html
                 //field.getClass()
-                if (occ==-1)
-                {
+                if (occ==-1) {
                     occStart = 0;
                     occStop = occs;
                 }
@@ -246,12 +253,73 @@ public class TypedUbfMarshaller {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Short)Array.get(fldVal, occi));
                         }
-                    } else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
+                    } 
+                    else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Long)Array.get(fldVal, occi));
+                        }
+                    } 
+                    else if (fldtyp.equals("[B") || fldtyp.equals("[Ljava.lang.Byte;")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
+                                    (Byte)Array.get(fldVal, occi));
+                        }
+                    } 
+                    else if (fldtyp.equals("[F") || fldtyp.equals("[Ljava.lang.Float;")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
+                                    (Float)Array.get(fldVal, occi));
+                        }
+                    } 
+                    else if (fldtyp.equals("[D") || fldtyp.equals("[Ljava.lang.Double;")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
+                                    (Double)Array.get(fldVal, occi));
+                        }
+                    } 
+                    else if (fldtyp.equals("[Ljava.lang.String;")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
+                                    (String)Array.get(fldVal, occi));
+                        }
+                    }
+                    else if (fldtyp.equals("[[B")) {
+                        
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            /* convert array to unboxed type... */
+                            byte[] tmp = (byte[])Array.get(fldVal, occi);
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, tmp);
+                        }
+                    }
+                    else if (fldtyp.equals("[[Ljava.lang.Byte;"))
+                    {
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            /* convert array to unboxed type... */
+                            Byte[] tmp = (Byte[])Array.get(fldVal, occi);
+                            
+                            int len = Array.getLength(tmp);
+                            byte [] tmpB = new byte[len];
+                            
+                            for (int i=0; i<len; i++)
+                            {
+                                tmpB[i] = (Byte)Array.get(tmp, i);
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, tmpB);
                         }
                     }
                     

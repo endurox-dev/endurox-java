@@ -161,6 +161,20 @@ public class ButilTest {
         
         res = ub.Bnext(first);
         assertNotEquals(null, res);
+        assertEquals(test.T_SHORT_2_FLD, res.bfldid);
+        assertEquals(0, res.occ);
+        /* two bytes ok... */
+        assertEquals(2, res.len);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_SHORT_2_FLD, res.bfldid);
+        assertEquals(1, res.occ);
+        /* two bytes ok... */
+        assertEquals(2, res.len);        
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
         assertEquals(test.T_LONG_FLD, res.bfldid);
         assertEquals(0, res.occ);
         
@@ -170,6 +184,21 @@ public class ButilTest {
         
         /* not measuring length due to 32bit/64bit platform differences... */
         assertEquals(1, res.occ);
+
+
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_LONG_2_FLD, res.bfldid);
+        assertEquals(0, res.occ);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_LONG_2_FLD, res.bfldid);
+        
+        /* not measuring length due to 32bit/64bit platform differences... */
+        assertEquals(1, res.occ);        
+        
+        
         
         res = ub.Bnext(first);
         assertNotEquals(null, res);
@@ -177,10 +206,21 @@ public class ButilTest {
         assertEquals(0, res.occ);
         assertEquals(1, res.len);
         
-        
         res = ub.Bnext(first);
         assertNotEquals(null, res);
         assertEquals(test.T_CHAR_FLD, res.bfldid);
+        assertEquals(1, res.occ);
+        assertEquals(1, res.len);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_CHAR_2_FLD, res.bfldid);
+        assertEquals(0, res.occ);
+        assertEquals(1, res.len);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_CHAR_2_FLD, res.bfldid);
         assertEquals(1, res.occ);
         assertEquals(1, res.len);
         
@@ -196,12 +236,33 @@ public class ButilTest {
         
         res = ub.Bnext(first);
         assertNotEquals(null, res);
+        assertEquals(test.T_FLOAT_2_FLD, res.bfldid);
+        assertEquals(0, res.occ);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_FLOAT_2_FLD, res.bfldid);
+        assertEquals(1, res.occ);
+        
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
         assertEquals(test.T_DOUBLE_FLD, res.bfldid);
         assertEquals(0, res.occ);
         
         res = ub.Bnext(first);
         assertNotEquals(null, res);
         assertEquals(test.T_DOUBLE_FLD, res.bfldid);
+        assertEquals(1, res.occ);
+
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_DOUBLE_2_FLD, res.bfldid);
+        assertEquals(0, res.occ);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_DOUBLE_2_FLD, res.bfldid);
         assertEquals(1, res.occ);
         
         /* these includes EOS.. */
@@ -232,6 +293,18 @@ public class ButilTest {
         res = ub.Bnext(first);
         assertNotEquals(null, res);
         assertEquals(test.T_CARRAY_FLD, res.bfldid);
+        assertEquals(1, res.occ);
+        assertEquals(5, res.len);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_CARRAY_2_FLD, res.bfldid);
+        assertEquals(0, res.occ);
+        assertEquals(4, res.len);
+        
+        res = ub.Bnext(first);
+        assertNotEquals(null, res);
+        assertEquals(test.T_CARRAY_2_FLD, res.bfldid);
         assertEquals(1, res.occ);
         assertEquals(5, res.len);
         
