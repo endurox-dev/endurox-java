@@ -324,5 +324,29 @@ public class BMarshalTest {
         
         /* test short: */
         assertEquals(true, ub.Bqboolev("T_SHORT_FLD==100 && T_SHORT_2_FLD==-100" ));
+        
+        /* test long: */
+        assertEquals(true, ub.Bqboolev("T_LONG_FLD==10009991 && T_LONG_2_FLD==-10009991" ));
+        
+        /* test char: */
+        assertEquals(true, ub.Bqboolev("T_CHAR_FLD=='F' && T_CHAR_2_FLD=='A'" ));
+        
+        /* test float: */
+        assertEquals(true, ub.Bqboolev("T_FLOAT_FLD==10.1 && T_FLOAT_2_FLD==-10.1" ));
+        
+        /* test double: */
+        assertEquals(true, ub.Bqboolev("T_DOUBLE_FLD==100.122 && T_DOUBLE_2_FLD==-100.122" ));
+        
+        /* test string: */
+        assertEquals(true, ub.Bqboolev("T_STRING_FLD=='hello world'" ));
+        
+        /* byte array/ carray tests */
+        byte[] b1 = ub.BgetByteArr(test.T_CARRAY_FLD, 0);
+        assertArrayEquals(new byte[]{0,1,2,3}, b1);
+        
+        byte[] b2 = ub.BgetByteArr(test.T_CARRAY_2_FLD, 0);
+        assertArrayEquals(new byte[]{3,2,1,0,-127}, b2);
+        
+        
     }
 }

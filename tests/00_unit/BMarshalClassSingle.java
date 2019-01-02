@@ -58,7 +58,7 @@ public class BMarshalClassSingle {
     @UbfField(bfldid=test.T_CARRAY_FLD)
     byte [][] tcarray;
     
-    @UbfField(bfldid=test.T_CARRAY_FLD)
+    @UbfField(bfldid=test.T_CARRAY_2_FLD)
     Byte [][] tcarray2;
     
     public short getTshort() {
@@ -167,8 +167,8 @@ public class BMarshalClassSingle {
         ret.tchar = 'F';
         ret.tchar2 = 'A';
         
-        ret.tfloat = 100.1f;
-        ret.tfloat2 = -100.1f;
+        ret.tfloat = 10.1f;
+        ret.tfloat2 = -10.1f;
         
         ret.tdouble = 100.122d;
         ret.tdouble2 = -100.122d;
