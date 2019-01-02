@@ -9,27 +9,27 @@ public class BMarshalClassSingle {
     /* standard types: */
     @UbfField(bfldid=test.T_SHORT_FLD)
     short tshort;
-    @UbfField(bfldid=test.T_SHORT_FLD)
+    @UbfField(bfldid=test.T_SHORT_2_FLD)
     Short tshort2;
     
     @UbfField(bfldid=test.T_LONG_FLD)
     long tlong;
-    @UbfField(bfldid=test.T_LONG_FLD)
+    @UbfField(bfldid=test.T_LONG_2_FLD)
     Long tlong2;
     
     @UbfField(bfldid=test.T_CHAR_FLD)
     byte tchar;
-    @UbfField(bfldid=test.T_CHAR_FLD)
+    @UbfField(bfldid=test.T_CHAR_2_FLD)
     Byte tchar2;
     
     @UbfField(bfldid=test.T_FLOAT_FLD)
     float tfloat;
-    @UbfField(bfldid=test.T_FLOAT_FLD)
+    @UbfField(bfldid=test.T_FLOAT_2_FLD)
     Float tfloat2;
     
     @UbfField(bfldid=test.T_DOUBLE_FLD)
     double tdouble;
-    @UbfField(bfldid=test.T_DOUBLE_FLD)
+    @UbfField(bfldid=test.T_DOUBLE_2_FLD)
     Double tdouble2;
     
     @UbfField(bfldid=test.T_STRING_FLD)
@@ -147,6 +147,42 @@ public class BMarshalClassSingle {
 
     public void setTstring(String tstring) {
         this.tstring = tstring;
+    }
+    
+    /**
+     * Load testing data - object factory
+     * @return filled object with test data
+     */
+    public static BMarshalClassSingle getTestData() {
+        
+        BMarshalClassSingle ret = new BMarshalClassSingle();
+        
+        
+        ret.tshort=100;
+        ret.tshort2=-100;
+        
+        ret.tlong=10009991L;
+        ret.tlong2=-10009991L;
+        
+        ret.tchar = 'F';
+        ret.tchar2 = 'A';
+        
+        ret.tfloat = 100.1f;
+        ret.tfloat2 = -100.1f;
+        
+        ret.tdouble = 100.122d;
+        ret.tdouble2 = -100.122d;
+        
+        ret.tstring = "hello world";
+   
+        ret.tcarray = new byte[1][];
+        ret.tcarray[0] = new byte[]{0,1,2,3};
+        
+        ret.tcarray2 = new Byte[1][];
+        ret.tcarray2[0] = new Byte[]{3,2,1,0,-127};
+        
+        return ret;
+        
     }
     
 }

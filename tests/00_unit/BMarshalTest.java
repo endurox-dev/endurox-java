@@ -82,7 +82,7 @@ public class BMarshalTest {
     /**
      * The occurrence is missing, error
      */
-    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    //@Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
     public void testUnMarshalNoOcc() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -107,7 +107,7 @@ public class BMarshalTest {
     /**
      * Shall get error as field is missing in buffer
      */
-    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    //@Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
     public void testUnMarshalMandMiss() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -124,7 +124,7 @@ public class BMarshalTest {
     /**
      * Field marked as optional and is missing, no error.
      */
-    @Test
+    //@Test
     public void testUnMarshalOptMiss() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -142,7 +142,7 @@ public class BMarshalTest {
      * This will perform normal array tests, the exception cases, min max
      * will test in other case
      */
-    @Test
+    //@Test
     public void testUnMarshalArray() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -228,7 +228,7 @@ public class BMarshalTest {
     /**
      * Test array marshaller, null ptr exception in array
      */
-    @Test(expected = java.lang.NullPointerException.class)
+    //@Test(expected = java.lang.NullPointerException.class)
     public void testMarshalArrayNullExcpetion() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -245,7 +245,7 @@ public class BMarshalTest {
     /**
      * Test array marshaller
      */
-    @Test
+    //@Test
     public void testMarshalArray() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -300,5 +300,29 @@ public class BMarshalTest {
         byte[] b2_2 = ub.BgetByteArr(test.T_CARRAY_2_FLD, 1);
         assertArrayEquals(new byte[]{3,2,1,3}, b2_2);
         
+    }
+    
+    /**
+     * Perform marshal of single entry
+     */
+    //@Test
+    public void testMarshal() {
+        
+        System.out.println("************** testMarshal START");
+        
+        BMarshalClassSingle a = BMarshalClassSingle.getTestData();
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+        
+        ub.marshal(a);
+        
+        ub.Bprint();
+        
+        /* test the values with expressions (will be simpler)... */
+        
+        /* test short: */
+        assertEquals(true, ub.Bqboolev("T_SHORT_FLD==100 && T_SHORT_2_FLD==-100" ));
     }
 }
