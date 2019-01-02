@@ -144,6 +144,8 @@ public class TypedUbfMarshaller {
                 minFlds = fAnno.ojbmin();
                 String fldtyp = field.getType().getName();
                         
+                System.out.println(String.format("YOPT HELLO =>> [%s]\n", 
+                            field.getName()));
                 
                 /* TODO: Detect type is it array, or what?
                  * if array, get the length 
@@ -210,6 +212,8 @@ public class TypedUbfMarshaller {
                 /* In case of array, access in one way */
                 if (null==fldVal) {
                     /* not items in array..., just skip */
+                     System.out.println(String.format("NULL HELLO =>> [%s]\n", 
+                            fldtyp));
                 }
                 else if (field.getType().isArray()) {
                     
@@ -237,8 +241,8 @@ public class TypedUbfMarshaller {
                     
                     */
                     
-                    System.out.println(String.format("array ty START p: (%s)\n", 
-                            fldVal.getClass().getName()));
+                    //System.out.println(String.format("array ty START p: (%s)\n", 
+                    //        fldVal.getClass().getName()));
                     
                     /* process items one by one... -> load into buffer */
                     if (fldtyp.equals("[S") || fldtyp.equals("[Ljava.lang.Short;")) {
@@ -325,6 +329,9 @@ public class TypedUbfMarshaller {
                     
                 } else {
                     
+                    System.out.println(String.format("HELLO =>> [%s]\n", 
+                            fldtyp));
+                    
                     /* Any signle item is loaded in occ 0 */
                     if (fldtyp.equals("short") || fldtyp.equals("java.lang.Short")) {
                         
@@ -333,8 +340,6 @@ public class TypedUbfMarshaller {
                         
                         /* set field to struct */
                         ub.Bchg(fAnno.bfldid(), 0, s);
-                        
-                        break; //Just fetch first, next no where to store...
                     }
                     else if (fldtyp.equals("long")  || fldtyp.equals("java.lang.Long")) {
                         
@@ -342,36 +347,26 @@ public class TypedUbfMarshaller {
                         Long l = (Long)fldVal;
                         
                         ub.Bchg(fAnno.bfldid(), 0, l);
-                        
-                        break; //Just fetch first, next no where to store...
                     }
                     else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
                         
                         Byte b = (Byte)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, b);
-                        
-                        break; //Just fetch first, next no where to store...
                     }
                     else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
                         
                         Float f = (Float)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, f);
-
-                        break; //Just fetch first, next no where to store...
                     }
                     else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
                         
                         Double d = (Double)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, d);
-                        
-                        break; //Just fetch first, next no where to store...
                     }
                     else if (fldtyp.equals("java.lang.String")) {
                         
                         String s = (String)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, s);
-                        
-                        break; //Just fetch first, next no where to store...
                     }
                     else
                     {

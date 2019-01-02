@@ -6,7 +6,7 @@ import org.endurox.*;
  */
 public class BMarshalTest {
     
-    @Test
+    //@Test
     public void testUnMarshal() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -305,7 +305,7 @@ public class BMarshalTest {
     /**
      * Perform marshal of single entry
      */
-    //@Test
+    @Test
     public void testMarshal() {
         
         System.out.println("************** testMarshal START");
