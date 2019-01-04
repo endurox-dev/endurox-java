@@ -203,10 +203,27 @@ public class TypedUbfMarshaller {
                 } else if ( occStop > occs ) {
                     /* max index requested: occStop-1, but have occs-1 */
                     /* Raise exception -> minimum X but in array Y */
-                    throw new UbfBNOTPRESException(String.format("Range end pos %d "
-                            + "but array have of max index %d, java field: [%s], UBF field: [%s]", 
-                              occStop-1, occs-1, field.getName(), 
-                              ub.ctx.Bfname(fAnno.bfldid()  )));
+                    
+                    /* well we could just ignore this condition....
+                     * and continue with next field ... or 
+                     * process until the last occ available... 
+                     * we we do not run in -1 mode
+                     * but we are here only in case if we run in non -1 mode
+                     * thus just continue;
+                     */
+                    
+                    if (minFlds > 0)
+                    {
+                        throw new UbfBNOTPRESException(String.format("Range end pos %d "
+                                + "but array have of max index %d, java "
+                                + "field: [%s], UBF field: [%s]", 
+                                  occStop-1, occs-1, field.getName(), 
+                                  ub.ctx.Bfname(fAnno.bfldid()  )));
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
                 
                 /* In case of array, access in one way */

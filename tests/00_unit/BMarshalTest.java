@@ -305,7 +305,7 @@ public class BMarshalTest {
     /**
      * Perform marshal of single entry
      */
-    @Test
+    //@Test
     public void testMarshal() {
         
         System.out.println("************** testMarshal START");
@@ -347,6 +347,59 @@ public class BMarshalTest {
         byte[] b2 = ub.BgetByteArr(test.T_CARRAY_2_FLD, 0);
         assertArrayEquals(new byte[]{3,2,1,0,-127}, b2);
         
+        
+    }
+    
+    /**
+     * Perform marshaling of single array instance
+     * if field is NULL, we shall skip it not ?
+     */
+    @Test
+    public void testMarshalArraySingle() {
+        
+        BMarshalClassArray a = BMarshalClassArray.getTestData();
+                
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+        
+        ub.marshal(a, 1);
+        ub.Bprint();
+        
+        
+        /* test the values with expressions (will be simpler)... */
+        
+        /* test short: */
+        assertEquals(true, ub.Bqboolev("T_SHORT_FLD==667" ));
+        assertEquals(true, ub.Bqboolev("T_SHORT_2_FLD==0" ));
+        
+        /* test long fields: */
+        assertEquals(true, ub.Bqboolev("T_LONG_FLD==-1000000000"));
+        assertEquals(true, ub.Bqboolev("!T_LONG_2_FLD"));
+        
+        /* test char fields: */
+        assertEquals(true, ub.Bqboolev("!T_CHAR_FLD" ));
+        assertEquals(true, ub.Bqboolev("T_CHAR_2_FLD==0" ));
+        
+        /* Float tests: */
+        /* due to not boxed, we have 0 in "NULL" position ... */
+        assertEquals(true, ub.Bqboolev("T_FLOAT_FLD==0" ));
+        assertEquals(true, ub.Bqboolev("T_FLOAT_2_FLD==-1.99" ));
+        
+        /* Double tests: */
+        assertEquals(true, ub.Bqboolev("T_DOUBLE_FLD==0" ));
+        assertEquals(true, ub.Bqboolev("T_DOUBLE_2_FLD==-1011.99" ));
+        
+        /* String tests: */
+        assertEquals(true, ub.Bqboolev("T_STRING_FLD=='world'" ));
+        
+        /* carrays will extract from the buffer for testing... */
+        byte[] b1_2 = ub.BgetByteArr(test.T_CARRAY_FLD, 0);
+        assertArrayEquals(new byte[]{3,2,1,3}, b1_2);
+        
+        byte[] b2_2 = ub.BgetByteArr(test.T_CARRAY_2_FLD, 0);
+        assertArrayEquals(new byte[]{3,2,1,3}, b2_2);
         
     }
 }

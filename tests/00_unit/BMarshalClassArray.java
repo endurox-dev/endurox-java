@@ -235,5 +235,6 @@ public class BMarshalClassArray {
         
         return ret;
     }
+    
 }
 
