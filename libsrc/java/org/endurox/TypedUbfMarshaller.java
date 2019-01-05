@@ -406,7 +406,9 @@ public class TypedUbfMarshaller {
     }
     
     /**
-     * Copy UBF to object
+     * Copy UBF to object.
+     * In case of requesting occurrence but missing in UBF, will perform
+     * tests according to min fields only.
      * @param o object to process
      * @param occ -1 all occurrences, >=0 specified occurrence 
      */
@@ -468,175 +470,175 @@ public class TypedUbfMarshaller {
                 
                 totalEls = occStop - occStart;
                 
-                /**
-                 * We start array unmarshal always from element 0
-                 * even if specific occurrence was given.
-                 */
-                if (fldtyp.equals("[S")) {
-                    
+                try {
+                    /**
+                     * We start array unmarshal always from element 0
+                     * even if specific occurrence was given.
+                     */
+                    if (fldtyp.equals("[S")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        short [] arr = new short[occStop];
-                        
+                            short [] arr = new short[occStop-occStart];
+
+                            for (occi=occStart; occi<occStop; occi++)
+                            {
+                                occsProc++;
+                                arr[occi-occStart] = ub.BgetShort(fAnno.bfldid(), occi);
+                            }
+
+                            invokeSetter(o, field.getName(), arr);
+                    }
+                    else if (fldtyp.equals("[Ljava.lang.Short;"))
+                    {
+                        /* allocate the array, load fields and set the data */
+
+                        Short [] arr = new Short[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             occsProc++;
                             arr[occi-occStart] = ub.BgetShort(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[Ljava.lang.Short;"))
-                {
+                    }
+                    else if (fldtyp.equals("[J")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        Short [] arr = new Short[occStop];
-                        
-                        for (occi=occStart; occi<occStop; occi++)
-                        {
-                            occsProc++;
-                            arr[occi-occStart] = ub.BgetShort(fAnno.bfldid(), occi);
-                        }
-                        
-                        invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[J")) {
-                         
-                        /* allocate the array, load fields and set the data */
-                        
-                        long [] arr = new long[occStop];
-                        
+
+                        long [] arr = new long[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetLong(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[Ljava.lang.Long;")) {
-                         
+                    }
+                    else if (fldtyp.equals("[Ljava.lang.Long;")) {
+
                         /* allocate the array, load fields and set the data */
-                        Long [] arr = new Long[occStop];
-                        
+                        Long [] arr = new Long[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetLong(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[B")) {
-                        
-                        byte [] arr = new byte[occStop];
-                        
+                    }
+                    else if (fldtyp.equals("[B")) {
+
+                        byte [] arr = new byte[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetByte(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[Ljava.lang.Byte;")) {
-
-                    /* allocate the array, load fields and set the data */
-                    Byte [] arr = new Byte[occStop];
-
-                    for (occi=occStart; occi<occStop; occi++)
-                    {
-                        arr[occi-occStart] = ub.BgetByte(fAnno.bfldid(), occi);
                     }
+                    else if (fldtyp.equals("[Ljava.lang.Byte;")) {
 
-                    invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[F")) {
-                         
                         /* allocate the array, load fields and set the data */
-                        
-                        float [] arr = new float[occStop];
-                        
+                        Byte [] arr = new Byte[occStop-occStart];
+
+                        for (occi=occStart; occi<occStop; occi++)
+                        {
+                            arr[occi-occStart] = ub.BgetByte(fAnno.bfldid(), occi);
+                        }
+
+                        invokeSetter(o, field.getName(), arr);
+                    }
+                    else if (fldtyp.equals("[F")) {
+
+                        /* allocate the array, load fields and set the data */
+
+                        float [] arr = new float[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetFloat(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[Ljava.lang.Float;")) {
-                         
+                    }
+                    else if (fldtyp.equals("[Ljava.lang.Float;")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        Float [] arr = new Float[occStop];
-                        
+
+                        Float [] arr = new Float[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetFloat(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[D")) {
-                         
+                    }
+                    else if (fldtyp.equals("[D")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        double [] arr = new double[occStop];
-                        
+
+                        double [] arr = new double[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetDouble(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[Ljava.lang.Double;")) {
-                         
+                    }
+                    else if (fldtyp.equals("[Ljava.lang.Double;")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        Double [] arr = new Double[occStop];
-                        
+
+                        Double [] arr = new Double[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetDouble(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[Ljava.lang.String;")) {
-                         
+                    }
+                    else if (fldtyp.equals("[Ljava.lang.String;")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        String [] arr = new String[occStop];
-                        
+
+                        String [] arr = new String[occStop-occStart];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetString(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                /* We cannot distinguish between carray
-                 * and byte array of single entries.
-                 * thus if array of single bytes needs to read
-                 * needs to use som short or long for data storage.
-                 */
-                else if (fldtyp.equals("[[B")) {
-                         
+                    }
+                    /* We cannot distinguish between carray
+                     * and byte array of single entries.
+                     * thus if array of single bytes needs to read
+                     * needs to use som short or long for data storage.
+                     */
+                    else if (fldtyp.equals("[[B")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        byte [][] arr = new byte[occStop][];
-                        
+
+                        byte [][] arr = new byte[occStop-occStart][];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             arr[occi-occStart] = ub.BgetByteArr(fAnno.bfldid(), occi);
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
-                }
-                else if (fldtyp.equals("[[Ljava.lang.Byte;")) {
-                         
+                    }
+                    else if (fldtyp.equals("[[Ljava.lang.Byte;")) {
+
                         /* allocate the array, load fields and set the data */
-                        
-                        Byte [][] arr = new Byte[occStop][];
-                        
+
+                        Byte [][] arr = new Byte[occStop-occStart][];
+
                         for (occi=occStart; occi<occStop; occi++)
                         {
                             byte[] tmp = ub.BgetByteArr(fAnno.bfldid(), occi);
@@ -648,70 +650,78 @@ public class TypedUbfMarshaller {
 
                             arr[occi-occStart] = ba;
                         }
-                        
+
                         invokeSetter(o, field.getName(), arr);
+                    }
+                    else for (occi=occStart; occi<occStop; occi++) {
+
+                        occsProc++;
+
+                        if (fldtyp.equals("short") || fldtyp.equals("java.lang.Short")) {
+
+                            /* get short and set */
+                            short s = ub.BgetShort(fAnno.bfldid(), occi);
+                            /* set field to struct */
+                            invokeSetter(o, field.getName(), s);
+                            break; //Just fetch first, next no where to store...
+                        }
+                        else if (fldtyp.equals("long")  || fldtyp.equals("java.lang.Long")) {
+
+                            /* get short and set */
+                            long l = ub.BgetLong(fAnno.bfldid(), occi);
+                            /* set field to struct */
+                            invokeSetter(o, field.getName(), l);
+                            break; //Just fetch first, next no where to store...
+                        }
+                        else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
+
+                            /* get short and set */
+                            byte b = ub.BgetByte(fAnno.bfldid(), occi);
+
+                            /* set field to struct */
+                            invokeSetter(o, field.getName(), b);
+                            break; //Just fetch first, next no where to store...
+                        }
+                        else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
+
+                            /* get short and set */
+                            float f = ub.BgetFloat(fAnno.bfldid(), occi);
+                            /* set field to struct */
+                            invokeSetter(o, field.getName(), f);
+                            break; //Just fetch first, next no where to store...
+                        }
+                        else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
+
+                            /* get short and set */
+                            double d = ub.BgetDouble(fAnno.bfldid(), occi);
+                            /* set field to struct */
+                            invokeSetter(o, field.getName(), d);
+                            break; //Just fetch first, next no where to store...
+                        }
+                        else if (fldtyp.equals("java.lang.String")) {
+
+                            /* get short and set */
+                            String s = ub.BgetString(fAnno.bfldid(), occi);
+                            /* set field to struct */
+                            invokeSetter(o, field.getName(), s);
+                            break; //Just fetch first, next no where to store...
+                        }
+                        else
+                        {
+                            throw new UbfBSYNTAXException(String.format("Field type [%s] not "+
+                                    "supported for unmarshal op, field [%s] of class [%s]", 
+                                    fldtyp, field.getName(), o.getClass().toString()));
+                        }
+
+                    } /* for  */
                 }
-                else for (occi=occStart; occi<occStop; occi++) {
-                    
-                    occsProc++;
-                       
-                    if (fldtyp.equals("short") || fldtyp.equals("java.lang.Short")) {
-                        
-                        /* get short and set */
-                        short s = ub.BgetShort(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), s);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else if (fldtyp.equals("long")  || fldtyp.equals("java.lang.Long")) {
-                        
-                        /* get short and set */
-                        long l = ub.BgetLong(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), l);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
-                        
-                        /* get short and set */
-                        byte b = ub.BgetByte(fAnno.bfldid(), occi);
-                        
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), b);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
-                        
-                        /* get short and set */
-                        float f = ub.BgetFloat(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), f);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
-                        
-                        /* get short and set */
-                        double d = ub.BgetDouble(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), d);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else if (fldtyp.equals("java.lang.String")) {
-                        
-                        /* get short and set */
-                        String s = ub.BgetString(fAnno.bfldid(), occi);
-                        /* set field to struct */
-                        invokeSetter(o, field.getName(), s);
-                        break; //Just fetch first, next no where to store...
-                    }
-                    else
-                    {
-                        throw new UbfBSYNTAXException(String.format("Field type [%s] not "+
-                                "supported for unmarshal op, field [%s] of class [%s]", 
-                                fldtyp, field.getName(), o.getClass().toString()));
-                    }
-                    
-                } /* for  */
+                catch (UbfBNOTPRESException ex)
+                {
+                    /* nothing todo, this ok, just continue */
+                }
+                catch (RuntimeException e) {
+                    throw e;
+                }
                 
                 //check that mandatory fields succeeded?
                 if (occsProc < minFlds) {

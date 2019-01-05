@@ -2,7 +2,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
 /**
- * Perform marshalling tests...
+ * Perform marshaling tests...
  */
 public class BMarshalTest {
     
@@ -226,6 +226,80 @@ public class BMarshalTest {
     }
     
     /**
+     * Single Occurrence unmarshal
+     */
+    @Test
+    public void testUnMarshalArraySingle() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+
+        short s = 100;
+        ub.Badd(test.T_SHORT_FLD, s);
+
+        BMarshalClassArray arr = new BMarshalClassArray();
+
+        System.out.println("About to list... Array");
+
+        /* load the buffer */
+        ButilTest.loadTestData1(ub);
+
+        /* Print UBF buffer. */
+        ub.Bprint();
+        ub.unMarshal(arr, 1);
+        
+        /* Short tests: */
+        assertEquals(1, arr.tshort.length);
+        assertEquals(-5, arr.tshort[0]);
+        
+        assertEquals(1, arr.tshort2.length);
+        assertEquals((short)-5, (short)arr.tshort2[0]);
+        
+        /* Long tests: */
+        assertEquals(1, arr.tlong.length);
+        assertEquals(-2225, arr.tlong[0]);
+        
+        assertEquals(1, arr.tlong2.length);
+        assertEquals((long)-2225, (long)arr.tlong2[0]);
+        
+        /* Char tests: */
+        assertEquals(1, arr.tchar.length);
+        assertEquals((byte)253, (byte)arr.tchar[0]);
+        
+        assertEquals(1, arr.tchar2.length);
+        assertEquals((byte)253, (byte)arr.tchar2[0]);
+        
+        /* float tests: */
+        assertEquals(1, arr.tfloat.length);
+        assertEquals((float)-500.63, (float)arr.tfloat[0], 0.01);
+        
+        assertEquals(1, arr.tfloat2.length);
+        assertEquals((float)-500.63, (float)arr.tfloat2[0], 0.01);
+        
+        /* double tests: */
+        assertEquals(1, arr.tdouble.length);
+        assertEquals((double)-22500.63, (double)arr.tdouble[0], 0.01);
+        
+        assertEquals(1, arr.tdouble2.length);
+        assertEquals((double)-22500.63, (double)arr.tdouble2[0], 0.01);
+        
+        /* string tests: */
+        assertEquals(1, arr.tstring.length);
+        assertEquals("WORLD", arr.tstring[0]);
+        
+        /* carray tests: */
+        assertEquals(1, arr.tcarray.length);
+        assertArrayEquals(new byte[]{0,4,5,6,7}, arr.tcarray[0]);
+        
+        assertEquals(1, arr.tcarray2.length);
+        assertArrayEquals(new Byte[]{0,4,5,6,7}, arr.tcarray2[0]);
+    }
+    
+    /* TODO: Unmarhsal occ to signles/non array... */
+    
+    /**
      * Test array marshaller, null ptr exception in array
      */
     //@Test(expected = java.lang.NullPointerException.class)
@@ -354,7 +428,7 @@ public class BMarshalTest {
      * Perform marshaling of single array instance
      * if field is NULL, we shall skip it not ?
      */
-    @Test
+    //@Test
     public void testMarshalArraySingle() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
