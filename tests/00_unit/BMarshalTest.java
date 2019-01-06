@@ -6,7 +6,7 @@ import org.endurox.*;
  */
 public class BMarshalTest {
     
-    //@Test
+    @Test
     public void testUnMarshal() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -81,8 +81,8 @@ public class BMarshalTest {
     
     /**
      * The occurrence is missing, error
-     */
-    //@Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+
+    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
     public void testUnMarshalNoOcc() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -97,17 +97,17 @@ public class BMarshalTest {
 
         System.out.println("About to list... Single");
 
-        /* load the buffer */
         ButilTest.loadTestData1(ub);
         
         ub.unMarshal(sing, 2);
         
     }
+    *      */
     
     /**
      * Shall get error as field is missing in buffer
      */
-    //@Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
     public void testUnMarshalMandMiss() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -124,7 +124,7 @@ public class BMarshalTest {
     /**
      * Field marked as optional and is missing, no error.
      */
-    //@Test
+    @Test
     public void testUnMarshalOptMiss() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -142,7 +142,7 @@ public class BMarshalTest {
      * This will perform normal array tests, the exception cases, min max
      * will test in other case
      */
-    //@Test
+    @Test
     public void testUnMarshalArray() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -297,12 +297,10 @@ public class BMarshalTest {
         assertArrayEquals(new Byte[]{0,4,5,6,7}, arr.tcarray2[0]);
     }
     
-    /* TODO: Unmarhsal occ to signles/non array... */
-    
     /**
      * Test array marshaller, null ptr exception in array
      */
-    //@Test(expected = java.lang.NullPointerException.class)
+    @Test(expected = java.lang.NullPointerException.class)
     public void testMarshalArrayNullExcpetion() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -379,7 +377,7 @@ public class BMarshalTest {
     /**
      * Perform marshal of single entry
      */
-    //@Test
+    @Test
     public void testMarshal() {
         
         System.out.println("************** testMarshal START");
@@ -428,7 +426,7 @@ public class BMarshalTest {
      * Perform marshaling of single array instance
      * if field is NULL, we shall skip it not ?
      */
-    //@Test
+    @Test
     public void testMarshalArraySingle() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -476,4 +474,21 @@ public class BMarshalTest {
         assertArrayEquals(new byte[]{3,2,1,3}, b2_2);
         
     }
+    
+    /**
+     * Perform test of mandatory field which is missing
+     */
+    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    public void testMarshalMandFail() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+        
+        BMarshalClassMandOpt2 obj = new BMarshalClassMandOpt2();
+        
+        ub.marshal(obj);
+    }
+    
 }
