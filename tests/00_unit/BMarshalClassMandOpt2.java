@@ -22,7 +22,7 @@ public class BMarshalClassMandOpt2 {
     @UbfField(bfldid=test.T_LONG_FLD, ubfmin=1, ojbmin=1)
     Long tlong;
     
-    @UbfField(bfldid=test.T_STRING_FLD, ubfmin=1, ojbmin=1)
+    @UbfField(bfldid=test.T_STRING_2_FLD, ubfmin=1, ojbmin=1)
     String tstring2;
     
 
