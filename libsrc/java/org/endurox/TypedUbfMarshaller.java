@@ -273,6 +273,7 @@ public class TypedUbfMarshaller {
                              */
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Short)Array.get(fldVal, occi));
+                            occsProc++;
                         }
                     } 
                     else if (fldtyp.equals("[J") || fldtyp.equals("[Ljava.lang.Long;")) {
@@ -281,6 +282,7 @@ public class TypedUbfMarshaller {
                         {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Long)Array.get(fldVal, occi));
+                            occsProc++;
                         }
                     } 
                     else if (fldtyp.equals("[B") || fldtyp.equals("[Ljava.lang.Byte;")) {
@@ -289,6 +291,7 @@ public class TypedUbfMarshaller {
                         {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Byte)Array.get(fldVal, occi));
+                            occsProc++;
                         }
                     } 
                     else if (fldtyp.equals("[F") || fldtyp.equals("[Ljava.lang.Float;")) {
@@ -297,6 +300,7 @@ public class TypedUbfMarshaller {
                         {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Float)Array.get(fldVal, occi));
+                            occsProc++;
                         }
                     } 
                     else if (fldtyp.equals("[D") || fldtyp.equals("[Ljava.lang.Double;")) {
@@ -305,6 +309,7 @@ public class TypedUbfMarshaller {
                         {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (Double)Array.get(fldVal, occi));
+                            occsProc++;
                         }
                     } 
                     else if (fldtyp.equals("[Ljava.lang.String;")) {
@@ -313,6 +318,7 @@ public class TypedUbfMarshaller {
                         {
                             ub.Bchg(fAnno.bfldid(), occi-occStart, 
                                     (String)Array.get(fldVal, occi));
+                            occsProc++;
                         }
                     }
                     else if (fldtyp.equals("[[B")) {
@@ -323,6 +329,7 @@ public class TypedUbfMarshaller {
                             byte[] tmp = (byte[])Array.get(fldVal, occi);
                             
                             ub.Bchg(fAnno.bfldid(), occi-occStart, tmp);
+                            occsProc++;
                         }
                     }
                     else if (fldtyp.equals("[[Ljava.lang.Byte;"))
@@ -341,6 +348,7 @@ public class TypedUbfMarshaller {
                             }
                             
                             ub.Bchg(fAnno.bfldid(), occi-occStart, tmpB);
+                            occsProc++;
                         }
                     }
                     
@@ -357,6 +365,7 @@ public class TypedUbfMarshaller {
                         
                         /* set field to struct */
                         ub.Bchg(fAnno.bfldid(), 0, s);
+                        occsProc++;
                     }
                     else if (fldtyp.equals("long")  || fldtyp.equals("java.lang.Long")) {
                         
@@ -364,26 +373,31 @@ public class TypedUbfMarshaller {
                         Long l = (Long)fldVal;
                         
                         ub.Bchg(fAnno.bfldid(), 0, l);
+                        occsProc++;
                     }
                     else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
                         
                         Byte b = (Byte)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, b);
+                        occsProc++;
                     }
                     else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
                         
                         Float f = (Float)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, f);
+                        occsProc++;
                     }
                     else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
                         
                         Double d = (Double)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, d);
+                        occsProc++;
                     }
                     else if (fldtyp.equals("java.lang.String")) {
                         
                         String s = (String)fldVal;
                         ub.Bchg(fAnno.bfldid(), 0, s);
+                        occsProc++;
                     }
                     else
                     {

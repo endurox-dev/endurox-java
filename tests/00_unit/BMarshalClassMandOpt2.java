@@ -21,6 +21,22 @@ public class BMarshalClassMandOpt2 {
     /* test also single fields, will use boxed types to allow nulls */
     @UbfField(bfldid=test.T_LONG_FLD, ubfmin=1, ojbmin=1)
     Long tlong;
+
+    public Long getTlong() {
+        return tlong;
+    }
+
+    public void setTlong(Long tlong) {
+        this.tlong = tlong;
+    }
+
+    public String getTstring2() {
+        return tstring2;
+    }
+
+    public void setTstring2(String tstring2) {
+        this.tstring2 = tstring2;
+    }
     
     @UbfField(bfldid=test.T_STRING_2_FLD, ubfmin=1, ojbmin=1)
     String tstring2;
