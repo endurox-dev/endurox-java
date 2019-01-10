@@ -477,7 +477,7 @@ public class BMarshalTest {
     }
     
     /**
-     * Perform different mandatory/optional tests for marshalling
+     * Perform different mandatory/optional tests for marshaling
      */
     @Test
     public void testMarshalMandFail() {
@@ -547,6 +547,79 @@ public class BMarshalTest {
         assertEquals(true, ub.Bqboolev("T_LONG_FLD==125"));
         assertEquals(true, ub.Bqboolev("T_STRING_2_FLD=='HELLO'"));
         
+        /* Ok remove some array elems, expect reject too */
+        gotex = false;
+        ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        
+        obj.tshort = new short[1];
+        obj.tshort[0] = 1;
+        
+        try
+        {
+            ub.marshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            //e.printStackTrace();
+            gotex = true;
+        }
+        assertEquals(true, gotex);
+        
+        /* marshal extra, fine */
+        gotex = false;
+        ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        
+        obj.tshort = new short[3];
+        obj.tshort[0] = 1;
+        obj.tshort[1] = 2;
+        obj.tshort[2] = 3;
+        
+        try
+        {
+            ub.marshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            e.printStackTrace();
+            gotex = true;
+        }
+        assertEquals(false, gotex);
+        assertEquals(true, ub.Bqboolev("T_SHORT_FLD==1 && T_SHORT_FLD[1]==2 "
+                + "&& T_SHORT_FLD[2]==3"));
+        
+        /* test optional string */
+        assertEquals(true, ub.Bqboolev("!T_STRING_FLD"));
+        
+        gotex = false;
+        ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        
+        obj.tstring = new String[4];
+        obj.tstring[0] = "hello enduro";
+        obj.tstring[1] = "hello x";
+        obj.tstring[3] = "zzz";
+                
+        try
+        {
+            ub.marshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            e.printStackTrace();
+            gotex = true;
+        }
+        assertEquals(false, gotex);
+        /* check that we stop at nulls.. */
+        assertEquals(true, ub.Bqboolev("T_STRING_FLD=='hello enduro' && "
+                + "T_STRING_FLD[1]='hello x' "
+                + "!T_STRING_FLD[2]"));
+        
     }
     
+    /**
+     * Perform Un-marshal tests
+     */
+    @Test
+    public void testUnMarshalMandFail() {
+        
+    }
 }
