@@ -7,7 +7,7 @@ import org.endurox.exceptions.UbfBNOTPRESException;
  */
 public class BMarshalTest {
     
-    //@Test
+    @Test
     public void testUnMarshal() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -108,7 +108,7 @@ public class BMarshalTest {
     /**
      * Shall get error as field is missing in buffer
      */
-    //@Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
+    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
     public void testUnMarshalMandMiss() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -125,7 +125,7 @@ public class BMarshalTest {
     /**
      * Field marked as optional and is missing, no error.
      */
-    //@Test
+    @Test
     public void testUnMarshalOptMiss() {
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -143,7 +143,7 @@ public class BMarshalTest {
      * This will perform normal array tests, the exception cases, min max
      * will test in other case
      */
-    //@Test
+    @Test
     public void testUnMarshalArray() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -229,7 +229,7 @@ public class BMarshalTest {
     /**
      * Single Occurrence unmarshal
      */
-    //@Test
+    @Test
     public void testUnMarshalArraySingle() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -301,7 +301,7 @@ public class BMarshalTest {
     /**
      * Test array marshaller, null ptr exception in array
      */
-    //@Test(expected = java.lang.NullPointerException.class)
+    @Test(expected = java.lang.NullPointerException.class)
     public void testMarshalArrayNullExcpetion() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -318,7 +318,7 @@ public class BMarshalTest {
     /**
      * Test array marshaller
      */
-    //@Test
+    @Test
     public void testMarshalArray() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -378,7 +378,7 @@ public class BMarshalTest {
     /**
      * Perform marshal of single entry
      */
-    //@Test
+    @Test
     public void testMarshal() {
         
         System.out.println("************** testMarshal START");
@@ -427,7 +427,7 @@ public class BMarshalTest {
      * Perform marshaling of single array instance
      * if field is NULL, we shall skip it not ?
      */
-    //@Test
+    @Test
     public void testMarshalArraySingle() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -621,5 +621,118 @@ public class BMarshalTest {
     @Test
     public void testUnMarshalMandFail() {
         
+        boolean gotex;
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        
+        BMarshalClassMandOpt2 obj;
+        
+        /* try empty shall be exception due to missing fields */
+        gotex = false;
+        obj = new BMarshalClassMandOpt2();
+        try
+        {
+            ub.unMarshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            //e.printStackTrace();
+            gotex = true;
+        }
+        assertEquals(true, gotex);
+        
+        /* fill up some fields, try again*/
+        ub.Badd(test.T_SHORT_FLD, 445);
+        ub.Badd(test.T_SHORT_2_FLD, 777);
+        ub.Badd(test.T_LONG_FLD, 12777L);
+        
+        /* try empty shall be exception due to missing fields, one T_SHORT_FLD missing */
+        gotex = false;
+        obj = new BMarshalClassMandOpt2();
+        try
+        {
+            ub.unMarshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            //e.printStackTrace();
+            gotex = true;
+        }
+        assertEquals(true, gotex);
+        
+        
+        /* now ok, shall be all */
+        
+        ub.Bprint();
+        
+        ub.Badd(test.T_SHORT_FLD, 4);
+        ub.Badd(test.T_STRING_2_FLD, "Hello world");
+        gotex = false;
+        obj = new BMarshalClassMandOpt2();
+        try
+        {
+            ub.unMarshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            e.printStackTrace();
+            gotex = true;
+        }
+        
+        assertEquals(false, gotex);
+        
+        assertEquals(2, obj.tshort.length);
+        assertEquals(445, obj.tshort[0]);
+        assertEquals(4, obj.tshort[1]);
+        
+        assertEquals(1, obj.tshort2.length);
+        assertEquals(777, (short)obj.tshort2[0]);
+        
+        assertEquals(12777L, (long)obj.tlong);
+        assertEquals(0, obj.tstring.length);
+        
+        assertEquals("Hello world", obj.tstring2);
+        
+        /* remove long field shall fail... */
+        ub.Bdel(test.T_LONG_FLD, 0);
+        obj = new BMarshalClassMandOpt2();
+        try
+        {
+            ub.unMarshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            //e.printStackTrace();
+            gotex = true;
+        }
+        
+        assertEquals(true, gotex);
+        
+        /* try the null in middle of array */
+        
+        ub.Badd(test.T_STRING_FLD, "str 1");
+        ub.Badd(test.T_STRING_FLD, "str 2");
+        ub.Badd(test.T_STRING_FLD, "str 3");
+        ub.Badd(test.T_LONG_FLD, 12777L);
+        obj = new BMarshalClassMandOpt2();
+        gotex = false;
+        try
+        {
+            ub.unMarshal(obj);
+        }
+        catch (UbfBNOTPRESException e)
+        {
+            e.printStackTrace();
+            gotex = true;
+        }
+        
+        assertEquals(false, gotex);
+        assertEquals(3, obj.tstring.length);
+        assertEquals("str 1", obj.tstring[0]);
+        assertEquals("str 2", obj.tstring[1]);
+        assertEquals("str 3", obj.tstring[2]);
+        
     }
 }
+
