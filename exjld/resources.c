@@ -52,7 +52,7 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
-
+MUTEX_LOCKDECL(M_hash_lock);
 
 /**
  * Find resource in the hash 
@@ -63,7 +63,11 @@
 expublic exjld_resource_t * exljd_res_find(exjld_resource_t *head, char *resname)
 {
     exjld_resource_t *ret;
+    
+    MUTEX_LOCK_V(M_hash_lock);
     EXHASH_FIND_STR( head, resname, ret);
+    MUTEX_UNLOCK_V(M_hash_lock);
+    
     return ret;
 }
 
@@ -71,24 +75,22 @@ expublic exjld_resource_t * exljd_res_find(exjld_resource_t *head, char *resname
  * Add resource to the hash. Check that record isn't duplicate. If so
  * return an error.
  * This function will also invoke embedded file generator
- * @param head hash head (double ptr as can change e.g. from NULL to value)
- * @param resname resource name
- * @param id resource id (just unique id for resource files)
- * @param respath resource path on disk
- * @param emb_pfx embedded file prefix - either class or resources..
+ 
  * @return EXSUCCEED / EXFAIL
  */
-expublic int exljd_res_add(exjld_resource_t **head, char *resname,
-        int id, char *respath, char *emb_pfx)
+void exljd_res_add_th (void *ptr, int *p_finish_off)
 {
     int ret = EXSUCCEED;
     exjld_resource_t *elm;
     char cmd[PATH_MAX+1];
+    resgen_thread_data_t *data = (resgen_thread_data_t *)ptr;
     
-    if (NULL!=(elm=exljd_res_find(*head, resname)))
+    if (NULL!=(elm=exljd_res_find(*data->head, data->resname)))
     {
+        exjld_thread_debug_lock();
         NDRX_LOG(log_error, "Duplicate resource name: [%s] file: [%s] id: %d",
-                resname, elm->respath, elm->id);
+                data->resname, elm->respath, elm->id);
+        exjld_thread_debug_unlock();
         EXFAIL_OUT(ret);
     }
     
@@ -97,30 +99,36 @@ expublic int exljd_res_add(exjld_resource_t **head, char *resname,
     {
         int err = errno;
         
+        exjld_thread_debug_lock();
         NDRX_LOG(log_error, "Failed to malloc %d bytes: %s", 
                 sizeof(exjld_resource_t), strerror(err));
         userlog("Failed to malloc %d bytes: %s", 
                 sizeof(exjld_resource_t), strerror(err));
+        exjld_thread_debug_unlock();
         EXFAIL_OUT(ret);
     }
     
-    elm->id = id;
+    elm->id = data->id;
     
-    NDRX_STRCPY_SAFE(elm->respath, respath);
-    NDRX_STRCPY_SAFE(elm->resname, resname);
+    NDRX_STRCPY_SAFE(elm->respath, data->respath);
+    NDRX_STRCPY_SAFE(elm->resname, data->resname);
     
-    snprintf(elm->embpath, sizeof(elm->embpath), "%s_%d", emb_pfx, id);
+    snprintf(elm->embpath, sizeof(elm->embpath), "%s_%d", data->emb_pfx, data->id);
     snprintf(cmd, sizeof(cmd), "exembedfile '%s' %s cinclude", 
             elm->respath, elm->embpath);
     
+    exjld_thread_debug_lock();
     NDRX_LOG(log_dump, "%s", cmd);
+    exjld_thread_debug_unlock();
     if (EXSUCCEED!=(ret = system(cmd)))
     {
         NDRX_LOG(log_error, "%s failed: %d", cmd, ret);
         EXFAIL_OUT(ret);
     }
     
-    EXHASH_ADD_STR( *head, resname, elm);
+    MUTEX_LOCK_V(M_hash_lock);
+    EXHASH_ADD_STR( (*data->head), resname, elm);
+    MUTEX_UNLOCK_V(M_hash_lock);
     
 out:
     
@@ -128,8 +136,21 @@ out:
     {
         NDRX_FREE(elm);
     }
-    
-    return ret;
+
+    if (NULL!=data)
+    {
+        NDRX_FREE(data->resname);
+        NDRX_FREE(data->respath);
+        NDRX_FREE(data->emb_pfx);
+        NDRX_FREE(data);
+    }
+
+    if (EXSUCCEED!=ret)
+    {
+        exjld_thread_error_set(ret);
+    }
+
+    return;
 }
 
 /**
@@ -156,7 +177,7 @@ expublic void exljd_res_sort_by_resname(exjld_resource_t **head)
  * Free up resources taken by hash
  * @param head
  */ 
-expublic void exljd_res_sort_by_free(exjld_resource_t **head)
+expublic void exljd_res_free(exjld_resource_t **head)
 {
    exjld_resource_t *el, *elt;
    

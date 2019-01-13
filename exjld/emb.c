@@ -60,9 +60,12 @@ expublic int exjld_emb_build_hash(void)
     char path[PATH_MAX+1];
     int id=0;
     string_list_t* cur = ndrx_G_embedded_res;
+    resgen_thread_data_t *data;
+    int was_res = EXFALSE;
     
     while (NULL!=cur)
     {
+        was_res = EXTRUE;
         id++;
         
         if (cur->qname[0] == '/')
@@ -75,15 +78,39 @@ expublic int exjld_emb_build_hash(void)
             snprintf(path, sizeof(path), "%s/%s", ndrx_G_owd, cur->qname);
         }
         
-        if (EXSUCCEED!=exljd_res_add(&ndrx_G_emb_res_hash, cur->qname, id, 
-                path, "emb"))
+        data = NDRX_MALLOC(sizeof(resgen_thread_data_t));
+        
+        if (NULL==data)
         {
-            NDRX_LOG(log_error, "Failed to add embedded resource [%s]", path);
+            NDRX_LOG(log_error, "Failed to malloc %d bytes: %s", 
+                    sizeof(resgen_thread_data_t), strerror(errno));
             EXFAIL_OUT(ret);
         }
         
+        /* fill up the call */
+        data->head = &ndrx_G_emb_res_hash;
+        data->id = id;
+        
+        NDRX_STRDUP_OUT(data->resname, cur->qname);
+        NDRX_STRDUP_OUT(data->respath, path);
+        NDRX_STRDUP_OUT(data->emb_pfx, "emb");
+        
+        thpool_add_work(ndrx_G_thpool, (void*)exljd_res_add_th, (void *)data);
+        
         cur=cur->next;
     }
+    
+    if (was_res)
+    {
+        thpool_wait(ndrx_G_thpool);
+        
+        if (EXSUCCEED!=ndrx_G_thpool_error)
+        {
+            NDRX_LOG(log_error, "Failed to build resources!");
+            EXFAIL_OUT(ret);
+        }
+    }
+    
 out:
     
    return ret; 

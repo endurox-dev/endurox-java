@@ -187,14 +187,25 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IILjava_lang_Str
   (JNIEnv *env, jobject data, jint bfldid, jint occ, jstring js)
 {
     jboolean n_str_copy = EXFALSE;
-    const char *n_str = (*env)->GetStringUTFChars(env, js, &n_str_copy);
     
-    ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)n_str, 0L, BFLD_STRING);
-    
-    if (n_str_copy)
+    if (NULL!=js)
     {
-        (*env)->ReleaseStringUTFChars(env, js, n_str);
+        const char *n_str = (*env)->GetStringUTFChars(env, js, &n_str_copy);
+
+        ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)n_str, 0L, BFLD_STRING);
+
+        if (n_str_copy)
+        {
+            (*env)->ReleaseStringUTFChars(env, js, n_str);
+        }
     }
+    else
+    {
+    
+        /* throw exception due to NULL string */
+        ndrxj_ubf_throw(env, BEINVAL, "%s: Failed to add %d (%s) - null value field", 
+                __func__, bfldid, Bfname(bfldid));
+    }   
 }
 
 /**

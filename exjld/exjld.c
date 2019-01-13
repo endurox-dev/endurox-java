@@ -55,7 +55,9 @@
 #include <ndebug.h>
 #include <view_cmn.h>
 #include <ndrx_java_config.h>
-
+#include <exthpool.h>
+#include <thlock.h>
+#include <sys_unix.h>
 #include "exjld.h"
 
 /*---------------------------Externs------------------------------------*/
@@ -96,7 +98,47 @@ expublic exjld_resource_t *ndrx_G_classes_hash = NULL;
 /** List of resources to be embedded */
 expublic exjld_resource_t *ndrx_G_emb_res_hash = NULL;
 
+/** Linker utility thread pool */
+expublic threadpool ndrx_G_thpool = NULL;
+
+/** 
+ * Thread pool global error response
+ * Also we need mutex lock for this
+ */
+expublic int ndrx_G_thpool_error = EXSUCCEED;
+MUTEX_LOCKDECL(ndrx_G_thpool_error_lock);
+MUTEX_LOCKDECL(ndrx_G_thpool_dbg_lock);
+
 /*---------------------------Statics------------------------------------*/
+
+/**
+ * Set thread error
+ * @param ret error code
+ */
+expublic void exjld_thread_error_set(int ret)
+{
+    MUTEX_LOCK_V(ndrx_G_thpool_error_lock);
+    
+    ndrx_G_thpool_error = ret;
+    
+    MUTEX_UNLOCK_V(ndrx_G_thpool_error_lock);
+}
+
+/**
+ * Perform debug locking for clean console output (not overlapping)
+ */
+expublic void exjld_thread_debug_lock(void)
+{
+    MUTEX_LOCK_V(ndrx_G_thpool_dbg_lock);
+}
+
+/**
+ * Unlock the debug output
+ */
+expublic void exjld_thread_debug_unlock(void)
+{
+    MUTEX_UNLOCK_V(ndrx_G_thpool_dbg_lock);
+}
 
 /**
  * print usage
@@ -123,9 +165,59 @@ exprivate void usage(char *progname)
     "                        are allowed. File name must be unique among embedded.\n"
     "                        Accessed via org.endurox.AtmiCtx.getResource(<name>);\n"
     "   -k                  Keep temp files/folder when running in non -t mode\n"
+    "   -j 'nr_jobs'        Number of concurrent jobs, default is 4\n"
     "Example.\n"
     "   $ exjld -o testbin -L /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64 \\\n"
     "      test1.jar hamcrest-core-1.3.jar junit-4.12.jar\n");
+}
+
+/**
+ * extract jar files, threaded
+ * @param ptr ptr to file name
+ * @param p_finish_off shall we finish, not touching...
+ */
+void extract_jar_th (void *ptr, int *p_finish_off)
+{
+    int ret = EXSUCCEED;
+    char tmp[PATH_MAX];
+    int sysret;
+    char *path = (char *)ptr;
+    
+    exjld_thread_debug_lock();
+    NDRX_LOG (log_debug, "Processing JAR file [%s]", path);
+    exjld_thread_debug_unlock();
+
+    /* extract file... */
+    if ('/'==path[0])
+    {
+        snprintf(tmp, sizeof(tmp), "jar xf %s", path);
+    }
+    else
+    {
+        snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, path);
+    }
+
+    exjld_thread_debug_lock();
+    NDRX_LOG(log_debug, "%s", tmp);
+    fprintf(stderr, "%s\n", tmp);
+    exjld_thread_debug_unlock();
+    
+    ret = system(tmp);
+
+    if (EXSUCCEED!=ret)
+    {
+        exjld_thread_debug_lock();
+        NDRX_LOG(log_error, "Failed to execute: [%s]: %d", tmp, sysret);
+        exjld_thread_debug_unlock();
+        goto out;
+    }
+    
+out:
+    
+    if (EXSUCCEED!=ret)
+    {
+        exjld_thread_error_set(ret);
+    }
 }
 
 /**
@@ -140,6 +232,8 @@ int main(int argc, char **argv)
     char tmp[PATH_MAX];
     char tmp_outbin[PATH_MAX]="a.out";
     int i;
+    int tmpi;
+    int jobs = 4;
     opterr = 0;
     
     /* Print Enduro/X Banner */
@@ -165,7 +259,7 @@ int main(int argc, char **argv)
      * n - do not run test
      * 
      */
-    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:I:h")) != -1)
+    while ((c = getopt (argc, argv, "m:o:L:l:b:nt:ke:I:hj:")) != -1)
     {
         switch (c)
         {
@@ -245,6 +339,23 @@ int main(int argc, char **argv)
                     EXFAIL_OUT(ret);
                 }
                 break;
+            case 'j':
+                
+                tmpi = atoi(optarg);
+                
+                if (tmpi > 0)
+                {
+                    jobs = tmpi;
+                }
+                else
+                {
+                    NDRX_LOG(log_error, "Invalid setting [%s] for 'j' arg - "
+                            "cannot be less than 0",
+                            optarg);
+                    EXFAIL_OUT(ret);
+                }
+                
+                break;
             case 'k':
                 ndrx_G_keep_temp = EXTRUE;
                 break;
@@ -304,6 +415,13 @@ int main(int argc, char **argv)
         }
     }
     
+    if (NULL==(ndrx_G_thpool = thpool_init(jobs)))
+    {
+        NDRX_LOG(log_error, "Failed to initialize thread pool (cnt: %d)!", 
+                jobs);
+        EXFAIL_OUT(ret);
+    }
+    
     /* create directory */
     
     if (EXEOS==ndrx_G_wd[0])
@@ -352,30 +470,23 @@ int main(int argc, char **argv)
                 ndrx_G_wd, strerror(errno));
         EXFAIL_OUT(ret);
     }
-
+    
+    /* run extract in parallel */
+    exjld_thread_error_set(EXSUCCEED);
+    
     for (i = optind; i < argc; i++)
     {
-        int sysret;
         was_file = EXTRUE;
-        NDRX_LOG (log_debug, "Processing JAR file [%s]", argv[i]);
+        thpool_add_work(ndrx_G_thpool, (void*)extract_jar_th, (void *)argv[i]);
+    }
+    
+    if (was_file)
+    {
+        thpool_wait(ndrx_G_thpool);
         
-        /* extract file... */
-        if ('/'==argv[i][0])
+        if (EXSUCCEED!=ndrx_G_thpool_error)
         {
-            snprintf(tmp, sizeof(tmp), "jar xf %s", argv[i]);
-        }
-        else
-        {
-            snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, argv[i]);
-        }
-        
-        NDRX_LOG(log_debug, "%s", tmp);
-        fprintf(stderr, "%s\n", tmp);
-        sysret = system(tmp);
-        
-        if (EXSUCCEED!=sysret)
-        {
-            NDRX_LOG(log_error, "Failed to execute: [%s]: %d", tmp, sysret);
+            NDRX_LOG(log_error, "Failed to extract JARs!");
             EXFAIL_OUT(ret);
         }
     }
@@ -427,6 +538,12 @@ int main(int argc, char **argv)
     NDRX_LOG(log_info, "Build ok");
     
 out:
+                
+    if (NULL!=ndrx_G_thpool)
+    {
+        thpool_wait(ndrx_G_thpool);
+        thpool_destroy(ndrx_G_thpool);
+    }
                 
     if (EXEOS!=ndrx_G_owd[0])
     {

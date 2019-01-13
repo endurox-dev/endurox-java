@@ -81,31 +81,6 @@ public class BMarshalTest {
     }
     
     /**
-     * The occurrence is missing, error
-
-    @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
-    public void testUnMarshalNoOcc() {
-        
-        AtmiCtx ctx = new AtmiCtx();
-        assertNotEquals(ctx.getCtx(), 0x0);
-        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
-        assertNotEquals(ub, null);
-
-        short s = 100;
-        ub.Badd(test.T_SHORT_FLD, s);
-
-        BMarshalClassSingle sing = new BMarshalClassSingle();
-
-        System.out.println("About to list... Single");
-
-        ButilTest.loadTestData1(ub);
-        
-        ub.unMarshal(sing, 2);
-        
-    }
-    *      */
-    
-    /**
      * Shall get error as field is missing in buffer
      */
     @Test(expected = org.endurox.exceptions.UbfBNOTPRESException.class)
@@ -143,7 +118,7 @@ public class BMarshalTest {
      * This will perform normal array tests, the exception cases, min max
      * will test in other case
      */
-    @Test
+    //@Test
     public void testUnMarshalArray() {
         
         AtmiCtx ctx = new AtmiCtx();
@@ -299,9 +274,9 @@ public class BMarshalTest {
     }
     
     /**
-     * Test array marshaller, null ptr exception in array
+     * Test array marshaller, null ptr exception -> no exception..
      */
-    @Test(expected = java.lang.NullPointerException.class)
+    @Test
     public void testMarshalArrayNullExcpetion() {
         
         BMarshalClassArray a = BMarshalClassArray.getTestData();
@@ -316,7 +291,7 @@ public class BMarshalTest {
     }
     
     /**
-     * Test array marshaller
+     * Test array marshaler
      */
     @Test
     public void testMarshalArray() {
@@ -596,6 +571,9 @@ public class BMarshalTest {
         obj.tstring = new String[4];
         obj.tstring[0] = "hello enduro";
         obj.tstring[1] = "hello x";
+        
+        /* empty occurrence, process until it, i.e. we need 0 & 1 occs in UBF */
+        
         obj.tstring[3] = "zzz";
                 
         try
@@ -610,7 +588,7 @@ public class BMarshalTest {
         assertEquals(false, gotex);
         /* check that we stop at nulls.. */
         assertEquals(true, ub.Bqboolev("T_STRING_FLD=='hello enduro' && "
-                + "T_STRING_FLD[1]='hello x' "
+                + "T_STRING_FLD[1]=='hello x' && "
                 + "!T_STRING_FLD[2]"));
         
     }

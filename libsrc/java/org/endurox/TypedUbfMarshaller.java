@@ -271,8 +271,14 @@ public class TypedUbfMarshaller {
                              * shall we put exception?
                              * I guess so...
                              */
-                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
-                                    (Short)Array.get(fldVal, occi));
+                            Short s = (Short)Array.get(fldVal, occi);
+                            
+                            if (null==s)
+                            {
+                                break;
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, s);
                             occsProc++;
                         }
                     } 
@@ -280,8 +286,14 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
-                                    (Long)Array.get(fldVal, occi));
+                            Long l = (Long)Array.get(fldVal, occi);
+                            
+                            if (null==l)
+                            {
+                                break;
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, l);
                             occsProc++;
                         }
                     } 
@@ -289,8 +301,14 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
-                                    (Byte)Array.get(fldVal, occi));
+                            Byte b = (Byte)Array.get(fldVal, occi);
+                            
+                            if (null==b)
+                            {
+                                break;
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, b);
                             occsProc++;
                         }
                     } 
@@ -298,8 +316,14 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
-                                    (Float)Array.get(fldVal, occi));
+                            Float f = (Float)Array.get(fldVal, occi);
+                            
+                            if (null==f)
+                            {
+                                break;
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, f);
                             occsProc++;
                         }
                     } 
@@ -307,8 +331,14 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
-                                    (Double)Array.get(fldVal, occi));
+                            Double d = (Double)Array.get(fldVal, occi);
+                            
+                            if (null==d)
+                            {
+                                break;
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, d);
                             occsProc++;
                         }
                     } 
@@ -316,8 +346,14 @@ public class TypedUbfMarshaller {
                         
                         for (occi=occStart; occi<occStop; occi++)
                         {
-                            ub.Bchg(fAnno.bfldid(), occi-occStart, 
-                                    (String)Array.get(fldVal, occi));
+                            String s = (String)Array.get(fldVal, occi);
+                            
+                            if (null==s)
+                            {
+                                break;
+                            }
+                            
+                            ub.Bchg(fAnno.bfldid(), occi-occStart, s);
                             occsProc++;
                         }
                     }
@@ -327,6 +363,11 @@ public class TypedUbfMarshaller {
                         {
                             /* convert array to unboxed type... */
                             byte[] tmp = (byte[])Array.get(fldVal, occi);
+                            
+                            if (null==tmp)
+                            {
+                                break;
+                            }
                             
                             ub.Bchg(fAnno.bfldid(), occi-occStart, tmp);
                             occsProc++;
@@ -347,6 +388,11 @@ public class TypedUbfMarshaller {
                                 tmpB[i] = (Byte)Array.get(tmp, i);
                             }
                             
+                            if (null==tmp)
+                            {
+                                break;
+                            }
+                            
                             ub.Bchg(fAnno.bfldid(), occi-occStart, tmpB);
                             occsProc++;
                         }
@@ -363,6 +409,11 @@ public class TypedUbfMarshaller {
                         /* get short and set */
                         Short s = (Short)fldVal;
                         
+                        if (null==s)
+                        {
+                            break;
+                        }
+                        
                         /* set field to struct */
                         ub.Bchg(fAnno.bfldid(), 0, s);
                         occsProc++;
@@ -372,30 +423,59 @@ public class TypedUbfMarshaller {
                         /* get long */
                         Long l = (Long)fldVal;
                         
+                        if (null==l)
+                        {
+                            break;
+                        }
+                        
                         ub.Bchg(fAnno.bfldid(), 0, l);
                         occsProc++;
                     }
                     else if (fldtyp.equals("byte") || fldtyp.equals("java.lang.Byte")) {
                         
                         Byte b = (Byte)fldVal;
+                        
+                        if (null==b)
+                        {
+                            break;
+                        }
+                        
                         ub.Bchg(fAnno.bfldid(), 0, b);
                         occsProc++;
                     }
                     else if (fldtyp.equals("float") || fldtyp.equals("java.lang.Float")) {
                         
                         Float f = (Float)fldVal;
+                        
+                        if (null==f)
+                        {
+                            break;
+                        }
+                        
                         ub.Bchg(fAnno.bfldid(), 0, f);
                         occsProc++;
                     }
                     else if (fldtyp.equals("double") || fldtyp.equals("java.lang.Double")) {
                         
                         Double d = (Double)fldVal;
+                        
+                        if (null==d)
+                        {
+                            break;
+                        }
+                        
                         ub.Bchg(fAnno.bfldid(), 0, d);
                         occsProc++;
                     }
                     else if (fldtyp.equals("java.lang.String")) {
                         
                         String s = (String)fldVal;
+                        
+                        if (null==s)
+                        {
+                            break;
+                        }
+                        
                         ub.Bchg(fAnno.bfldid(), 0, s);
                         occsProc++;
                     }

@@ -35,6 +35,7 @@
 /*------------------------------Includes--------------------------------------*/
 /* #include <sys_unix.h> */
 #include <exhash.h>
+#include <exthpool.h>
 /*------------------------------Macros----------------------------------------*/
 /*------------------------------Enums-----------------------------------------*/
 /*------------------------------Typedefs--------------------------------------*/
@@ -66,6 +67,26 @@ struct exjld_resource
  */
 typedef struct exjld_resource exjld_resource_t;
 
+
+/**
+ * Structure for threaded resource generator
+ */
+typedef struct 
+{
+    /** head hash head (double ptr as can change e.g. from NULL to value) */
+    exjld_resource_t **head;
+    
+    /** resource name */
+    char *resname;
+    /** resource id (just unique id for resource files) */
+    int id;
+    /** resource path on disk */
+    char *respath;
+    /** embedded file prefix - either class or resources.. */
+    char *emb_pfx;
+    
+} resgen_thread_data_t;
+
 /*------------------------------Externs---------------------------------------*/
 extern char ndrx_G_build_cmd[];
 extern int ndrx_G_do_test;
@@ -81,6 +102,8 @@ extern string_list_t* ndrx_G_embedded_res;
 
 extern exjld_resource_t *ndrx_G_classes_hash;
 extern exjld_resource_t *ndrx_G_emb_res_hash;
+extern int ndrx_G_thpool_error;
+extern threadpool ndrx_G_thpool;
 
 /*------------------------------Globals---------------------------------------*/
 /*------------------------------Statics---------------------------------------*/
@@ -88,11 +111,14 @@ extern exjld_resource_t *ndrx_G_emb_res_hash;
 
 
 extern exjld_resource_t * exljd_res_find(exjld_resource_t *head, char *resname);
-extern int exljd_res_add(exjld_resource_t **head, char *resname,
-        int id, char *respath, char *emb_pfx);
-extern void exljd_res_sort_by_resname(exjld_resource_t **head);
-extern void exljd_res_sort_by_free(exjld_resource_t **head);
+extern void exljd_res_add_th (void *ptr, int *p_finish_off);
 
+extern void exljd_res_sort_by_resname(exjld_resource_t **head);
+extern void exljd_res_free(exjld_resource_t **head);
+
+extern void exjld_thread_error_set(int ret);
+extern void exjld_thread_debug_lock(void);
+extern void exjld_thread_debug_unlock(void);
 
 extern int exjld_emb_build_hash(void);
 extern int exjld_class_build_hash(void);

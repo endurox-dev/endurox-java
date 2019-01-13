@@ -56,6 +56,7 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
+exprivate int M_was_file = EXFALSE; /**< Have we processed something?       */
 
 /**
  * Process directory entry callback
@@ -74,14 +75,16 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
     char tmp[PATH_MAX];
     char *p = tmp;
     int i;
-    
+    resgen_thread_data_t *data;
     len = strlen(filepath);
     
     /* Accept files only... */
     if (FTW_F == typeflag && len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
     {
         id++;
+        exjld_thread_debug_lock();
         NDRX_LOG(log_dump, "Processing as class: [%s]", filepath);
+        exjld_thread_debug_unlock();
         
         NDRX_STRCPY_SAFE(tmp, filepath);
         
@@ -104,14 +107,40 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
         /* strip down lass 5 symbols */
         p[len-6] = EXEOS;
         
+        exjld_thread_debug_lock();
         NDRX_LOG(log_dump, "Got class: [%s]", p);
+        exjld_thread_debug_unlock();
         
+        /* move to job... */
+        /*
         if (EXSUCCEED!=exljd_res_add(&ndrx_G_classes_hash, p, id,  
                 (char *)filepath, "class"))
         {
             NDRX_LOG(log_error, "Failed to add embedded resource [%s]", filepath);
             EXFAIL_OUT(ret);
         }
+         * */
+        
+        data = NDRX_MALLOC(sizeof(resgen_thread_data_t));
+        
+        if (NULL==data)
+        {
+            NDRX_LOG(log_error, "Failed to malloc %d bytes: %s", 
+                    sizeof(resgen_thread_data_t), strerror(errno));
+            EXFAIL_OUT(ret);
+        }
+        
+        /* fill up the call */
+        data->head = &ndrx_G_classes_hash;
+        data->id = id;
+        
+        NDRX_STRDUP_OUT(data->resname, p);
+        NDRX_STRDUP_OUT(data->respath, filepath);
+        NDRX_STRDUP_OUT(data->emb_pfx, "class");
+        M_was_file = EXTRUE;
+        
+        thpool_add_work(ndrx_G_thpool, (void*)exljd_res_add_th, (void *)data);
+         
     }
     
 out:
@@ -131,6 +160,17 @@ expublic int exjld_class_build_hash(void)
         NDRX_LOG(log_error, "Failed to scan local directory: %s",
                     strerror(errno));
         EXFAIL_OUT(ret);
+    }
+    
+    if (M_was_file)
+    {
+        thpool_wait(ndrx_G_thpool);
+        
+        if (EXSUCCEED!=ndrx_G_thpool_error)
+        {
+            NDRX_LOG(log_error, "Failed to build classes!");
+            EXFAIL_OUT(ret);
+        }
     }
 
 out:
