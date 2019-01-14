@@ -652,13 +652,32 @@ public class TypedUbf extends TypedBuffer {
      * Marshaling is done via annotations. The annotations shall be set of the
      * class fields (can be private). The access for setting or getting is done
      * by use of camel case access to getter and setters. Following annotations
-     * are available: @UbfField(Compiled_field_ID[, Access: UBF_MAND|OBJ_MAND])
-     * where UBF_MAND says that at least one UBF field must be transfered to
-     * Object. The OBJ_MAND says, that at least one Object field must be transfered
-     * to UBF buffer.
+     * are available: @UbfField(Compiled_field_ID[, ubfmin=NR][, ojbmin=NR])
+     * where ubfmin says minimum number of UBF fields to be present when performing
+     * unmarhsal. The objmin says, minimum number of object array fields to be 
+     * present when loading into UBF. If criteria is not met, then UbfBNOTPRESException
+     * exception is thrown.
+     * 
      * Supported field types are as usual: short, byte, long, float, double
-     * string and byte array. To support nulls for primitive types,
-     * types Short, Byte, Long, Float and Double are supported too.
+     * string and byte array. Boxed types Short, Byte, Long, Float and 
+     * Double are supported too.
+     * 
+     * When marshaling array object which has some null element in the middle,
+     * the marshaling will stop at that point. And number of "objmin" will be 
+     * counted till the null.
+     * 
+     * Also for boxed types, "objmin" tests are applied for non array fields too,
+     * thus "objmin" may check for field set or not set rules.
+     * 
+     * When performing marshal or unmarshal for specific occurrence (or array
+     * element in case of object), the specified occurrence fields are loaded
+     * into target object into 0 occurrence elements. For example if doing marshal
+     * (i.e. copy from object to UBF), of occurrence 2 (i.e. array index 2),
+     * then data of array index 2 will be copied to UBF field occurrences 0.
+     * 
+     * In case of non array elements, they will be copied too to target UBF
+     * occurrence 0, no matter of occurrence passed to marshal/unmarshal methods.
+     * 
      * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
      */
     /**

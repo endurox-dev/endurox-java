@@ -144,10 +144,7 @@ public class TypedUbfMarshaller {
                 minFlds = fAnno.ojbmin();
                 String fldtyp = field.getType().getName();
                         
-                System.out.println(String.format("YOPT HELLO =>> [%s]\n", 
-                            field.getName()));
-                
-                /* TODO: Detect type is it array, or what?
+                /* Detect type is it array, or what?
                  * if array, get the length 
                 */
                 fldVal = invokeGetter(o, field.getName());
