@@ -497,7 +497,9 @@ JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_TpUBFToJSON
 {
     char *cdata;
     long clen;
-    jlong ret = EXFAIL;
+    int ret = EXSUCCEED;
+    char *tmp = NULL;
+    int bufsz;
     
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
@@ -512,20 +514,38 @@ JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_TpUBFToJSON
     }
     
     /* allocate char buffer */
+    bufsz = Bsizeof((UBFH *)data) * 10;
     
+    tmp = NDRX_MALLOC(bufsz);
+    
+    if (NULL==tmp)
+    {
+        ndrxj_ubf_throw(env, BEUNIX, "Failed to malloc JSON temp buffer of %d "
+        "(UBF size of multiplied by 10) bytes: %s", tmp, strerror(errno));
+        EXFAIL_OUT(ret);
+    }
     
     /* build json string */
-    
-    /* create return string... */
-    
+    if (EXSUCCEED!=tpubftojson((UBFH *)cdata, tmp, bufsz))
+    {
+        ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+        EXFAIL_OUT(ret);
+    }
+        
 out:
 
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
-    return NULL;
+    if (EXSUCCEED==ret)
+    {
+        return (*env)->NewStringUTF(env, tmp);
+    }
+    else
+    {
+        return NULL;
+    }    
 }
-
 
 /*
  * TODO:

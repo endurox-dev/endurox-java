@@ -81,7 +81,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
     snprintf(cls, sizeof(cls), "org/endurox/exceptions/Atmi%sException", 
             tpecodestr(err));
     
-    NDRX_LOG(log_info, "Throwing: [%s]", cls);
+    NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
     /*
     ex = (*env)->FindClass(env, cls);
@@ -163,7 +163,7 @@ expublic void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
             ndrx_Necodestr(err));
     
     
-    NDRX_LOG(log_info, "Throwing: [%s]", cls, error);
+    NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
     ex = (*env)->FindClass(env, cls);
     
@@ -195,7 +195,7 @@ expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
     snprintf(cls, sizeof(cls), "org/endurox/exceptions/Ubf%sException", 
             Becodestr(err));
     
-    NDRX_LOG(log_info, "Throwing: [%s]", cls);
+    NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
     ex = (*env)->FindClass(env, cls);
     
@@ -239,7 +239,5 @@ expublic char *ndrxj_exception_backtrace(JNIEnv *env)
     
     return ret;
 }
-
-/* vim: set ts=4 sw=4 et cindent: */
 
 /* vim: set ts=4 sw=4 et smartindent: */
