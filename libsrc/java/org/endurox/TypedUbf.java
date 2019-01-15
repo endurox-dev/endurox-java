@@ -719,6 +719,19 @@ public class TypedUbf extends TypedBuffer {
     /** @} */ // end of UbfMarshalling
     
     /**
+     * Restore UBF buffer from JSON.
+     * it is assumed that there is enough space in UBF buffer to store all data.
+     * @param json JSON string
+     */
+    public native void TpJSONToUBF(String json);
+    
+    /**
+     * Convert UBF buffer to JSON string
+     * @return JSON string
+     */
+    public native String TpUBFToJSON();
+    
+    /**
      * 
      * 
      * 7.10.37. TypedUBF.TpJSONToUBF()

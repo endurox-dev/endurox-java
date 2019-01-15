@@ -443,6 +443,90 @@ out:
     return ret;
 }
 
+/**
+ * Build UBF buffer from JSON data
+ * @param env java env
+ * @param data UBF buffer
+ * @param json json data
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_TpJSONToUBF
+  (JNIEnv * env, jobject data, jstring json)
+{
+    char *cdata;
+    long clen;
+    jboolean n_str_copy = EXFALSE;
+    const char *n_str = (*env)->GetStringUTFChars(env, json, &n_str_copy);
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        goto out;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    if (EXSUCCEED!=tpjsontoubf((UBFH *)cdata, (char *)n_str))
+    {
+        ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+        goto out;
+    }
+    
+out:
+        
+    if (n_str_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, json, n_str);
+    }
+
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Generate JSON from UBF buffer
+ * @param env java env
+ * @param data UBF buffer
+ * @return allocated string with json
+ */
+JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_TpUBFToJSON
+  (JNIEnv * env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jlong ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* allocate char buffer */
+    
+    
+    /* build json string */
+    
+    /* create return string... */
+    
+out:
+
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return NULL;
+}
+
+
 /*
  * TODO:
  * executed on DEST object:

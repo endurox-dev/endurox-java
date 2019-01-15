@@ -94,6 +94,9 @@ parameter other directory can be chosen.
 [*-e* 'EMBED_RESOURCES']::
 Additional resource files that can be accessible via Enduro/X Java API.
 
+[*-j* 'NRTHREADS']::
+Additional resource files that can be accessible via Enduro/X Java API.
+
 [*-h*]::
 Print usage.
 
