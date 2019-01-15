@@ -22,9 +22,18 @@
 
 source ~/ndrx_home
 
+# Create some test env...
+xadmin provision -d
+pushd . 
+
+cd conf
+. settest1
+
+popd
+
 # Use decimal sepertar with dots..
 export LANG=en_UK.UTF-8
-export NDRX_CCONFIG=`pwd`/settings.ini
+export NDRX_CCONFIG1=`pwd`/settings.ini
 export FIELDTBLS=Exfields,test.fd
 export FLDTBLDIR=`pwd`
 unset NDRX_DEBUG_CONF

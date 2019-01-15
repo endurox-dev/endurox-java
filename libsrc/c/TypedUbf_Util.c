@@ -514,7 +514,7 @@ JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_TpUBFToJSON
     }
     
     /* allocate char buffer */
-    bufsz = Bsizeof((UBFH *)data) * 10;
+    bufsz = Bsizeof((UBFH *)cdata) * 10;
     
     tmp = NDRX_MALLOC(bufsz);
     
