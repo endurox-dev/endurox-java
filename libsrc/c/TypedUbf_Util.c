@@ -449,7 +449,7 @@ out:
  * @param data UBF buffer
  * @param json json data
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_TpJSONToUBF
+JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tpjsontoubf
   (JNIEnv * env, jobject data, jstring json)
 {
     char *cdata;
@@ -492,7 +492,7 @@ out:
  * @param data UBF buffer
  * @return allocated string with json
  */
-JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_TpUBFToJSON
+JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_tpubftojson
   (JNIEnv * env, jobject data)
 {
     char *cdata;
