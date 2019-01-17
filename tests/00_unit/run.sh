@@ -23,7 +23,9 @@
 source ~/ndrx_home
 
 # Create some test env...
-xadmin provision -d
+# override some details to local...
+#
+xadmin provision -d -vaddubf=test.fd
 pushd . 
 
 cd conf
