@@ -677,12 +677,23 @@ public class TypedUbf extends TypedBuffer {
      * 
      * In case of non array elements, they will be copied too to target UBF
      * occurrence 0, no matter of occurrence passed to marshal/unmarshal methods.
-     * 
      * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
      */
     /**
      * Copy object fields to UBF
      * @param o object which shall be copied to this UBF
+     * @throws UbfBEUNIXException cannot get field value from object, access
+     *  problem, either got: IllegalAccessException/IllegalArgumentException/
+     *  InvocationTargetException or IntrospectionException exception
+     * @thorws UbfBNOTPRESException two few object array elements ("objmin" not
+     *  reached).
+     * @thorws UbfBSYNTAXException Invalid mapped field type. Enduro/X for Java
+     *  supports only following data types: short,Short,long,Long,byte,Byte,float,
+     *  Float,double,Double,String,byte[].
+     * @throws UbfBALIGNERRException Invalid Buffer
+     * @throws UbfBNOTFLDException Invalid Buffer
+     * @throws UbfBNOSPACEException No space in buffer
+     * @throws UbfBBADFLDException No space in buffer
      */
     public void marshal(Object o) {
         TypedUbfMarshaller.marshal(o, -1, this);
