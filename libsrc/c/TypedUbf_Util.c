@@ -547,6 +547,49 @@ out:
     }    
 }
 
+/**
+ * Print UBF buffer to log file
+ * @param env java env
+ * @param data UBF buffer to print
+ * @param lev debug level
+ * @param debug title
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tplogprintubf
+  (JNIEnv * env, jobject data, jint lev, jstring title)
+{
+    char *cdata;
+    long clen;
+    int ret = EXSUCCEED;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        EXFAIL_OUT(ret);
+    }
+    
+    //tplogprintubf(lev, )
+    
+out:
+
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return;
+}
+
+/*
+JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tplogprintubf
+  (JNIEnv *, jobject);
+ * 
+ * 
+*/
+
 /*
  * TODO:
  * executed on DEST object:

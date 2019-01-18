@@ -766,6 +766,11 @@ public class TypedUbf extends TypedBuffer {
      * Restore UBF buffer from JSON.
      * it is assumed that there is enough space in UBF buffer to store all data.
      * see tpjsontoubf(3) manpage for more information.
+     * @throws AtmiTPEINVALException Invalid JSON or invalid base64 encoding,
+     * @throws AtmiTPESYSTEMException UBF sub-system error, JSON sub-system error.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. In case of 
+     *  insufficient memory this error will be generated too.
      * @param json JSON string
      */
     public native void tpjsontoubf(String json);
@@ -773,16 +778,27 @@ public class TypedUbf extends TypedBuffer {
     /**
      * Convert UBF buffer to JSON string
      * see tpubftojson(3) manpage for more information.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. Might be 
+     *  insufficient memory, JSON or UBF library failure.
+     * @throws AtmiTPEOSException Not enough space in output buffer.
      * @return JSON string
      */
     public native String tpubftojson();
     
     /**
      * Print UBF buffer to TPLOG
-     * @return 
+     * @param [in] lev log level see AtmiConstants.LOG_...
+     * @param [in] title Title of UBF buffer dump
      */
-    public native void tplogprintubf();
+    public native void tplogprintubf(int lev, String title);
         
+    
+    /* TODO: Add: 
+    extern NDRX_API int Bjoin(UBFH *dest, UBFH *src);
+extern NDRX_API int Bojoin(UBFH *dest, UBFH *src);
+
+    */
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
