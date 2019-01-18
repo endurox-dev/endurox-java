@@ -60,9 +60,9 @@ public class TypedUbf extends TypedBuffer {
      * Add field to UBF buffer. Group of methods for different data types.
      * @defgroup Badd function calls
      * @param bfldid compiled field id
-     * @throw UbfBALIGNERRException Invalid Buffer
-     * @throw UbfBNOTFLDException Invalid Buffer
-     * @throw UbfBNOSPACEException No space in buffer
+     * @throws UbfBALIGNERRException Invalid Buffer
+     * @throws UbfBNOTFLDException Invalid Buffer
+     * @throws UbfBNOSPACEException No space in buffer
      * @{
      */
     
@@ -119,9 +119,9 @@ public class TypedUbf extends TypedBuffer {
     
     /**
      * Print the UBF buffer to STDOUT
-     * @throw AtmiBALIGNERRException Corrupted buffer or 
+     * @throws AtmiBALIGNERRException Corrupted buffer or 
      *  pointing to not aligned memory area.
-     * @throw AtmiBNOTFLDException Buffer not fielded, not 
+     * @throws AtmiBNOTFLDException Buffer not fielded, not 
      *  correctly allocated or corrupted.
      */
     public native void Bprint();
@@ -134,11 +134,11 @@ public class TypedUbf extends TypedBuffer {
      * @param bfldid compiled field id
      * @param occ field occurrence
      * @return casted data type
-     * @throw UbfBBADFLDException Bad field id requested
-     * @thorw UbfBNOTPRESException Field not present
-     * @throw UbfBALIGNERRException Invalid Buffer
-     * @throw UbfBNOTFLDException Invalid Buffer
-     * @throw UbfBNOSPACEException No space in buffer
+     * @throws UbfBBADFLDException Bad field id requested
+     * @thorws UbfBNOTPRESException Field not present
+     * @throws UbfBALIGNERRException Invalid Buffer
+     * @throws UbfBNOTFLDException Invalid Buffer
+     * @throws UbfBNOSPACEException No space in buffer
      * @{
      */
     public native short BgetShort(int bfldid, int occ);
@@ -163,9 +163,9 @@ public class TypedUbf extends TypedBuffer {
      *  on the object.
      * @defgroup Baddfast function calls
      * @param bfldid compiled field id
-     * @throw UbfBALIGNERRException Invalid Buffer
-     * @throw UbfBNOTFLDException Invalid Buffer
-     * @throw UbfBNOSPACEException No space in buffer
+     * @throws UbfBALIGNERRException Invalid Buffer
+     * @throws UbfBNOTFLDException Invalid Buffer
+     * @throws UbfBNOSPACEException No space in buffer
      * @{
      */
     
@@ -232,10 +232,10 @@ public class TypedUbf extends TypedBuffer {
      * @defgroup Bchg function calls
      * @param bfldid compiled field id
      * @param occ field occurrence to change
-     * @throw UbfBALIGNERRException Invalid Buffer
-     * @throw UbfBNOTFLDException Invalid Buffer
-     * @throw UbfBNOSPACEException No space in buffer
-     * @throw UbfBBADFLDException No space in buffer
+     * @throws UbfBALIGNERRException Invalid Buffer
+     * @throws UbfBNOTFLDException Invalid Buffer
+     * @throws UbfBNOSPACEException No space in buffer
+     * @throws UbfBBADFLDException No space in buffer
      * @{
      */
     
@@ -360,10 +360,10 @@ public class TypedUbf extends TypedBuffer {
      * For more information see Bdel(3) manpage.
      * @param bfldid compiled field id
      * @param occ occurrence to erase
-     * UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
-     * UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
-     * UbfBBADFLDException Invalid field id passed.
-     * UbfBNOTPRESException Field not present.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     * @throws UbfBBADFLDException Invalid field id passed.
+     * @throws UbfBNOTPRESException Field not present.
      */
     public native void Bdel(int bfldid, int occ);
     
@@ -680,7 +680,7 @@ public class TypedUbf extends TypedBuffer {
      * @defgroup UbfMarshalling Convert UBF buffer to local objects and vice versa
      */
     /**
-     * Copy object fields to UBF
+     * Copy object fields to UBF (serialize)
      * @param o object which shall be copied to this UBF
      * @throws UbfBEUNIXException cannot get field value from object, access
      *  problem, either got: IllegalAccessException/IllegalArgumentException/
@@ -700,27 +700,60 @@ public class TypedUbf extends TypedBuffer {
     }
             
     /**
-     * Copy object fields to UBF
+     * Copy object fields to UBF (serialize)
      * @param o object which shall be copied to this UBF
      * @param occ occurrence to serialize
+     * @throws UbfBEUNIXException cannot get field value from object, access
+     *  problem, either got: IllegalAccessException/IllegalArgumentException/
+     *  InvocationTargetException or IntrospectionException exception
+     * @thorws UbfBNOTPRESException two few object array elements ("objmin" not
+     *  reached).
+     * @thorws UbfBSYNTAXException Invalid mapped field type. Enduro/X for Java
+     *  supports only following data types: short,Short,long,Long,byte,Byte,float,
+     *  Float,double,Double,String,byte[].
+     * @throws UbfBALIGNERRException Invalid Buffer
+     * @throws UbfBNOTFLDException Invalid Buffer
+     * @throws UbfBNOSPACEException No space in buffer
+     * @throws UbfBBADFLDException No space in buffer
      */
     public void marshal(Object o, int occ) {
         TypedUbfMarshaller.marshal(o, occ, this);
     }
     
     /**
-     * Copy UBF fields to object
+     * Copy UBF fields to object (deserialize)
      * This buffer is reset before filling in with data from \p o.
-     * @param o 
+     * @param o object to which copy the UBF data
+     * @throws UbfBEUNIXException 
+     * @thorws UbfBNOTPRESException 
+     * @thorws UbfBSYNTAXException Error while accessing object \p o. Problem
+     *  with setter methods. Got either exception: IllegalAccessException,
+     *  IllegalArgumentException, InvocationTargetException, IntrospectionException.
+     * @throws UbfBALIGNERRException Invalid UBF Buffer
+     * @throws UbfBNOTFLDException Invalid UBF Buffer
+     * @throws UbfBNOSPACEException No space in buffer (temp buffer for read)
+     * @thorws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
+     *  minimum fields.
+     * 
      */
     public void unMarshal(Object o) {
         TypedUbfMarshaller.unmarshal(o, -1, this);
     }
     
     /**
-     * Copy UBF fields to object
-     * @param o object to copy data from
+     * Copy UBF fields to object(deserialize)
+     * @param o object o which copy UBF data
      * @param occ array element occurrence to copy
+     * @throws UbfBEUNIXException 
+     * @thorws UbfBNOTPRESException 
+     * @thorws UbfBSYNTAXException Error while accessing object \p o. Problem
+     *  with setter methods. Got either exception: IllegalAccessException,
+     *  IllegalArgumentException, InvocationTargetException, IntrospectionException.
+     * @throws UbfBALIGNERRException Invalid UBF Buffer
+     * @throws UbfBNOTFLDException Invalid UBF Buffer
+     * @throws UbfBNOSPACEException No space in buffer (temp buffer for read)
+     * @thorws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
+     *  minimum fields.
      */
     public void unMarshal(Object o, int occ) {
         /* do this logic in java code, it will be simpler */
@@ -745,13 +778,11 @@ public class TypedUbf extends TypedBuffer {
     public native String tpubftojson();
     
     /**
-     * 
-     * 
-     * 7.10.37. TypedUBF.TpJSONToUBF()
-7.10.38. TypedUBF.TpLogPrintUBF()
-7.10.40. TypedUBF.TpUBFToJSON()
-*/
-    
+     * Print UBF buffer to TPLOG
+     * @return 
+     */
+    public native void tplogprintubf();
+        
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

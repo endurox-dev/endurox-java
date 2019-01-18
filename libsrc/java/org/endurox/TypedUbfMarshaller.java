@@ -132,7 +132,6 @@ public class TypedUbfMarshaller {
         int occStop;
         int occs;
         int minFlds;
-        int totalEls;
         Object fldVal;
         
         Field[] fields = o.getClass().getDeclaredFields();
@@ -521,10 +520,6 @@ public class TypedUbfMarshaller {
                 
                 /* process annotation... */
                 occsProc = 0;
-                
-                /* TODO: Get the setter of the field 
-                 * TODO: Needs array implementation for all elms
-                 */
                 
                 /* Check the field type  
                 field.getType()
