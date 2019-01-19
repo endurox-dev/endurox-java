@@ -182,8 +182,6 @@ JNIEXPORT jbyte JNICALL Java_org_endurox_TypedUbf_BgetByte
     /* return the value */
     v = (char *)buf;
     
-    
-    NDRX_LOG(log_error, "YOPOTEL: %d", (int)*v);
     return (jbyte)*v;
 }
 

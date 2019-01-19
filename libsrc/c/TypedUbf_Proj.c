@@ -509,5 +509,112 @@ out:
     return (jboolean)ret;
 }
 
+/**
+ * Update data buffer with common fields from \p src. Non common fields are
+ * removed from \p data
+ * @param env java env
+ * @param data UBF data buffer (dest)
+ * @param src source buffer to take data from
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bjoin
+  (JNIEnv * env, jobject data, jobject src)
+{
+    char *cdata_dst;
+    long clen_dst;
+    
+    char *cdata_src;
+    long clen_src;
+    
+    int ret = EXSUCCEED;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
+            &clen_dst))
+    {
+        UBF_LOG(log_error, "Failed to get dest/data buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
+            &clen_src))
+    {
+        UBF_LOG(log_error, "Failed to get source buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Delete the field */
+    if (EXSUCCEED!=Bjoin((UBFH *)cdata_dst, (UBFH *)cdata_src))
+    {
+        ndrxj_ubf_throw(env, Berror, "%s: Bjoin failed on %p buffer: %s", 
+                __func__, cdata_dst, Bstrerror(Berror));
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return;
+}
+
+/**
+ * Outer join two UBF buffers - update common fields in data, do not add
+ * or remove not matching fields from src.
+ * @param env java env
+ * @param data dest buffer
+ * @param src source buffer
+ */
+JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bojoin
+  (JNIEnv * env, jobject data, jobject src)
+{
+    char *cdata_dst;
+    long clen_dst;
+    
+    char *cdata_src;
+    long clen_src;
+    
+    int ret = EXSUCCEED;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
+            &clen_dst))
+    {
+        UBF_LOG(log_error, "Failed to get dest/data buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
+            &clen_src))
+    {
+        UBF_LOG(log_error, "Failed to get source buffer");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Delete the field */
+    if (EXSUCCEED!=Bojoin((UBFH *)cdata_dst, (UBFH *)cdata_src))
+    {
+        ndrxj_ubf_throw(env, Berror, "%s: Bojoin failed on %p buffer: %s", 
+                __func__, cdata_dst, Bstrerror(Berror));
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return;
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */

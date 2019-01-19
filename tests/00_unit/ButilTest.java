@@ -381,7 +381,27 @@ public class ButilTest {
         assertEquals(false, ub.Bpres(test.T_DOUBLE_FLD, 0));
         assertEquals(false, ub.Bpres(test.T_STRING_FLD, 0));
         assertEquals(false, ub.Bpres(test.T_CARRAY_FLD, 0));   
+    }
+    
+    
+    /**
+     * Perform tplogprintubf() testing
+     */
+    @Test
+    public void testTplogprintubf() {
         
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(null, ub);
+     
+        
+        /* load some test data.. */
+        loadTestData1(ub);
+        
+        ub.Badd(test.T_STRING_10_FLD, "HELLO MARS");
+        
+        ub.tplogprintubf(AtmiConstants.LOG_ERROR, "HELLO TEST");
     }
     
 }

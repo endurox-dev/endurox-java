@@ -792,13 +792,46 @@ public class TypedUbf extends TypedBuffer {
      * @param [in] title Title of UBF buffer dump
      */
     public native void tplogprintubf(int lev, String title);
-        
     
-    /* TODO: Add: 
-    extern NDRX_API int Bjoin(UBFH *dest, UBFH *src);
-extern NDRX_API int Bojoin(UBFH *dest, UBFH *src);
-
-    */
+    /**
+     * Return number of fields in UBF buffer
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing 
+     *  to not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted. p_ub is NULL.
+     * @throws UbfFBADFLDException Invalid field type.
+     * @return number of UBF buffer fields
+     */
+    public native int Bnum();
+    
+    /**
+     * Join UBF buffer. This object is destination.
+     * Leave in this object only matching field IDs and occurrences. Matched
+     * fields are updated from source buffer. Non matched fields are removed
+     * from UBF buffer.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not 
+     *  aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted. \p src is NULL.
+     * @throws UbfFBADFLDException Invalid field type.
+     * @param src[in] source buffer
+     */
+    public native void Bjoin(TypedUbf src);
+    
+    /**
+     * Outer join UBF buffer. This object is destination.
+     * Method updates matched fields/occurrences in this buffer. The non matched
+     * fields are left un-touched. Non matched fields from \p src is not added
+     * to this buffer.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not 
+     *  aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted. \p src is NULL.
+     * @throws UbfFBADFLDException Invalid field type.
+     * @param src[in] source buffer
+     */
+    public native void Bojoin(TypedUbf src);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

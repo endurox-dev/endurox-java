@@ -580,10 +580,10 @@ public class AtmiCtx {
     /**
      * Initialize current ATMI Context as a ATMI client
      * @param tpinfo might be NULL. Currently not used by Enduro/X
-     * @thorw AtmiTPEINVALException environment not configured
-     * @throw AtmiTPESYSTEMException System failure occurred during serving. 
+     * @throws AtmiTPEINVALException environment not configured
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
-     * @throw AtmiTPEOSException System failure occurred during serving. 
+     * @throws AtmiTPEOSException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
      */
     public native void tpinit(TpInit tpinfo);
@@ -605,14 +605,51 @@ public class AtmiCtx {
     
     /**
      * Call the service
+     * See tpcall(3) manpage for more information.
      * @param svc XATMI service name to call
      * @param idata Input buffer
      * @param flags ATMI flags; TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPTRANSUSPEND,
      *  TPNOBLOCK
+     * @throws AtmiTPEINVALException Invalid parameter is given to function. 
+     *  Either service name is NULL or flags does not allow to change the value.
+     * @throws AtmiTPENOENTException No service (svc parameter) 
+     *  advertised in system.
+     * @throws AtmiTPETIMEException Service did not reply in given time 
+     *  (NDRX_TOUT).
+     * @throws AtmiTPESVCFAILException Service returned TPFAIL. This is 
+     *  application level failure.
+     * @throws AtmiTPESVCERRException System level service failure. Server 
+     *  died during the message presence in service queue.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEBLOCKException Service request queue was full and 
+     *  TPNOBLOCK flag was specified.
+     * @throws AtmiTPNOABORTException Do not abort global transaction (if one 
+     *  in progress), even if service failed.
      * @return We return the buffer form the call.
      */
     public native TypedBuffer tpcall(String svc, TypedBuffer idata, long flags);
     
+    /**
+     * Asynchronous service call
+     * @param svc service name to call
+     * @param idata input typed buffer to send to service
+     * @param flags call flags: TPNOTRAN, TPSIGRSTRT, TPNOBLOCK, TPNOREPLY
+     * @return call descriptor
+     */
+    public native int tapcall(String svc, TypedBuffer idata, long flags);
+    
+    /* TODO:
+     * tpacall
+     * tpgetrply
+     * tpcancel
+     * tpconnect
+     * tpdiscon
+     * tprecv
+     * tpsend
+     */
     
     /**
      * Group of boolean expression routines

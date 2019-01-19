@@ -260,4 +260,87 @@ public class BProjTest {
             
         }
     }
+    
+        /**
+     * Perform join tests
+     */
+    @Test
+    public void testBjoin() {
+        
+        
+        AtmiCtx ctx = new AtmiCtx();
+        TypedUbf src = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf dst = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        
+        src.Badd(test.T_SHORT_FLD, (short)1);
+        src.Badd(test.T_SHORT_FLD, (short)2);
+        
+        src.Badd(test.T_LONG_FLD, (short)3);
+        src.Badd(test.T_LONG_FLD, (short)4);
+        
+        
+        dst.Badd(test.T_SHORT_FLD, (short)5);
+        dst.Badd(test.T_SHORT_FLD, (short)6);
+        dst.Badd(test.T_SHORT_FLD, (short)11);
+        
+        dst.Badd(test.T_LONG_FLD, (short)12);
+        dst.Badd(test.T_STRING_FLD, "HELLO");
+        
+        
+        /* check the join output.. */
+        dst.Bjoin(src);
+        
+        /* check shorts */
+        assertEquals(true, dst.Bqboolev("T_SHORT_FLD==1 && "
+                + "T_SHORT_FLD[1]==2 && !T_SHORT_FLD[2]"));
+        
+        /* check longs */
+        assertEquals(true, dst.Bqboolev("T_LONG_FLD==3 && "
+                + "!T_LONG_FLD[1]"));
+        
+        /* check strings */
+        assertEquals(true, dst.Bqboolev("!T_STRING_FLD"));
+        
+    }
+    
+    /**
+     * Perform ojoin tests
+     */
+    @Test
+    public void testBojoin() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        TypedUbf src = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        TypedUbf dst = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        
+        src.Badd(test.T_SHORT_FLD, (short)1);
+        src.Badd(test.T_SHORT_FLD, (short)2);
+        
+        src.Badd(test.T_LONG_FLD, (short)3);
+        src.Badd(test.T_LONG_FLD, (short)4);
+        
+        
+        dst.Badd(test.T_SHORT_FLD, (short)5);
+        dst.Badd(test.T_SHORT_FLD, (short)6);
+        dst.Badd(test.T_SHORT_FLD, (short)11);
+        
+        dst.Badd(test.T_LONG_FLD, (short)12);
+        dst.Badd(test.T_STRING_FLD, "HELLO");
+        
+        
+        /* check the join output.. */
+        dst.Bojoin(src);
+        
+        /* check shorts */
+        assertEquals(true, dst.Bqboolev("T_SHORT_FLD==1 && "
+                + "T_SHORT_FLD[1]==2 && T_SHORT_FLD[2]==11"));
+        
+        /* check longs */
+        assertEquals(true, dst.Bqboolev("T_LONG_FLD==3 && "
+                + "!T_LONG_FLD[1]"));
+        
+        /* check strings */
+        assertEquals(true, dst.Bqboolev("T_STRING_FLD=='HELLO'"));
+    }
+    
 }

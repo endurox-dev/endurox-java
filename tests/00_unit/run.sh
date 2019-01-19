@@ -47,7 +47,17 @@ unset NDRX_DEBUG_CONF
 #./jexunit00b BboolTest || exit 5
 #./jexunit00b BDelTest || exit 6
 #./jexunit00b BprintTest || exit 7
-#./jexunit00b ButilTest || exit 8
-#./jexunit00b BProjTest || exit 9
+./jexunit00b ButilTest > ButilTest.log 2>&1 || exit 8
+
+TESTOUT=`grep "HELLO MARS" ButilTest.log`
+echo "GOT OUT: [$TESTOUT]"
+
+if [[ "X$TESTOUT" == "X" ]]; then
+
+	echo "ButilTest failed -> logging not working"
+	exit 8
+fi
+
+#./jexunit00b  BProjTest || exit 9
 #./jexunit00b  BMarshalTest|| exit 10
-./jexunit00b  BjsonTest|| exit 11
+#./jexunit00b  BjsonTest|| exit 11

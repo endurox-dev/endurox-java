@@ -560,7 +560,9 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tplogprintubf
     char *cdata;
     long clen;
     int ret = EXSUCCEED;
-    
+    jboolean n_title_copy = EXFALSE;
+    const char *n_title = NULL;
+
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
@@ -572,10 +574,17 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tplogprintubf
         UBF_LOG(log_error, "Failed to get buffer data");
         EXFAIL_OUT(ret);
     }
+
+    n_title = (*env)->GetStringUTFChars(env, title, &n_title_copy);
     
-    //tplogprintubf(lev, )
+    tplogprintubf(lev, (char *)n_title, (UBFH *)cdata);
     
 out:
+
+    if (n_title_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, title, n_title);
+    }
 
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -583,22 +592,40 @@ out:
     return;
 }
 
-/*
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tplogprintubf
-  (JNIEnv *, jobject);
- * 
- * 
-*/
-
-/*
- * TODO:
- * executed on DEST object:
-BConcat
-BCpy
-BInit
-BProjCpy
-BUpdate
- 
+/**
+ * Return total number of fields in UBF buffer
+ * @param env java env
+ * @param data UBF buffer obj
+ * @return number of fields (including occurrences) present in buffer
  */
+expublic jint JNICALL Java_org_endurox_TypedUbf_Bnum
+  (JNIEnv * env, jobject data)
+{
+    char *cdata;
+    long clen;
+    jint ret = EXFAIL;
+    
+    /* get the context, switch */
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+        return ret;
+    }
+    
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    {
+        UBF_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* return number of fields in buffer */
+    ret = (jint) Bnum((UBFH*)cdata);
+    
+out:
+    
+    /* switch context back */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */
