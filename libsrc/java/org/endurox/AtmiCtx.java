@@ -637,9 +637,26 @@ public class AtmiCtx {
      * @param svc service name to call
      * @param idata input typed buffer to send to service
      * @param flags call flags: TPNOTRAN, TPSIGRSTRT, TPNOBLOCK, TPNOREPLY
+     * @throws AtmiTPEINVALException Invalid parameter is given to function. 
+     *  Either service name is NULL or flags does not allow to change the value.
+     * @throws AtmiTPENOENTException No service (svc parameter) advertised in system.
+     * @throws AtmiTPETIMEException Service did not reply in given time (NDRX_TOUT).
+     * @throws AtmiTPESVCFAILException Service returned TPFAIL. This is 
+     *  application level failure.
+     * @throws AtmiTPESVCERRException System level service failure. Server 
+     *  died during the message presence in service queue.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEBLOCKException Service queue was full and 
+     *  TPNOBLOCK flag was specified.
+     * @throws AtmiTPNOTIMEException Do not expire call by server process, 
+     *  If message age is older than NDRX_TOUT timeout (or timeout 
+     *  overridden by tptoutset(3)).
      * @return call descriptor
      */
-    public native int tapcall(String svc, TypedBuffer idata, long flags);
+    public native int tpacall(String svc, TypedBuffer idata, long flags);
     
     /* TODO:
      * tpacall

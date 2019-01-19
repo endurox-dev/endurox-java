@@ -70,9 +70,9 @@
             </manifest>
         </jar>
 	
-	    <!-- =============================================================== -->
+        <!-- =============================================================== -->
         <!-- == Build for tests/01_basic_server/src/server -->
-	    <!-- =============================================================== -->
+        <!-- =============================================================== -->
         <mkdir dir="build/tests/01_basic_server/src/server/classes"/>
         <javac includeantruntime="false" srcdir="tests/01_basic_server/src/server" 
 	       destdir="build/tests/01_basic_server/src/server/classes">

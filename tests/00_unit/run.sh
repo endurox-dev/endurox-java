@@ -39,14 +39,14 @@ export NDRX_CCONFIG1=`pwd`/settings.ini
 export FIELDTBLS=Exfields,test.fd
 export FLDTBLDIR=`pwd`
 unset NDRX_DEBUG_CONF
-#./jexunit00b AtmiCtxTest || exit 1
-#./jexunit00b BaddTest || exit 2
-#./jexunit00b BaddfastTest || exit 3
-#./jexunit00b BchgTest || exit 4
+./jexunit00b AtmiCtxTest || exit 1
+./jexunit00b BaddTest || exit 2
+./jexunit00b BaddfastTest || exit 3
+./jexunit00b BchgTest || exit 4
 #valgrind --leak-check=full ./jexunit00b BboolTest || exit 5
-#./jexunit00b BboolTest || exit 5
-#./jexunit00b BDelTest || exit 6
-#./jexunit00b BprintTest || exit 7
+./jexunit00b BboolTest || exit 5
+./jexunit00b BDelTest || exit 6
+./jexunit00b BprintTest || exit 7
 ./jexunit00b ButilTest > ButilTest.log 2>&1 || exit 8
 
 TESTOUT=`grep "HELLO MARS" ButilTest.log`
@@ -58,6 +58,8 @@ if [[ "X$TESTOUT" == "X" ]]; then
 	exit 8
 fi
 
-#./jexunit00b  BProjTest || exit 9
-#./jexunit00b  BMarshalTest|| exit 10
-#./jexunit00b  BjsonTest|| exit 11
+./jexunit00b  BProjTest || exit 9
+./jexunit00b  BMarshalTest|| exit 10
+./jexunit00b  BjsonTest|| exit 11
+
+exit 0

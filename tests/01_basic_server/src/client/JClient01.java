@@ -14,42 +14,43 @@ public class JClient01 {
     
         boolean got_noent = false;
         int ret = AtmiConstants.TPSUCCESS;
+        int i;
+        
         AtmiCtx ctx = new AtmiCtx();
         ctx.tpinit(null);
         ctx.tplogInfo("Client process started...");
         ctx.userlog("Hello from Userlog");
+        
+        for (i=0; i<100000; i++)
+        {
+            TypedUbf u = (TypedUbf) ctx.tpalloc("UBF", null, 1024);
 
-        TypedUbf u = (TypedUbf) ctx.tpalloc("UBF", null, 1024);
+            /* set some fields in buffer */
+            try
+            {
+                u = (TypedUbf)ctx.tpcall("NOSVC", u, 0);
+            }
+            catch (AtmiTPENOENTException e)
+            {
+                got_noent = true;
+                ctx.tplogInfo("got exception !!!: %s", e.toString());
+                u = (TypedUbf)e.getReplyBuffer();
+            }
+
+            if (!got_noent)
+            {
+                ctx.tplogError("Expected AtmiTPENOENTException but wasn't");
+                ret = AtmiConstants.TPFAIL;
+            }
+
+            if (AtmiConstants.TPSUCCESS!=ret)
+            {
+                ctx.tplogInfo("Test Failed...");
+                /* Print the UBF buffer? */
+                System.exit(AtmiConstants.TPFAIL);
+            }
+        }
         
-        /* set some fields in buffer */
-        
-        try
-        {
-            u = (TypedUbf)ctx.tpcall("NOSVC", u, 0);
-        }
-        catch (AtmiTPENOENTException e)
-        {
-            got_noent = true;
-            ctx.tplogInfo("got exception !!!: %s", e.toString());
-            u = (TypedUbf)e.getReplyBuffer();
-        }
-        if (!got_noent)
-        {
-            ctx.tplogError("Expected AtmiTPENOENTException but wasn't");
-            ret = AtmiConstants.TPFAIL;
-        }
-        
-        if (AtmiConstants.TPSUCCESS==ret)
-        {
-            ctx.tplogInfo("Test OK...");
-            /* Print the UBF buffer? */
-            System.exit(AtmiConstants.SUCCEED);
-        }
-        else
-        {
-            ctx.tplogInfo("Test Failed...");
-            /* Print the UBF buffer? */
-            System.exit(AtmiConstants.TPFAIL);
-        }
+        System.exit(AtmiConstants.SUCCEED);
     }
 }

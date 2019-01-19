@@ -153,4 +153,80 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+/**
+ * Perform async service call
+ * @param env java env
+ * @param atmiCtxObj atmi context object
+ * @param svc service name
+ * @param idata input typed buffer
+ * @param flags call flags
+ * @return call descriptor
+ */
+JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpacall
+  (JNIEnv * env, jobject atmiCtxObj, jstring svc, jobject idata, jlong flags)
+{
+    jint ret = EXFAIL;
+    TPCONTEXT_T ctx;
+    /* set context */
+    char *ibuf = NULL;
+    long ilen = 0;
+    
+    jboolean n_svc_copy = EXFALSE;
+    const char *n_svc = NULL;
+
+    /* get context & set */
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    } 
+    
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+    }
+    
+    /* Extract obuf, & olen from AtmiBufferRef */
+    
+    n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
+    
+    /* OK might get exception, but there could be buffer associated with it.. */
+    if (EXSUCCEED!=(ret=tpacall((char *)n_svc, ibuf, ilen, (long)flags)))
+    {
+        int err = tperrno;
+        char errbuf[MAX_ERROR_LEN+1];
+        
+        NDRX_LOG(log_debug, "Call failed with %d", err);
+        /* save the error detail, and continue */
+        
+        /* if it is user error, return the data buffer */
+        
+        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+        
+        ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+        goto out;
+    }
+    
+    
+    NDRX_LOG(log_debug, "tpcall OK cd=%d", (int)ret);
+    
+out:
+
+    if (n_svc_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, svc, n_svc);
+    }
+
+    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+}
+
 /* vim: set ts=4 sw=4 et smartindent: */

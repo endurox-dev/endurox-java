@@ -670,7 +670,7 @@ out:
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
  */
-expublic jint JNICALL Java_org_endurox_AtmiCtx_tprunC(JNIEnv *env, jobject obj, 
+expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj, 
         jobjectArray jargv, jboolean nocheck)
 {
     char **argv = NULL;
@@ -1187,6 +1187,5 @@ out:
 
     tpsetctxt(TPNULLCONTEXT, 0L);    
 }
-/* vim: set ts=4 sw=4 et cindent: */
 
 /* vim: set ts=4 sw=4 et smartindent: */
