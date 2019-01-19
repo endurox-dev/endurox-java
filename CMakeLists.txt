@@ -459,5 +459,7 @@ include(CPack)
 ################################################################################
 
 
+add_custom_target(index glimpseindex -H ./glimpse_index ${PROJECT_SOURCE_DIR}
+                    COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/glimpse_index/glim.cmake)
 
 # vim: set ts=4 sw=4 et smartindent:
