@@ -634,6 +634,7 @@ public class AtmiCtx {
     
     /**
      * Asynchronous service call
+     * See tpacall(3) manpage for more information.
      * @param svc service name to call
      * @param idata input typed buffer to send to service
      * @param flags call flags: TPNOTRAN, TPSIGRSTRT, TPNOBLOCK, TPNOREPLY
@@ -658,9 +659,30 @@ public class AtmiCtx {
      */
     public native int tpacall(String svc, TypedBuffer idata, long flags);
     
+    /**
+     * Get reply from Asynchronous call tpacall().
+     * See tpgetrply(3) manpage for more information.
+     * @param cd call descriptor returned by  \ref tpacall(). In case if 
+     *  TPGETANY flag is set, the field value is ignored
+     * @param flags  TPGETANY, TPNOBLOCK, TPSIGRSTRT, TPNOTIME,
+     *  TPNOCHANGE, TPNOABORT 
+     * @return result buffer and call descriptor of call returned.
+     * @throws AtmiTPEINVAL Invalid parameter is given to function. 
+     *  Particularly pointer parameters are NULL.
+     * @throws AtmiTPETIMEException Service did not reply in 
+     *  given time (NDRX_TOUT time).
+     * @throws AtmiTPESVCFAILException Service returned TPFAIL. 
+     *  This is application level failure.
+     * @throws AtmiTPESVCERRException System level service failure. 
+     *  Server died during the message presence in service queue.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
+    public native TpgetrplyResult tpgetrply(int cd, long flags);
+    
     /* TODO:
-     * tpacall
-     * tpgetrply
      * tpcancel
      * tpconnect
      * tpdiscon

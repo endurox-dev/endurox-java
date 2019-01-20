@@ -229,4 +229,19 @@ out:
 
 }
 
+/**
+ * Get reply from async call
+ * @param env java env
+ * @param atmiCtxObj atmi context object
+ * @param cd call descriptor
+ * @param flags java flags
+ * @return TpgetrplyResult with result data cd & buffer
+ */
+expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
+  (JNIEnv *env, jobject atmiCtxObj, jint cd, jlong flags)
+{
+    /* TODO: */
+    return NULL;
+}
+
 /* vim: set ts=4 sw=4 et smartindent: */

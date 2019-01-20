@@ -88,6 +88,28 @@
                 <attribute name="Main-Class" value="JServer01"/>
             </manifest>
         </jar>
+        
+        
+        <!-- =============================================================== -->
+        <!-- == Build for tests/01_basic_server/src/unit -->
+        <!-- =============================================================== -->
+        <mkdir dir="build/tests/01_basic_server/src/unit/classes"/>
+        <javac includeantruntime="false" srcdir="tests/01_basic_server/src/unit" 
+	       destdir="build/tests/01_basic_server/src/unit/classes">
+                <classpath>
+                        <pathelement path="tests/libs/junit.jar"/>
+                        <pathelement path="tests/libs/hamcrest-core.jar"/>
+                        <pathelement path="libsrc/enduroxjava.jar"/>
+                        <pathelement path="tests/01_basic_server/src/ubftab/ubf01.jar"/>
+                </classpath>
+        </javac>
+
+        <jar destfile="tests/01_basic_server/src/unit/jexunit01.jar" 
+	     basedir="build/tests/01_basic_server/src/unit/classes">
+            <manifest>
+                <attribute name="Main-Class" value="org.junit.runner.JUnitCore"/>
+            </manifest>
+        </jar>
 	
     </target>
 

@@ -85,6 +85,7 @@ if(Java_VERSION VERSION_LESS 1.10)
         org.endurox.TpInit
         org.endurox.BFldLocInfo
         org.endurox.BExprTree
+        org.endurox.TpgetrplyResult
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     DEPENDS enduroxjava
     CLASSPATH enduroxjava)
