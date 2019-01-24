@@ -32,6 +32,10 @@
  */
 package org.endurox;
 
+/**
+ * AtmiCtx.tpgetrply() return type
+ * Async reply buffer and call descriptor
+ */
 public class TpgetrplyResult {
 
     /**
@@ -43,6 +47,16 @@ public class TpgetrplyResult {
      * Associated buffer returned from call
      */
     TypedBuffer buffer;
+
+    /**
+     * Create instance of tpgetrply results 
+     * @param cd call descriptor
+     * @param buffer UBF buffer received
+     */
+    public TpgetrplyResult(int cd, TypedBuffer buffer) {
+        this.cd = cd;
+        this.buffer = buffer;
+    }
 
     /**
      * Get call descriptor
