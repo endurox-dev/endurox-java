@@ -662,8 +662,10 @@ public class AtmiCtx {
     /**
      * Get reply from Asynchronous call tpacall().
      * See tpgetrply(3) manpage for more information.
-     * @param cd call descriptor returned by  \ref tpacall(). In case if 
+     * @param[in] cd call descriptor returned by  \ref tpacall(). In case if 
      *  TPGETANY flag is set, the field value is ignored
+     * @param[in] idata input data buffer used for receiving the reply data
+     *  copied/reallocated to TpgetrplyResult
      * @param flags  TPGETANY, TPNOBLOCK, TPSIGRSTRT, TPNOTIME,
      *  TPNOCHANGE, TPNOABORT 
      * @return result buffer and call descriptor of call returned.
@@ -680,7 +682,7 @@ public class AtmiCtx {
      * @throws AtmiTPEOSException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
      */
-    public native TpgetrplyResult tpgetrply(int cd, long flags);
+    public native TpgetrplyResult tpgetrply(int cd, TypedBuffer idata, long flags);
     
     /* TODO:
      * tpcancel

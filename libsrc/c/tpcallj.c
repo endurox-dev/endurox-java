@@ -238,10 +238,75 @@ out:
  * @return TpgetrplyResult with result data cd & buffer
  */
 expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
-  (JNIEnv *env, jobject atmiCtxObj, jint cd, jlong flags)
+  (JNIEnv *env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
 {
-    /* TODO: */
-    return NULL;
+    jint ret = EXFAIL;
+    TPCONTEXT_T ctx;
+    /* set context */
+    char *ibuf = NULL;
+    long ilen = 0;
+    int cdo = cd;
+    jboolean n_svc_copy = EXFALSE;
+    const char *n_svc = NULL;
+
+    /* get context & set */
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    } 
+    
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+    }
+    
+    /* Extract obuf, & olen from AtmiBufferRef 
+     * we we need to understand what we want to do the the original buffer
+     * if it was auto destroy buffer, then probably we need to allocate new
+     * one. Or at-least mark it as not auto. and new buffer should be made 
+     * as auto.
+     */
+    
+    n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
+    
+    /* OK might get exception, but there could be buffer associated with it.. */
+    if (EXSUCCEED!=(ret=tpgetrply(&cdo, ibuf, ilen, (long)flags)))
+    {
+        int err = tperrno;
+        char errbuf[MAX_ERROR_LEN+1];
+        
+        NDRX_LOG(log_debug, "Call failed with %d", err);
+        /* save the error detail, and continue */
+        
+        /* if it is user error, return the data buffer */
+        
+        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+        
+        ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+        goto out;
+    }
+    
+    
+    NDRX_LOG(log_debug, "tpcall OK cd=%d", (int)ret);
+    
+out:
+
+    if (n_svc_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, svc, n_svc);
+    }
+
+    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
