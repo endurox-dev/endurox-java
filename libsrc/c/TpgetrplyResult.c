@@ -45,7 +45,7 @@
 #include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
-#define BNEXTRESULT_CLASS "org/endurox/BNextResult"
+#define ALLOC_CLASS "org/endurox/TpgetrplyResult"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -53,34 +53,36 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Allocate iteration result
- * @param env java env
- * @param[in] bfldid  compiled filed id
- * @param[in] occ field occurrence
- * @param[in] len field length 
+ * Allocate result buffer for tpgetrply()
+ * @param[in] env java env
+ * @param[in] ctx_obj Atmi context object
+ * @param[in] cd call descriptor
+ * @param[in] data XATMI data buffer ptr
+ * @param[in] len XATMI data buffer len
  * @return Result object
  */
-expublic jobject ndrxj_BNextResult_new(JNIEnv *env, 
-        BFLDID bfldid, BFLDOCC occ, BFLDLEN len)
+expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
+        int is_ctxset, int cd, char *data, long len)
 {
     jobject ret = NULL;
     jclass bclz;
     jmethodID mid;
+    jobject jdata = NULL;
     
     /* Set context if needed */
     
-    UBF_LOG(log_debug, "Allocating [%s]", BNEXTRESULT_CLASS);
+    UBF_LOG(log_debug, "Allocating [%s]", ALLOC_CLASS);
     
-    bclz = (*env)->FindClass(env, BNEXTRESULT_CLASS);
+    bclz = (*env)->FindClass(env, ALLOC_CLASS);
     
     if (NULL==bclz)
     {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", BNEXTRESULT_CLASS);
+        NDRX_LOG(log_error, "Failed to find class [%s]", ALLOC_CLASS);
         goto out;
     }
     
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(III)V");
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(ILorg/endurox/TypedBuffer;)V");
     
     if (NULL==mid)
     {
@@ -88,13 +90,24 @@ expublic jobject ndrxj_BNextResult_new(JNIEnv *env,
         goto out;
     }
 
-    NDRX_LOG(log_debug, "About to NewObject(%s)", BNEXTRESULT_CLASS);
+    NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
+
+    jdata = ndrxj_atmi_TypedBuffer_translate(env, 
+            ctx_obj, EXTRUE, data, len,
+            NULL, NULL, EXTRUE);
+
+    if (NULL==jdata)
+    {
+        NDRX_LOG(log_error, "Failed to translate to java buffer %p/%ld XATMI C buffer",
+            data, len);
+        goto out;
+    }
     
-    ret = (*env)->NewObject(env, bclz, mid, (jint)bfldid, (jint)occ, (jint)len);
+    ret = (*env)->NewObject(env, bclz, mid, (jint)cd, jdata);
     
     if (NULL==ret)
     {
-        NDRX_LOG(log_error, "Failed to create [%s]", BNEXTRESULT_CLASS);
+        NDRX_LOG(log_error, "Failed to create [%s]", ALLOC_CLASS);
         goto out;
     }
     

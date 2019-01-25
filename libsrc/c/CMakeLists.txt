@@ -77,6 +77,7 @@ add_library (exjava SHARED
                 TypedUbf_Util.c
                 TypedUbf_Proj.c
                 BNextResult.c
+                TpgetrplyResult.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

@@ -137,6 +137,10 @@ extern long Bbool_callback_function(UBFH *p_ub, char *funcname);
 extern jobject ndrxj_BNextResult_new(JNIEnv *env, 
         BFLDID bfldid, BFLDOCC occ, BFLDLEN len);
 
+/* TpgetrplyResul ops */
+extern jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
+        int is_ctxset, int cd, char *data, long len);
+
 #ifdef  __cplusplus
 }
 #endif
