@@ -40,7 +40,12 @@ public class TypedBuffer {
     AtmiCtx ctx;
     boolean doFinalize;
     
-    /* Allow access from package: */
+    /* Allow access from package: 
+     * TODO: well here we need a small object which will be shared between
+     * return types for same object. And this small object will have a destructor.
+     * this will ensure that destructor will happen only when all referes will
+     * be deleted.
+     */
     long cPtr;
     long len;
 
