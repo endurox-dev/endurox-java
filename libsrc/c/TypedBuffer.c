@@ -45,6 +45,77 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
+/**
+ * Transfer finalize flag from two buffers.
+ * This assumes that ATMI context is set.
+ * @param[in] env java env
+ * @param[in out] to_data to data object
+ * @param[in out] from_data from data object
+ * @param[in] from_invalidate remove c ptr from "from" buffer
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_TypedBuffer_finalize_transfer(JNIEnv *env, 
+        jobject to_data, jobject from_data, int from_invalidate)
+{
+    int ret = EXSUCCEED;
+    
+    jclass clz;
+    jfieldID doFinalize_fldid;
+    jboolean doFinalize;
+    
+    clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to get Atmi buffer class [%s]!",
+                TYPEDBUFFER_CLASS);
+        EXFAIL_OUT(ret);
+    }
+    
+    if (NULL==(doFinalize_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [doFinalize] field from TypedBuffer: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    doFinalize = (*env)->GetBooleanField(env, from_data, doFinalize_fldid);
+    
+    /* now set the field to dest buffer */
+    NDRX_LOG(log_debug, "transfer of auto flag: %d", (int)doFinalize);
+    (*env)->SetBooleanField(env, to_data, doFinalize_fldid, doFinalize);
+    
+    /* now set org buffer to false */
+    (*env)->SetBooleanField(env, from_data, doFinalize_fldid, JNI_FALSE);
+    
+    if (from_invalidate)
+    {
+        jfieldID cptr_fldid;
+        NDRX_LOG(log_info, "Source buffer will be invalidated...");
+        
+        if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Failed to get [cPtr] field from TypedBuffer: %s");
+            EXFAIL_OUT(ret);
+        }
+        
+        (*env)->SetLongField(env, from_data, cptr_fldid, 0L);
+    }
+    
+    if((*env)->ExceptionCheck(env))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to transfer doFinalize flag between buffers: %s - %p %p",
+                from_data, to_data);
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+    
+    return ret;
+}
 
 /**
  * Get ATMI Context from ATMI buffer
@@ -150,6 +221,8 @@ expublic void JNICALL Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject 
  * @param len data len
  * @param type optional data type
  * @param subtype optional sub-type
+ * @param finalize EXTRUE if buffer shall be finalized,
+ *    EXFALSE, if buffer shall not be finalized (auto or part of other buf)
  * @return NULL (in case of error) java object
  */
 expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
@@ -286,7 +359,6 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     
     NDRX_LOG(log_debug, "NewObject() done");
     
-
 out:
     
     if (we_set_ctx)
@@ -305,21 +377,27 @@ out:
  * @param data ATMI buffer
  * @param buf return pointer to data block
  * @param len return value of buffer len (if applicable)
+ * @param [out] doFinalize return current status for finalization (destructor).
+ * @param [in] unsetDoFinalize remove finalize flag
+ * @param [in] unsetPtr remove C pointers from buffer
+ *  basically invalidate java buffer. As C side will take care of..
  * @return EXSUCCEED in case of OK, EXFAIL in case of failure
  * @thorws java exceptions if any
  */
 expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
-            jobject data, char **buf, long *len)
+            jobject data, char **buf, long *len, jboolean *doFinalize, 
+            int unsetDoFinalize, int unsetPtr)
 {
     int ret = EXSUCCEED;
     
     jclass clz;
     jfieldID cptr_fldid;
     jfieldID clen_fldid;
+    jfieldID doFinalize_fldid;
     jlong cptr;
     jlong clen;
     
-    clz = (*env)->FindClass(env, "org/endurox/TypedBuffer");
+    clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
 
     if (NULL==clz)
     {        
@@ -337,6 +415,10 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     
     cptr = (*env)->GetLongField(env, data, cptr_fldid);
     
+    if (unsetPtr)
+    {
+        (*env)->SetLongField(env, data, cptr_fldid, 0L);
+    }
     
     if (NULL==(clen_fldid = (*env)->GetFieldID(env, clz, "len", "J")))
     {
@@ -346,9 +428,39 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     }
     
     clen = (*env)->GetLongField(env, data, clen_fldid);
+            
     
     *buf = (char *)cptr;
     *len = (long)clen;
+    
+    if (NULL!=doFinalize || unsetDoFinalize)
+    {
+        if (NULL==(doFinalize_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Failed to get [doFinalize] field from TypedBuffer: %s");
+            EXFAIL_OUT(ret);
+        }
+
+        if (NULL!=doFinalize)
+        {
+            *doFinalize = (*env)->GetBooleanField(env, data, doFinalize_fldid);
+        }
+        
+        if (unsetDoFinalize)
+        {
+            (*env)->SetBooleanField(env, data, doFinalize_fldid, JNI_FALSE);
+        }
+    }
+    
+    /* check exception */
+    if((*env)->ExceptionCheck(env))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to transfer doFinalize flag between buffers: %s - %p",
+                data);
+        EXFAIL_OUT(ret);
+    }
     
 out:
     
@@ -427,7 +539,8 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedBuffer_tprealloc
         return;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len, 
+            NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to extract ATMI buffer from TypedBuffer Object");
         goto out;

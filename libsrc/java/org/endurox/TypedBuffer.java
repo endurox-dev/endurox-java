@@ -32,12 +32,23 @@
  */
 package org.endurox;
 
+/**
+ * This is data type buffer for XATMI IPC.
+ * Note that only one instance of the buffer may hold the destructor for C
+ * counter parts. Some buffers (received by service call) may not be even
+ * associated by destructor, as those are dellocated by XATMI sub-system.
+ */
 public class TypedBuffer {
 	
     /**
      * Pointer to C ATMI Context object
      */
     AtmiCtx ctx;
+    
+    /**
+     * Shall we destruct the linked C side ATMI object.
+     * No need to collect the object for auto buffers.
+     */
     boolean doFinalize;
     
     /* Allow access from package: 

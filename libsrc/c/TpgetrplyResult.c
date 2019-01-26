@@ -57,19 +57,15 @@
  * @param[in] env java env
  * @param[in] ctx_obj Atmi context object
  * @param[in] cd call descriptor
- * @param[in] data XATMI data buffer ptr
- * @param[in] len XATMI data buffer len
+ * @param[in] odata output data to send in results
  * @return Result object
  */
 expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
-        int is_ctxset, int cd, char *data, long len)
+        int cd, jobject odata)
 {
     jobject ret = NULL;
     jclass bclz;
     jmethodID mid;
-    jobject jdata = NULL;
-    
-    /* Set context if needed */
     
     UBF_LOG(log_debug, "Allocating [%s]", ALLOC_CLASS);
     
@@ -91,19 +87,8 @@ expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
     }
 
     NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
-
-    jdata = ndrxj_atmi_TypedBuffer_translate(env, 
-            ctx_obj, EXTRUE, data, len,
-            NULL, NULL, EXTRUE);
-
-    if (NULL==jdata)
-    {
-        NDRX_LOG(log_error, "Failed to translate to java buffer %p/%ld XATMI C buffer",
-            data, len);
-        goto out;
-    }
     
-    ret = (*env)->NewObject(env, bclz, mid, (jint)cd, jdata);
+    ret = (*env)->NewObject(env, bclz, mid, (jint)cd, odata);
     
     if (NULL==ret)
     {

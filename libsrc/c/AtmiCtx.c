@@ -828,7 +828,8 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpreturn
     /* get data buffer... */
     if (NULL!=data)
     {
-        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len, 
+                NULL, EXTRUE, EXTRUE))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             EXFAIL_OUT(ret);
@@ -867,7 +868,8 @@ expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpforward
     /* get data buffer... */
     if (NULL!=data)
     {
-        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &buf, &len, 
+                NULL, EXTRUE, EXTRUE))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             EXFAIL_OUT(ret);

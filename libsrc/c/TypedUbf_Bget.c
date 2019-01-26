@@ -79,7 +79,8 @@ exprivate int ndrxj_ubf_CBfind(JNIEnv *env, jobject data, jint bfldid, BFLDOCC o
         EXFAIL_OUT(ret);
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to get buffer data");
         EXFAIL_OUT(ret);

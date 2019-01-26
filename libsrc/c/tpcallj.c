@@ -88,7 +88,8 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
     /* get data buffer... */
     if (NULL!=idata)
     {
-        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             goto out;
@@ -184,7 +185,8 @@ JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpacall
     /* get data buffer... */
     if (NULL!=idata)
     {
-        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             goto out;
@@ -241,13 +243,21 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
   (JNIEnv *env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
 {
     jint ret = EXFAIL;
+    jobject retObj = NULL;
     TPCONTEXT_T ctx;
     /* set context */
+    
+    /* input buffer */
     char *ibuf = NULL;
     long ilen = 0;
-    int cdo = cd;
-    jboolean n_svc_copy = EXFALSE;
-    const char *n_svc = NULL;
+    
+    /* output buffer */
+    char *obuf = NULL;
+    long olen = 0;
+    
+    int ocd = cd;
+    
+    jobject odata = NULL;
 
     /* get context & set */
     
@@ -259,24 +269,16 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     /* get data buffer... */
     if (NULL!=idata)
     {
-        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen))
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
         {
             NDRX_LOG(log_error, "Failed to get data buffer!");
             goto out;
         }
     }
     
-    /* Extract obuf, & olen from AtmiBufferRef 
-     * we we need to understand what we want to do the the original buffer
-     * if it was auto destroy buffer, then probably we need to allocate new
-     * one. Or at-least mark it as not auto. and new buffer should be made 
-     * as auto.
-     */
-    
-    n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
-    
     /* OK might get exception, but there could be buffer associated with it.. */
-    if (EXSUCCEED!=(ret=tpgetrply(&cdo, ibuf, ilen, (long)flags)))
+    if (EXSUCCEED!=(ret=tpgetrply(&ocd, &obuf, &olen, (long)flags)))
     {
         int err = tperrno;
         char errbuf[MAX_ERROR_LEN+1];
@@ -293,20 +295,72 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     }
     
     
-    NDRX_LOG(log_debug, "tpcall OK cd=%d", (int)ret);
+    NDRX_LOG(log_debug, "OK cd=%d", (int)ocd);
+    
+    if (0==ocd)
+    {
+        /* no data returned just use the same idata buffer in response */
+        odata = idata;
+    }
+    else
+    {
+        /* get return type..., if same object returned, use it,
+         * if not then alloc newone, transfer destructor flag
+         */
+        NDRX_LOG(log_debug, "tpgetrply: ibuf=%p ilen=%ld obuf=%p olen=%ld",
+                ibuf, ilen, obuf, olen);
+        
+        if (ibuf!=obuf || ilen!=olen)
+        {
+            /* alloc new return buf */
+            
+            if (NULL==(odata = ndrxj_atmi_TypedBuffer_translate(env, 
+                atmiCtxObj, EXTRUE, obuf, olen, NULL, NULL, EXFALSE)))
+            {
+                NDRX_LOG(log_error, "Failed to prepare reply buffer object");
+                EXFAIL_OUT(ret);
+            }
+            
+            if (NULL!=idata)
+            {
+                /* transfer the destructor status down here. */
+                if (EXSUCCEED!=ndrxj_TypedBuffer_finalize_transfer(env, 
+                        odata, idata, EXTRUE))
+                {
+                    NDRX_LOG(log_error, "Failed to transfer finalize status");
+                    EXFAIL_OUT(ret);
+                }
+            }
+            
+        }
+        else
+        {
+            NDRX_LOG(log_debug, "use same return buffer");
+            odata = idata;
+        }
+    }
+    
+    if (NULL==(retObj = ndrxj_TpgetrplyResult_new(env, atmiCtxObj, ocd, odata)))
+    {
+        NDRX_LOG(log_error, "Failed to generate reply object!");
+        EXFAIL_OUT(ret);
+    }
     
 out:
 
-    if (n_svc_copy)
-    {
-        (*env)->ReleaseStringUTFChars(env, svc, n_svc);
-    }
-
-    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    NDRX_LOG(log_debug, "returns %d", ret);
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
-
+    
+    if (EXSUCCEED==ret)
+    {
+        return retObj;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

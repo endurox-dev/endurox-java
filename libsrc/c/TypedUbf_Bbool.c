@@ -179,7 +179,8 @@ JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUbf_Bboolev
         goto out;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;
@@ -251,7 +252,8 @@ expublic jdouble JNICALL Java_org_endurox_TypedUbf_Bfloatev
         goto out;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;
@@ -312,7 +314,8 @@ expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bqboolev
         goto out;
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;

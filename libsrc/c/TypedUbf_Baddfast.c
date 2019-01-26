@@ -103,7 +103,8 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
     loc.last_checked = ptr;
     
     /* get UBF buffer */
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;

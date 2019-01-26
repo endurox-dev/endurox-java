@@ -75,7 +75,8 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bdel
        return; 
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get buffer data");
         goto out;
@@ -117,7 +118,8 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bdelall
        return; 
     }
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get buffer data");
         goto out;
@@ -190,9 +192,8 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bdelete
     
     barra[i] = BBADFLDID;
             
-    
-    
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get buffer data");
         goto out;

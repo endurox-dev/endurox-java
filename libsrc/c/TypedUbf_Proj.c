@@ -105,7 +105,8 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bproj
     
     barra[i] = BBADFLDID;
     
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen))
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get buffer data");
         goto out;
@@ -163,14 +164,14 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bconcat
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
@@ -216,14 +217,14 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bcpy
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
@@ -275,14 +276,14 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bprojcpy
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         goto out;
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         goto out;
@@ -366,14 +367,14 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bupdate
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
@@ -421,14 +422,14 @@ JNIEXPORT jint JNICALL Java_org_endurox_TypedUbf_Bcmp
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
@@ -477,14 +478,14 @@ expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bsubset
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
@@ -534,14 +535,14 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bjoin
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);
@@ -588,14 +589,14 @@ JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bojoin
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata_dst, 
-            &clen_dst))
+            &clen_dst, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get dest/data buffer");
         EXFAIL_OUT(ret);
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, src, &cdata_src, 
-            &clen_src))
+            &clen_src, NULL, EXFALSE, EXFALSE))
     {
         UBF_LOG(log_error, "Failed to get source buffer");
         EXFAIL_OUT(ret);

@@ -102,13 +102,16 @@ extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
 extern TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env, 
         jobject atmiBufObj, int do_set);
 
-extern int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
-            jobject data, char **buf, long *len);
-
 extern jobject ndrxj_atmi_TypedBuffer_result_prep
   (JNIEnv *env, jobject ctx_obj, jobject data, char *idata, 
         long ilen, char *odata, long olen);
 
+extern int ndrxj_TypedBuffer_finalize_transfer(JNIEnv *env, 
+        jobject to_data, jobject from_data, int from_invalidate);
+
+extern int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env, 
+            jobject data, char **buf, long *len, jboolean *doFinalize, 
+            int unsetDoFinalize, int unsetPtr);
 
 /* TpCallResult ops: */
 
@@ -139,7 +142,7 @@ extern jobject ndrxj_BNextResult_new(JNIEnv *env,
 
 /* TpgetrplyResul ops */
 extern jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
-        int is_ctxset, int cd, char *data, long len);
+        int cd, jobject odata);
 
 #ifdef  __cplusplus
 }
