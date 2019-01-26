@@ -86,10 +86,12 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bdel
     
     if (EXSUCCEED!=Bdel((UBFH*)cdata, (BFLDID)bfldid, (BFLDOCC)occ))
     {
+        int err = Berror;
+        /* TODO: in case of not pres, use lower debug level */
         UBF_LOG(log_error, "%s: Bdel failed %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "%s: Bdel failed %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+                __func__, bfldid, Bfname(bfldid), Bstrerror(err));
+        ndrxj_ubf_throw(env, err, "%s: Bdel failed %d (%s): %s", 
+                __func__, bfldid, Bfname(bfldid), Bstrerror(err));
         goto out;
     }
     

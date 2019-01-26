@@ -4,13 +4,20 @@ import java.util.*;
 public class JServer01 implements Server, Service {
 
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
-        ctx.tplogDebug("tpService/HELLO called");
+        
+        ctx.tplogDebug("tpService/ECHOSVC called");
+
+        TypedUbf ub = (TypedUbf)svcinfo.getData();
+        
+        /* echo the field value... */
+        ub.Bchg(test.T_STRING_2_FLD, 0, ub.BgetString(test.T_STRING_FLD, 0));
+        
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, svcinfo.getData(), 0);
     }
 
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
         ctx.tplogDebug("Into tpSvrInit()");
-        ctx.tpadvertise("HELLOSVC", "HELLOFN", this);
+        ctx.tpadvertise("ECHOSVC", "ECHOSVC", this);
         return AtmiConst.SUCCEED;
     }
     

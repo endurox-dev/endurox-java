@@ -152,6 +152,8 @@ out:
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    return ret;
 }
 
 /**

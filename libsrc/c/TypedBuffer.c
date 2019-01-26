@@ -1,6 +1,8 @@
 /**
  * @brief Typed buffer operations
- *
+ *  TODO: We shall agree here how to handle exception?
+ *  Check them only at the level of JNI calls? Or we can do this inside too?
+ * 
  * @file TypedBuffer.c
  */
 /* -----------------------------------------------------------------------------
@@ -349,7 +351,8 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
 
     NDRX_LOG(log_debug, "About to NewObject(%s)", clazz);
     
-    ret = (*env)->NewObject(env, bclz, mid, ctx_obj, (jboolean)finalize, (jlong)data, len);
+    ret = (*env)->NewObject(env, bclz, mid, ctx_obj, (jboolean)finalize, 
+            (jlong)data, len);
     
     if (NULL==ret)
     {
@@ -574,7 +577,9 @@ out:
  * Prepare Typed buffer result i.e. check if pointer is changed, then
  * check types, if types are the same, then just update "data" object.
  * If types are changed, the "data" object shall be marked as destructor
- * not needed and allocate new object according to the "odata" buffer
+ * not needed and allocate new object according to the "odata" buffer.
+ * Note the exception is not checked here...
+ * 
  * @param env java env
  * @param ctx_obj ATMI Context obj
  * @param data original data object
@@ -602,6 +607,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     jfieldID clen_fldid;
     jfieldID cptr_fldid;
     jfieldID dofin_fldid;
+    jboolean finalizeOrg;
 
 
     if (idata!=odata)
@@ -640,14 +646,16 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
         is_types_eq = EXFALSE;
     }
     
-    if (idata==odata || is_types_eq)
+    /* What do we want to do in case if buffer pointer is changed? */
+    
+    if (is_types_eq && idata==odata && ilen==olen)
+    {
+        NDRX_LOG(log_debug, "ptr, types and len not changed...");
+        ret = data;
+    }
+    else if (is_types_eq)
     {    
-        if (idata==odata && is_types_eq && ilen==olen)
-        {
-            NDRX_LOG(log_debug, "ptr, types and len not changed...");
-            ret = data;
-        }
-        
+        ret = data;
         clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
             
         if (NULL==clz)
@@ -715,6 +723,9 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             goto out;
         }
 
+        /* TODO: todo get field value */
+        finalizeOrg = (*env)->GetBooleanField(env, data, dofin_fldid);
+        
         (*env)->SetBooleanField(env, data, dofin_fldid, (jboolean)JNI_FALSE);
 
         /* now allocate new typed buffer */
@@ -729,7 +740,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             /* exception shall be set */
             if (NULL==(ret = ndrxj_atmi_TypedBuffer_translate(env, 
                 ctx_obj, EXTRUE, odata, olen,
-                otype, osubtype, EXTRUE)))
+                otype, osubtype, finalizeOrg)))
             {
                 NDRX_LOG(log_error, "Failed to translate buffer %p", odata);
                 goto out;
@@ -738,6 +749,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     }
     
 out:
+    
     return ret;
 }
 

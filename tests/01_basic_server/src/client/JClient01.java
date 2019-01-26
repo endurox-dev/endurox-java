@@ -21,7 +21,7 @@ public class JClient01 {
         ctx.tplogInfo("Client process started...");
         ctx.userlog("Hello from Userlog");
         
-        for (i=0; i<100000; i++)
+        for (i=0; i<1000; i++)
         {
             TypedUbf u = (TypedUbf) ctx.tpalloc("UBF", null, 1024);
 
