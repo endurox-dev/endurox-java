@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPESVCFAIL exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPESVCFAILException extends AtmiException {
         
     public AtmiTPESVCFAILException(String msg) {
-        super(AtmiConstants.TPESVCFAIL, msg);
+        super(AtmiConst.TPESVCFAIL, msg);
     }
     
     public AtmiTPESVCFAILException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPESVCFAIL, msg, throwable);
+        super(AtmiConst.TPESVCFAIL, msg, throwable);
     }
 }
 

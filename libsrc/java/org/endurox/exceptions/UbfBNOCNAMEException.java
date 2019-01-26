@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BNOCNAME exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBNOCNAMEException extends UbfException {
         
     public UbfBNOCNAMEException(String msg) {
-        super(AtmiConstants.BNOCNAME, msg);
+        super(AtmiConst.BNOCNAME, msg);
     }
     
     public UbfBNOCNAMEException(String msg, Throwable throwable) {
-        super(AtmiConstants.BNOCNAME, msg, throwable);
+        super(AtmiConst.BNOCNAME, msg, throwable);
     }
 }
 

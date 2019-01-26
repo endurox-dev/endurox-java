@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
         
 /**
  * TPEDIAGNOSTIC exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEDIAGNOSTICException extends AtmiException {
         
     public AtmiTPEDIAGNOSTICException(String msg) {
-        super(AtmiConstants.TPEDIAGNOSTIC, msg);
+        super(AtmiConst.TPEDIAGNOSTIC, msg);
     }
     
     public AtmiTPEDIAGNOSTICException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEDIAGNOSTIC, msg, throwable);
+        super(AtmiConst.TPEDIAGNOSTIC, msg, throwable);
     }
 }
 

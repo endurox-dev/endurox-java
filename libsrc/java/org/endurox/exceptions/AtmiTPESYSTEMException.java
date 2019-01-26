@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPESYSTEM exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPESYSTEMException extends AtmiException {
         
     public AtmiTPESYSTEMException(String msg) {
-        super(AtmiConstants.TPESYSTEM, msg);
+        super(AtmiConst.TPESYSTEM, msg);
     }
     
     public AtmiTPESYSTEMException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPESYSTEM, msg, throwable);
+        super(AtmiConst.TPESYSTEM, msg, throwable);
     }
 }
 

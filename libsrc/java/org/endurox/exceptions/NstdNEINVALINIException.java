@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEINVALINI exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEINVALINIException extends NstdException {
         
     public NstdNEINVALINIException(String msg) {
-        super(AtmiConstants.NEINVALINI, msg);
+        super(AtmiConst.NEINVALINI, msg);
     }
     
     public NstdNEINVALINIException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEINVALINI, msg, throwable);
+        super(AtmiConst.NEINVALINI, msg, throwable);
     }
 }
 

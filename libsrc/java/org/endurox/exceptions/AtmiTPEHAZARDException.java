@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEHAZARD exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEHAZARDException extends AtmiException {
         
     public AtmiTPEHAZARDException(String msg) {
-        super(AtmiConstants.TPEHAZARD, msg);
+        super(AtmiConst.TPEHAZARD, msg);
     }
     
     public AtmiTPEHAZARDException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEHAZARD, msg, throwable);
+        super(AtmiConst.TPEHAZARD, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NENOCONN exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNENOCONNException extends NstdException {
         
     public NstdNENOCONNException(String msg) {
-        super(AtmiConstants.NENOCONN, msg);
+        super(AtmiConst.NENOCONN, msg);
     }
     
     public NstdNENOCONNException(String msg, Throwable throwable) {
-        super(AtmiConstants.NENOCONN, msg, throwable);
+        super(AtmiConst.NENOCONN, msg, throwable);
     }
 }
 

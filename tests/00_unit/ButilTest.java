@@ -401,7 +401,7 @@ public class ButilTest {
         
         ub.Badd(test.T_STRING_10_FLD, "HELLO MARS");
         
-        ub.tplogprintubf(AtmiConstants.LOG_ERROR, "HELLO TEST");
+        ub.tplogprintubf(AtmiConst.LOG_ERROR, "HELLO TEST");
     }
     
 }

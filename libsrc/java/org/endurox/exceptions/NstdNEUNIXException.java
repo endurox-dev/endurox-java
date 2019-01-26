@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEUNIX exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEUNIXException extends NstdException {
         
     public NstdNEUNIXException(String msg) {
-        super(AtmiConstants.NEUNIX, msg);
+        super(AtmiConst.NEUNIX, msg);
     }
     
     public NstdNEUNIXException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEUNIX, msg, throwable);
+        super(AtmiConst.NEUNIX, msg, throwable);
     }
 }
 

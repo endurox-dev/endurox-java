@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEPLUGIN exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEPLUGINException extends NstdException {
         
     public NstdNEPLUGINException(String msg) {
-        super(AtmiConstants.NEPLUGIN, msg);
+        super(AtmiConst.NEPLUGIN, msg);
     }
     
     public NstdNEPLUGINException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEPLUGIN, msg, throwable);
+        super(AtmiConst.NEPLUGIN, msg, throwable);
     }
 }
 

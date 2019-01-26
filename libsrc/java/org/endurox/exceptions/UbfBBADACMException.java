@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BBADACM exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBBADACMException extends UbfException {
         
     public UbfBBADACMException(String msg) {
-        super(AtmiConstants.BBADACM, msg);
+        super(AtmiConst.BBADACM, msg);
     }
     
     public UbfBBADACMException(String msg, Throwable throwable) {
-        super(AtmiConstants.BBADACM, msg, throwable);
+        super(AtmiConst.BBADACM, msg, throwable);
     }
 }
 

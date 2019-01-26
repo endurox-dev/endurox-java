@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEMIB exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEMIBException extends AtmiException {
         
     public AtmiTPEMIBException(String msg) {
-        super(AtmiConstants.TPEMIB, msg);
+        super(AtmiConst.TPEMIB, msg);
     }
     
     public AtmiTPEMIBException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEMIB, msg, throwable);
+        super(AtmiConst.TPEMIB, msg, throwable);
     }
 }
 

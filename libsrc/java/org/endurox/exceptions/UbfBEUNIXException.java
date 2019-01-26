@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BEUNIX exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBEUNIXException extends UbfException {
         
     public UbfBEUNIXException(String msg) {
-        super(AtmiConstants.BEUNIX, msg);
+        super(AtmiConst.BEUNIX, msg);
     }
     
     public UbfBEUNIXException(String msg, Throwable throwable) {
-        super(AtmiConstants.BEUNIX, msg, throwable);
+        super(AtmiConst.BEUNIX, msg, throwable);
     }
 }
 

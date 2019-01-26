@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEINVAL exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEINVALException extends AtmiException {
         
     public AtmiTPEINVALException(String msg) {
-        super(AtmiConstants.TPEINVAL, msg);
+        super(AtmiConst.TPEINVAL, msg);
     }
     
     public AtmiTPEINVALException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEINVAL, msg, throwable);
+        super(AtmiConst.TPEINVAL, msg, throwable);
     }
 }
 

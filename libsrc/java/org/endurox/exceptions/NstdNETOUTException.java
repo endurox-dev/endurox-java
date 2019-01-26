@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NETOUT exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNETOUTException extends NstdException {
         
     public NstdNETOUTException(String msg) {
-        super(AtmiConstants.NETOUT, msg);
+        super(AtmiConst.NETOUT, msg);
     }
     
     public NstdNETOUTException(String msg, Throwable throwable) {
-        super(AtmiConstants.NETOUT, msg, throwable);
+        super(AtmiConst.NETOUT, msg, throwable);
     }
 }
 

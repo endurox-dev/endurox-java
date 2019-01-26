@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BNOTPRES exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBNOTPRESException extends UbfException {
         
     public UbfBNOTPRESException(String msg) {
-        super(AtmiConstants.BNOTPRES, msg);
+        super(AtmiConst.BNOTPRES, msg);
     }
     
     public UbfBNOTPRESException(String msg, Throwable throwable) {
-        super(AtmiConstants.BNOTPRES, msg, throwable);
+        super(AtmiConst.BNOTPRES, msg, throwable);
     }
 }
 

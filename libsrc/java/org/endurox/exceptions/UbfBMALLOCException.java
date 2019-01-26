@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BMALLOC exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBMALLOCException extends UbfException {
         
     public UbfBMALLOCException(String msg) {
-        super(AtmiConstants.BMALLOC, msg);
+        super(AtmiConst.BMALLOC, msg);
     }
     
     public UbfBMALLOCException(String msg, Throwable throwable) {
-        super(AtmiConstants.BMALLOC, msg, throwable);
+        super(AtmiConst.BMALLOC, msg, throwable);
     }
 }
 

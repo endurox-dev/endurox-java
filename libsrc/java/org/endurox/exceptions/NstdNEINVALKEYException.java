@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEINVALKEY exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEINVALKEYException extends NstdException {
         
     public NstdNEINVALKEYException(String msg) {
-        super(AtmiConstants.NEINVALKEY, msg);
+        super(AtmiConst.NEINVALKEY, msg);
     }
     
     public NstdNEINVALKEYException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEINVALKEY, msg, throwable);
+        super(AtmiConst.NEINVALKEY, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BERFU1 exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBERFU1Exception extends UbfException {
         
     public UbfBERFU1Exception(String msg) {
-        super(AtmiConstants.BERFU1, msg);
+        super(AtmiConst.BERFU1, msg);
     }
     
     public UbfBERFU1Exception(String msg, Throwable throwable) {
-        super(AtmiConstants.BERFU1, msg, throwable);
+        super(AtmiConst.BERFU1, msg, throwable);
     }
 }
 

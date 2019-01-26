@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEITYPE exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEITYPEException extends AtmiException {
         
     public AtmiTPEITYPEException(String msg) {
-        super(AtmiConstants.TPEITYPE, msg);
+        super(AtmiConst.TPEITYPE, msg);
     }
     
     public AtmiTPEITYPEException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEITYPE, msg, throwable);
+        super(AtmiConst.TPEITYPE, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 import org.endurox.TypedBuffer;
 
 /**
@@ -66,94 +66,94 @@ public class AtmiException extends RuntimeException {
     	
     	switch (tperrno) {
     	
-        case AtmiConstants.TPEABORT:
+        case AtmiConst.TPEABORT:
             return new AtmiTPEABORTException(msg);
 
-	    case AtmiConstants.TPEBADDESC:
+	    case AtmiConst.TPEBADDESC:
             return new AtmiTPEBADDESCException(msg);
 	
-	    case AtmiConstants.TPEBLOCK:
+	    case AtmiConst.TPEBLOCK:
             return new AtmiTPEBLOCKException(msg);
 
-	    case AtmiConstants.TPEINVAL:
+	    case AtmiConst.TPEINVAL:
             return new AtmiTPEINVALException(msg);
 	
-	    case AtmiConstants.TPELIMIT:
+	    case AtmiConst.TPELIMIT:
             return new AtmiTPELIMITException(msg);
 	
-	    case AtmiConstants.TPENOENT:
+	    case AtmiConst.TPENOENT:
             return new AtmiTPENOENTException(msg);
 	
-	    case AtmiConstants.TPEOS:
+	    case AtmiConst.TPEOS:
             return new AtmiTPEOSException(msg);
 	
-	    case AtmiConstants.TPEPERM:
+	    case AtmiConst.TPEPERM:
             return new AtmiTPEPERMException(msg);
 	
-	    case AtmiConstants.TPEPROTO:
+	    case AtmiConst.TPEPROTO:
             return new AtmiTPEPROTOException(msg);
 	
-	    case AtmiConstants.TPESVCERR:
+	    case AtmiConst.TPESVCERR:
             return new AtmiTPESVCERRException(msg);
 	
-	    case AtmiConstants.TPESVCFAIL:
+	    case AtmiConst.TPESVCFAIL:
             return new AtmiTPESVCFAILException(msg);
 	
-	    case AtmiConstants.TPESYSTEM:
+	    case AtmiConst.TPESYSTEM:
             return new AtmiTPESYSTEMException(msg);
 	
-	    case AtmiConstants.TPETIME:
+	    case AtmiConst.TPETIME:
             return new AtmiTPETIMEException(msg);
 	
-	    case AtmiConstants.TPETRAN:
+	    case AtmiConst.TPETRAN:
             return new AtmiTPETRANException(msg);
 	
-	    case AtmiConstants.TPGOTSIG:
+	    case AtmiConst.TPGOTSIG:
             return new AtmiTPGOTSIGException(msg);
 	
-	    case AtmiConstants.TPERMERR:
+	    case AtmiConst.TPERMERR:
             return new AtmiTPERMERRException(msg);
 	
-	    case AtmiConstants.TPEITYPE:
+	    case AtmiConst.TPEITYPE:
             return new AtmiTPEITYPEException(msg);
 	
-	    case AtmiConstants.TPEOTYPE:
+	    case AtmiConst.TPEOTYPE:
             return new AtmiTPEOTYPEException(msg);
 	
-	    case AtmiConstants.TPERELEASE:
+	    case AtmiConst.TPERELEASE:
             return new AtmiTPERELEASEException(msg);
 	
-	    case AtmiConstants.TPEHAZARD:
+	    case AtmiConst.TPEHAZARD:
             return new AtmiTPEHAZARDException(msg);
 	
-	    case AtmiConstants.TPEHEURISTIC:
+	    case AtmiConst.TPEHEURISTIC:
             return new AtmiTPEHEURISTICException(msg);
 	
-	    case AtmiConstants.TPEEVENT:
+	    case AtmiConst.TPEEVENT:
             return new AtmiTPEEVENTException(msg);
 	
-	    case AtmiConstants.TPEMATCH:
+	    case AtmiConst.TPEMATCH:
             return new AtmiTPEMATCHException(msg);
 	
-	    case AtmiConstants.TPEDIAGNOSTIC:
+	    case AtmiConst.TPEDIAGNOSTIC:
             return new AtmiTPEDIAGNOSTICException(msg);
 	
-	    case AtmiConstants.TPEMIB:
+	    case AtmiConst.TPEMIB:
             return new AtmiTPEMIBException(msg);
 	
-	    case AtmiConstants.TPERFU26:
+	    case AtmiConst.TPERFU26:
             return new AtmiTPERFU26Exception(msg);
 	
-	    case AtmiConstants.TPERFU27:
+	    case AtmiConst.TPERFU27:
             return new AtmiTPERFU27Exception(msg);
 	
-	    case AtmiConstants.TPERFU28:
+	    case AtmiConst.TPERFU28:
             return new AtmiTPERFU28Exception(msg);
 	
-	    case AtmiConstants.TPERFU29:
+	    case AtmiConst.TPERFU29:
             return new AtmiTPERFU29Exception(msg);
 	
-	    case AtmiConstants.TPINITFAIL:
+	    case AtmiConst.TPINITFAIL:
             return new AtmiTPINITFAILException(msg);
     	}
     	//Return generic exception if not matched any code

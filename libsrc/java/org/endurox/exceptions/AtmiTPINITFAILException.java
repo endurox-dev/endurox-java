@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPINITFAIL exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPINITFAILException extends AtmiException {
         
     public AtmiTPINITFAILException(String msg) {
-        super(AtmiConstants.TPINITFAIL, msg);
+        super(AtmiConst.TPINITFAIL, msg);
     }
     
     public AtmiTPINITFAILException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPINITFAIL, msg, throwable);
+        super(AtmiConst.TPINITFAIL, msg, throwable);
     }
 }
 

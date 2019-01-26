@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEPROTO exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEPROTOException extends AtmiException {
         
     public AtmiTPEPROTOException(String msg) {
-        super(AtmiConstants.TPEPROTO, msg);
+        super(AtmiConst.TPEPROTO, msg);
     }
     
     public AtmiTPEPROTOException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEPROTO, msg, throwable);
+        super(AtmiConst.TPEPROTO, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEBADDESC exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEBADDESCException extends AtmiException {
         
     public AtmiTPEBADDESCException(String msg) {
-        super(AtmiConstants.TPEBADDESC, msg);
+        super(AtmiConst.TPEBADDESC, msg);
     }
     
     public AtmiTPEBADDESCException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEBADDESC, msg, throwable);
+        super(AtmiConst.TPEBADDESC, msg, throwable);
     }
 }
 

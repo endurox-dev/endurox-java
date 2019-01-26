@@ -328,7 +328,7 @@ public class AtmiCtx {
         catch (Exception e)
         {
             //Return fail with the same buffer in case of exception!
-            tpreturn(AtmiConstants.TPFAIL, ctx, svcInfo.data, ctx);
+            tpreturn(AtmiConst.TPFAIL, ctx, svcInfo.data, ctx);
         }
     }
 
@@ -358,7 +358,7 @@ public class AtmiCtx {
         
         this.svr = svr;
         
-        tplogndrx(AtmiConstants.LOG_INFO, "Booting server");
+        tplogndrx(AtmiConst.LOG_INFO, "Booting server");
         
         /* Call native server entry (this should in return boot call server
          * interface 
@@ -382,7 +382,7 @@ public class AtmiCtx {
         
         this.svr = svr;
         
-        tplogndrx(AtmiConstants.LOG_INFO, "Booting server");
+        tplogndrx(AtmiConst.LOG_INFO, "Booting server");
         
         /* Call native server entry (this should in return boot call server
          * interface 
@@ -458,10 +458,10 @@ public class AtmiCtx {
     void tplogndrx(int lev, String format, Object... arguments) {
 
         int log_config = tplogqinfo(lev,
-                AtmiConstants.TPLOGQI_GET_NDRX | AtmiConstants.TPLOGQI_EVAL_DETAILED);
+                AtmiConst.TPLOGQI_GET_NDRX | AtmiConst.TPLOGQI_EVAL_DETAILED);
 
         String filename = "";
-        long line = AtmiConstants.FAIL;
+        long line = AtmiConst.FAIL;
 
         if (log_config <= 0) {
 
@@ -469,7 +469,7 @@ public class AtmiCtx {
             return;
         }
 
-        if ((log_config & AtmiConstants.TPLOGQI_EVAL_DETAILED) > 0) {
+        if ((log_config & AtmiConst.TPLOGQI_EVAL_DETAILED) > 0) {
 
             /* backtrace the file and line number */
             StackTraceElement[] s = Thread.currentThread().getStackTrace();
@@ -493,10 +493,10 @@ public class AtmiCtx {
     public void tplog(int lev, boolean directCall, String format, Object... arguments) {
         
         int log_config = tplogqinfo(lev, 
-                AtmiConstants.TPLOGQI_GET_TP | AtmiConstants.TPLOGQI_EVAL_DETAILED);
+                AtmiConst.TPLOGQI_GET_TP | AtmiConst.TPLOGQI_EVAL_DETAILED);
         
         String filename = "";
-        long line = AtmiConstants.FAIL;
+        long line = AtmiConst.FAIL;
         
         if (log_config <= 0) {
             
@@ -504,7 +504,7 @@ public class AtmiCtx {
             return;
         }
         
-        if ((log_config & AtmiConstants.TPLOGQI_RET_HAVDETAILED) > 0) {
+        if ((log_config & AtmiConst.TPLOGQI_RET_HAVDETAILED) > 0) {
             
             /* backtrace the file and line number */
             StackTraceElement[] s = Thread.currentThread().getStackTrace();
@@ -529,7 +529,7 @@ public class AtmiCtx {
      * @param arguments variable args 
      */
     public void tplogAlways(String format, Object... arguments) {
-        tplog(AtmiConstants.LOG_ALWAYS, false, format, arguments);
+        tplog(AtmiConst.LOG_ALWAYS, false, format, arguments);
     }   
     
     /**
@@ -538,7 +538,7 @@ public class AtmiCtx {
      * @param arguments variable args 
      */
     public void tplogError(String format, Object... arguments) {
-        tplog(AtmiConstants.LOG_ERROR, false, format, arguments);
+        tplog(AtmiConst.LOG_ERROR, false, format, arguments);
     }
     
     /**
@@ -547,7 +547,7 @@ public class AtmiCtx {
      * @param arguments variable args 
      */
     public void tplogWarn(String format, Object... arguments) {
-        tplog(AtmiConstants.LOG_WARN, false, format, arguments);
+        tplog(AtmiConst.LOG_WARN, false, format, arguments);
     }
     
     /**
@@ -556,7 +556,7 @@ public class AtmiCtx {
      * @param arguments variable args 
      */
     public void tplogInfo(String format, Object... arguments) {
-        tplog(AtmiConstants.LOG_INFO, false, format, arguments);
+        tplog(AtmiConst.LOG_INFO, false, format, arguments);
     }
     
     /**
@@ -565,7 +565,7 @@ public class AtmiCtx {
      * @param arguments variable args 
      */
     public void tplogDebug(String format, Object... arguments) {
-        tplog(AtmiConstants.LOG_DEBUG, false, format, arguments);
+        tplog(AtmiConst.LOG_DEBUG, false, format, arguments);
     }
     
     /**
@@ -574,7 +574,7 @@ public class AtmiCtx {
      * @param arguments variable args 
      */
     public void tplogDump(String format, Object... arguments) {
-        tplog(AtmiConstants.LOG_DUMP, false, format, arguments);
+        tplog(AtmiConst.LOG_DUMP, false, format, arguments);
     }
     
     /**

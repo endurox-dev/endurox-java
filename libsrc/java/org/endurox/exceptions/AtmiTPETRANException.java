@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPETRAN exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPETRANException extends AtmiException {
         
     public AtmiTPETRANException(String msg) {
-        super(AtmiConstants.TPETRAN, msg);
+        super(AtmiConst.TPETRAN, msg);
     }
     
     public AtmiTPETRANException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPETRAN, msg, throwable);
+        super(AtmiConst.TPETRAN, msg, throwable);
     }
 }
 

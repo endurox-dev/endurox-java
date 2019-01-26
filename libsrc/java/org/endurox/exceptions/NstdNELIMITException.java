@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NELIMIT exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNELIMITException extends NstdException {
         
     public NstdNELIMITException(String msg) {
-        super(AtmiConstants.NELIMIT, msg);
+        super(AtmiConst.NELIMIT, msg);
     }
     
     public NstdNELIMITException(String msg, Throwable throwable) {
-        super(AtmiConstants.NELIMIT, msg, throwable);
+        super(AtmiConst.NELIMIT, msg, throwable);
     }
 }
 

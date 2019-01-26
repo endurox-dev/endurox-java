@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BNOSPACE exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBNOSPACEException extends UbfException {
         
     public UbfBNOSPACEException(String msg) {
-        super(AtmiConstants.BNOSPACE, msg);
+        super(AtmiConst.BNOSPACE, msg);
     }
     
     public UbfBNOSPACEException(String msg, Throwable throwable) {
-        super(AtmiConstants.BNOSPACE, msg, throwable);
+        super(AtmiConst.BNOSPACE, msg, throwable);
     }
 }
 

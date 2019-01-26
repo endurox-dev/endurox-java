@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * ATMI Base exception
@@ -52,43 +52,43 @@ public class NstdException extends RuntimeException {
     	
     	switch (tperrno) {
     	
-	        case AtmiConstants.NEINVALINI:
+	        case AtmiConst.NEINVALINI:
 	            return new NstdNEINVALINIException(msg);
 	
-	        case AtmiConstants.NEMALLOC:
+	        case AtmiConst.NEMALLOC:
 	            return new NstdNEMALLOCException(msg);
 	
-	        case AtmiConstants.NEUNIX:
+	        case AtmiConst.NEUNIX:
 	            return new NstdNEUNIXException(msg);
 	
-	        case AtmiConstants.NEINVAL:
+	        case AtmiConst.NEINVAL:
 	            return new NstdNEINVALException(msg);
 	
-	        case AtmiConstants.NESYSTEM:
+	        case AtmiConst.NESYSTEM:
 	            return new NstdNESYSTEMException(msg);
 	
-	        case AtmiConstants.NEMANDATORY:
+	        case AtmiConst.NEMANDATORY:
 	            return new NstdNEMANDATORYException(msg);
 	
-	        case AtmiConstants.NEFORMAT:
+	        case AtmiConst.NEFORMAT:
 	            return new NstdNEFORMATException(msg);
 	
-	        case AtmiConstants.NETOUT:
+	        case AtmiConst.NETOUT:
 	            return new NstdNETOUTException(msg);
 	
-	        case AtmiConstants.NENOCONN:
+	        case AtmiConst.NENOCONN:
 	            return new NstdNENOCONNException(msg);
 	
-	        case AtmiConstants.NELIMIT:
+	        case AtmiConst.NELIMIT:
 	            return new NstdNELIMITException(msg);
 	
-	        case AtmiConstants.NEPLUGIN:
+	        case AtmiConst.NEPLUGIN:
 	            return new NstdNEPLUGINException(msg);
 	
-	        case AtmiConstants.NENOSPACE:
+	        case AtmiConst.NENOSPACE:
 	            return new NstdNENOSPACEException(msg);
 	
-	        case AtmiConstants.NEINVALKEY:
+	        case AtmiConst.NEINVALKEY:
 	            return new NstdNEINVALKEYException(msg);
     	}
     	//Return generic exception if not matched any code

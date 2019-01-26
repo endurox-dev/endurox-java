@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEMATCH exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEMATCHException extends AtmiException {
         
     public AtmiTPEMATCHException(String msg) {
-        super(AtmiConstants.TPEMATCH, msg);
+        super(AtmiConst.TPEMATCH, msg);
     }
     
     public AtmiTPEMATCHException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEMATCH, msg, throwable);
+        super(AtmiConst.TPEMATCH, msg, throwable);
     }
 }
 

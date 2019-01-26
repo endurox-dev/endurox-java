@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEMALLOC exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEMALLOCException extends NstdException {
         
     public NstdNEMALLOCException(String msg) {
-        super(AtmiConstants.NEMALLOC, msg);
+        super(AtmiConst.NEMALLOC, msg);
     }
     
     public NstdNEMALLOCException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEMALLOC, msg, throwable);
+        super(AtmiConst.NEMALLOC, msg, throwable);
     }
 }
 

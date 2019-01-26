@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BALIGNERR exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBALIGNERRException extends UbfException {
         
     public UbfBALIGNERRException(String msg) {
-        super(AtmiConstants.BALIGNERR, msg);
+        super(AtmiConst.BALIGNERR, msg);
     }
     
     public UbfBALIGNERRException(String msg, Throwable throwable) {
-        super(AtmiConstants.BALIGNERR, msg, throwable);
+        super(AtmiConst.BALIGNERR, msg, throwable);
     }
 }
 

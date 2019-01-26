@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEOTYPE exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEOTYPEException extends AtmiException {
         
     public AtmiTPEOTYPEException(String msg) {
-        super(AtmiConstants.TPEOTYPE, msg);
+        super(AtmiConst.TPEOTYPE, msg);
     }
     
     public AtmiTPEOTYPEException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEOTYPE, msg, throwable);
+        super(AtmiConst.TPEOTYPE, msg, throwable);
     }
 }
 

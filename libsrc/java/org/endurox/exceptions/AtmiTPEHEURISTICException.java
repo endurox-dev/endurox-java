@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEHEURISTIC exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEHEURISTICException extends AtmiException {
         
     public AtmiTPEHEURISTICException(String msg) {
-        super(AtmiConstants.TPEHEURISTIC, msg);
+        super(AtmiConst.TPEHEURISTIC, msg);
     }
     
     public AtmiTPEHEURISTICException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEHEURISTIC, msg, throwable);
+        super(AtmiConst.TPEHEURISTIC, msg, throwable);
     }
 }
 

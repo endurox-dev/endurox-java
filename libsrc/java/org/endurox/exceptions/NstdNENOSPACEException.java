@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NENOSPACE exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNENOSPACEException extends NstdException {
         
     public NstdNENOSPACEException(String msg) {
-        super(AtmiConstants.NENOSPACE, msg);
+        super(AtmiConst.NENOSPACE, msg);
     }
     
     public NstdNENOSPACEException(String msg, Throwable throwable) {
-        super(AtmiConstants.NENOSPACE, msg, throwable);
+        super(AtmiConst.NENOSPACE, msg, throwable);
     }
 }
 

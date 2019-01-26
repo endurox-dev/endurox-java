@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEFORMAT exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEFORMATException extends NstdException {
         
     public NstdNEFORMATException(String msg) {
-        super(AtmiConstants.NEFORMAT, msg);
+        super(AtmiConst.NEFORMAT, msg);
     }
     
     public NstdNEFORMATException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEFORMAT, msg, throwable);
+        super(AtmiConst.NEFORMAT, msg, throwable);
     }
 }
 

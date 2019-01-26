@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEABORT exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEABORTException extends AtmiException {
         
     public AtmiTPEABORTException(String msg) {
-        super(AtmiConstants.TPEABORT, msg);
+        super(AtmiConst.TPEABORT, msg);
     }
     
     public AtmiTPEABORTException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEABORT, msg, throwable);
+        super(AtmiConst.TPEABORT, msg, throwable);
     }
 }
 

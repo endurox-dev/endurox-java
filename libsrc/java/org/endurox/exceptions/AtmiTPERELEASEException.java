@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPERELEASE exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPERELEASEException extends AtmiException {
         
     public AtmiTPERELEASEException(String msg) {
-        super(AtmiConstants.TPERELEASE, msg);
+        super(AtmiConst.TPERELEASE, msg);
     }
     
     public AtmiTPERELEASEException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPERELEASE, msg, throwable);
+        super(AtmiConst.TPERELEASE, msg, throwable);
     }
 }
 

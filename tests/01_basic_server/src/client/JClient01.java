@@ -1,4 +1,4 @@
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 import org.endurox.AtmiCtx;
 import org.endurox.TypedUbf;
 import org.endurox.exceptions.AtmiException;
@@ -13,7 +13,7 @@ public class JClient01 {
     public static void main(String[] args) {
     
         boolean got_noent = false;
-        int ret = AtmiConstants.TPSUCCESS;
+        int ret = AtmiConst.TPSUCCESS;
         int i;
         
         AtmiCtx ctx = new AtmiCtx();
@@ -40,17 +40,17 @@ public class JClient01 {
             if (!got_noent)
             {
                 ctx.tplogError("Expected AtmiTPENOENTException but wasn't");
-                ret = AtmiConstants.TPFAIL;
+                ret = AtmiConst.TPFAIL;
             }
 
-            if (AtmiConstants.TPSUCCESS!=ret)
+            if (AtmiConst.TPSUCCESS!=ret)
             {
                 ctx.tplogInfo("Test Failed...");
                 /* Print the UBF buffer? */
-                System.exit(AtmiConstants.TPFAIL);
+                System.exit(AtmiConst.TPFAIL);
             }
         }
         
-        System.exit(AtmiConstants.SUCCEED);
+        System.exit(AtmiConst.SUCCEED);
     }
 }

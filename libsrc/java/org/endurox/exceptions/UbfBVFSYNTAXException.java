@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BVFSYNTAX exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBVFSYNTAXException extends UbfException {
         
     public UbfBVFSYNTAXException(String msg) {
-        super(AtmiConstants.BVFSYNTAX, msg);
+        super(AtmiConst.BVFSYNTAX, msg);
     }
     
     public UbfBVFSYNTAXException(String msg, Throwable throwable) {
-        super(AtmiConstants.BVFSYNTAX, msg, throwable);
+        super(AtmiConst.BVFSYNTAX, msg, throwable);
     }
 }
 

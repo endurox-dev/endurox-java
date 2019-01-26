@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * ATMI Base exception
@@ -50,70 +50,70 @@ public class UbfException extends RuntimeException {
     public static UbfException create(int tperrno, String msg) {
     	
     	switch (tperrno) {
-        case AtmiConstants.BERFU0:
+        case AtmiConst.BERFU0:
                         return new UbfBERFU0Exception(msg);
 
-            case AtmiConstants.BALIGNERR:
+            case AtmiConst.BALIGNERR:
             return new UbfBALIGNERRException(msg);
 
-            case AtmiConstants.BNOTFLD:
+            case AtmiConst.BNOTFLD:
             return new UbfBNOTFLDException(msg);
 
-            case AtmiConstants.BNOSPACE:
+            case AtmiConst.BNOSPACE:
             return new UbfBNOSPACEException(msg);
 
-            case AtmiConstants.BNOTPRES:
+            case AtmiConst.BNOTPRES:
             return new UbfBNOTPRESException(msg);
 
-            case AtmiConstants.BBADFLD:
+            case AtmiConst.BBADFLD:
             return new UbfBBADFLDException(msg);
 
-            case AtmiConstants.BTYPERR:
+            case AtmiConst.BTYPERR:
             return new UbfBTYPERRException(msg);
 
-            case AtmiConstants.BEUNIX:
+            case AtmiConst.BEUNIX:
             return new UbfBEUNIXException(msg);
 
-            case AtmiConstants.BBADNAME:
+            case AtmiConst.BBADNAME:
             return new UbfBBADNAMEException(msg);
 
-            case AtmiConstants.BMALLOC:
+            case AtmiConst.BMALLOC:
             return new UbfBMALLOCException(msg);
 
-            case AtmiConstants.BSYNTAX:
+            case AtmiConst.BSYNTAX:
             return new UbfBSYNTAXException(msg);
 
-            case AtmiConstants.BFTOPEN:
+            case AtmiConst.BFTOPEN:
             return new UbfBFTOPENException(msg);
 
-            case AtmiConstants.BFTSYNTAX:
+            case AtmiConst.BFTSYNTAX:
             return new UbfBFTSYNTAXException(msg);
 
-            case AtmiConstants.BEINVAL:
+            case AtmiConst.BEINVAL:
             return new UbfBEINVALException(msg);
 
-            case AtmiConstants.BERFU1:
+            case AtmiConst.BERFU1:
             return new UbfBERFU1Exception(msg);
 
-            case AtmiConstants.BBADTBL:
+            case AtmiConst.BBADTBL:
             return new UbfBBADTBLException(msg);
 
-            case AtmiConstants.BBADVIEW:
+            case AtmiConst.BBADVIEW:
             return new UbfBBADVIEWException(msg);
 
-            case AtmiConstants.BVFSYNTAX:
+            case AtmiConst.BVFSYNTAX:
             return new UbfBVFSYNTAXException(msg);
 
-            case AtmiConstants.BVFOPEN:
+            case AtmiConst.BVFOPEN:
             return new UbfBVFOPENException(msg);
 
-            case AtmiConstants.BBADACM:
+            case AtmiConst.BBADACM:
             return new UbfBBADACMException(msg);
 
-            case AtmiConstants.BNOCNAME:
+            case AtmiConst.BNOCNAME:
             return new UbfBNOCNAMEException(msg);
 
-            case AtmiConstants.BEBADOP:
+            case AtmiConst.BEBADOP:
             return new UbfBEBADOPException(msg);
 
     	}

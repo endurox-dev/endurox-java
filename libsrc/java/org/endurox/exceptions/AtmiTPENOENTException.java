@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPENOENT exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPENOENTException extends AtmiException {
         
     public AtmiTPENOENTException(String msg) {
-        super(AtmiConstants.TPENOENT, msg);
+        super(AtmiConst.TPENOENT, msg);
     }
     
     public AtmiTPENOENTException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPENOENT, msg, throwable);
+        super(AtmiConst.TPENOENT, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NESYSTEM exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNESYSTEMException extends NstdException {
         
     public NstdNESYSTEMException(String msg) {
-        super(AtmiConstants.NESYSTEM, msg);
+        super(AtmiConst.NESYSTEM, msg);
     }
     
     public NstdNESYSTEMException(String msg, Throwable throwable) {
-        super(AtmiConstants.NESYSTEM, msg, throwable);
+        super(AtmiConst.NESYSTEM, msg, throwable);
     }
 }
 

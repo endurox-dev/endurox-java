@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPGOTSIG exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPGOTSIGException extends AtmiException {
         
     public AtmiTPGOTSIGException(String msg) {
-        super(AtmiConstants.TPGOTSIG, msg);
+        super(AtmiConst.TPGOTSIG, msg);
     }
     
     public AtmiTPGOTSIGException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPGOTSIG, msg, throwable);
+        super(AtmiConst.TPGOTSIG, msg, throwable);
     }
 }
 

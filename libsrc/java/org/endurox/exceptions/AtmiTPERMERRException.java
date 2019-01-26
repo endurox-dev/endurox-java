@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPERMERR exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPERMERRException extends AtmiException {
         
     public AtmiTPERMERRException(String msg) {
-        super(AtmiConstants.TPERMERR, msg);
+        super(AtmiConst.TPERMERR, msg);
     }
     
     public AtmiTPERMERRException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPERMERR, msg, throwable);
+        super(AtmiConst.TPERMERR, msg, throwable);
     }
 }
 

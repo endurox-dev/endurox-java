@@ -5,13 +5,13 @@ public class JServer01 implements Server, Service {
 
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         ctx.tplogDebug("tpService/HELLO called");
-        ctx.tpreturn(AtmiConstants.TPSUCCESS, 0, svcinfo.getData(), 0);
+        ctx.tpreturn(AtmiConst.TPSUCCESS, 0, svcinfo.getData(), 0);
     }
 
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
         ctx.tplogDebug("Into tpSvrInit()");
         ctx.tpadvertise("HELLOSVC", "HELLOFN", this);
-        return AtmiConstants.SUCCEED;
+        return AtmiConst.SUCCEED;
     }
     
     public void tpSvrDone(AtmiCtx ctx) {

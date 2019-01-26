@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * NEMANDATORY exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class NstdNEMANDATORYException extends NstdException {
         
     public NstdNEMANDATORYException(String msg) {
-        super(AtmiConstants.NEMANDATORY, msg);
+        super(AtmiConst.NEMANDATORY, msg);
     }
     
     public NstdNEMANDATORYException(String msg, Throwable throwable) {
-        super(AtmiConstants.NEMANDATORY, msg, throwable);
+        super(AtmiConst.NEMANDATORY, msg, throwable);
     }
 }
 

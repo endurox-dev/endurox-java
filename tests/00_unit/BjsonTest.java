@@ -32,7 +32,7 @@ public class BjsonTest {
             /* generate some json */
             String json = ub.tpubftojson();
                     
-            ctx.tplog(AtmiConstants.LOG_DEBUG, false, "Got json: %s", json);
+            ctx.tplog(AtmiConst.LOG_DEBUG, false, "Got json: %s", json);
             
             assertEquals("{\"T_SHORT_FLD\":[455,-5],\"T_SHORT_2_FLD\":[455,-5],\""
                     + "T_LONG_FLD\":[111455,-2225],\"T_LONG_2_FLD\":[111455,-2225],\""

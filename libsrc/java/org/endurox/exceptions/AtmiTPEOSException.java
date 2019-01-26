@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEOS exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEOSException extends AtmiException {
         
     public AtmiTPEOSException(String msg) {
-        super(AtmiConstants.TPEOS, msg);
+        super(AtmiConst.TPEOS, msg);
     }
     
     public AtmiTPEOSException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEOS, msg, throwable);
+        super(AtmiConst.TPEOS, msg, throwable);
     }
 }
 

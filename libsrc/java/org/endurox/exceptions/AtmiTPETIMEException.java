@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPETIME exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPETIMEException extends AtmiException {
         
     public AtmiTPETIMEException(String msg) {
-        super(AtmiConstants.TPETIME, msg);
+        super(AtmiConst.TPETIME, msg);
     }
     
     public AtmiTPETIMEException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPETIME, msg, throwable);
+        super(AtmiConst.TPETIME, msg, throwable);
     }
 }
 

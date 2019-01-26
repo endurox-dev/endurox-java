@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BEINVAL exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBEINVALException extends UbfException {
         
     public UbfBEINVALException(String msg) {
-        super(AtmiConstants.BEINVAL, msg);
+        super(AtmiConst.BEINVAL, msg);
     }
     
     public UbfBEINVALException(String msg, Throwable throwable) {
-        super(AtmiConstants.BEINVAL, msg, throwable);
+        super(AtmiConst.BEINVAL, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BVFOPEN exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBVFOPENException extends UbfException {
         
     public UbfBVFOPENException(String msg) {
-        super(AtmiConstants.BVFOPEN, msg);
+        super(AtmiConst.BVFOPEN, msg);
     }
     
     public UbfBVFOPENException(String msg, Throwable throwable) {
-        super(AtmiConstants.BVFOPEN, msg, throwable);
+        super(AtmiConst.BVFOPEN, msg, throwable);
     }
 }
 

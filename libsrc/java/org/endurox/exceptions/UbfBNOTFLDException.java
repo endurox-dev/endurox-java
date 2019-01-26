@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * BNOTFLD exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class UbfBNOTFLDException extends UbfException {
         
     public UbfBNOTFLDException(String msg) {
-        super(AtmiConstants.BNOTFLD, msg);
+        super(AtmiConst.BNOTFLD, msg);
     }
     
     public UbfBNOTFLDException(String msg, Throwable throwable) {
-        super(AtmiConstants.BNOTFLD, msg, throwable);
+        super(AtmiConst.BNOTFLD, msg, throwable);
     }
 }
 

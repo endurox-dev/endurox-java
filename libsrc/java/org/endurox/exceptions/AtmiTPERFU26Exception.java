@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPERFU26 exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPERFU26Exception extends AtmiException {
         
     public AtmiTPERFU26Exception(String msg) {
-        super(AtmiConstants.TPERFU26, msg);
+        super(AtmiConst.TPERFU26, msg);
     }
     
     public AtmiTPERFU26Exception(String msg, Throwable throwable) {
-        super(AtmiConstants.TPERFU26, msg, throwable);
+        super(AtmiConst.TPERFU26, msg, throwable);
     }
 }
 

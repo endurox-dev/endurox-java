@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEPERM exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEPERMException extends AtmiException {
         
     public AtmiTPEPERMException(String msg) {
-        super(AtmiConstants.TPEPERM, msg);
+        super(AtmiConst.TPEPERM, msg);
     }
     
     public AtmiTPEPERMException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEPERM, msg, throwable);
+        super(AtmiConst.TPEPERM, msg, throwable);
     }
 }
 

@@ -1,5 +1,5 @@
 package org.endurox.exceptions;
-import org.endurox.AtmiConstants;
+import org.endurox.AtmiConst;
 
 /**
  * TPEBLOCK exception
@@ -7,11 +7,11 @@ import org.endurox.AtmiConstants;
 public class AtmiTPEBLOCKException extends AtmiException {
         
     public AtmiTPEBLOCKException(String msg) {
-        super(AtmiConstants.TPEBLOCK, msg);
+        super(AtmiConst.TPEBLOCK, msg);
     }
     
     public AtmiTPEBLOCKException(String msg, Throwable throwable) {
-        super(AtmiConstants.TPEBLOCK, msg, throwable);
+        super(AtmiConst.TPEBLOCK, msg, throwable);
     }
 }
 
