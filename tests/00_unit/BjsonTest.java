@@ -81,11 +81,8 @@ public class BjsonTest {
             ub_ref.Bchg(test.T_CHAR_2_FLD, 0, 'C');
             ub_ref.Bchg(test.T_CHAR_2_FLD, 1, 'D');
             
-            System.console().printf("Buffer 1");
-            
             ub.Bprint();
             
-            System.console().printf("Buffer 2"); 
             ub_ref.Bprint();
             
             assertEquals(0, ub.Bcmp(ub_ref));

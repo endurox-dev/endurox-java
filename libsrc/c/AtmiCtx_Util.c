@@ -72,7 +72,7 @@ expublic jstring JNICALL Java_org_endurox_AtmiCtx_Btype
     
     cret = Btype((BFLDID)bfldid);
     
-    if (ret < 0)
+    if (NULL==cret)
     {
         /* throw exception */
         ndrxj_ubf_throw(env, Berror, "%s", Bstrerror(Berror));
@@ -108,7 +108,7 @@ expublic jstring JNICALL Java_org_endurox_AtmiCtx_Bfname
     
     cret = Bfname((BFLDID)bfldid);
     
-    if (ret < 0)
+    if (NULL==cret)
     {
         /* throw exception */
         ndrxj_ubf_throw(env, Berror, "%s", Bstrerror(Berror));
