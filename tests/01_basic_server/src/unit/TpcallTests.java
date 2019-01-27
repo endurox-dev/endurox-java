@@ -20,6 +20,7 @@ public class TpcallTests {
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
+        //TODO: Have long term test for memory management.
         for (int i=0; i<1000; i++)
         {
             try {

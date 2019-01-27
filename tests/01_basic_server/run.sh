@@ -44,5 +44,6 @@ fi
 #
 
 jexunit01b TpcallTests || go_out 2
+jexunit01b TpacallTests || go_out 3
 
 go_out 0

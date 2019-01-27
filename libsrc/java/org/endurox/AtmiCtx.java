@@ -819,6 +819,24 @@ public class AtmiCtx {
      */
     public native String Bfname(int bfldid);
     
+    /**
+     * Return current XATMI timeout for IPC communications.
+     * By default method uses NDRX_TOUT env variable for readings if value
+     * is not override by \see AtmiCtx::tptoutset
+     * See tptoutget(3) manpage for more information.
+     * @return timeout in seconds currently used by XATMI IPC sub-system
+     */
+    public native int tptoutget();
+    
+    /**
+     * Set XATMI sub-system timeout value
+     * @param tout number of seconds for XATMI calls like tpcall or tpgetrply
+     *  before returning timeout exception
+     * See tptoutset(3) manpage for more information.
+     * @throws AtmiTPEINVALException tout parameter is less or equal to 0.
+     */
+    public native void tptoutset(int tout);
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

@@ -75,7 +75,8 @@ expublic jstring JNICALL Java_org_endurox_AtmiCtx_Btype
     if (ret < 0)
     {
         /* throw exception */
-        ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
+        ndrxj_ubf_throw(env, Berror, "%s", Bstrerror(Berror));
+        goto out;
     }
     
     /* create new UTF */
@@ -110,7 +111,8 @@ expublic jstring JNICALL Java_org_endurox_AtmiCtx_Bfname
     if (ret < 0)
     {
         /* throw exception */
-        ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
+        ndrxj_ubf_throw(env, Berror, "%s", Bstrerror(Berror));
+        goto out;
     }
     
     /* create new UTF */
@@ -121,7 +123,54 @@ out:
     return ret;
 }
 
+/**
+ * Get ATMI Context current timeout setting
+ * @param env java env
+ * @param atmiCtxObj atmi context object
+ * @return timeout in secnods
+ */
+expublic JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tptoutget
+  (JNIEnv * env, jobject atmiCtxObj)
+{
+    jint ret = EXFAIL;
+    
+    if (NULL== ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    ret = (jint)tptoutget();
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
 
-/* vim: set ts=4 sw=4 et cindent: */
+    return ret;
+}
+
+/**
+ * Set atmi context timeout setting
+ * @param env java env
+ * @param atmiCtxObj atmi context
+ * @param tout timeout in seconds
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tptoutset
+  (JNIEnv * env, jobject atmiCtxObj, jint tout)
+{
+    int ret = EXSUCCEED;
+    
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    if (EXSUCCEED!=tptoutset((int)tout))
+    {
+        ndrxj_atmi_throw(env, NULL, tperrno, "%s", tpstrerror(tperrno));
+        goto out;
+    }
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */

@@ -80,7 +80,7 @@ export PATH=$PATH:`pwd`/../bin
 
 export NDRX_CONFIG=`pwd`/ndrxconfig.xml
 export NDRX_CCONFIG=`pwd`
-export NDRX_DEBUG_CONF=`pwd`/debug.conf
+#export NDRX_DEBUG_CONF=`pwd`/debug.conf
 # UBFTAB
 export FLDTBLDIR=`pwd`/../src/ubftab
 export FIELDTBLS=test.fd,Exfields

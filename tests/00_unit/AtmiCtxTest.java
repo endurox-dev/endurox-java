@@ -53,5 +53,7 @@ public class AtmiCtxTest {
     assertEquals("string", ctx.Btype(test.T_STRING_FLD));
     assertEquals("carray", ctx.Btype(test.T_CARRAY_FLD));
   }
+  
+  /* todo: tests for failed Btype/Btype */
 
 }
