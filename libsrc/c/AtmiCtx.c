@@ -900,15 +900,18 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
   (JNIEnv *env, jclass cls, jlong cPtr)
 {
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
+    TPCONTEXT_T tmp;
     
     tpsetctxt(ctx, 0L);
     
     NDRX_LOG(log_debug, "About to free ctx %p", ctx);
+    /*
     tpterm();
-    
     tpsetctxt(TPNULLCONTEXT, 0L);
-    
+    */
     tpfreectxt(ctx);
+    
+    userlog("YOPT Done free ctx %p", ctx);
     
 }
 

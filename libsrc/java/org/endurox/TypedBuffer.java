@@ -74,7 +74,7 @@ public class TypedBuffer {
     public native void tprealloc(long size);
 
     /**
-     * Initialize ATMI Object
+     * Initialize ATMI Buffer Object
      * @param ctx[in] ATMI Context allocated this method
      * @param doFinalize[in] Should
      * @param cPtr[in] C pointer to allocated block
@@ -94,11 +94,13 @@ public class TypedBuffer {
      */
     public void cleanup() {
         
+        System.out.println("Typed buf cleanup called");
         ctx = null;
         if (doFinalize && 0!=cPtr) {
             tpfree(cPtr);
             cPtr = 0;
         }
+        System.out.println("Typed buf cleanup called DONE");
     }
     
     /**

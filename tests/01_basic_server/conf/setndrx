@@ -38,7 +38,6 @@ export NDRX_CLUSTERISED=1
 # Load balance, 0 = process all locally, 100 = process all on remote servers
 export NDRX_LDBAL=0
 export NDRX_TOUT=60
-export NDRX_ULOG=/tmp
 export NDRX_QPREFIX=/n00b
 export NDRX_SVCMAX=20000
 export NDRX_SRVMAX=10000
@@ -85,6 +84,7 @@ export NDRX_CCONFIG=`pwd`
 export FLDTBLDIR=`pwd`/../src/ubftab
 export FIELDTBLS=test.fd,Exfields
 export NDRX_APPHOME=`pwd`/../
+export NDRX_ULOG=${NDRX_APPHOME}/log
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$NDRX_APPHOME/../../libsrc/c
 
 # vim: set ts=4 sw=4 et smartindent:

@@ -21,7 +21,7 @@ public class TpcallTests {
         assertNotEquals(ub, null);
 
         //TODO: Have long term test for memory management.
-        for (int i=0; i<1000; i++)
+        for (int i=0; i<1000000000; i++)
         {
             try {
                 ub.Bdel(test.T_STRING_2_FLD, 0);
