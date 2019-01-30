@@ -107,7 +107,6 @@ expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
     
     jclientdata = (*env)->NewStringUTF(env, cltid->clientdata);
     
-
     NDRX_LOG(log_debug, "About to NewObject() of ClientID");
     
     ret = (*env)->NewObject(env, bclz, mid, jclientdata);
@@ -119,7 +118,11 @@ expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
     }
     
     NDRX_LOG(log_debug, "NewObject() done of ClientID");
-
+    
+    /* delete local reference to avoid the leak */
+    
+    (*env)->DeleteLocalRef(env, jclientdata);
+    
 out:
     
     if (we_set_ctx)

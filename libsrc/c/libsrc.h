@@ -120,7 +120,9 @@ extern jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env,
 
 /* TpSvcInfo ops: */
 extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo);
+            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo,
+            jobject *p_jdata, jobject *p_jcltid, jstring *p_jname, 
+            jstring *p_jfname);
 
 
 /* BFldLocInfo ops */

@@ -94,13 +94,12 @@ public class TypedBuffer {
      */
     public void cleanup() {
         
-        System.out.println("Typed buf cleanup called");
         ctx = null;
         if (doFinalize && 0!=cPtr) {
             tpfree(cPtr);
             cPtr = 0;
         }
-        System.out.println("Typed buf cleanup called DONE");
+        
     }
     
     /**

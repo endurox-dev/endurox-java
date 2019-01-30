@@ -251,6 +251,7 @@ JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_BgetString
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
+    jstring ret;
     
     /* exception will be thrown in case of failure */
     if (EXSUCCEED!=ndrxj_ubf_CBfind(env, data, bfldid, occ, &buf, NULL, BFLD_STRING))
@@ -258,7 +259,9 @@ JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_BgetString
         return (jstring)NULL;
     }
     /* build java string... */
-    return (*env)->NewStringUTF(env, buf);
+    ret = (*env)->NewStringUTF(env, buf);
+    
+    return ret;
 }
 
 /**

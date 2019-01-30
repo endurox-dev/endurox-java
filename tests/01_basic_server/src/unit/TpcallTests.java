@@ -21,14 +21,15 @@ public class TpcallTests {
         assertNotEquals(ub, null);
 
         //TODO: Have long term test for memory management.
-        for (int i=0; i<1000000000; i++)
+        for (int i=0; i<1000000; i++)
         {
+            
             try {
                 ub.Bdel(test.T_STRING_2_FLD, 0);
             } 
             catch (UbfBNOTPRESException e)
             {
-                /* ignore.. */
+                // ignore.. 
             }
             
             String reqData = String.format("loop %d", i);
@@ -37,7 +38,6 @@ public class TpcallTests {
             ub = (TypedUbf)ctx.tpcall("ECHOSVC", ub, 0);
             
             String rspData = ub.BgetString(test.T_STRING_2_FLD, 0);
-            
             assertEquals(reqData, rspData);
         }
         ub.cleanup();

@@ -63,19 +63,13 @@
  * @return Java object of TpSvcInfo or NULL with exception set
  */
 expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env, 
-            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo)
+            jobject ctx_obj, int is_ctxset, TPSVCINFO *svcinfo,
+            jobject *p_jdata, jobject *p_jcltid, jstring *p_jname, jstring *p_jfname)
 {
     jobject ret = NULL;
     jclass bclz;
     jmethodID mid;
     int we_set_ctx = EXFALSE;
-    
-    jobject jdata;
-    jobject jcltid;
-    
-    jstring jname;
-    jstring jfname;
-    
     
     /* Set context if needed */
     if (!is_ctxset)
@@ -109,7 +103,7 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     }
     
     /* Translate ATMI buffer */
-    if (NULL==(jdata=ndrxj_atmi_TypedBuffer_translate(env, 
+    if (NULL==(*p_jdata=ndrxj_atmi_TypedBuffer_translate(env, 
             ctx_obj, EXTRUE, svcinfo->data, svcinfo->len,
             NULL, NULL, EXFALSE)))
     {
@@ -120,7 +114,7 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     }
     
     /* Translate ClientId */
-    if (NULL==(jcltid=ndrxj_atmi_ClientId_translate(env, 
+    if (NULL==(*p_jcltid=ndrxj_atmi_ClientId_translate(env, 
             ctx_obj, EXTRUE, &svcinfo->cltid)))
     {
         NDRX_LOG(log_error, "Failed to translate ClientId to Java object: [%s]",
@@ -129,14 +123,14 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
         goto out;
     }
     
-    jname = (*env)->NewStringUTF(env, svcinfo->name);
-    jfname = (*env)->NewStringUTF(env, svcinfo->fname);
+    *p_jname = (*env)->NewStringUTF(env, svcinfo->name);
+    *p_jfname = (*env)->NewStringUTF(env, svcinfo->fname);
     
     NDRX_LOG(log_debug, "About to NewObject() of TpSvcInfo");
     
-    ret = (*env)->NewObject(env, bclz, mid, jname, jdata, 
+    ret = (*env)->NewObject(env, bclz, mid, *p_jname, *p_jdata, 
             (jlong)svcinfo->flags, (jint)svcinfo->cd, 
-            (jlong)svcinfo->appkey, jcltid, jfname);
+            (jlong)svcinfo->appkey, *p_jcltid, *p_jfname);
     
     if (NULL==ret)
     {

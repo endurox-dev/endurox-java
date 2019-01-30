@@ -11,6 +11,11 @@ public class JServer01 implements Server, Service {
         
         /* echo the field value... */
         ub.Bchg(test.T_STRING_2_FLD, 0, ub.BgetString(test.T_STRING_FLD, 0));
+     
+        
+        /* TODO: Test here expression handling deallocations...!
+         * might get a leak...!
+         */
         
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, svcinfo.getData(), 0);
     }

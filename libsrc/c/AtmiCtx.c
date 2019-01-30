@@ -480,12 +480,17 @@ out:
 exprivate void dispatch_call(TPSVCINFO *svcinfo)
 {
     /* build the svcinfo object and invoke the service proxy of java side */
-    jobject jsvcinfo;
+    jobject jsvcinfo = NULL;
     jclass bclz;
     jmethodID mid;
+    jobject jdata = NULL;
+    jobject jcltid = NULL;
+    jstring jname = NULL;
+    jstring jfname = NULL;
+            
     
     if (NULL==(jsvcinfo = ndrxj_atmi_TpSvcInfo_translate(M_srv_ctx_env,
-            M_srv_ctx_obj, EXTRUE, svcinfo)))
+            M_srv_ctx_obj, EXTRUE, svcinfo, &jdata, &jcltid, &jname, &jfname)))
     {
         NDRX_LOG(log_error, "Failed to translate service call to java!");
     }
@@ -517,7 +522,6 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
             abort();
         }
         
-        
         /* unset context */
         tpsetctxt(TPNULLCONTEXT, 0L);
         
@@ -540,6 +544,35 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         
         /* set context back... */
         tpsetctxt(M_srv_ctx, 0L);
+    }
+    
+    /*
+     * If not releasing allocated objects from C/C++ that will result in 
+     * growth of java.lang.ref.Finalizer
+     */
+    if (NULL!=jsvcinfo)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jsvcinfo);
+    }
+    
+    if (NULL!=jcltid)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jcltid);
+    }
+    
+    if (NULL!=jdata)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jdata);
+    }
+    
+    if (NULL!=jname)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jname);
+    }
+    
+    if (NULL!=jfname)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jfname);
     }
 }
 
@@ -693,8 +726,9 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
         size = 0;
     }
 
-    /* lock up th context object */
+    /* lock up th context object 
     obj=(*env)->NewGlobalRef(env, obj);
+     * */
     /*TODO: Check the NULL? */
 
     M_srv_ctx_env = env;
@@ -801,8 +835,9 @@ out:
         NDRX_FREE(argv);
     }
 
+/*
     (*env)->DeleteGlobalRef(env, obj);
-
+*/
     return (jint)ret;
 }
 

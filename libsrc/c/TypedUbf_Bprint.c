@@ -169,6 +169,12 @@ exprivate long Bextread_readf(char *buffer, long bufsz, void *dataptr1)
     n_str= (*(ctl->env))->GetStringUTFChars(ctl->env, str, &n_str_copy);
      
     NDRX_STRNCPY_SAFE(buffer, n_str, bufsz);
+    
+    if (n_str_copy)
+    {
+        (*(ctl->env))->ReleaseStringUTFChars(ctl->env, str, n_str);
+    }
+    
     ret = strlen(buffer)+1;
 
 out:
@@ -462,9 +468,5 @@ out:
 
     return ret;
 }
-
-
-/* vim: set ts=4 sw=4 et cindent: */
-
 
 /* vim: set ts=4 sw=4 et smartindent: */
