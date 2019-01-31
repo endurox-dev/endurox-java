@@ -22,7 +22,7 @@ public class TpacallTests {
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
-        for (int i=0; i<1000; i++)
+        for (int i=0; i<100000000; i++)
         {
             try {
                 ub.Bdel(test.T_STRING_2_FLD, 0);

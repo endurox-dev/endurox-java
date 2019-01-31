@@ -1,7 +1,7 @@
 /**
- * @brief Return result from tpgetrply()
+ * @brief tprecv result
  *
- * @class TpgetrplyResult
+ * @class TprecvResult
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -33,11 +33,16 @@
 package org.endurox;
 
 /**
- * AtmiCtx.tpgetrply() return type
- * Async reply buffer and call descriptor
+ * AtmiCtx.tprecv() return type
+ * Conversation receive return type
  */
-public class TpgetrplyResult {
+public class TprecvResult {
 
+    /**
+     * Return event
+     */
+    long revent;
+    
     /**
      * Call descriptor returned
      */
@@ -49,29 +54,37 @@ public class TpgetrplyResult {
     TypedBuffer buffer;
 
     /**
-     * Create instance of tpgetrply results 
-     * @param cd call descriptor
+     * Create instance of tprecv results 
+     * @param cd conversation descriptor
      * @param buffer Typed buffer received
      */
-    public TpgetrplyResult(int cd, TypedBuffer buffer) {
+    public TprecvResult(int cd, TypedBuffer buffer) {
         this.cd = cd;
         this.buffer = buffer;
     }
 
     /**
-     * Get call descriptor
-     * @return call descriptor
+     * Get conversation descriptor
+     * @return conversation descriptor
      */
     public int getCd() {
         return cd;
     }
 
     /**
-     * XATMI buffer associated with call
+     * XATMI buffer associated with receive
      * @return XATMI Buffer
      */
     public TypedBuffer getBuffer() {
         return buffer;
+    }
+
+    /**
+     * Returned event type 
+     * @return event code, see "TPEV_" from AtmiConst.
+     */
+    public long getRevent() {
+        return revent;
     }
     
 }

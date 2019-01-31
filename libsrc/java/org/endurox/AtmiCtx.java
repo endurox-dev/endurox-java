@@ -684,13 +684,39 @@ public class AtmiCtx {
      */
     public native TpgetrplyResult tpgetrply(int cd, TypedBuffer idata, long flags);
     
-    /* TODO:
-     * tpcancel
-     * tpconnect
-     * tpdiscon
-     * tprecv
-     * tpsend
+    /**
+     * Conversational methods group
+     * @defgroup Convers conversational methods
+     * @{
      */
+    
+    /**
+     * Connect to XATMI conversational server
+     * @param svc
+     * @param idata
+     * @param flags
+     * @return 
+     */
+    public native int tpconnect(String svc, TypedBuffer idata, long flags);
+    
+    /**
+     * Send data to conversational server
+     * @param cd
+     * @param idata
+     * @param flags
+     * @return receive event
+     */
+    public native long tpsend(int cd, TypedBuffer idata, long flags);
+    
+    public native TprecvResult tprecv(int cd, TypedBuffer idata, long flags);
+    
+    public native void tpdiscon(int cd);
+    
+    public native void tpcancel(int cd);
+    
+    
+    /** @} */ // end of Convers
+    
     
     /**
      * Group of boolean expression routines
