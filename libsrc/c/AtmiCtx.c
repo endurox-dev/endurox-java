@@ -946,8 +946,6 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
     */
     tpfreectxt(ctx);
     
-    userlog("YOPT Done free ctx %p", ctx);
-    
 }
 
 /**

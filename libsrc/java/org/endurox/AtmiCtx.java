@@ -692,10 +692,28 @@ public class AtmiCtx {
     
     /**
      * Connect to XATMI conversational server
-     * @param svc
-     * @param idata
-     * @param flags
-     * @return 
+     * See tpconnect(3) manpage for more information.
+     * @param svc service name
+     * @param idata input XATMI buffer
+     * @param flags AtmiConst flags - TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPTRANSUSPEND,
+     *  TPSENDONLY, TPRECVONLY. Binary or'able.
+     * @return connection descriptor
+     * @throws AtmiTPEINVALException Invalid parameter is given to function. 
+     *  Either service name is NULL or data is not NULL, but not allocated by tpalloc()
+     * @throws AtmiTPENOENTException No service (svc parameter) 
+     *  advertised in system.
+     * @throws AtmiTPELIMITException Max number of connections are reached.
+     *  Currently max number of connections is limited to 5 (MAX_CONNECTIONS macro).
+     * @throws AtmiTPETIMEException Service did not reply in 
+     *  given time (NDRX_TOUT).
+     * @throws AtmiTPESVCFAILException Service returned TPFAIL. This is 
+     *  application level failure.
+     * @throws AtmiTPESVCERRException System level service failure. Server 
+     *  died during the message presence in service queue.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. See 
+     *  logs i.e. user log, or debugs for more info.
      */
     public native int tpconnect(String svc, TypedBuffer idata, long flags);
     

@@ -43,6 +43,7 @@ add_executable (exjld   exjld.c
                         resources.c
                         emb.c
                         codegen.c
+                        zip.c
                 )
 
 # Link the executable to the UBF library & others...

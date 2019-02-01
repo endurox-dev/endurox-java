@@ -216,8 +216,7 @@ JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpacall
         goto out;
     }
     
-    
-    NDRX_LOG(log_debug, "tpcall OK cd=%d", (int)ret);
+    NDRX_LOG(log_debug, "tpcall to [%s] OK cd=%d", n_svc, (int)ret);
     
 out:
 

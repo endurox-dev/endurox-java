@@ -59,6 +59,7 @@
 #include <thlock.h>
 #include <sys_unix.h>
 #include "exjld.h"
+#include "zip.h"
 
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
@@ -190,24 +191,44 @@ void extract_jar_th (void *ptr, int *p_finish_off)
     /* extract file... */
     if ('/'==path[0])
     {
+        /*
         snprintf(tmp, sizeof(tmp), "jar xf %s", path);
+         * */
+        
+        snprintf(tmp, sizeof(tmp), "%s", path);
     }
     else
     {
+        /*
         snprintf(tmp, sizeof(tmp), "jar xf %s/%s", ndrx_G_owd, path);
+        */
+        snprintf(tmp, sizeof(tmp), "%s/%s", ndrx_G_owd, path);
     }
 
     exjld_thread_debug_lock();
     NDRX_LOG(log_debug, "%s", tmp);
     fprintf(stderr, "%s\n", tmp);
     exjld_thread_debug_unlock();
-    
-    ret = system(tmp);
 
-    if (EXSUCCEED!=ret)
+/*
+    ret = system(tmp);
+ * 
+ * if (EXSUCCEED!=ret)
     {
         exjld_thread_debug_lock();
         NDRX_LOG(log_error, "Failed to execute: [%s]: %d", tmp, sysret);
+        exjld_thread_debug_unlock();
+        goto out;
+    }
+ * 
+*/    
+    ret = zip_extract(tmp, ".", NULL, NULL);
+    
+    if (EXFAIL==ret)
+    {
+        exjld_thread_debug_lock();
+        NDRX_LOG(log_error, "Failed to open zip file: [%s] missing file or invalid format!",
+                tmp);
         exjld_thread_debug_unlock();
         goto out;
     }
