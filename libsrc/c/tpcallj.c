@@ -100,7 +100,12 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
     
     n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
     
-    /* OK might get exception, but there could be buffer associated with it.. */
+    /* OK might get exception, but there could be buffer associated with it.. 
+     * TODO: obuf/olen => not initialized
+     * use the same ibuf...
+     * Also type checking for casting must be done before call
+     * and shall be provided to ndrxj_atmi_TypedBuffer_result_prep
+     */
     if (EXSUCCEED!=tpcall((char *)n_svc, ibuf, ilen, &obuf, &olen, (long)flags))
     {
         int err = tperrno;

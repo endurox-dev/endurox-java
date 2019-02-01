@@ -250,7 +250,7 @@ JNIEXPORT jdouble JNICALL Java_org_endurox_TypedUbf_BgetDouble
 JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_BgetString
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
-    char *buf;
+    char *buf = NULL;
     jstring ret;
     
     /* exception will be thrown in case of failure */
