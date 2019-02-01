@@ -43,6 +43,7 @@
 #include <ndrstandard.h>
 #include <ndebug.h>
 #include <exhash.h>
+#include <nstdutil.h>
 
 #include "exjld.h"
 
@@ -114,15 +115,28 @@ void exljd_res_add_th (void *ptr, int *p_finish_off)
     NDRX_STRCPY_SAFE(elm->resname, data->resname);
     
     snprintf(elm->embpath, sizeof(elm->embpath), "%s_%d", data->emb_pfx, data->id);
+    
+    /*
     snprintf(cmd, sizeof(cmd), "exembedfile '%s' %s cinclude", 
             elm->respath, elm->embpath);
+    */
     
+    
+    /*
     exjld_thread_debug_lock();
     NDRX_LOG(log_dump, "%s", cmd);
     exjld_thread_debug_unlock();
     if (EXSUCCEED!=(ret = system(cmd)))
     {
         NDRX_LOG(log_error, "%s failed: %d", cmd, ret);
+        EXFAIL_OUT(ret);
+    }
+    */
+    
+    if (EXSUCCEED!=ndrx_file_gen_embed(elm->respath, elm->embpath, "cinclude"))
+    {
+        NDRX_LOG(log_error, "Failed to generate resource (probably missing file "
+                "or no permissions to read)");
         EXFAIL_OUT(ret);
     }
     
