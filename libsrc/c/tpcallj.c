@@ -72,8 +72,11 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
     char *ibuf = NULL;
     long ilen = 0;
     
-    char *obuf = NULL;
-    long olen = 0;
+    char *obuf;
+    long olen;
+    
+    char itype[XATMI_TYPE_LEN+1] = {EXEOS};
+    char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
     
     jboolean n_svc_copy = EXFALSE;
     const char *n_svc = NULL;
@@ -94,18 +97,25 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
             NDRX_LOG(log_error, "Failed to get data buffer!");
             goto out;
         }
+        
+        /* read buffer types... */
+        if (EXFAIL==tptypes(ibuf, itype, isubtype))
+        {
+            NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
+                    tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+                    tpstrerror(tperrno));
+            goto out;
+        }
+
     }
     
-    /* Extract obuf, & olen from AtmiBufferRef */
+    obuf = ibuf;
+    olen = ilen;
     
     n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
     
-    /* OK might get exception, but there could be buffer associated with it.. 
-     * TODO: obuf/olen => not initialized
-     * use the same ibuf...
-     * Also type checking for casting must be done before call
-     * and shall be provided to ndrxj_atmi_TypedBuffer_result_prep
-     */
+    /* OK might get exception, but there could be buffer associated with it.. */
     if (EXSUCCEED!=tpcall((char *)n_svc, ibuf, ilen, &obuf, &olen, (long)flags))
     {
         int err = tperrno;
@@ -121,11 +131,15 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
         
         if (TPESVCFAIL==err)
         {
-            errdatabuf = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, idata, ibuf, 
-                ilen, obuf, olen);
+            errdatabuf = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, 
+                    idata, ibuf, ilen, obuf, olen, itype, isubtype);
             /* generate exception */
         }
-        
+        else
+        {
+            errdatabuf = idata;
+        }
+            
         ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
         goto out;
     }
@@ -135,7 +149,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
      * make it free.
      */
     ret = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, idata, ibuf, 
-        ilen, obuf, olen);
+        ilen, obuf, olen, itype, isubtype);
     
     /* Check exception, as data buffer can be NULL (in null response servers) */
     if ((*env)->ExceptionCheck(env)) 

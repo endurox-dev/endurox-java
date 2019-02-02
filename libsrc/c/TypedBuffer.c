@@ -587,16 +587,16 @@ out:
  * @param ilen input data len
  * @param odata output (result) data buffer
  * @param olen output len
+ * @param itype input buffer ATMI type
+ * @param isubtype input buffer ATMI sub-type
  * @return final java object according to the "odata". Might be re-used
  *  "data" object or new.
  */
 expublic jobject ndrxj_atmi_TypedBuffer_result_prep
   (JNIEnv *env, jobject ctx_obj, jobject data, char *idata, 
-        long ilen, char *odata, long olen)
+        long ilen, char *odata, long olen, char *itype, char *isubtype)
 {
     jobject ret = NULL;
-    char itype[XATMI_TYPE_LEN+1] = {EXEOS};
-    char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
     
     char otype[XATMI_TYPE_LEN+1]  = {EXEOS};
     char osubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
@@ -609,35 +609,19 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     jfieldID dofin_fldid;
     jboolean finalizeOrg;
 
-
-    if (idata!=odata)
+    if (NULL!=odata)
     {
-        if (NULL!=idata)
+        if (EXFAIL==tptypes(odata, otype, osubtype))
         {
-            if (EXFAIL==tptypes(idata, itype, isubtype))
-            {
-                NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
-                        tpstrerror(tperrno));
-                ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get idata type infos: %s", 
-                        tpstrerror(tperrno));
-                goto out;
-            }
-        }
-        
-        if (NULL!=odata)
-        {
-            if (EXFAIL==tptypes(odata, otype, osubtype))
-            {
-                NDRX_LOG(log_error, "Failed to get odata type infos: %s", 
-                        tpstrerror(tperrno));
-                ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
-                        tpstrerror(tperrno));
-                goto out;
-            }
+            NDRX_LOG(log_error, "Failed to get odata type infos: %s", 
+                    tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+                    tpstrerror(tperrno));
+            goto out;
         }
     }
     
-    if (0==strcmp(idata, odata))
+    if (0==strcmp(otype, itype))
     {
         is_types_eq = EXTRUE;
     }

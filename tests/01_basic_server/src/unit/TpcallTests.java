@@ -20,7 +20,11 @@ public class TpcallTests {
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
 
-        //TODO: Have long term test for memory management.
+        /**
+         * TODO: Have long term test for memory management.
+         * ideally we would time terminated tests, for example 5 min...?
+         * thus we need a stop watch construction to have in java..
+         */
         for (int i=0; i<100000000; i++)
         {
             
@@ -38,10 +42,17 @@ public class TpcallTests {
             ub = (TypedUbf)ctx.tpcall("ECHOSVC", ub, 0);
             
             String rspData = ub.BgetString(test.T_STRING_2_FLD, 0);
-            //assertEquals(reqData, rspData);
+            assertEquals(reqData, rspData);
         }
         ub.cleanup();
         ctx.cleanup();
     }
     
+    //TODO: Test with NULL buffer call....
+    
+    //TODO: Test buffer with other service error, for example noent...
+    
+    //TODO: Test server call with buffer translate...
+    
+    //TODO: Test server call with buffer translate and service error...
 }

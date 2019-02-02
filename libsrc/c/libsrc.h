@@ -104,7 +104,7 @@ extern TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env,
 
 extern jobject ndrxj_atmi_TypedBuffer_result_prep
   (JNIEnv *env, jobject ctx_obj, jobject data, char *idata, 
-        long ilen, char *odata, long olen);
+        long ilen, char *odata, long olen, char *itype, char *isubtype);
 
 extern int ndrxj_TypedBuffer_finalize_transfer(JNIEnv *env, 
         jobject to_data, jobject from_data, int from_invalidate);
