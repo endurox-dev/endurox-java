@@ -1,11 +1,11 @@
 import org.endurox.*;
 import java.util.*;
 
-public class JServer01 implements Server, Service {
+public class JServer01_2 implements Server, Service {
 
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
-        ctx.tplogDebug("tpService/DUMMYSVC called");
+        ctx.tplogDebug("tpService/ECHOSVC called");
 
         TypedUbf ub = (TypedUbf)svcinfo.getData();
         
@@ -22,7 +22,7 @@ public class JServer01 implements Server, Service {
 
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
         ctx.tplogDebug("Into tpSvrInit()");
-        ctx.tpadvertise("DUMMYSVC", "DUMMYSVC", this);
+        ctx.tpadvertise("ECHOSVC", "ECHOSVC", this);
         return AtmiConst.SUCCEED;
     }
     
@@ -35,7 +35,7 @@ public class JServer01 implements Server, Service {
         AtmiCtx ctx = new AtmiCtx();
 
         System.out.println("About to create ...");
-        JServer01 server = new JServer01();
+        JServer01_2 server = new JServer01_2();
 
         System.out.println("About to log ...");
         ctx.tplogInfo("Started server with: %s", Arrays.toString(args));

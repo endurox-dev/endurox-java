@@ -488,6 +488,56 @@ out:
     return ret;
 }
 
+#if 0
+/* save the original pointer... */
+__thread void * old_malloc_hook;
+
+static void *
+my_malloc_hook (size_t size, const void *caller)
+{
+  void *result;
+  long ldate, ltime, lusec;
+  nstd_tls_t *tls;
+  /* Restore all old hooks */
+  __malloc_hook = old_malloc_hook;
+  
+  /* Call recursively */
+  result = malloc (size);
+  
+  /* Save underlying hooks */
+  old_malloc_hook = __malloc_hook;
+  
+  /* printf might call malloc, so protect it too. 
+  printf ("%08ld:%06ld%06d: malloc (%d) returns %p\n", ldate, ltime, lusec, 
+          (int)size, result);
+  
+  ndrx_get_dt_local(&ldate, &ltime, &lusec);
+  */
+  
+  /*
+  userlog("malloc (%d) returns %p\n",
+          (int)size, result);
+  */
+  
+  NDRX_LOG(log_error, "malloc (%d) returns %p", (int)size, result);
+  
+  /* print some log only if we have a Enduro/X TLS... */
+
+  /* Restore our own hooks */
+  __malloc_hook = my_malloc_hook;
+  
+  return result;
+}
+
+static void
+my_init (void)
+{
+  old_malloc_hook = __malloc_hook;
+  __malloc_hook = my_malloc_hook;
+}
+
+
+#endif
 /**
  * Run java main
  * @param argc command line argument count
@@ -524,6 +574,9 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
     M_index_len = class_index_len;
 
     NDRX_LOG(log_debug, "Loading config...");
+    
+    /* my_init(); */
+    
     /* Load Enduro/X based config... with @java section */
     if (EXSUCCEED!=ndrx_cconfig_load_general(&cfg))
     {

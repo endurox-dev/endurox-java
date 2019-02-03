@@ -274,12 +274,15 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     long ilen = 0;
     
     /* output buffer */
-    char *obuf = NULL;
-    long olen = 0;
+    char *obuf;
+    long olen;
     
     int ocd = cd;
     
     jobject odata = NULL;
+    char itype[XATMI_TYPE_LEN+1] = {EXEOS};
+    char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
+    
 
     /* get context & set */
     
@@ -297,25 +300,49 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
             NDRX_LOG(log_error, "Failed to get data buffer!");
             goto out;
         }
+        
+        /* read buffer types... */
+        if (EXFAIL==tptypes(ibuf, itype, isubtype))
+        {
+            NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
+                    tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+                    tpstrerror(tperrno));
+            goto out;
+        }
+        
     }
+    
+    obuf = ibuf;
+    olen = ilen;
     
     /* OK might get exception, but there could be buffer associated with it.. */
     if (EXSUCCEED!=(ret=tpgetrply(&ocd, &obuf, &olen, (long)flags)))
     {
         int err = tperrno;
         char errbuf[MAX_ERROR_LEN+1];
-        
+        jobject errdatabuf;
         NDRX_LOG(log_debug, "Call failed with %d", err);
         /* save the error detail, and continue */
         
         /* if it is user error, return the data buffer */
         
+        if (TPESVCFAIL==err)
+        {
+            errdatabuf = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, 
+                    idata, ibuf, ilen, obuf, olen, itype, isubtype);
+            /* generate exception */
+        }
+        else
+        {
+            errdatabuf = idata;
+        }
+        
         NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
         
-        ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+        ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
         goto out;
     }
-    
     
     NDRX_LOG(log_debug, "OK cd=%d", (int)ocd);
     

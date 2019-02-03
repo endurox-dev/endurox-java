@@ -354,6 +354,16 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     ret = (*env)->NewObject(env, bclz, mid, ctx_obj, (jboolean)finalize, 
             (jlong)data, len);
     
+    /*
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * BIG WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * Seems that if we run from JNI java loader, we must delete local references
+     * THIS AFFECTS FUNCTIONS WHICH ARE USED BY SERVICE CALL DISPATCHER!!!!!!!!!
+     * OTHERWISE EXPECT LEAKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     */
+    (*env)->DeleteLocalRef( env, bclz);
+    
     if (NULL==ret)
     {
         NDRX_LOG(log_error, "Failed to create [%s]", clazz);

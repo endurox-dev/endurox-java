@@ -124,11 +124,21 @@ Also the class path shall include the Junit JARS. The next screen shows how
 to do it when project is configured, but that can be done during the initial
 wizard too.
 
-The class path attributes:
+If adding new sources folder get similar message like this 
+(Package folder already used in project):
 
-image:images/java_classpath.png[caption="Figure 8: ", title="Java class path"]
+image:images/java_classpath.png[caption="Figure 8: ", title="Java source error"]
+
+Then this probably is caused by "endurox-java" C project. There is nothing to
+do in such case except to go and manually edit the NetBeans project file in
+
+*endurox-j/nbproject/project.xml* and add the necessary source folders to project,
+in similar way as other source folders are added.
 
 
+*The class path attributes*:
+
+image:images/java_classpath.png[caption="Figure 9: ", title="Java class path"]
 
 == Distributed transaction processing architecture
 

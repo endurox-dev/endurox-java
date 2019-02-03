@@ -111,6 +111,25 @@
             </manifest>
         </jar>
 	
+	<!-- =============================================================== -->
+        <!-- == Build for tests/01_basic_server/src/jserver01_2 -->
+        <!-- =============================================================== -->
+        <mkdir dir="build/tests/01_basic_server/src/jserver01_2/classes"/>
+        <javac includeantruntime="false" srcdir="tests/01_basic_server/src/jserver01_2" 
+	       destdir="build/tests/01_basic_server/src/jserver01_2/classes">
+                <classpath>
+                        <pathelement path="libsrc/enduroxjava.jar"/>
+                        <pathelement path="tests/01_basic_server/src/ubftab/ubf01.jar"/>
+                </classpath>
+        </javac>
+
+        <jar destfile="tests/01_basic_server/src/jserver01_2/jserver01_2.jar" 
+	     basedir="build/tests/01_basic_server/src/jserver01_2/classes">
+            <manifest>
+                <attribute name="Main-Class" value="JServer01_2"/>
+            </manifest>
+        </jar>
+	
     </target>
 
     <target name="run">

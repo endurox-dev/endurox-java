@@ -111,6 +111,8 @@ expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
     
     ret = (*env)->NewObject(env, bclz, mid, jclientdata);
     
+    (*env)->DeleteLocalRef( env, bclz);
+    
     if (NULL==ret)
     {
         NDRX_LOG(log_error, "Failed to create [%s] instance", CLIENTID_CLASS);

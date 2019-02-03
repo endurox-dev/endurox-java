@@ -1,5 +1,5 @@
 ##
-## @brief Include sub-dirs for tests
+## @brief Test server, linked
 ##
 ## @file CMakeLists.txt
 ##
@@ -30,12 +30,43 @@
 ## contact@mavimax.com
 ## -----------------------------------------------------------------------------
 ##
-cmake_minimum_required(VERSION 2.8)
 
-# Sub Dirs
-add_subdirectory (ubftab)
-add_subdirectory (server)
-add_subdirectory (client)
-add_subdirectory (unit)
-add_subdirectory (jserver01_2)
+# Set minimum version
+cmake_minimum_required(VERSION 2.6)
+
+find_package(Java)
+include(UseJava)
+
+# Add debug options
+# By default if RELEASE_BUILD is not defined, then we run in debug!
+IF ($ENV{RELEASE_BUILD})
+	# do nothing
+ELSE ($ENV{RELEASE_BUILD})
+	ADD_DEFINITIONS("-D UBF_DEBUG")
+ENDIF ($ENV{RELEASE_BUILD})
+
+# Make sure the compiler can find include files from our UBF library.
+include_directories (. ${JNI_INCLUDE_DIRS})
+
+FILE(GLOB JAVASRC *.java)
+
+add_jar(jserver01_2
+    SOURCES
+        ${JAVASRC}
+    INCLUDE_JARS 
+        ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+        ../ubftab/ubf01.jar
+        )
+
+ndrx_java_link(
+            TARGET 
+                jserver01_2b
+            MAINCLASS 
+                JServer01_2
+            JARS
+                jserver01_2.jar
+                ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+                ../ubftab/ubf01.jar
+)
+
 # vim: set ts=4 sw=4 et smartindent:

@@ -132,6 +132,8 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
             (jlong)svcinfo->flags, (jint)svcinfo->cd, 
             (jlong)svcinfo->appkey, *p_jcltid, *p_jfname);
     
+    (*env)->DeleteLocalRef( env, bclz);
+    
     if (NULL==ret)
     {
         NDRX_LOG(log_error, "Failed to create [%s] instance", TPSVCINFO_CLASS);

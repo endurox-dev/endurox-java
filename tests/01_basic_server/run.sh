@@ -9,6 +9,8 @@ cd conf
 . setndrx
 popd
 
+export ASAN_OPTIONS=handle_segv=0
+
 # Start the enduro/x app server (which will boot the our server executable)
 
 #
@@ -43,6 +45,8 @@ fi
 # Running unit tests...
 #
 
+# Valgrind debug:
+#  valgrind --main-stacksize=9916777216 --leak-check=full --show-leak-kinds=all --show-reachable=yes jexunit01b TpacallTests
 jexunit01b TpcallTests || go_out 2
 jexunit01b TpacallTests || go_out 3
 

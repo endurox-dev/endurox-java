@@ -95,6 +95,9 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
             tpsetctxt(ctx, 0L);
         }
     }
+    
+    /* release class */
+    (*env)->DeleteLocalRef( env, objClass);
 
     return ctx;
 }
@@ -535,11 +538,17 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
          */
         if ((*M_srv_ctx_env)->ExceptionCheck(M_srv_ctx_env))
         {
+            (*M_srv_ctx_env)->DeleteLocalRef( M_srv_ctx_env, bclz);
+            
             NDRXJ_LOG_EXCEPTION(M_srv_ctx_env, log_error, 
                 NDRXJ_LOGEX_ULOG, "Service have thrown unexpected exception: "
                     "[%s] - ignoring (continue)");
             
             (*M_srv_ctx_env)->ExceptionClear(M_srv_ctx_env);
+        }
+        else
+        {
+            (*M_srv_ctx_env)->DeleteLocalRef( M_srv_ctx_env, bclz);
         }
         
         /* set context back... */
