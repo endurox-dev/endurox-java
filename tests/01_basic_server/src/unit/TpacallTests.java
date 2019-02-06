@@ -21,8 +21,22 @@ public class TpacallTests {
 
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
+        
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+        }
+        
+        /* get env for leak test... for particular time... */
 
-        for (int i=0; i<100000000; i++)
+        for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             try {
                 ub.Bdel(test.T_STRING_2_FLD, 0);
