@@ -48,6 +48,8 @@ fi
 # Running unit tests...
 #
 
+xadmin psc
+
 # Valgrind debug:
 #  valgrind --main-stacksize=9916777216 --leak-check=full --show-leak-kinds=all --show-reachable=yes jexunit01b TpacallTests
 jexunit01b TpcallTests || go_out 2

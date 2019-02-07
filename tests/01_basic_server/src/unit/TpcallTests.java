@@ -66,7 +66,54 @@ public class TpcallTests {
         ctx.cleanup();
     }
     
-    //TODO: Test with NULL buffer call.... + non null response...
+    /**
+     * Test with NULL buffer call.... + non null response...
+     */
+    @Test
+    public void tpcallNullCallTest() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+        
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpcallNullCallTest")) {
+                return;
+            }
+                
+        }
+        
+        for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        {
+            try {
+                ub.Bdel(test.T_STRING_2_FLD, 0);
+            } 
+            catch (UbfBNOTPRESException e)
+            {
+                // ignore.. 
+            }
+            
+            ub = (TypedUbf)ctx.tpcall("NULL", null, 0);
+            
+            String rspData = ub.BgetString(test.T_STRING_2_FLD, 0);
+            assertEquals("HELLO NULL", rspData);
+        }
+        ub.cleanup();
+        ctx.cleanup();
+    }
     
     //TODO: Test buffer with other service error, for example noent...
     
