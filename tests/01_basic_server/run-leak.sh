@@ -32,7 +32,8 @@ function go_out {
 #
 function test_leak {
 
-	echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME"
+	echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME (sleep 5 for plot results...)"
+	sleep 5
 
 	LEAKS=`grep LEAK log/XMEMCK`
 
