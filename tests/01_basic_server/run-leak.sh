@@ -17,13 +17,32 @@ export ASAN_OPTIONS=handle_segv=0
 # Generic exit function
 #
 function go_out {
-echo "Test exiting with: $1"
+	echo "Test exiting with: $1"
 
-xadmin stop -y
-xadmin killall xmemck
-xadmin down -y 2>/dev/null
+	xadmin stop -y
+	xadmin killall xmemck
+	xadmin down -y 2>/dev/null
 
-exit $1
+	exit $1
+}
+
+
+#
+# Verify that we finish ok with out leaks...
+#
+function test_leak {
+
+	echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME"
+
+	LEAKS=`grep LEAK log/XMEMCK`
+
+	echo "leaks=[$LEAKS]"
+
+	if [[ "X$LEAKS" != "X" ]]; then
+		echo "Memory leaks detected for $NDRXJ_LEAKTEST_NAME!"
+		go_out 99
+	fi
+
 }
 
 echo "debug off"
@@ -61,21 +80,16 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 xmemck -m jexunit01b -m jserver01_2b &
 
+# needs to export exact test case name, via hash # does not work case selection...
+# needed due to multiple scenarios and we need to understand exactly when we got a leak
+export NDRXJ_LEAKTEST_NAME="tpcallTest"
 jexunit01b TpcallTests || go_out 3
+test_leak;
 
+# needs to export exact test case name, via hash # does not work case selection...
+export NDRXJ_LEAKTEST_NAME="tpacallTest"
 jexunit01b TpacallTests || go_out 4
-
-
-echo "Scanning for leaks..."
-
-LEAKS=`grep LEAK log/XMEMCK`
-
-echo "leaks=[$LEAKS]"
-
-if [[ "X$LEAKS" != "X" ]]; then
-	echo "Memory leaks detected!"
-	go_out 99
-fi
+test_leak;
 
 go_out 0
 

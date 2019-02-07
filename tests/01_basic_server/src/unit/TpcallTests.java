@@ -30,6 +30,12 @@ public class TpcallTests {
         {
             leaktestSec = Integer.parseInt(leaktestSecStr);
             leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpcallTest")) {
+                return;
+            }
+                
         }
         
         /**
@@ -60,7 +66,7 @@ public class TpcallTests {
         ctx.cleanup();
     }
     
-    //TODO: Test with NULL buffer call....
+    //TODO: Test with NULL buffer call.... + non null response...
     
     //TODO: Test buffer with other service error, for example noent...
     

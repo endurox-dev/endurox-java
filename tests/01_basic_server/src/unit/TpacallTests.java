@@ -32,6 +32,12 @@ public class TpacallTests {
         {
             leaktestSec = Integer.parseInt(leaktestSecStr);
             leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpacallTest")) {
+                return;
+            }
+            
         }
         
         /* get env for leak test... for particular time... */
