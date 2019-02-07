@@ -19,13 +19,25 @@ public class TpcallTests {
 
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
-
+        
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+        }
+        
         /**
          * TODO: Have long term test for memory management.
          * ideally we would time terminated tests, for example 5 min...?
          * thus we need a stop watch construction to have in java..
          */
-        for (int i=0; i<100000000; i++)
+        for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             
             try {

@@ -25,6 +25,9 @@ function go_out {
     exit $1
 }
 
+# debug on
+export NDRX_CCTAG="on"
+
 xadmin start -y
 rm /tmp/01_CLIENT.log 2>/dev/null
 
