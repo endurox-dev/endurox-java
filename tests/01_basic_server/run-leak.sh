@@ -85,11 +85,13 @@ xmemck -m jexunit01b -m jserver01_2b &
 # needed due to multiple scenarios and we need to understand exactly when we got a leak
 export NDRXJ_LEAKTEST_NAME="tpcallTest"
 jexunit01b TpcallTests || go_out 3
+tmshutdown -y; tmboot -y
 test_leak;
 
 # needs to export exact test case name, via hash # does not work case selection...
 export NDRXJ_LEAKTEST_NAME="tpacallTest"
 jexunit01b TpacallTests || go_out 4
+tmshutdown -y; tmboot -y
 test_leak;
 
 go_out 0

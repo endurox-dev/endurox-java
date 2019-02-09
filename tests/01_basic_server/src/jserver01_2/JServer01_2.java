@@ -26,19 +26,13 @@ public class JServer01_2 implements Server, Service {
      * @return SUCCEED/FAIL
      */
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
-        try
-        {
-            ctx.tplogDebug("Into tpSvrInit() [%s]", argv[0]);
-            ctx.tpadvertise("ECHOSVC", "ECHOSVC", this);
 
-            //Allocate NULL service
-            ctx.tpadvertise("NULL", "NullSvc", new NullSvc());
-        }
-        catch (Exception e)
-        {
-            //!!!!!!!!!!!1
-            ctx.tplogError("Failed to init: %s", e.getMessage());
-        }
+        argv[0] = "HELLO";
+        ctx.tplogDebug("Into tpSvrInit");
+        
+        ctx.tpadvertise("ECHOSVC", "ECHOSVC", this);
+        //Allocate NULL service
+        ctx.tpadvertise("NULL", "NullSvc", new NullSvc());
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...
