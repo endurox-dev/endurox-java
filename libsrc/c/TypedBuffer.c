@@ -288,8 +288,12 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     
     if (0==strcmp(p_type, "NULL"))
     {
-        /* NULL buffer object */
+        /* NULL buffer object 
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedNull");
+         * ??? maybe just return NULL */ 
+        
+        /* NULL buffer... nothing todo... */
+        goto out;
     }
     else if (0==strncmp(p_type, "UBF", 3) || 
             0==strncmp(p_type, "FML", 3))
@@ -409,6 +413,13 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     jfieldID doFinalize_fldid;
     jlong cptr;
     jlong clen;
+    
+    if (NULL==data)
+    {
+        /* just return NULL... */
+        *buf = NULL;
+        goto out;
+    }
     
     clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
 
