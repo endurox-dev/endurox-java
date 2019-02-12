@@ -79,7 +79,7 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 # Start Enduro/X leak monitor...
 #
-xmemck -m jexunit01b -m jserver01_2b &
+xmemck -s30 -t60 -m jexunit01b -m jserver01_2b &
 
 # needs to export exact test case name, via hash # does not work case selection...
 # needed due to multiple scenarios and we need to understand exactly when we got a leak
