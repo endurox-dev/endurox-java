@@ -75,7 +75,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
     char *obuf;
     long olen;
     
-    char itype[XATMI_TYPE_LEN+1] = {EXEOS};
+    char itype[XATMI_TYPE_LEN+1] = "NULL";
     char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
     
     jboolean n_svc_copy = EXFALSE;

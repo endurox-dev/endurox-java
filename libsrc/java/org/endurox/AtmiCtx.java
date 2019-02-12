@@ -719,8 +719,8 @@ public class AtmiCtx {
     
     /**
      * Send data to conversational server
-     * @param cd
-     * @param idata
+     * @param cd conversation descriptor
+     * @param idata input data buffer
      * @param flags
      * @return receive event
      */

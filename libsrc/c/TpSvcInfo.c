@@ -107,10 +107,9 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
             ctx_obj, EXTRUE, svcinfo->data, svcinfo->len,
             NULL, NULL, EXFALSE)))
     {
-        NDRX_LOG(log_error, "Failed to translate ATMI buffer to Java object: %p",
-                svcinfo->data);
-        ret = NULL;
-        goto out;
+        NDRX_LOG(log_error, "NULL buffer");
+        /* ret = NULL;
+        goto out; */
     }
     
     /* Translate ClientId */

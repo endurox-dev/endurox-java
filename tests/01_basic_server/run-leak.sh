@@ -35,7 +35,7 @@ function test_leak {
 	echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME (sleep 5 for plot results...)"
 	sleep 5
 
-	LEAKS=`grep LEAK log/XMEMCK`
+	LEAKS=`grep "LEAK" log/XMEMCK`
 
 	echo "leaks=[$LEAKS]"
 
@@ -81,15 +81,35 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 xmemck -s30 -t60 -m jexunit01b -m jserver01_2b &
 
+
+export NDRXJ_LEAKTEST_NAME="tpcallNullRsp"
+jexunit01b TpcallTests || go_out 7
+tmshutdown -y; tmboot -y
+test_leak;
+
+exit 0
+
+export NDRXJ_LEAKTEST_NAME="tpcallNullNull"
+jexunit01b TpcallTests || go_out 6
+tmshutdown -y; tmboot -y
+test_leak;
+
+export NDRXJ_LEAKTEST_NAME="tpcallNullCallTest"
+jexunit01b TpcallTests || go_out 5
+tmshutdown -y; tmboot -y
+test_leak;
+
 # needs to export exact test case name, via hash # does not work case selection...
 # needed due to multiple scenarios and we need to understand exactly when we got a leak
 export NDRXJ_LEAKTEST_NAME="tpcallTest"
-jexunit01b TpcallTests || go_out 3
+jexunit01b TpcallTests || go_out 4
+tmshutdown -y; tmboot -y
 test_leak;
 
 # needs to export exact test case name, via hash # does not work case selection...
 export NDRXJ_LEAKTEST_NAME="tpacallTest"
-jexunit01b TpacallTests || go_out 4
+jexunit01b TpacallTests || go_out 3
+tmshutdown -y; tmboot -y
 test_leak;
 
 go_out 0

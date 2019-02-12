@@ -400,12 +400,12 @@ out:
 exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
 {
     int ret = EXSUCCEED;
-    jclass objClass;
+    jclass objClass = NULL;
     jfieldID myFieldID;        
-    jobject svrObj;
+    jobject svrObj = NULL;
     
     /* Attribs of the server to invoke */
-    jclass svrClass;
+    jclass svrClass = NULL;
     jmethodID svr_mid;
     
     NDRX_LOG(log_info, "Into tpsrvinit -> java");
@@ -459,19 +459,42 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     }
  
     NDRX_LOG(log_debug, "About to call server interface...");
+
+    /* Call server object */
     
     /* We shall enter into NULL context, not? */
     tpsetctxt(TPNULLCONTEXT, 0L);
     
-    /* Call server object */
+
     ret = (int)(*M_srv_ctx_env)->CallIntMethod(M_srv_ctx_env, svrObj, svr_mid,
             M_srv_ctx_obj, M_jargv);
     
     /* set back actual context */
     tpsetctxt(M_srv_ctx, 0L);
     
+    /* check for exception, if have one the return  */
+    
+    if ((*M_srv_ctx_env)->ExceptionCheck(M_srv_ctx_env))
+    {
+        NDRXJ_LOG_EXCEPTION(M_srv_ctx_env, log_error, 
+            NDRXJ_LOGEX_NDRX, "Java tpSvrInit failed:\n%s");
+        (*M_srv_ctx_env)->ExceptionClear(M_srv_ctx_env);
+        EXFAIL_OUT(ret);
+    }
+    
 out:
-            
+
+    if (NULL!=objClass)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, objClass);
+    }
+
+
+    if (NULL!=svrClass)
+    {
+        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, svrClass);
+    }
+
     return ret;
 }
 

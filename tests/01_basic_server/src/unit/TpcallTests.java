@@ -120,4 +120,89 @@ public class TpcallTests {
     //TODO: Test server call with buffer translate...
     
     //TODO: Test server call with buffer translate and service error...
+    
+    //TOOD: Return NULL from service
+    
+    /**
+     * Send NULL and get NULL
+     */
+    @Test
+    public void tpcallNullNull() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpcallNullNull")) {
+                return;
+            }
+                
+        }
+        
+        for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        {
+            TypedUbf ub = null;
+        
+            ub = (TypedUbf)ctx.tpcall("NULLRSP", null, 0);
+            
+            assertEquals(null, ub);
+        }
+        ctx.cleanup();
+    }
+    
+    /**
+     * We send some data but we get NULL back...
+     */
+    @Test
+    public void tpcallNullRsp() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpcallNullRsp")) {
+                return;
+            }
+                
+        }
+        
+        for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        {
+            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+            assertNotEquals(ub, null);
+            
+            /* load some data */
+            
+            ub.Badd(test.T_STRING_2_FLD, "HELLO NULL");
+        
+            ub = (TypedUbf)ctx.tpcall("NULLRSP", ub, 0);
+            
+            assertEquals(null, ub);
+        }
+        ctx.cleanup();
+    }
+    
+    
 }
