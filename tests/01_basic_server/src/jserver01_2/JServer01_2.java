@@ -27,12 +27,14 @@ public class JServer01_2 implements Server, Service {
      */
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
 
-        argv[0] = "HELLO";
+        /* argv[0] = "HELLO"; */
         ctx.tplogDebug("Into tpSvrInit");
         
         ctx.tpadvertise("ECHOSVC", "ECHOSVC", this);
         //Allocate NULL service
         ctx.tpadvertise("NULL", "NullSvc", new NullSvc());
+        
+        ctx.tpadvertise("NULLRSP", "NullRspSvc", new NullRspSvc());
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...

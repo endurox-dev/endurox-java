@@ -619,7 +619,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
 {
     jobject ret = NULL;
     
-    char otype[XATMI_TYPE_LEN+1]  = {EXEOS};
+    char otype[XATMI_TYPE_LEN+1]  = "NULL";
     char osubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
     
     int is_types_eq;
@@ -686,7 +686,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             (*env)->SetLongField(env, data, clen_fldid, (jlong)olen);
         }
         
-        if (idata!=odata)
+        if (idata!=odata && NULL!=data)
         {
             NDRX_LOG(log_debug, "Buffer pointers changed...");
             
@@ -705,33 +705,36 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     {
         /* deactivate the original buffer and allocate new for odata (if odata is NULL
          * then return TypedNULL. But we could also return NULL of the buffer object
+         * !!! Enduro/X must delete the incoming buffer if return is NULL
          */
 
-        clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
-
-        if (NULL==clz)
-        {        
-            /* I guess we need to abort here! 
-             * exception should be set already
-             */
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                        "Failed to resolve `" TYPEDBUFFER_CLASS "' class! ");
-            goto out;
-        }
-
-        /* Change the not finalize flag */
-
-        if (NULL==(dofin_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
+        if (NULL!=data)
         {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to get [doFinalize] field from " TYPEDBUFFER_CLASS ": %s");
-            goto out;
-        }
+            clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
 
-        /* TODO: todo get field value */
-        finalizeOrg = (*env)->GetBooleanField(env, data, dofin_fldid);
-        
-        (*env)->SetBooleanField(env, data, dofin_fldid, (jboolean)JNI_FALSE);
+            if (NULL==clz)
+            {        
+                /* I guess we need to abort here! 
+                 * exception should be set already
+                 */
+                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                            "Failed to resolve `" TYPEDBUFFER_CLASS "' class! ");
+                goto out;
+            }
+
+            /* Change the not finalize flag */
+
+            if (NULL==(dofin_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
+            {
+                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                        "Failed to get [doFinalize] field from " TYPEDBUFFER_CLASS ": %s");
+                goto out;
+            }
+
+            finalizeOrg = (*env)->GetBooleanField(env, data, dofin_fldid);
+
+            (*env)->SetBooleanField(env, data, dofin_fldid, (jboolean)JNI_FALSE);
+        }
 
         /* now allocate new typed buffer */
 
