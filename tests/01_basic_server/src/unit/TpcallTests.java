@@ -121,8 +121,6 @@ public class TpcallTests {
     
     //TODO: Test server call with buffer translate and service error...
     
-    //TOOD: Return NULL from service
-    
     /**
      * Send NULL and get NULL
      */
@@ -147,7 +145,6 @@ public class TpcallTests {
             if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpcallNullNull")) {
                 return;
             }
-                
         }
         
         for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)

@@ -35,7 +35,7 @@ function test_leak {
 	echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME (sleep 5 for plot results...)"
 	sleep 5
 
-	LEAKS=`grep "LEAK" log/XMEMCK`
+	LEAKS=`grep "Process leaky" log/XMEMCK`
 
 	echo "leaks=[$LEAKS]"
 
@@ -79,15 +79,12 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 # Start Enduro/X leak monitor...
 #
-xmemck -s30 -t60 -m jexunit01b -m jserver01_2b &
-
+xmemck -d45 -s50 -t90 -m jexunit01b -m jserver01_2b &
 
 export NDRXJ_LEAKTEST_NAME="tpcallNullRsp"
 jexunit01b TpcallTests || go_out 7
 tmshutdown -y; tmboot -y
 test_leak;
-
-exit 0
 
 export NDRXJ_LEAKTEST_NAME="tpcallNullNull"
 jexunit01b TpcallTests || go_out 6
