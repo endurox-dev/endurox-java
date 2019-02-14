@@ -82,6 +82,7 @@ if(Java_VERSION VERSION_LESS 1.10)
         org.endurox.AtmiCtx
         org.endurox.TypedBuffer
         org.endurox.TypedUbf
+        org.endurox.TypedString
         org.endurox.TpInit
         org.endurox.BFldLocInfo
         org.endurox.BExprTree

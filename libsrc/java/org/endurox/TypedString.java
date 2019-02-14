@@ -32,6 +32,9 @@
  */
 package org.endurox;
 
+/**
+ * Typed string. Holds the string value
+ */
 public class TypedString extends TypedBuffer {
 	
    /**
@@ -44,6 +47,20 @@ public class TypedString extends TypedBuffer {
    public TypedString(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
         super(ctx, doFinalize, cPtr, len);
    }
+   
+   /**
+    * Install string value
+    * @param str New value to set in string buffer
+    */
+   public native void setString(String str);
+   
+   
+   /**
+    * Get string value from buffer
+    * @return string value read
+    */
+   public native String getString();
+   
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

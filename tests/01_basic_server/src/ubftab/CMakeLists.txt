@@ -45,6 +45,10 @@ ELSE ($ENV{RELEASE_BUILD})
 	ADD_DEFINITIONS("-D UBF_DEBUG")
 ENDIF ($ENV{RELEASE_BUILD})
 
+#
+# Got to build views here too
+#
+
 ndrx_java_ubf(
             TARGET 
                 ubf01

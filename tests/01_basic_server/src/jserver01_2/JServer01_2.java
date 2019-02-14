@@ -34,7 +34,7 @@ public class JServer01_2 implements Server, Service {
         //Allocate NULL service
         ctx.tpadvertise("NULL", "NullSvc", new NullSvc());
         
-        ctx.tpadvertise("NULLRSP", "NullRspSvc", new NullRspSvc());
+        ctx.tpadvertise("NULLRSP", "NullRspSvc", new NullRsp());
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...
