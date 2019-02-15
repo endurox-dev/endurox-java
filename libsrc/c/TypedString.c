@@ -68,6 +68,16 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
     char *cdata;
     long clen;
     int ret = EXSUCCEED;
+    jboolean n_str_copy = EXFALSE;
+    const char *n_str;
+    int new_size, bufsz;
+    
+    /* Validate NULL string - not accetable... */
+    
+    if (NULL==s)
+    {
+        /* TODO: Reject! */
+    }
     
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
@@ -86,9 +96,32 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
      * if fits in fine, if not - realloc to bigger
      */
     
+    /* Get string */
+    n_str = (*env)->GetStringUTFChars(env, js, &n_str_copy);
+    new_size = strlen(n_str);
+    
+    bufsz = tptypes(cdata, NULL, NULL);
+    
+    if (bufsz < 1)
+    {
+        /* TODO: Invalid buffer! */
+    }
+    
+    if (bufsz < new_size)
+    {
+        /* TODO: Reallocate buffer! */
+        cdata = tprealloc(cdata, new_size);
+    }
+    
+    strcpy(cdata, n_str);
 
 out:
     
+    if (n_str_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, js, n_str);
+    }
+
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
