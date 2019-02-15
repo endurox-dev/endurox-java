@@ -881,6 +881,20 @@ public class AtmiCtx {
      */
     public native void tptoutset(int tout);
     
+    /**
+     * Allocate string object with value
+     * @param s string value to set
+     * @return Typed string filled with value
+     */
+    public TypedString newString(String s) {
+        
+        TypedString ret = (TypedString)tpalloc("STRING", "", s.getBytes().length);
+        
+        ret.setString(s);
+        
+        return ret;
+    }
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
