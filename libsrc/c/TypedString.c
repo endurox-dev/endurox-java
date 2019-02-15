@@ -76,7 +76,8 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
     
     if (NULL==s)
     {
-        /* TODO: Reject! */
+         ndrxj_atmi_throw(env, data, TPEINVAL, "string must not be NULL!");
+         return; /* <<<< RETURN !!! */
     }
     
     /* get the context, switch */
@@ -104,13 +105,22 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
     
     if (bufsz < 1)
     {
-        /* TODO: Invalid buffer! */
+         ndrxj_atmi_throw(env, data, tperror, tpstrerror(tperror));
+         EXFAIL_OUT(ret);
     }
     
     if (bufsz < new_size)
     {
         /* TODO: Reallocate buffer! */
-        cdata = tprealloc(cdata, new_size);
+        NDRX_LOG(log_debug, "Realloc string buffer from %d to %d",
+            bufsz, new_size);
+        if (NULL==(cdata = tprealloc(cdata, new_size)))
+        {
+            /* TODO: Set buffer to NULL! to avoid crash at free */
+            /* throw exception */
+            EXFAIL_OUT(ret);
+        }
+
     }
     
     strcpy(cdata, n_str);
