@@ -43,6 +43,7 @@
 #include <oatmisrv_integra.h>
 #include "libsrc.h"
 #include <sys_unix.h>
+#include <tpadm.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -171,6 +172,56 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tptoutset
     
 out:
     tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Return list of ATMI buffers (a snapshoot of pointers)
+ * @param env java env
+ * @param data 
+ * @return list of pointers
+ */
+expublic JNIEXPORT jlongArray JNICALL Java_org_endurox_AtmiCtx_getBuffers
+  (JNIEnv * env, jobject atmiCtxObj)
+{
+    jlongArray ret = NULL;
+    ndrx_growlist_t list;
+    
+    list.mem = NULL;
+    
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    if (EXSUCCEED!=ndrx_buffer_list(&list))
+    {
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to get buffers list!");
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "Nr allocated buffers: %d", list.maxindexused);
+
+    /* Alloc java array */
+    
+    ret = (*env)->NewLongArray(env, list.maxindexused+1);
+    
+    if (NULL==ret)
+    {
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to alloc java array!");
+        goto out;
+    }
+    
+    /* copy longs to java... */
+    if (list.maxindexused > -1)
+    {
+        (*env)->SetLongArrayRegion(env, ret, 0, list.maxindexused+1, 
+                (jlong *)list.mem);
+    }
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

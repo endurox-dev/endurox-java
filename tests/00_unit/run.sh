@@ -47,33 +47,36 @@ unset NDRX_DEBUG_CONF
 
 if [ "X$1" != "X" ]; then
 
-	./jexunit00b $1|| exit 11
+    ./jexunit00b $1|| exit 11
 
 else
 
-	./jexunit00b AtmiCtxTest || exit 1
-	./jexunit00b BaddTest || exit 2
-	./jexunit00b BaddfastTest || exit 3
-	./jexunit00b BchgTest || exit 4
-	#valgrind --leak-check=full ./jexunit00b BboolTest || exit 5
-	./jexunit00b BboolTest || exit 5
-	./jexunit00b BDelTest || exit 6
-	./jexunit00b BprintTest || exit 7
-	./jexunit00b ButilTest > ButilTest.log 2>&1 || exit 8
+    ./jexunit00b AtmiCtxTest || exit 1
+    ./jexunit00b BaddTest || exit 2
+    ./jexunit00b BaddfastTest || exit 3
+    ./jexunit00b BchgTest || exit 4
+    #valgrind --leak-check=full ./jexunit00b BboolTest || exit 5
+    ./jexunit00b BboolTest || exit 5
+    ./jexunit00b BDelTest || exit 6
+    ./jexunit00b BprintTest || exit 7
+    ./jexunit00b ButilTest > ButilTest.log 2>&1 || exit 8
 
-	TESTOUT=`grep "HELLO MARS" ButilTest.log`
-	echo "GOT OUT: [$TESTOUT]"
+    TESTOUT=`grep "HELLO MARS" ButilTest.log`
+    echo "GOT OUT: [$TESTOUT]"
 
-	if [[ "X$TESTOUT" == "X" ]]; then
+    if [[ "X$TESTOUT" == "X" ]]; then
 
-		echo "ButilTest failed -> logging not working"
-		exit 8
-	fi
+        echo "ButilTest failed -> logging not working"
+        exit 8
+    fi
 
-	./jexunit00b BProjTest || exit 9
-	./jexunit00b BMarshalTest|| exit 10
-	./jexunit00b BjsonTest|| exit 11
-	./jexunit00b TypedStringTest|| exit 12
+    ./jexunit00b BProjTest || exit 9
+    ./jexunit00b BMarshalTest|| exit 10
+    ./jexunit00b BjsonTest|| exit 11
+    ./jexunit00b TypedStringTest|| exit 12
+    ./jexunit00b AtmiCtxGetBuffers|| exit 13
+    ./jexunit00b TypedJsonTest|| exit 14
+    ./jexunit00b TypedCarrayTest|| exit 15
 
 fi
 

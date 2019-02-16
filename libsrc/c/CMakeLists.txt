@@ -80,6 +80,8 @@ add_library (exjava SHARED
                 TpgetrplyResult.c
                 conversations.c
                 TypedString.c
+                TypedJson.c
+                TypedCarray.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

@@ -32,18 +32,41 @@
  */
 package org.endurox;
 
+/**
+ * C Byte array buffer.
+ * The length handling strategy is following:
+ * - The actual length is stored in TypedBuffer.len
+ * - When allocating from Java side, the TypedBuffer.len holds the infos about actual
+ *  data length
+ * - When buffer is received from XATMI dispatcher / service call, also the
+ * actual data length is installed here in java.
+ */
 public class TypedCarray extends TypedBuffer {
 	
    /**
     * Initialize Carray buffer
     * @param ctx[in] ATMI Context allocated this method
-    * @param doFinalize[in] Should the buffer be deallocated automaitcally
+    * @param doFinalize[in] Should the buffer be deallocated automatically
     * @param cPtr[in] C pointer to allocated block
     * @param len[in] Conditional buffer length
     */
    public TypedCarray(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
         super(ctx, doFinalize, cPtr, len);
    }
+   
+   /**
+    * Set C byte array value
+    * @param b byte array to set value
+    */
+   public native void setBytes(byte [] b);
+   
+   
+   /**
+    * Get C array value
+    * @return Byte array
+    */
+   public native byte[] getBytes();
+   
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

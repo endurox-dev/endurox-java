@@ -554,6 +554,9 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         (*M_srv_ctx_env)->CallVoidMethod(M_srv_ctx_env, M_srv_ctx_obj, 
                 mid, jsvcinfo);
         
+        /* set context back... */
+        tpsetctxt(M_srv_ctx, 0L);
+        
         /* Check exceptions, if have one, I guess we abort or return TPFAIL? 
          * If get get exception here, log down the output and abort the process
          * It is up to developer to handle the exceptions before doing
@@ -574,8 +577,6 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
             (*M_srv_ctx_env)->DeleteLocalRef( M_srv_ctx_env, bclz);
         }
         
-        /* set context back... */
-        tpsetctxt(M_srv_ctx, 0L);
     }
     
     /*
@@ -606,6 +607,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
     {
         (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jfname);
     }
+    
 }
 
 /*

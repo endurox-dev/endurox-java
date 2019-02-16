@@ -47,6 +47,20 @@ public class TypedJson extends TypedBuffer {
    public TypedJson(AtmiCtx ctx, boolean doFinalize, long cPtr, long len) {
         super(ctx, doFinalize, cPtr, len);
    }
+   
+   /**
+    * Install string value
+    * @param str New value to set in string buffer
+    */
+   public native void setJSON(String str);
+   
+   
+   /**
+    * Get string value from buffer
+    * @return string value read
+    */
+   public native String getJSON();
+   
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

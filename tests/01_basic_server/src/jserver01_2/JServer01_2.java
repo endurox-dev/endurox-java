@@ -33,8 +33,10 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("ECHOSVC", "ECHOSVC", this);
         //Allocate NULL service
         ctx.tpadvertise("NULL", "NullSvc", new NullSvc());
-        
         ctx.tpadvertise("NULLRSP", "NullRspSvc", new NullRsp());
+        
+        //This should provide server error back not?
+        ctx.tpadvertise("EXCEPT", "ExceptRsp", new ExceptRsp());
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...

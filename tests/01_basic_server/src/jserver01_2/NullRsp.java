@@ -15,8 +15,6 @@ public class NullRsp implements Service {
         
         ctx.tplogDebug("tpService NullRspSvc called");
         
-        
-
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, null, 0);
     }
 }

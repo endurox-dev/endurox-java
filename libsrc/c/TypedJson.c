@@ -1,7 +1,7 @@
 /**
- * @brief TypedString backings
+ * @brief TypedJson backings
  *
- * @file TypedString.c
+ * @file TypedJson.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -36,7 +36,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedString.h"
+#include "org_endurox_TypedJson.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -55,14 +55,14 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Set string value.
- * Reallocate the STRING buffer if it is shorter than string value.
+ * Set JSON string value.
+ * Reallocate the JSON buffer if it is shorter than string value.
  * Update string object's length in java side to match the string just set
  * @param env java env
  * @param data TypedString object
  * @param s Sring value to set
  */
-expublic void JNICALL Java_org_endurox_TypedString_setString
+expublic void JNICALL Java_org_endurox_TypedJson_setJSON
   (JNIEnv * env, jobject data, jstring s)
 {
     char *cdata;
@@ -156,12 +156,12 @@ out:
 }
 
 /**
- * Read string value from C side buffer
+ * Read JSON value from C side buffer
  * @param env java env
  * @param data TypedString object
  * @return Java string
  */
-expublic jstring JNICALL Java_org_endurox_TypedString_getString
+expublic jstring JNICALL Java_org_endurox_TypedJson_getJSON
   (JNIEnv * env, jobject data)
 {
     char *cdata;
@@ -180,7 +180,6 @@ expublic jstring JNICALL Java_org_endurox_TypedString_getString
         NDRX_LOG(log_error, "Failed to get buffer data");
         goto out;
     }
-    
     
     ret = (*env)->NewStringUTF(env, cdata);
     

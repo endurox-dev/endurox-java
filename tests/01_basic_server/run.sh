@@ -52,7 +52,15 @@ xadmin psc
 
 # Valgrind debug:
 #  valgrind --main-stacksize=9916777216 --leak-check=full --show-leak-kinds=all --show-reachable=yes jexunit01b TpacallTests
-jexunit01b TpcallTests || go_out 2
-jexunit01b TpacallTests || go_out 3
+
+
+if [ "X$1" != "X" ]; then
+    jexunit01b $1|| exit 11
+
+else
+    jexunit01b TpcallTests || go_out 2
+    jexunit01b TpacallTests || go_out 3
+    jexunit01b ExceptionTests || go_out 2
+fi
 
 go_out 0

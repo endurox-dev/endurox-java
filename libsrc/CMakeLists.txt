@@ -83,6 +83,9 @@ if(Java_VERSION VERSION_LESS 1.10)
         org.endurox.TypedBuffer
         org.endurox.TypedUbf
         org.endurox.TypedString
+        org.endurox.TypedJson
+        org.endurox.TypedCarray
+        org.endurox.TypedView
         org.endurox.TpInit
         org.endurox.BFldLocInfo
         org.endurox.BExprTree

@@ -895,6 +895,37 @@ public class AtmiCtx {
         return ret;
     }
     
+    /**
+     * Allocate JSON object
+     * @param j string value to set
+     * @return Typed string filled with value
+     */
+    public TypedJson newJson(String j) {
+        
+        TypedJson ret = (TypedJson)tpalloc("JSON", "", j.getBytes().length);
+        
+        ret.setJSON(j);
+        
+        return ret;
+    }
+    
+    public TypedCarray newCarray(byte  [] b) {
+        
+        TypedCarray ret = (TypedCarray)tpalloc("CARRAY", "",b.length);
+        
+        ret.setBytes(b);
+        
+        return ret;
+        
+    }
+    
+    /**
+     * List XATMI buffers (C side pointers)
+     * @return List of allocated XATMI buffers.
+     *  May be used for debug purposes, i.e. detect gc operations.
+     */
+    public native long [] getBuffers();
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

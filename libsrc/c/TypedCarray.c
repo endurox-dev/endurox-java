@@ -1,7 +1,7 @@
 /**
- * @brief TypedString backings
+ * @brief TypedJson backings
  *
- * @file TypedString.c
+ * @file TypedJson.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -36,7 +36,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedString.h"
+#include "org_endurox_TypedCarray.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -55,28 +55,28 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Set string value.
- * Reallocate the STRING buffer if it is shorter than string value.
+ * Set JSON string value.
+ * Reallocate the JSON buffer if it is shorter than string value.
  * Update string object's length in java side to match the string just set
  * @param env java env
  * @param data TypedString object
  * @param s Sring value to set
  */
-expublic void JNICALL Java_org_endurox_TypedString_setString
-  (JNIEnv * env, jobject data, jstring s)
+expublic JNIEXPORT void JNICALL Java_org_endurox_TypedCarray_setBytes
+  (JNIEnv * env, jobject data, jbyteArray b)
 {
     char *cdata;
     long clen;
     int ret = EXSUCCEED;
-    jboolean n_str_copy = EXFALSE;
-    const char *n_str;
     int new_size, bufsz;
+    jboolean n_carray_copy = EXFALSE;
+    char * n_carray = NULL;
     
     /* Validate NULL string - not acceptable... */
     
-    if (NULL==s)
+    if (NULL==b)
     {
-         ndrxj_atmi_throw(env, data, TPEINVAL, "string must not be NULL!");
+         ndrxj_atmi_throw(env, data, TPEINVAL, "byte array must not be NULL!");
          return; /* <<<< RETURN !!! */
     }
     
@@ -93,13 +93,8 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
         EXFAIL_OUT(ret);
     }
     
-    /* get buffer size & compare with "S" string length
-     * if fits in fine, if not - realloc to bigger
-     */
-    
-    /* Get string */
-    n_str = (*env)->GetStringUTFChars(env, s, &n_str_copy);
-    new_size = strlen(n_str) + 1;
+    n_carray = (char*)(*env)->GetByteArrayElements(env, b, &n_carray_copy);
+    new_size = (*env)->GetArrayLength(env, b);
     
     bufsz = tptypes(cdata, NULL, NULL);
     
@@ -112,7 +107,7 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
     if (bufsz < new_size)
     {
         /* Reallocate buffer! */
-        NDRX_LOG(log_debug, "Realloc string buffer from %d to %d",
+        NDRX_LOG(log_debug, "Realloc carray buffer from %d to %d",
             bufsz, new_size);
         
         if (NULL==(cdata = tprealloc(cdata, new_size)))
@@ -139,14 +134,24 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
             }
         }
     }
+    else
+    {
+        /* just update the used length... data is the same... */
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_set_buffer(env, 
+                data, cdata, new_size))
+        {
+            NDRX_LOG(log_error, "Failed to update buffer c address");
+            EXFAIL_OUT(ret);
+        }
+    }
     
-    strcpy(cdata, n_str);
-
+    memcpy(cdata, n_carray, new_size);
+    
 out:
     
-    if (n_str_copy)
+    if(n_carray_copy)
     {
-        (*env)->ReleaseStringUTFChars(env, s, n_str);
+       (*env)->ReleaseByteArrayElements(env, b, n_carray, JNI_ABORT);
     }
 
     /* switch context back */
@@ -156,17 +161,17 @@ out:
 }
 
 /**
- * Read string value from C side buffer
+ * Read JSON value from C side buffer
  * @param env java env
  * @param data TypedString object
  * @return Java string
  */
-expublic jstring JNICALL Java_org_endurox_TypedString_getString
+expublic JNIEXPORT jbyteArray JNICALL Java_org_endurox_TypedCarray_getBytes
   (JNIEnv * env, jobject data)
 {
     char *cdata;
     long clen;
-    jstring ret = NULL;
+    jbyteArray ret = NULL;
     
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
@@ -181,11 +186,28 @@ expublic jstring JNICALL Java_org_endurox_TypedString_getString
         goto out;
     }
     
-    
-    ret = (*env)->NewStringUTF(env, cdata);
+    ret = (*env)->NewByteArray(env, (jsize)clen);
+
+    if (NULL==ret)
+    {
+        /* will it create exception??? */
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to create byte array with: %s, size: %d", (int)clen);
+        goto out;
+    }
+
+    (*env)->SetByteArrayRegion(env, ret, 0, clen, 
+                            (jbyte*)cdata);
+
+    /* Will it create exception? */
+    if((*env)->ExceptionCheck(env))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to set data bytes: %s");
+        goto out;
+    }
     
 out:
-    
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
