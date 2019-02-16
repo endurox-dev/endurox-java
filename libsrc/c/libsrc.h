@@ -113,6 +113,9 @@ extern int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
             jobject data, char **buf, long *len, jboolean *doFinalize, 
             int unsetDoFinalize, int unsetPtr);
 
+extern int ndrxj_atmi_TypedBuffer_set_buffer(JNIEnv *env, 
+            jobject data, char *buf, long len);
+
 /* TpCallResult ops: */
 
 extern jobject ndrxj_atmi_TpCallResult_new(JNIEnv *env, 

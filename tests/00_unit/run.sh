@@ -73,6 +73,7 @@ else
 	./jexunit00b BProjTest || exit 9
 	./jexunit00b BMarshalTest|| exit 10
 	./jexunit00b BjsonTest|| exit 11
+	./jexunit00b TypedStringTest|| exit 12
 
 fi
 

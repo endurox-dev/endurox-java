@@ -93,34 +93,40 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
         EXFAIL_OUT(ret);
     }
     
-    /* TODO: get buffer size & compare with "S" string length
+    /* get buffer size & compare with "S" string length
      * if fits in fine, if not - realloc to bigger
      */
     
     /* Get string */
-    n_str = (*env)->GetStringUTFChars(env, js, &n_str_copy);
+    n_str = (*env)->GetStringUTFChars(env, s, &n_str_copy);
     new_size = strlen(n_str);
     
     bufsz = tptypes(cdata, NULL, NULL);
     
     if (bufsz < 1)
     {
-         ndrxj_atmi_throw(env, data, tperror, tpstrerror(tperror));
+         ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
          EXFAIL_OUT(ret);
     }
     
     if (bufsz < new_size)
     {
-        /* TODO: Reallocate buffer! */
+        /* Reallocate buffer! */
         NDRX_LOG(log_debug, "Realloc string buffer from %d to %d",
             bufsz, new_size);
         if (NULL==(cdata = tprealloc(cdata, new_size)))
         {
-            /* TODO: Set buffer to NULL! to avoid crash at free */
+            /* Set buffer to NULL! to avoid crash at free */
+            if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_set_buffer(env, 
+                    data, NULL, 0L))
+            {
+                NDRX_LOG(log_error, "Failed to reset buffer to NULL");
+            }
+            
             /* throw exception */
+            ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
             EXFAIL_OUT(ret);
         }
-
     }
     
     strcpy(cdata, n_str);
@@ -129,13 +135,13 @@ out:
     
     if (n_str_copy)
     {
-        (*env)->ReleaseStringUTFChars(env, js, n_str);
+        (*env)->ReleaseStringUTFChars(env, s, n_str);
     }
 
     /* switch context back */
     tpsetctxt(TPNULLCONTEXT, 0L);
 
-    return ret;
+    return;
 }
 
 /**
@@ -154,18 +160,18 @@ expublic jstring JNICALL Java_org_endurox_TypedString_getString
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
     {
-        EXFAIL_OUT(ret);
+        goto out;
     }
     
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
             NULL, EXFALSE, EXFALSE))
     {
         NDRX_LOG(log_error, "Failed to get buffer data");
-        EXFAIL_OUT(ret);
+        goto out;
     }
     
     
-    ret = (env)->NewStringUTF(env, cdata);
+    ret = (*env)->NewStringUTF(env, cdata);
     
 out:
     

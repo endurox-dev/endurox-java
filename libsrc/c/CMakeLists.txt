@@ -79,6 +79,7 @@ add_library (exjava SHARED
                 BNextResult.c
                 TpgetrplyResult.c
                 conversations.c
+                TypedString.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

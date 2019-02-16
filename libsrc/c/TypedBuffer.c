@@ -504,7 +504,7 @@ expublic int ndrxj_atmi_TypedBuffer_set_buffer(JNIEnv *env,
 {
     int ret = EXSUCCEED;
     
-    jclass clz;
+    jclass clz = NULL;
     jfieldID cptr_fldid;
     jfieldID clen_fldid;
     jlong cptr = (jlong)buf;
@@ -541,6 +541,11 @@ expublic int ndrxj_atmi_TypedBuffer_set_buffer(JNIEnv *env,
     (*env)->SetLongField(env, data, clen_fldid, clen);
     
 out:
+    
+    if (NULL!=clz)
+    {
+        (*env)->DeleteLocalRef( env, clz);
+    }
     
     return ret;
 }
