@@ -52,7 +52,26 @@ extern "C" {
 #define NDRXJ_LOGEX_ULOG          0x0002
 /** Log exception to UBF logger */
 #define NDRXJ_LOGEX_UBF           0x0004
+/** Log exception to TP logger */
+#define NDRXJ_LOGEX_TP            0x0008
 
+
+#define NDRXJ_LOG_EXCEPTION_E(ENV__, EXC__, LEV__, FLAGS__, FMT__, ...) {\
+\
+    char *jerr__ = ndrxj_exception_backtrace(ENV__, EXC__);\
+    char *jerr_null__ = "no JNI exception";\
+    \
+    if (NULL==jerr__) {jerr__= jerr_null__;}\
+    if (FLAGS__ & NDRXJ_LOGEX_ULOG)\
+        userlog(FMT__, jerr__, ##__VA_ARGS__);\
+    if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
+        NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+    if (FLAGS__ & NDRXJ_LOGEX_UBF)\
+        UBF_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+    if (FLAGS__ & NDRXJ_LOGEX_TP)\
+        TP_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+    NDRX_FREE(jerr__);\
+}
 
 /**
  * Log exception
@@ -64,7 +83,7 @@ extern "C" {
  */
 #define NDRXJ_LOG_EXCEPTION(ENV__, LEV__, FLAGS__, FMT__, ...) {\
 \
-    char *jerr__ = ndrxj_exception_backtrace(ENV__);\
+    char *jerr__ = ndrxj_exception_backtrace(ENV__, NULL);\
     char *jerr_null__ = "no JNI exception";\
     \
     if (NULL==jerr__) {jerr__= jerr_null__;}\
@@ -74,6 +93,8 @@ extern "C" {
         NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
     if (FLAGS__ & NDRXJ_LOGEX_UBF)\
         UBF_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+    if (FLAGS__ & NDRXJ_LOGEX_TP)\
+        TP_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_FREE(jerr__);\
 }
 /*---------------------------Enums--------------------------------------*/
@@ -87,7 +108,7 @@ extern void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt, .
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
-extern char *ndrxj_exception_backtrace(JNIEnv *env);
+extern char *ndrxj_exception_backtrace(JNIEnv *env, jthrowable exc_in);
 
 /* ClientId ops: */
 extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 

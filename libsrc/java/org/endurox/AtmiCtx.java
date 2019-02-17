@@ -327,8 +327,15 @@ public class AtmiCtx {
         }
         catch (Exception e)
         {
+            //Log exception (i.e. backtrace)...
+            
+            tplogndrxex(AtmiConst.LOG_ERROR, 
+                    String.format("Service [%s] generated exception", 
+                            svcInfo.getName()), e);
+            
             //Return fail with the same buffer in case of exception!
-            tpreturn(AtmiConst.TPFAIL, ctx, svcInfo.data, ctx);
+            tpreturn(AtmiConst.TPFAIL, AtmiConst.TPESVCERR, 
+                    svcInfo.data, AtmiConst.TPSOFTERR);
         }
     }
 
@@ -447,7 +454,38 @@ public class AtmiCtx {
 	/* add service to hash list */
         svcMap.put(svcname, svc);
     }
-
+    
+    /**
+     * Log exception to UBF logger
+     * @param lev debug level
+     * @param msg custom message
+     * @param e exception to backtrace
+     */
+    native void tplogubfex(int lev, String msg, Throwable e);
+    
+    /**
+     * Log exception to NDRX logger
+     * @param lev debug level
+     * @param msg custom message
+     * @param e exception to back
+     */
+    native void tplogndrxex(int lev, String msg, Throwable e);
+    
+    /**
+     * Log exception to user logger
+     * @param lev debug level
+     * @param msg trace message
+     * @param e exception to backtrace
+     */
+    public native void tplogex(int lev, String msg, Throwable e);
+    
+    /**
+     * Log exception to ulog
+     * @param msg custom message
+     * @param e exception to backtrace
+     */
+    public native void userlogex(String msg, Throwable e);
+    
     /**
      * Write the ndrx log (for library internal use). Package level access.
      * @param lev Log level

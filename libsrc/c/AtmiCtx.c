@@ -608,6 +608,8 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jfname);
     }
     
+    NDRX_LOG(log_error, "%s return", __func__);
+    
 }
 
 /*

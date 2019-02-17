@@ -224,4 +224,144 @@ out:
     return ret;
 }
 
+
+/**
+ * Log exception to UBF logger
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param lev log level
+ * @param msg message to print
+ * @param e exception to backtrace
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tplogubfex
+  (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jthrowable e)
+{
+    
+    jboolean n_msg_copy = EXFALSE;
+    
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+
+    
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    NDRXJ_LOG_EXCEPTION_E(env, e, lev, NDRXJ_LOGEX_UBF, "%s: %s", n_msg);
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+
+    return;
+}
+
+/**
+ * log exception to NDRX logger
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param lev debug level
+ * @param msg custom message
+ * @param e exception
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tplogndrxex
+  (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jthrowable e)
+{
+    jboolean n_msg_copy = EXFALSE;
+    
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+ 
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    NDRXJ_LOG_EXCEPTION_E(env, e, lev, NDRXJ_LOGEX_NDRX, "%s: %s", n_msg);
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+
+    return;
+}
+
+/**
+ * log exception to TP logger
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param lev debug level
+ * @param msg custom message
+ * @param e exception
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tplogex
+  (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jthrowable e)
+{
+    jboolean n_msg_copy = EXFALSE;
+    
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+ 
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    NDRXJ_LOG_EXCEPTION_E(env, e, lev, NDRXJ_LOGEX_TP, "%s: %s", n_msg);
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+
+    return;
+}
+
+/**
+ * Write exception to "ULOG"
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param lev debug level
+ * @param msg custom message
+ * @param e exception
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogex
+  (JNIEnv * env, jobject atmiCtxObj, jstring msg, jthrowable e)
+{
+    jboolean n_msg_copy = EXFALSE;
+    
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+ 
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    NDRXJ_LOG_EXCEPTION_E(env, e, log_error, NDRXJ_LOGEX_ULOG, "%s: %s", n_msg);
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+
+    return;
+}
+
+
 /* vim: set ts=4 sw=4 et smartindent: */

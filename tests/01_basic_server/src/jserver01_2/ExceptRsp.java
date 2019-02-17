@@ -13,6 +13,6 @@ public class ExceptRsp implements Service {
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         ctx.tplogDebug("ExceptRsp exception responder - we should reply "
                 + "with service failure not?");
-        throw new RuntimeException("This is exception");
+        throw new RuntimeException("Service generates exception!");
     }
 }

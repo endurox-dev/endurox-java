@@ -37,6 +37,11 @@ package org.endurox;
  */
 public class AtmiConst {
     
+    /**
+     * ATMI Error codes
+     * @defgroup atmierrors XATMI Error code
+     * @{
+     */
     /** Transaction is being aborted*/
     public static final int TPEABORT	= 1;
     /** Bad call descriptor */
@@ -50,6 +55,7 @@ public class AtmiConst {
     public static final int TPEOS	= 7;
     public static final int TPEPERM	= 8;
     public static final int TPEPROTO	= 9;
+    /** Service error - service failed to generate response */
     public static final int TPESVCERR	= 10;
     public static final int TPESVCFAIL	= 11;
     public static final int TPESYSTEM	= 12;
@@ -71,6 +77,8 @@ public class AtmiConst {
     public static final int TPERFU28	= 28;
     public static final int TPERFU29	= 29;
     public static final int TPINITFAIL	= 30;
+    
+    /** @} */ // end of atmierrors
 
     /* UBF library error codes: */
     public static final int BERFU0	= 1;
@@ -188,6 +196,49 @@ public class AtmiConst {
     public static final int TPSUCCESS       = 0x00000002;
     /** rval in tpreturn - RFU */
     public static final int TPEXIT          = 0x08000000;
+    
+    /**
+     * ATMI flags
+     * @defgroup atmiflags XATMI tpcall/tpreturn, etc... flags
+     * @{
+     */
+    public static final int TPNOBLOCK       = 0x00000001;
+    public static final int TPSIGRSTRT      = 0x00000002;
+    public static final int TPNOREPLY       = 0x00000004;
+    public static final int TPNOTRAN        = 0x00000008;
+    public static final int TPTRAN          = 0x00000010;
+    public static final int TPNOTIME        = 0x00000020;
+    public static final int TPABSOLUTE      = 0x00000040;
+    public static final int TPGETANY        = 0x00000080;
+    public static final int TPNOCHANGE      = 0x00000100;
+    public static final int TPCONV          = 0x00000400;
+    public static final int TPSENDONLY      = 0x00000800;
+    public static final int TPRECVONLY      = 0x00001000;
+    public static final int TPACK           = 0x00002000;
+    /** Software raised service error, any   */
+    public static final int TPSOFTERR       = 0x00020000;
+    /** Suspend current transaction          */
+    public static final int TPTRANSUSPEND   = 0x00040000;
+    /** Soft timout condition -> ret TPETIME */
+    public static final int TPSOFTTIMEOUT   = 0x00080000;
+    /** Simulate that service is not found   */
+    public static final int TPSOFTENOENT    = 0x00100000;
+    /** Don't restore autbuf in srv context  */
+    public static final int TPNOAUTBUF      = 0x00200000;
+    /** RFU, tux compatibility */
+    public static final int RESERVED_BIT1   = 0x00400000;
+    /** Use regular expressions for match    */
+    public static final int TPREGEXMATCH    = 0x00800000;
+    /** Do not lookup cache                  */
+    public static final int TPNOCACHELOOK   = 0x01000000;
+    /** Do not save data to cache            */
+    public static final int TPNOCACHEADD    = 0x02000000;
+    /** Do not use cached data               */
+    public static final int TPNOCACHEDDATA  = 0x04000000;
+    /** Do not abort global transaction, even if service failed */
+    public static final int TPNOABORT       = 0x08000000;
+            
+    /** @} */ // end of atmiflags
 
 }
 /* vim: set ts=4 sw=4 et smartindent: */

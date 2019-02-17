@@ -317,9 +317,10 @@ exprivate void backtrace_recursive(
 /**
  * Return stacktrace of the exception into allocated buffer
  * @param env Java env where exception is set
+ * @param exc_in   Input exception
  * @return allocated string with exception data
  */
-expublic char *ndrxj_exception_backtrace(JNIEnv *env)
+expublic char *ndrxj_exception_backtrace(JNIEnv *env, jthrowable exc_in)
 {
     char *ret = NULL;
     jthrowable exc = NULL;
@@ -390,7 +391,14 @@ expublic char *ndrxj_exception_backtrace(JNIEnv *env)
     
     exstring_new(ctrace);
 
-    exc = (*env)->ExceptionOccurred(env);
+    if (NULL!=exc_in)
+    {
+        exc = exc_in;
+    }
+    else
+    {
+        exc = (*env)->ExceptionOccurred(env);
+    }
 
     backtrace_recursive(
                         env,
