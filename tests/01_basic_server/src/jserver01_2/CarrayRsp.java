@@ -1,9 +1,9 @@
 import org.endurox.*;
 
 /**
- * String response service
+ * Null response service
  */
-public class StringRsp implements Service {
+public class CarrayRsp implements Service {
 
     /**
      * Responds with null buffer

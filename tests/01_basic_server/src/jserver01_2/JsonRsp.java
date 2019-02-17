@@ -1,9 +1,9 @@
 import org.endurox.*;
 
 /**
- * String response service
+ * JSON Response service
  */
-public class StringRsp implements Service {
+public class JsonRsp implements Service {
 
     /**
      * Responds with null buffer
