@@ -15,7 +15,7 @@ public class UbfRsp implements Service {
         
         ctx.tplogDebug("tpService UbfRsp called");
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 0);
-        ub.Bchg(test.T_STRING_10_FLD, 5, "HELLO STRING");
+        ub.Bchg(test.T_STRING_10_FLD, 5, "HELLO UBF FROM SERVICE");
         ctx.tpreturn(AtmiConst.TPSUCCESS, 55, ub, 0);
     }
 }

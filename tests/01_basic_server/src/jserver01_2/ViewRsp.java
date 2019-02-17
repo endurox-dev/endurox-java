@@ -6,7 +6,7 @@ import org.endurox.*;
 public class ViewRsp implements Service {
 
     /**
-     * Responds with null buffer
+     * Responds with VIEW buffer
      * add some text to buffer
      * @param ctx Atmi context
      * @param svcinfo service info
@@ -15,10 +15,9 @@ public class ViewRsp implements Service {
         
         ctx.tplogDebug("tpService StringRsp called");
 
-        TypedString ret = (TypedString)ctx.tpalloc("STRING", null, 100);
+        TypedView ret = (TypedView)ctx.tpalloc("VIEW", "JVIEW2", 0);
         
-        /* TODO: We need to set string & get string..! */
-        
+        /* use defaults and respond */
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, ret, 0);
     }
 }

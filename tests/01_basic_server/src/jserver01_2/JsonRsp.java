@@ -6,7 +6,7 @@ import org.endurox.*;
 public class JsonRsp implements Service {
 
     /**
-     * Responds with null buffer
+     * Responds with JSON buffer
      * add some text to buffer
      * @param ctx Atmi context
      * @param svcinfo service info
@@ -15,9 +15,8 @@ public class JsonRsp implements Service {
         
         ctx.tplogDebug("tpService StringRsp called");
 
-        TypedString ret = (TypedString)ctx.tpalloc("STRING", null, 100);
-        
-        /* TODO: We need to set string & get string..! */
+        TypedJson ret = (TypedJson)ctx.tpalloc("JSON", null, 100);
+        ret.setJSON("{}");
         
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, ret, 0);
     }

@@ -4,12 +4,34 @@
 # @(#) Run the test case
 #
 
-pushd .
-cd conf
-. setndrx
-popd
+#
+# Ask for JMV path.., if needed
+#
+
+ADDLIBPATH=""
+
+if [ ! -f  conf/settest1 ]; then
+    
+    echo "Please enter libjvm.so libpath "
+    echo "(e.g. /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server): "
+    read lpath
+
+    ADDLIBPATH=":$lpath"
+
+fi
+
+#
+# Have some runtime 
+#
+xadmin provision -d -vaddubf=test.fd -vviewInstall=y -vviewFiles=jview01.V \
+	-vshLibs=`pwd`/../../libsrc/c:`pwd`/../../libexjlds$ADDLIBPATH
 
 export ASAN_OPTIONS=handle_segv=0
+
+pushd .
+cd conf
+. settest1
+popd
 
 # Start the enduro/x app server (which will boot the our server executable)
 

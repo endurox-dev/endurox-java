@@ -50,6 +50,14 @@ include_directories (. ${JNI_INCLUDE_DIRS})
 
 FILE(GLOB JAVASRC *.java)
 
+add_custom_command(
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  OUTPUT jview01.h jview01.V
+  COMMAND viewc -n 
+            -b "buildclient -a '${CMAKE_C_FLAGS}'" 
+            jview01.v_in
+  DEPENDS jview01.v_in)
+
 add_jar(jserver01_2
     SOURCES
         ${JAVASRC}
@@ -67,6 +75,7 @@ ndrx_java_link(
                 jserver01_2.jar
                 ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
                 ../ubftab/ubf01.jar
+            DEPENDS jview01.V
 )
 
 # vim: set ts=4 sw=4 et smartindent:

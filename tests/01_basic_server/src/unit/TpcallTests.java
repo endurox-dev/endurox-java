@@ -121,6 +121,8 @@ public class TpcallTests {
     
     //TODO: Test server call with buffer translate and service error...
     
+    //TODO: have a test for message forwarding...
+    
     /**
      * Send NULL and get NULL
      */
@@ -200,6 +202,4 @@ public class TpcallTests {
         }
         ctx.cleanup();
     }
-    
-    
 }

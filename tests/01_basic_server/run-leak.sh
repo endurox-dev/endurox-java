@@ -4,12 +4,34 @@
 # @(#) Run the test case, leak tests
 #
 
-pushd .
-cd conf
-. setndrx
-popd
+#
+# Ask for JMV path.., if needed
+#
+
+ADDLIBPATH=""
+
+if [ ! -f  conf/settest1 ]; then
+    
+    echo "Please enter libjvm.so libpath "
+    echo "(e.g. /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server): "
+    read lpath
+
+    ADDLIBPATH=":$lpath"
+
+fi
+
+#
+# Have some runtime 
+#
+xadmin provision -d -vaddubf=test.fd -vviewInstall=y -vviewFiles=jview01.V \
+	-vshLibs=`pwd`/../../libsrc/c:`pwd`/../../libexjlds$ADDLIBPATH
 
 export ASAN_OPTIONS=handle_segv=0
+
+pushd .
+cd conf
+. settest1
+popd
 
 # Start the enduro/x app server (which will boot the our server executable)
 
@@ -17,13 +39,13 @@ export ASAN_OPTIONS=handle_segv=0
 # Generic exit function
 #
 function go_out {
-	echo "Test exiting with: $1"
+    echo "Test exiting with: $1"
 
-	xadmin stop -y
-	xadmin killall xmemck
-	xadmin down -y 2>/dev/null
+    xadmin stop -y
+    xadmin killall xmemck
+    xadmin down -y 2>/dev/null
 
-	exit $1
+    exit $1
 }
 
 
@@ -32,17 +54,17 @@ function go_out {
 #
 function test_leak {
 
-	echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME (sleep 5 for plot results...)"
-	sleep 5
+    echo "Scanning for leaks... $NDRXJ_LEAKTEST_NAME (sleep 5 for plot results...)"
+    sleep 5
 
-	LEAKS=`grep "Process leaky" log/XMEMCK`
+    LEAKS=`grep "Process leaky" log/XMEMCK`
 
-	echo "leaks=[$LEAKS]"
+    echo "leaks=[$LEAKS]"
 
-	if [[ "X$LEAKS" != "X" ]]; then
-		echo "Memory leaks detected for $NDRXJ_LEAKTEST_NAME!"
-		go_out 99
-	fi
+    if [[ "X$LEAKS" != "X" ]]; then
+            echo "Memory leaks detected for $NDRXJ_LEAKTEST_NAME!"
+            go_out 99
+    fi
 
 }
 

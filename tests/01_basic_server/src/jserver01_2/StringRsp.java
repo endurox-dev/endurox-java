@@ -17,7 +17,9 @@ public class StringRsp implements Service {
 
         TypedString ret = (TypedString)ctx.tpalloc("STRING", null, 100);
         
-        /* TODO: We need to set string & get string..! */
+        /* We need to set string & get string..! */
+        
+        ret.setString("HELLO FROM SERVICE");
         
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, ret, 0);
     }
