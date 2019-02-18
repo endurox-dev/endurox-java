@@ -216,7 +216,7 @@ public class TpcallTests {
      * @param validate shall we validate the error
      * @return SUCCEED/FAIL
      */
-    int testerX(AtmiCtx ctx, String svc, String input_type, String input_sub, 
+    void testerX(AtmiCtx ctx, String svc, String input_type, String input_sub, 
         String output_type, String output_sub, long flags, int tpcallerr, boolean validate) {
         
         int ret = AtmiConst.SUCCEED;
@@ -249,7 +249,7 @@ public class TpcallTests {
             b = ctx.tpalloc(input_type, "", 0);
             
             u = (TypedUbf)b;   
-            u.Bchg(test.T_FLOAT_2_FLD, 11, 1.11111d);
+            u.Bchg(test.T_STRING_5_FLD, 11, "HELLO 11");
         }
         
         /* call the service */
@@ -275,10 +275,64 @@ public class TpcallTests {
         assertEquals(tpcallerr, excpt_err);
         
         /* validate data types... */
-            
-        out:
-        return ret;
+        TpTypesResult retTyp = null;
         
+        if (output_sub.equals("NULL")) {
+            assertEquals(null, b_ret);
+        } else {
+            retTyp = b_ret.tptypes();
+            
+            assertEquals(output_type, retTyp.getType());
+            assertEquals(output_sub, retTyp.getSubType());
+        }
+        
+        if (!validate)
+        {
+            return;
+        }
+        
+        /* validate the value */
+        if (null!=retTyp && (0==tpcallerr || AtmiConst.TPESVCFAIL==tpcallerr)) {
+            
+            /* New values shall be in buffer */
+            if (input_type.equals("STRING")) {
+                TypedString s = (TypedString)b_ret;
+                assertEquals("This is unit test", s.getString());
+            }
+            else if (input_type.equals("JSON")) {
+                TypedJson j = (TypedJson)b_ret;
+                assertEquals("[]", j.getJSON());
+            }
+            else if (input_type.equals("CARRAY")) {
+                TypedCarray c = (TypedCarray)b_ret;
+                assertArrayEquals(new byte[]{1, 2, 5, 2, 1, 2, 3, 126}, c.getBytes());
+            }
+            else if (input_type.equals("UBF")) {
+                TypedUbf u = (TypedUbf)b_ret;
+                assertEquals("HELLO UBF FROM SERVICE", u.BgetString(test.T_STRING_10_FLD, 5));
+            }
+        } else if (null!=retTyp) {
+            
+            /* old values shall be in buffer */
+            if (input_type.equals("STRING")) {
+                TypedString s = (TypedString)b_ret;
+                assertEquals("HELLO FROM SERVICE", s.getString());
+            }
+            else if (input_type.equals("JSON")) {
+                TypedJson j = (TypedJson)b_ret;
+                assertEquals("{}", j.getJSON());
+            }
+            else if (input_type.equals("CARRAY")) {
+                TypedCarray c = (TypedCarray)b_ret;
+                assertArrayEquals(new byte [] {9, 4, 3, 2}, c.getBytes());
+            }
+            else if (input_type.equals("UBF")) {
+                TypedUbf u = (TypedUbf)b_ret;
+                assertEquals("HELLO 11", u.BgetString(test.T_STRING_5_FLD, 11));
+            }
+        }
     }
+    
+    /* validate the buffers... */
     
 }
