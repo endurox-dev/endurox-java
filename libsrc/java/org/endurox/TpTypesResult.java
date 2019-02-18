@@ -46,15 +46,21 @@ public class TpTypesResult {
      * Buffer sub-type code (used for views)
      */
     String subType;
+    
+    /**
+     * Buffer size in bytes
+     */
+    long size;
 
     /**
      * Allocate types result
      * @param type buffer type code
      * @param subType  sub-type
      */
-    public TpTypesResult(String type, String subType) {
+    public TpTypesResult(String type, String subType, long size) {
         this.type = type;
         this.subType = subType;
+        this.size = size;
     }
 
     /**
@@ -71,6 +77,14 @@ public class TpTypesResult {
      */
     public String getSubType() {
         return subType;
+    }
+
+    /**
+     * Get allocated buffer size
+     * @return buffer size in bytes
+     */
+    public long getSize() {
+        return size;
     }
     
 }

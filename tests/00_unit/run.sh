@@ -77,6 +77,7 @@ else
     ./jexunit00b AtmiCtxGetBuffers|| exit 13
     ./jexunit00b TypedJsonTest|| exit 14
     ./jexunit00b TypedCarrayTest|| exit 15
+    ./jexunit00b TypedBufferTest || exit 16
 
 fi
 

@@ -82,6 +82,7 @@ add_library (exjava SHARED
                 TypedString.c
                 TypedJson.c
                 TypedCarray.c
+                TpTypesResult.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

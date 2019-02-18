@@ -170,6 +170,10 @@ extern jobject ndrxj_BNextResult_new(JNIEnv *env,
 extern jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
         int cd, jobject odata);
 
+/* TpTypesResult ops */
+extern jobject ndrxj_TpTypesResult_new(JNIEnv *env, 
+        char *type, char *sub_type, long size);
+
 #ifdef  __cplusplus
 }
 #endif

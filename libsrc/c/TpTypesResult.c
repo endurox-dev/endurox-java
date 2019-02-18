@@ -53,44 +53,51 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Allocate iteration result
+ * Allocate buffer type result
  * @param env java env
- * @param[in] bfldid  compiled filed id
- * @param[in] occ field occurrence
- * @param[in] len field length 
- * @return Result object
+ * @param btype buffer type
+ * @param sub_type sub-type (if not set -> emtpy string)
+ * @param size allocated buffer size
+ * @return allocated object
  */
 expublic jobject ndrxj_TpTypesResult_new(JNIEnv *env, 
-        char *type, char *sub_type)
+        char *btype, char *sub_type, long size)
 {
     jobject ret = NULL;
-    jclass bclz;
+    jclass clz;
     jmethodID mid;
+    jstring jtype;
+    jstring jsub_type;
+    /* have two strings  */
     
     /* Set context if needed */
     
     UBF_LOG(log_debug, "Allocating [%s]", ALLOC_CLASS);
     
-    bclz = (*env)->FindClass(env, ALLOC_CLASS);
+    clz = (*env)->FindClass(env, ALLOC_CLASS);
     
-    if (NULL==bclz)
+    if (NULL==clz)
     {        
         NDRX_LOG(log_error, "Failed to find class [%s]", ALLOC_CLASS);
         goto out;
     }
     
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(III)V");
+    mid = (*env)->GetMethodID(env, clz, "<init>", "(Ljava/lang/String;Ljava/lang/String;J)V");
     
     if (NULL==mid)
     {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        NDRX_LOG(log_error, "Cannot get [%s] constructor!", ALLOC_CLASS);
         goto out;
     }
+    
+    jtype = (*env)->NewStringUTF(env, btype);
+    jsub_type = (*env)->NewStringUTF(env, sub_type);
 
+    /* TODO: How about exception checking right here? */
     NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, (jint)bfldid, (jint)occ, (jint)len);
+    ret = (*env)->NewObject(env, clz, mid, jtype, jsub_type, (jlong)size);
     
     if (NULL==ret)
     {
@@ -101,6 +108,11 @@ expublic jobject ndrxj_TpTypesResult_new(JNIEnv *env,
     NDRX_LOG(log_debug, "NewObject() done");
     
 out:
+    
+    (*env)->DeleteLocalRef(env, clz);
+    (*env)->DeleteLocalRef(env, jtype);
+    (*env)->DeleteLocalRef(env, jsub_type);
+    
     return ret;
 }
 

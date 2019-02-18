@@ -119,6 +119,11 @@ public class TypedBuffer {
         doFinalize = b;
     }
     
+    /**
+     * Get the buffer type description from middleware point of view
+     * @return Type descriptor
+     */
+    public native TpTypesResult tptypes();    
     
     static {
        System.loadLibrary("exjava"); // Load native library at runtime

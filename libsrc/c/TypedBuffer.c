@@ -165,6 +165,10 @@ expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env,
     }
     
 out:
+    if (NULL!=objClass)
+    {
+        (*env)->DeleteLocalRef(env, objClass);
+    }
     return ctx;
 }
 
@@ -764,6 +768,51 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
 out:
     
     return ret;
+}
+
+/**
+ * Extract C side type information
+ * @param env java env
+ * @param data ATMI Buffer
+ * @return TpTypesResult object
+ */
+expublic JNIEXPORT jobject JNICALL Java_org_endurox_TypedBuffer_tptypes
+  (JNIEnv * env, jobject data)
+{
+    char btype[16] = {EXEOS};
+    char stype[16] = {EXEOS};
+    long size;
+    char *cdata;
+    long clen;
+    jobject ret = NULL;
+    
+    if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
+    {
+       return NULL; 
+    }
+    
+    /* get atmi buffer */
+    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
+            NULL, EXFALSE, EXFALSE))
+    {
+        NDRX_LOG(log_error, "Failed to get buffer data");
+        goto out;
+    }
+    
+    /* read type infos */
+    if (EXFAIL==(size = tptypes(cdata, btype, stype)))
+    {
+        ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+        goto out;
+    }
+    
+    ret = ndrxj_TpTypesResult_new(env, btype, stype, size);
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ret;
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
