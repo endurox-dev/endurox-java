@@ -225,7 +225,7 @@ public class TpcallTests {
         int excpt_err = 0;
         
         ctx.tplogInfo("svc: [%s] input_type: [%s] input_sub: [%s] output_type: "+
-            "[%s] output_sub: [%s] flags: %ld tpcallerr: %d validate: %b",
+            "[%s] output_sub: [%s] flags: %d tpcallerr: %d validate: %b",
             svc, input_type, input_sub, output_type, output_sub, flags, 
             tpcallerr, validate);
         
@@ -280,6 +280,7 @@ public class TpcallTests {
         if (output_sub.equals("NULL")) {
             assertEquals(null, b_ret);
         } else {
+            
             retTyp = b_ret.tptypes();
             
             assertEquals(output_type, retTyp.getType());
@@ -334,5 +335,62 @@ public class TpcallTests {
     }
     
     /* validate the buffers... */
+    
+    /**
+     * This loop over the all buffer types
+     * twice and will mix for each buffer the other buffer
+     */
+    @Test
+    public void bufferCrossTest() {
+        
+        String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF"};
+        int i, j;
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("bufferCrossTest")) {
+                return;
+            }
+        }
+        
+        for (int n=0; ((n<1000) || (leaktest && w.deltaSec() < leaktestSec)); n++) {
+
+            for (i=0; i<buffers.length; i++) {
+
+                for (j=0; j<buffers.length; j++) {
+
+                    String svcnm = buffers[i].concat("RSP");
+                    String isub = "";
+                    String osub = "";
+
+                    if (buffers[j].equals("VIEW")) {
+                        isub = "JVIEW1";
+                    }
+
+                    if (buffers[i].equals("VIEW")) {
+                        osub = "JVIEW2";
+                    }
+                    
+                    /* call the server */
+                    testerX(ctx, svcnm, buffers[j], isub, 
+                        buffers[i], osub, 0, 0, true);
+
+                    /* todo: validate no switch */
+                } /* for input buffer format */
+            } /* for service */
+        }/* for  n */
+    }
     
 }
