@@ -293,7 +293,7 @@ public class TpcallTests {
         }
         
         /* validate the value */
-        if (null!=retTyp && (0==tpcallerr || AtmiConst.TPESVCFAIL==tpcallerr)) {
+        if (null!=retTyp && AtmiConst.TPESVCFAIL==tpcallerr) {
             
             /* New values shall be in buffer */
             if (input_type.equals("STRING")) {
@@ -310,26 +310,26 @@ public class TpcallTests {
             }
             else if (input_type.equals("UBF")) {
                 TypedUbf u = (TypedUbf)b_ret;
-                assertEquals("HELLO UBF FROM SERVICE", u.BgetString(test.T_STRING_10_FLD, 5));
+                assertEquals("HELLO 11", u.BgetString(test.T_STRING_5_FLD, 11));
             }
         } else if (null!=retTyp) {
             
             /* old values shall be in buffer */
-            if (input_type.equals("STRING")) {
+            if (output_type.equals("STRING")) {
                 TypedString s = (TypedString)b_ret;
                 assertEquals("HELLO FROM SERVICE", s.getString());
             }
-            else if (input_type.equals("JSON")) {
+            else if (output_type.equals("JSON")) {
                 TypedJson j = (TypedJson)b_ret;
                 assertEquals("{}", j.getJSON());
             }
-            else if (input_type.equals("CARRAY")) {
+            else if (output_type.equals("CARRAY")) {
                 TypedCarray c = (TypedCarray)b_ret;
                 assertArrayEquals(new byte [] {9, 4, 3, 2}, c.getBytes());
             }
-            else if (input_type.equals("UBF")) {
+            else if (output_type.equals("UBF")) {
                 TypedUbf u = (TypedUbf)b_ret;
-                assertEquals("HELLO 11", u.BgetString(test.T_STRING_5_FLD, 11));
+                assertEquals("HELLO UBF FROM SERVICE", u.BgetString(test.T_STRING_10_FLD, 5));
             }
         }
     }

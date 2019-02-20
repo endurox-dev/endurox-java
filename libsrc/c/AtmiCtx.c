@@ -150,6 +150,7 @@ void JNICALL Java_org_endurox_AtmiCtx_tplogC(JNIEnv * env, jobject obj, jint lev
     jboolean n_file_copy = EXFALSE;
     jboolean n_msg_copy = EXFALSE;
     
+    /* TODO: file name for some reasons may be NULL */
     const char *n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
     const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
     
