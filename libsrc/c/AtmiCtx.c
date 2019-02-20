@@ -151,9 +151,17 @@ void JNICALL Java_org_endurox_AtmiCtx_tplogC(JNIEnv * env, jobject obj, jint lev
     jboolean n_msg_copy = EXFALSE;
     
     /* TODO: file name for some reasons may be NULL */
-    const char *n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
+    
+    const char *n_file = "?.java";
     const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
     
+    if (NULL!=file)
+    {
+        n_file = (*env)->GetStringUTFChars(env, file, &n_file_copy);
+    }
+    
+    /* check mandatory arguments...!, thow NullPointerException if any bad.. */
+        
     if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
     {
         return;
