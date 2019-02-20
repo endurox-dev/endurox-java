@@ -277,7 +277,7 @@ public class TpcallTests {
         /* validate data types... */
         TpTypesResult retTyp = null;
         
-        if (output_sub.equals("NULL")) {
+        if (output_type.equals("NULL")) {
             assertEquals(null, b_ret);
         } else {
             
