@@ -637,9 +637,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     jfieldID clen_fldid;
     jfieldID cptr_fldid;
     jfieldID dofin_fldid;
-    
-    /* TODO: fix the finalize!!!!!!!!!!!!! */
-    jboolean finalizeOrg;
+    jboolean finalizeOrg = EXFALSE;
 
     if (NULL!=odata)
     {
@@ -745,6 +743,11 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             finalizeOrg = (*env)->GetBooleanField(env, data, dofin_fldid);
 
             (*env)->SetBooleanField(env, data, dofin_fldid, (jboolean)JNI_FALSE);
+        }
+        else
+        {
+            /* null buffers always are automatic */
+            finalizeOrg = EXTRUE;
         }
 
         /* now allocate new typed buffer */

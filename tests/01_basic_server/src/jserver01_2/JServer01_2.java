@@ -45,9 +45,9 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("VIEWRSP", "ViewRsp", new ViewRsp());
         
         //UBF Error 11 -> buffer with value provided back
-        ctx.tpadvertise("UBFE11", "Ubf11Rsp", new UbfE11Rsp());
+        //ctx.tpadvertise("UBFE11", "Ubf11Rsp", new UbfE11Rsp());
         //Timeout service...
-        ctx.tpadvertise("UBFTOUT", "UbfToutRsp", new UbfToutRsp());
+        //ctx.tpadvertise("UBFTOUT", "UbfToutRsp", new UbfToutRsp());
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...
