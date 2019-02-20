@@ -637,6 +637,8 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     jfieldID clen_fldid;
     jfieldID cptr_fldid;
     jfieldID dofin_fldid;
+    
+    /* TODO: fix the finalize!!!!!!!!!!!!! */
     jboolean finalizeOrg;
 
     if (NULL!=odata)

@@ -364,7 +364,9 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
             /* alloc new return buf */
             
             if (NULL==(odata = ndrxj_atmi_TypedBuffer_translate(env, 
-                atmiCtxObj, EXTRUE, obuf, olen, NULL, NULL, EXFALSE)))
+                atmiCtxObj, EXTRUE, obuf, olen, NULL, NULL, 
+                    /* in case if input was NULL, finalize the output buffer */
+                    (NULL==idata?EXTRUE:EXFALSE) )))
             {
                 NDRX_LOG(log_error, "Failed to prepare reply buffer object");
                 EXFAIL_OUT(ret);
