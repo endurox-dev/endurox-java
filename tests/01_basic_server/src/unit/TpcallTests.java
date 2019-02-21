@@ -278,7 +278,9 @@ public class TpcallTests {
         /* validate the response */
         assertEquals(svc, tpcallerr, excpt_err);
         
-        if (tpcallerr==AtmiConst.TPESVCFAIL)
+        if (tpcallerr==AtmiConst.TPESVCFAIL || 
+                /* copy from previous call.. */
+                tpcallerr==AtmiConst.TPESVCERR)
         {
             assertEquals(63, ctx.tpurcode());
         } else {
@@ -304,7 +306,8 @@ public class TpcallTests {
         }
         
         /* validate the value */
-        if (null!=retTyp && AtmiConst.TPEOTYPE==tpcallerr) {
+        if (null!=retTyp && (AtmiConst.TPEOTYPE==tpcallerr || 
+                AtmiConst.TPESVCERR==tpcallerr)) {
             
             /* New values shall be in buffer */
             if (input_type.equals("STRING")) {
@@ -418,6 +421,15 @@ public class TpcallTests {
                      */
                     testerX(ctx, svcnm, buffers[j], isub, 
                         buffers[i], osub, 0, AtmiConst.TPESVCFAIL, true);
+                    
+                    
+                    svcnm = buffers[i].concat("RSPFAIL10");
+                    
+                    /* 
+                     * Check service failure, new buffer not received.
+                     */
+                    testerX(ctx, svcnm, buffers[j], isub, 
+                        buffers[j], isub, 0, AtmiConst.TPESVCERR, true);
                     
                 } /* for input buffer format */
             } /* for service */
