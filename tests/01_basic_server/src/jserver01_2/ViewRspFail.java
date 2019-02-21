@@ -3,7 +3,7 @@ import org.endurox.*;
 /**
  * View response service
  */
-public class ViewRsp implements Service {
+public class ViewRspFail implements Service {
 
     /**
      * Responds with VIEW buffer
@@ -13,11 +13,11 @@ public class ViewRsp implements Service {
      */
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
-        ctx.tplogDebug("tpService ViewRsp called");
+        ctx.tplogDebug("tpService ViewRspFail called");
 
         TypedView ret = (TypedView)ctx.tpalloc("VIEW", "JVIEW2", 0);
         
         /* use defaults and respond */
-        ctx.tpreturn(AtmiConst.TPSUCCESS, 0, ret, 0);
+        ctx.tpreturn(AtmiConst.TPFAIL, 63, ret, 0);
     }
 }

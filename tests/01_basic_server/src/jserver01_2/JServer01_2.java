@@ -38,16 +38,27 @@ public class JServer01_2 implements Server, Service {
         
         
         //This should provide server error back not?
+        //Succeed responders:
         ctx.tpadvertise("NULLRSP", "NullRspSvc", new NullRsp());
         ctx.tpadvertise("JSONRSP", "JsonRsp", new JsonRsp());
         ctx.tpadvertise("STRINGRSP", "StringRsp", new StringRsp());
         ctx.tpadvertise("UBFRSP", "UbfRsp", new UbfRsp());
         ctx.tpadvertise("VIEWRSP", "ViewRsp", new ViewRsp());
         
-        //UBF Error 11 -> buffer with value provided back
-        //ctx.tpadvertise("UBFE11", "Ubf11Rsp", new UbfE11Rsp());
-        //Timeout service...
-        //ctx.tpadvertise("UBFTOUT", "UbfToutRsp", new UbfToutRsp());
+        //Fail responders + tpurcode:
+        ctx.tpadvertise("NULLRSPFAIL", "NullRspFail", new NullRspFail());
+        ctx.tpadvertise("JSONRSPFAIL", "JsonRspFail", new JsonRspFail());
+        ctx.tpadvertise("STRINGRSPFAIL", "StringRspFail", new StringRspFail());
+        ctx.tpadvertise("UBFRSPFAIL", "UbfRspFail", new UbfRspFail());
+        ctx.tpadvertise("VIEWRSPFAIL", "ViewRspFail", new ViewRspFail());
+        
+        //Service errors, no response
+        ctx.tpadvertise("NULLRSPFAIL10", "NullRspFail10", new NullRspFail10());
+        ctx.tpadvertise("JSONRSPFAIL10", "JsonRspFail10", new JsonRspFail10());
+        ctx.tpadvertise("STRINGRSPFAIL10", "StringRspFail10", new StringRspFail10());
+        ctx.tpadvertise("UBFRSPFAIL10", "UbfRspFail10", new UbfRspFail10());
+        ctx.tpadvertise("VIEWRSPFAIL10", "ViewRspFail10", new ViewRspFail10());
+        
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...

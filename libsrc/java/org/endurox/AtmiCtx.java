@@ -911,6 +911,13 @@ public class AtmiCtx {
     public native int tptoutget();
     
     /**
+     * Returns last user return code from tpcall/tpgetrply result.
+     * See tpurcode(3) manpage for more information.
+     * @return User return code (a second argument used to pass in tpreturn)
+     */
+    public native long tpurcode();
+    
+    /**
      * Set XATMI sub-system timeout value
      * @param tout number of seconds for XATMI calls like tpcall or tpgetrply
      *  before returning timeout exception

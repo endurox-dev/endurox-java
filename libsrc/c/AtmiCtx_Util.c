@@ -363,5 +363,29 @@ out:
     return;
 }
 
+/**
+ * get return code
+ * @param env java env
+ * @param atmiCtxObj atmi context
+ * @return user return code
+ */
+JNIEXPORT jlong JNICALL Java_org_endurox_AtmiCtx_tpurcode
+  (JNIEnv *env, jobject atmiCtxObj)
+{
+    long ur = 0;
+ 
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    ur = tpurcode;
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return ur;
+}
+
 
 /* vim: set ts=4 sw=4 et smartindent: */

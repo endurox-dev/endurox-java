@@ -1,9 +1,9 @@
 import org.endurox.*;
 
 /**
- * UBF Error time-out Response service
+ * Null response service
  */
-public class UbfToutRsp implements Service {
+public class NullRspFail implements Service {
 
     /**
      * Responds with null buffer
@@ -13,8 +13,8 @@ public class UbfToutRsp implements Service {
      */
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
-        ctx.tplogDebug("tpService UbfRsp called");
+        ctx.tplogDebug("tpService NullRspFail called");
         
-        //Just ignore response...
+        ctx.tpreturn(AtmiConst.TPFAIL, 63, null, 0);
     }
 }

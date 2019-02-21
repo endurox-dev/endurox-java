@@ -3,7 +3,7 @@ import org.endurox.*;
 /**
  * JSON Response service
  */
-public class JsonRsp implements Service {
+public class JsonRspFail implements Service {
 
     /**
      * Responds with JSON buffer
@@ -13,11 +13,11 @@ public class JsonRsp implements Service {
      */
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
-        ctx.tplogDebug("tpService JsonRsp called");
+        ctx.tplogDebug("tpService JsonRspFail called");
 
         TypedJson ret = (TypedJson)ctx.tpalloc("JSON", null, 100);
         ret.setJSON("{}");
         
-        ctx.tpreturn(AtmiConst.TPSUCCESS, 0, ret, 0);
+        ctx.tpreturn(AtmiConst.TPFAIL, 63, ret, 0);
     }
 }

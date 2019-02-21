@@ -262,17 +262,28 @@ public class TpcallTests {
             
             ctx.tplogex(AtmiConst.LOG_ERROR, "Got exception", e);
             excpt_err = e.getErrorCode();
-            
+            /*
+            result will already contain the filtered either original
+            or received buffer
             if (null!=e.getReplyBuffer())
             {
                 b_ret = e.getReplyBuffer();
             } else {
                 b_ret = b;
             }
+            */
+            b_ret = e.getReplyBuffer();
         }
         
         /* validate the response */
-        assertEquals(tpcallerr, excpt_err);
+        assertEquals(svc, tpcallerr, excpt_err);
+        
+        if (tpcallerr==AtmiConst.TPESVCFAIL)
+        {
+            assertEquals(63, ctx.tpurcode());
+        } else {
+            assertEquals(0, ctx.tpurcode());
+        }
         
         /* validate data types... */
         TpTypesResult retTyp = null;
@@ -390,16 +401,23 @@ public class TpcallTests {
                     /* validate no switch */
                     int err = AtmiConst.TPEOTYPE;
                     
-                    if (buffers[i].equals(buffers[j])) {
+                    /* for views we always fail as sub-types never match..! */
+                    if (buffers[i].equals(buffers[j]) && !buffers[j].equals("VIEW")) {
                         err = 0;
                     }
                     
                     /* types are not switched.. */
                     testerX(ctx, svcnm, buffers[j], isub, 
-                        buffers[i], osub, AtmiConst.TPNOCHANGE, 
+                        buffers[j], isub, AtmiConst.TPNOCHANGE, 
                         err, true);
                     
-                    /* well we could have a fail service too, not? */
+                    
+                    svcnm = buffers[i].concat("RSPFAIL");
+                    
+                    /* Check service failure, the new buffer shall be received
+                     */
+                    testerX(ctx, svcnm, buffers[j], isub, 
+                        buffers[i], osub, 0, AtmiConst.TPESVCFAIL, true);
                     
                 } /* for input buffer format */
             } /* for service */

@@ -1,9 +1,9 @@
 import org.endurox.*;
 
 /**
- * UBF Error 11 Response service
+ * UBF Response service
  */
-public class UbfE11Rsp implements Service {
+public class UbfRspFail10 implements Service {
 
     /**
      * Responds with null buffer
@@ -13,9 +13,9 @@ public class UbfE11Rsp implements Service {
      */
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
-        ctx.tplogDebug("tpService UbfRsp called");
+        ctx.tplogDebug("tpService UbfRspFail called");
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 0);
         ub.Bchg(test.T_STRING_10_FLD, 5, "HELLO UBF FROM SERVICE");
-        ctx.tpreturn(AtmiConst.TPSUCCESS, 55, ub, 0);
+        ctx.tpreturn(AtmiConst.TPFAIL, AtmiConst.TPESVCERR, ub, AtmiConst.TPSOFTERR);
     }
 }

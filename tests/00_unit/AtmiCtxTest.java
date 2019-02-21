@@ -24,6 +24,7 @@ public class AtmiCtxTest {
             /* test sub-type NULL */
             ub = (TypedUbf)ctx.tpalloc("UBF", null, 1024);
             assertNotEquals(ub, null);
+            ctx.tplogInfo("Hello Log");
 
             ub.cleanup();
             ctx.cleanup();
