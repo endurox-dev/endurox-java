@@ -293,7 +293,7 @@ public class TpcallTests {
         }
         
         /* validate the value */
-        if (null!=retTyp && AtmiConst.TPESVCFAIL==tpcallerr) {
+        if (null!=retTyp && AtmiConst.TPEOTYPE==tpcallerr) {
             
             /* New values shall be in buffer */
             if (input_type.equals("STRING")) {
@@ -387,7 +387,20 @@ public class TpcallTests {
                     testerX(ctx, svcnm, buffers[j], isub, 
                         buffers[i], osub, 0, 0, true);
 
-                    /* todo: validate no switch */
+                    /* validate no switch */
+                    int err = AtmiConst.TPEOTYPE;
+                    
+                    if (buffers[i].equals(buffers[j])) {
+                        err = 0;
+                    }
+                    
+                    /* types are not switched.. */
+                    testerX(ctx, svcnm, buffers[j], isub, 
+                        buffers[i], osub, AtmiConst.TPNOCHANGE, 
+                        err, true);
+                    
+                    /* well we could have a fail service too, not? */
+                    
                 } /* for input buffer format */
             } /* for service */
         }/* for  n */
