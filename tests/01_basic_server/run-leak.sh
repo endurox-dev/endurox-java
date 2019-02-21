@@ -103,6 +103,11 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 xmemck -d45 -s50 -t90 -m jexunit01b -m jserver01_2b &
 
+export NDRXJ_LEAKTEST_NAME="bufferCrossTestAsync"
+jexunit01b TpacallTests || go_out 9
+tmshutdown -y; tmboot -y
+test_leak;
+
 export NDRXJ_LEAKTEST_NAME="bufferCrossTest"
 jexunit01b TpcallTests || go_out 8
 tmshutdown -y; tmboot -y

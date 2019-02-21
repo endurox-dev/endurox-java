@@ -117,4 +117,37 @@ public class TpacallTests {
         ctx.cleanup();
     }
     
+    /**
+     * Cross buffer type validation, async
+     */
+    @Test
+    public void bufferCrossTestAsync() {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        boolean leaktest = false;
+        int leaktestSec = 0;
+        StopWatch w = new StopWatch();
+        
+        Commons com = new Commons();
+        
+        String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        if (null!=leaktestSecStr)
+        {
+            leaktestSec = Integer.parseInt(leaktestSecStr);
+            leaktest = true;
+            
+            //Nothing to test at the moment
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("bufferCrossTestAsync")) {
+                return;
+            }
+        }
+        
+        for (int n=0; ((n<1000) || (leaktest && w.deltaSec() < leaktestSec)); n++) {
+            
+            com.bufferCrossTestX(ctx, true);
+            
+        }
+    }
+    
 }

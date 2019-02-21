@@ -283,7 +283,6 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     char itype[XATMI_TYPE_LEN+1] = {EXEOS};
     char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
     
-
     /* get context & set */
     
     if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
