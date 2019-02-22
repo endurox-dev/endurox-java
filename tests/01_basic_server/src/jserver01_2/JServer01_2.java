@@ -59,6 +59,8 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("UBFRSPFAIL10", "UbfRspFail10", new UbfRspFail10());
         ctx.tpadvertise("VIEWRSPFAIL10", "ViewRspFail10", new ViewRspFail10());
         
+        //Forwarder
+        ctx.tpadvertise("UBFOKFWD1", "UbfOkFwd1", new UbfOkFwd1());
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...

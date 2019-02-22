@@ -131,10 +131,10 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bdelall
     
     if (EXSUCCEED!=Bdelall((UBFH*)cdata, (BFLDID)bfldid))
     {
-        UBF_LOG(log_error, "%s: Bdelall failed %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "%s: Bdelall failed %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+        UBF_LOG(log_error, "%s: Bdelall on failed %d: %s", 
+                __func__, bfldid, Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: Bdelall failed %d: %s", 
+                __func__, bfldid, Bstrerror(Berror));
         goto out;
     }
     

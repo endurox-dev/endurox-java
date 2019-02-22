@@ -23,6 +23,7 @@ public class JServer01 implements Server, Service {
     public int tpSvrInit(AtmiCtx ctx, String [] argv) {
         ctx.tplogDebug("Into tpSvrInit()");
         ctx.tpadvertise("DUMMYSVC", "DUMMYSVC", this);
+        ctx.tpadvertise("UBFOK2", "UbfOk2", new UbfOk2());
         return AtmiConst.SUCCEED;
     }
     
