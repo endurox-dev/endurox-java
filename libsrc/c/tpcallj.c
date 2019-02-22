@@ -352,6 +352,9 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     }
     else
     {
+        odata = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, 
+                    idata, ibuf, ilen, obuf, olen, itype, isubtype);
+#if 0
         /* get return type..., if same object returned, use it,
          * if not then alloc newone, transfer destructor flag
          */
@@ -359,7 +362,6 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
                 ibuf, ilen, obuf, olen);
         
         /* TODO: move to ndrxj_atmi_TypedBuffer_result_prep() !!!!!!!!!!!! */
-        
         if (ibuf!=obuf || ilen!=olen)
         {
             /* alloc new return buf */
@@ -396,12 +398,14 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
                 
             }
             
+            
         }
         else
         {
             NDRX_LOG(log_debug, "use same return buffer");
             odata = idata;
         }
+#endif
     }
     
     if (NULL==(retObj = ndrxj_TpgetrplyResult_new(env, atmiCtxObj, ocd, odata)))

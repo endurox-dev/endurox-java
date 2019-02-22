@@ -91,7 +91,7 @@ fi
 # Running unit tests...
 #
 
-export NDRXJ_LEAKTEST=50000
+export NDRXJ_LEAKTEST=200
 
 echo "Test period $NDRXJ_LEAKTEST sec"
 # Valgrind debug:
