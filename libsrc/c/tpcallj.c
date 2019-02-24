@@ -354,58 +354,6 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     {
         odata = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, 
                     idata, ibuf, ilen, obuf, olen, itype, isubtype);
-#if 0
-        /* get return type..., if same object returned, use it,
-         * if not then alloc newone, transfer destructor flag
-         */
-        NDRX_LOG(log_debug, "tpgetrply: ibuf=%p ilen=%ld obuf=%p olen=%ld",
-                ibuf, ilen, obuf, olen);
-        
-        /* TODO: move to ndrxj_atmi_TypedBuffer_result_prep() !!!!!!!!!!!! */
-        if (ibuf!=obuf || ilen!=olen)
-        {
-            /* alloc new return buf */
-            
-            if (NULL!=obuf)
-            {
-                if (NULL==(odata = ndrxj_atmi_TypedBuffer_translate(env, 
-                    atmiCtxObj, EXTRUE, obuf, olen, NULL, NULL, 
-                        /* in case if input was NULL, finalize the output buffer */
-                        (NULL==idata?EXTRUE:EXFALSE) )))
-                {
-
-                    NDRX_LOG(log_error, "Failed to prepare reply buffer object");
-                    EXFAIL_OUT(ret);
-                }
-
-                if (NULL!=idata)
-                {
-                    /* transfer the destructor status down here. */
-                    if (EXSUCCEED!=ndrxj_TypedBuffer_finalize_transfer(env, 
-                            odata, idata, EXTRUE))
-                    {
-                        NDRX_LOG(log_error, "Failed to transfer finalize status");
-                        EXFAIL_OUT(ret);
-                    }
-                }
-            }
-            else
-            {
-                /* TODO: in this case obuf is NULL, then set the ibuf
-                 * to non finalizable, as dealloce'd  
-                 */
-                odata = NULL; /* no data... */
-                
-            }
-            
-            
-        }
-        else
-        {
-            NDRX_LOG(log_debug, "use same return buffer");
-            odata = idata;
-        }
-#endif
     }
     
     if (NULL==(retObj = ndrxj_TpgetrplyResult_new(env, atmiCtxObj, ocd, odata)))

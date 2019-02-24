@@ -239,6 +239,40 @@ public class AtmiConst {
     public static final int TPNOABORT       = 0x08000000;
             
     /** @} */ // end of atmiflags
+    
+    /**
+     * Conversational IPC event flags
+     * @defgroup cnvevents
+     * @{
+     */
+    
+    /** 
+     * Disconnect received from other conversation end, by issuing tpdiscon(). 
+     * The global transaction in progress is aborted in this case. 
+     */
+    public static final int TPEV_DISCONIMM = 0x0001;
+    
+    /**
+     * Server died and queue was removed.
+     */
+    public static final int TPEV_SVCERR    = 0x0002;
+    
+    /**
+     * Server returned TPFAIL with tpreturn()
+     */
+    public static final int TPEV_SVCFAIL   = 0x0004;
+    
+    /**
+     * Server did tpreturn() with TPSUCCESS.
+     */
+    public static final int TPEV_SVCSUCC   = 0x0008;
+    
+    /**
+     * The sender program issued tpsend() with flag TPEV_SENDONLY, 
+     * meaning that we become senders.
+     */
+    public static final int TPEV_SENDONLY  = 0x0020;
+    /** @} */ // end of cnvevents
 
 }
 /* vim: set ts=4 sw=4 et smartindent: */

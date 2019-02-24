@@ -57,10 +57,12 @@ public class TprecvResult {
      * Create instance of tprecv results 
      * @param cd conversation descriptor
      * @param buffer Typed buffer received
+     * @param revent Return event code
      */
-    public TprecvResult(int cd, TypedBuffer buffer) {
+    public TprecvResult(int cd, TypedBuffer buffer, long revent) {
         this.cd = cd;
         this.buffer = buffer;
+        this.revent = revent;
     }
 
     /**

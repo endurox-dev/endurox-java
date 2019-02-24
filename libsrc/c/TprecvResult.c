@@ -1,7 +1,7 @@
 /**
- * @brief Backend code for 
+ * @brief Routines for handling TprecvResult object
  *
- * @file TpgetrplyResult.c
+ * @file TprecvResult.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -45,7 +45,7 @@
 #include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
-#define ALLOC_CLASS "org/endurox/TpgetrplyResult"
+#define ALLOC_CLASS "org/endurox/TprecvResult"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -53,15 +53,16 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Allocate result buffer for tpgetrply()
+ * Allocate result buffer for tprecv()
  * @param[in] env java env
  * @param[in] ctx_obj Atmi context object
  * @param[in] cd call descriptor
  * @param[in] odata output data to send in results
+ * @param[in] revent return event
  * @return Result object
  */
-expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
-        int cd, jobject odata)
+expublic jobject ndrxj_TprecvResult_new(JNIEnv *env, jobject ctx_obj,
+        int cd, jobject odata, long revent)
 {
     jobject ret = NULL;
     jclass bclz = NULL;
@@ -78,7 +79,7 @@ expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
     }
     
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(ILorg/endurox/TypedBuffer;)V");
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(ILorg/endurox/TypedBuffer;J)V");
     
     if (NULL==mid)
     {
@@ -88,7 +89,7 @@ expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
 
     NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, (jint)cd, odata);
+    ret = (*env)->NewObject(env, bclz, mid, (jint)cd, odata, revent);
     
     if (NULL==ret)
     {
@@ -104,6 +105,7 @@ out:
     {
         (*env)->DeleteLocalRef(env, bclz);
     }
+    
     return ret;
 }
 

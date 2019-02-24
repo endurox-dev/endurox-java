@@ -130,4 +130,230 @@ out:
     return ret;
 }
 
+/**
+ * Receive data from conversation
+ * @param env java environment
+ * @param atmiCtxObj ATMI Context
+ * @param cd call descriptor
+ * @param idata data buffer
+ * @param flags input flags
+ * @return TprecvResult obj
+ */
+expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tprecv
+  (JNIEnv * env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
+{
+    jint ret = EXFAIL;
+    jobject retObj = NULL;
+    long revent = 0;
+    TPCONTEXT_T ctx;
+    int err;
+    
+    /* input buffer */
+    char *ibuf = NULL;
+    long ilen = 0;
+    
+    /* output buffer */
+    char *obuf;
+    long olen;
+    
+    jobject odata = NULL;
+    char itype[XATMI_TYPE_LEN+1] = {EXEOS};
+    char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
+    
+    /* get context & set */
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    } 
+    
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+        
+        /* read buffer types... */
+        if (EXFAIL==tptypes(ibuf, itype, isubtype))
+        {
+            NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
+                    tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+                    tpstrerror(tperrno));
+            goto out;
+        }
+        
+    }
+    
+    obuf = ibuf;
+    olen = ilen;
+    
+    ret = tprecv((int)cd, &obuf, &olen, (long)flags, &revent);    
+    err = tperrno;
+   
+    /* OK might get exception, but there could be buffer associated with it.. */
+    if (EXSUCCEED!=ret && TPEEVENT!=err)
+    {
+        char errbuf[MAX_ERROR_LEN+1];
+        jobject errdatabuf;
+        NDRX_LOG(log_debug, "tprecv failed with %d", err);
+        
+        errdatabuf = idata;
+            
+        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+        ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "RECV OK cd=%d event %ld", (int)cd, revent);
+    
+    odata = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, 
+                idata, ibuf, ilen, obuf, olen, itype, isubtype);
+    
+    if (NULL==(retObj = ndrxj_TprecvResult_new(env, atmiCtxObj, cd, odata, revent)))
+    {
+        NDRX_LOG(log_error, "Failed to generate reply object!");
+        EXFAIL_OUT(ret);
+    }
+    
+out:
+
+    NDRX_LOG(log_debug, "returns %d", ret);
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    if (EXSUCCEED==ret)
+    {
+        return retObj;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+/**
+ * Send data to conversational end point
+ * @param env java environment
+ * @param atmiCtxObj ATMI Context
+ * @param cd call descriptor
+ * @param idata input data to be sent
+ * @param flags ATMI Flags
+ * @return ATMI Conv event or 0 (on OK)
+ */
+expublic JNIEXPORT jlong JNICALL Java_org_endurox_AtmiCtx_tpsend
+  (JNIEnv * env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
+{
+    jint ret = EXFAIL;
+    jobject retObj = NULL;
+    long revent = 0;
+    TPCONTEXT_T ctx;
+    int err;
+    
+    /* input buffer */
+    char *ibuf = NULL;
+    long ilen = 0;
+    
+    /* get context & set */
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    } 
+    
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+    }
+    
+    ret = tpsend((int)cd, ibuf, ilen, (long)flags, &revent);    
+    err = tperrno;
+   
+    /* OK might get exception, but there could be buffer associated with it.. */
+    if (EXSUCCEED!=ret && TPEEVENT!=err)
+    {
+        char errbuf[MAX_ERROR_LEN+1];
+        jobject errdatabuf;
+        NDRX_LOG(log_debug, "tpsend failed with %d", err);
+        
+        errdatabuf = idata;
+            
+        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+        
+        ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
+        
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "SEND OK cd=%d event %ld", (int)cd, revent);
+    
+out:
+
+    NDRX_LOG(log_debug, "returns %ld", revent);
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+            
+    return revent;
+}
+
+/**
+ * Terminate ATMI conversation
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param cd call descriptor
+ */
+expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpdiscon
+  (JNIEnv * env, jobject atmiCtxObj, jint cd)
+{
+    jint ret = EXFAIL;
+    TPCONTEXT_T ctx;
+    int err;
+    
+    
+    /* get context & set */    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    } 
+    
+    ret = tpdiscon((int)cd);
+   
+    /* OK might get exception, but there could be buffer associated with it.. */
+    if (EXSUCCEED!=ret)
+    {
+        char errbuf[MAX_ERROR_LEN+1];
+        NDRX_LOG(log_debug, "tpdiscon failed with %d", err);
+        
+        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+        
+        ndrxj_atmi_throw(env, NULL, err, "%s", errbuf);
+        
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "DISCON OK cd=%d", (int)cd);
+    
+out:
+    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+            
+    return;
+}
+
+
 /* vim: set ts=4 sw=4 et smartindent: */

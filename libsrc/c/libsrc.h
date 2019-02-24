@@ -174,6 +174,10 @@ extern jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
 extern jobject ndrxj_TpTypesResult_new(JNIEnv *env, 
         char *type, char *sub_type, long size);
 
+/* TprecvResult ops */
+extern jobject ndrxj_TprecvResult_new(JNIEnv *env, jobject ctx_obj,
+        int cd, jobject odata, long revent);
+
 #ifdef  __cplusplus
 }
 #endif

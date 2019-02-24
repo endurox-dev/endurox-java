@@ -756,22 +756,61 @@ public class AtmiCtx {
     public native int tpconnect(String svc, TypedBuffer idata, long flags);
     
     /**
-     * Send data to conversational server
+     * Send data to conversational endpoint
+     * See tpsend(3) manpage for more information.
      * @param cd conversation descriptor
-     * @param idata input data buffer
-     * @param flags
-     * @return receive event
+     * @param idata input data buffer. Data buffer is valid after the call
+     * @param flags TPRECVONLY, TPNOBLOCK, TPSIGRSTRT
+     * @return receive event. If sent ok w/o event, then return code is 0.
+     *  Event constants: TPEV_SVCERR, TPEV_SVCFAIL
+     * @throws AtmiTPEINVALException Invalid call descriptor cd passed in or 
+     *  data pointer is not pointing to buffer allocated by tpalloc().
+     * @throws AtmiTPETIMEException Was unable to send message in given 
+     *  time(NDRX_TOUT env param.).
+     * @throws AtmiTPESYSTEMException System failure occurred during 
+     *  serving. See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during 
+     *  serving. See logs i.e. user log, or debugs for more info.
      */
     public native long tpsend(int cd, TypedBuffer idata, long flags);
     
+    /**
+     * Received data from endpoint
+     * @param cd conversation id
+     * @param idata input data buffer into which received data shall be stored.
+     *  This object becomes invalid after the call, new instance is provided
+     *  in return object. The data type may be changed of the buffer.
+     * @param flags TPRECVONLY, TPNOBLOCK, TPSIGRSTRT, TPNOBLOCK
+     * @return Receive result (event, cd, typed buffer). Possible event constants:
+     *  TPEV_DISCONIMM, TPEV_SENDONLY, TPEV_SVCERR, TPEV_SVCFAIL, TPEV_SVCSUCC
+     * 
+     * @throws AtmiTPEINVALException Invalid call descriptor cd passed in.
+     * @throws AtmiTPETIMEException Service did not reply in given time (NDRX_TOUT).
+     * @throws AtmiTPEPROTOException System level service failure. Server died during 
+     *  the message presence in service queue.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. See logs 
+     *  i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. See logs i.e. 
+     *  user log, or debugs for more info.
+     */
     public native TprecvResult tprecv(int cd, TypedBuffer idata, long flags);
     
+    /**
+     * Disconnect from conversation
+     * @param cd conversation descriptor / id
+     * @throws AtmiTPEINVALException Invalid connection descriptor passed in.
+     * @throws AtmiTPEOSException System failure occurred during serving. See 
+     * logs i.e. user log, or debugs for more info.
+     */
     public native void tpdiscon(int cd);
     
-    public native void tpcancel(int cd);
-    
-    
     /** @} */ // end of Convers
+    
+    /**
+     * Cancel a tpacall. This basically marks the responses from 
+     * @param cd 
+     */
+    public native void tpcancel(int cd);
     
     
     /**
