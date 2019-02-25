@@ -17,6 +17,7 @@ public class UbfConv implements Service {
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
         ctx.tplogDebug("tpService UbfConv called");
+        /* Allocate the correct buffer... */
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 0);
         int cd = svcinfo.getCd();
         long revent;

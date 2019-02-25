@@ -735,7 +735,7 @@ public class AtmiCtx {
      * @param idata input XATMI buffer
      * @param flags AtmiConst flags - TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPTRANSUSPEND,
      *  TPSENDONLY, TPRECVONLY. Binary or'able.
-     * @return connection descriptor
+     * @return connection descriptor (cd)
      * @throws AtmiTPEINVALException Invalid parameter is given to function. 
      *  Either service name is NULL or data is not NULL, but not allocated by tpalloc()
      * @throws AtmiTPENOENTException No service (svc parameter) 
