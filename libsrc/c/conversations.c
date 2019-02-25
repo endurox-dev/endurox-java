@@ -208,6 +208,10 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tprecv
         ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
         goto out;
     }
+    else
+    {
+        ret = EXSUCCEED;
+    }
     
     NDRX_LOG(log_debug, "RECV OK cd=%d event %ld", (int)cd, revent);
     

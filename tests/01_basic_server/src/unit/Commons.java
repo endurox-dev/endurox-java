@@ -237,4 +237,203 @@ public class Commons {
         } /* for service */
     }
     
+    /**
+     * Cross validate 
+     * @param svc Service name
+     * @param input_type intput buffer type
+     * @param input_sub input sub-buffer type
+     * @param output_type output buffer type
+     * @param output_sub output buffer sub-type
+     * @param flags call flags
+     * @param tpcallerr return error code/from exception
+     * @return SUCCEED/FAIL
+     */
+    void testerConvX(AtmiCtx ctx, String svc, String input_type, String input_sub, 
+        String output_type, String output_sub, long flags, int tpcallerr) {
+        
+        TypedBuffer b = null;
+        int excpt_err = 0;
+        int cd = 0;
+        int rcv;
+        long gotval;
+        
+        ctx.tplogInfo("svc: [%s] input_type: [%s] input_sub: [%s] output_type: "+
+            "[%s] output_sub: [%s] flags: %d tpcallerr: %d validate: %b",
+            svc, input_type, input_sub, output_type, output_sub, flags, 
+            tpcallerr);
+        
+        /* Alloc some buffer */
+        b = ctx.tpalloc(input_type, input_sub, 1024);
+        
+        /* call the service */
+        cd = ctx.tpconnect(svc, b, flags);
+        rcv = 0;
+        
+        while (true) {
+            
+            TprecvResult rec = null;
+            
+            try {
+                rec = ctx.tprecv(cd, b, 0);
+            } 
+            catch (AtmiException e) {
+                excpt_err = e.getErrorCode();
+            }
+            
+            assertEquals(tpcallerr, excpt_err);
+            
+            if (excpt_err > 0) {
+                
+                /* nothing todo.. */
+                ctx.tpdiscon(cd);
+                return;
+            }
+            
+            b = rec.getBuffer();
+            
+            /* validate the response buffer */
+            TpTypesResult retTyp;
+        
+            if (output_type.equals("NULL")) {
+                assertEquals(null, b);
+            } else {
+
+                retTyp = b.tptypes();
+                assertEquals(output_type, retTyp.getType());
+                assertEquals(output_sub, retTyp.getSubType());
+            }
+
+            if (input_type.equals("STRING")) {
+                TypedString s = (TypedString)b;
+                gotval = Integer.getInteger(s.getString());
+            }
+            else if (input_type.equals("JSON")) {
+                /* it is the same string... */
+                TypedJson j = (TypedJson)b;
+                gotval = Integer.getInteger(j.getJSON());
+            }
+            else if (input_type.equals("CARRAY")) {
+                TypedCarray c = (TypedCarray)b;
+                gotval = c.getBytes()[0];
+            }
+            else if (input_type.equals("UBF")) {
+                TypedUbf u = (TypedUbf)b;
+                gotval = u.BgetLong(test.T_LONG_FLD, 0);
+            }
+            else if (input_type.equals("VIEW")) {
+                gotval = rcv + 3;
+            }
+            else if (input_type.equals("NULL")) {
+                gotval = rcv + 3;
+            }
+            else {
+                gotval = AtmiConst.FAIL;
+            }
+            
+            assertEquals(rcv + 3, gotval);
+            
+            rcv++;
+            
+            if (rec.getRevent() != 0)
+            {
+                assertEquals(AtmiConst.TPEV_SENDONLY, rec.getRevent());
+                break;
+            }
+            
+        }
+
+        assertEquals(100, rcv);
+
+        /* Now send some stuff */
+        
+        b = ctx.tpalloc(input_type, input_sub, 1024);
+        
+        for (int i=0; i<100; i++)
+        {
+            int snd = i + 7;
+            if (input_type.equals("STRING")) {
+                TypedString s = (TypedString)b;
+                s.setString(Integer.toString(snd));
+            }
+            else if (input_type.equals("JSON")) {
+                /* it is the same string... */
+                TypedJson j = (TypedJson)b;
+                
+                /* I know it is not a json, but basically it is string transport... */
+                j.setJSON(Integer.toString(snd));
+            }
+            else if (input_type.equals("CARRAY")) {
+                TypedCarray c = (TypedCarray)b;
+                
+                byte bb = (byte)snd;
+                c.setBytes(new byte[] {bb});
+            }
+            else if (input_type.equals("UBF")) {
+                TypedUbf u = (TypedUbf)b;
+                u.Bchg(test.T_LONG_FLD, 0, snd);
+            }
+            else if (input_type.equals("VIEW")) {
+                /* nothing to send.. */
+            }
+            else if (input_type.equals("NULL")) {
+                /* nothing to send.. */
+            }
+            
+            assertEquals(0, ctx.tpsend(0, b, flags));
+        }
+        
+        /* disconnect from conv */
+        ctx.tpdiscon(cd);
+        
+    }
+    
+    /**
+     * Test conversation mode buffer cross switching
+     * @param ctx ATMI Context
+     */
+    public void bufferCrossConvTestX(AtmiCtx ctx) {
+        
+        String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF"};
+        int i, j;
+        for (i=0; i<buffers.length; i++) {
+
+            for (j=0; j<buffers.length; j++) {
+
+                String svcnm = buffers[i].concat("CONV");
+                String isub = "";
+                String osub = "";
+
+                if (buffers[j].equals("VIEW")) {
+                    isub = "JVIEW1";
+                }
+
+                if (buffers[i].equals("VIEW")) {
+                    osub = "JVIEW2";
+                }
+                
+                testerConvX(ctx, svcnm, buffers[j], isub, 
+                     buffers[i], osub, 0, 0);
+        
+
+                /* call the server */
+                testerConvX(ctx, svcnm, buffers[j], isub, 
+                    buffers[i], osub, 0, 0);
+
+                /* validate no switch */
+                int err = AtmiConst.TPEOTYPE;
+
+                /* for views we always fail as sub-types never match..! */
+                if (buffers[i].equals(buffers[j]) && !buffers[j].equals("VIEW")) {
+                    err = 0;
+                }
+
+                /* types are not switched.. */
+                testerConvX(ctx, svcnm, buffers[j], isub, 
+                    buffers[j], isub, AtmiConst.TPNOCHANGE, 
+                    err);
+
+            } /* for input buffer format */
+        } /* for service */
+    }
+    
 }
