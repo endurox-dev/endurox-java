@@ -284,6 +284,11 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jobject 
     }
 
     n_btype = (*env)->GetStringUTFChars(env, btype, &n_btype_copy);
+    if (0==strcmp(n_btype, "NULL"))
+    {
+        /* NULL buffer is null buffer... */
+        goto out;
+    }
 
     /* get context handler */
 

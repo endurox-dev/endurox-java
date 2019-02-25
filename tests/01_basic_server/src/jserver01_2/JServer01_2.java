@@ -44,6 +44,7 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("STRINGRSP", "StringRsp", new StringRsp());
         ctx.tpadvertise("UBFRSP", "UbfRsp", new UbfRsp());
         ctx.tpadvertise("VIEWRSP", "ViewRsp", new ViewRsp());
+        ctx.tpadvertise("CARRAYRSP", "CarrayRsp", new CarrayRsp());
         
         //Fail responders + tpurcode:
         ctx.tpadvertise("NULLRSPFAIL", "NullRspFail", new NullRspFail());
@@ -51,6 +52,7 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("STRINGRSPFAIL", "StringRspFail", new StringRspFail());
         ctx.tpadvertise("UBFRSPFAIL", "UbfRspFail", new UbfRspFail());
         ctx.tpadvertise("VIEWRSPFAIL", "ViewRspFail", new ViewRspFail());
+        ctx.tpadvertise("CARRAYRSPFAIL", "CarrayRspFail", new CarrayRspFail());
         
         //Service errors, no response
         ctx.tpadvertise("NULLRSPFAIL10", "NullRspFail10", new NullRspFail10());
@@ -58,13 +60,20 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("STRINGRSPFAIL10", "StringRspFail10", new StringRspFail10());
         ctx.tpadvertise("UBFRSPFAIL10", "UbfRspFail10", new UbfRspFail10());
         ctx.tpadvertise("VIEWRSPFAIL10", "ViewRspFail10", new ViewRspFail10());
+        ctx.tpadvertise("CARRAYRSPFAIL10", "CarrayRspFail10", new CarrayRspFail10());
         
         //Forwarder
         ctx.tpadvertise("UBFOKFWD1", "UbfOkFwd1", new UbfOkFwd1());
-        ctx.tpadvertise("UBFCONV", "UbfConv", new UbfConv());
+        
+        //Conversations with buffers
+        ctx.tpadvertise("NULLCONV", "Convsv", new Convsv());
+        ctx.tpadvertise("JSONCONV", "Convsv", new Convsv());
+        ctx.tpadvertise("STRINGCONV", "Convsv", new Convsv());
+        ctx.tpadvertise("UBFCONV", "Convsv", new Convsv());
+        ctx.tpadvertise("VIEWCONV", "Convsv", new Convsv());
+        ctx.tpadvertise("CARRAYCONV", "Convsv", new Convsv());
         
         
-        //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...
         return AtmiConst.SUCCEED;
     }

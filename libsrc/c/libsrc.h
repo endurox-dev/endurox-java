@@ -63,13 +63,13 @@ extern "C" {
     \
     if (NULL==jerr__) {jerr__= jerr_null__;}\
     if (FLAGS__ & NDRXJ_LOGEX_ULOG)\
-        userlog(FMT__, jerr__, ##__VA_ARGS__);\
+        userlog(FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
-        NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+        NDRX_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_UBF)\
-        UBF_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+        UBF_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_TP)\
-        TP_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+        TP_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     NDRX_FREE(jerr__);\
 }
 
@@ -88,13 +88,13 @@ extern "C" {
     \
     if (NULL==jerr__) {jerr__= jerr_null__;}\
     if (FLAGS__ & NDRXJ_LOGEX_ULOG)\
-        userlog(FMT__, jerr__, ##__VA_ARGS__);\
+        userlog(FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_NDRX)\
-        NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+        NDRX_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_UBF)\
-        UBF_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+        UBF_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_TP)\
-        TP_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
+        TP_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     NDRX_FREE(jerr__);\
 }
 /*---------------------------Enums--------------------------------------*/

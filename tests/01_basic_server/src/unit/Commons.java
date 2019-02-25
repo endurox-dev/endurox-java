@@ -1,11 +1,6 @@
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
 import org.endurox.exceptions.AtmiException;
-import org.endurox.exceptions.UbfBNOTPRESException;
-import org.endurox.exceptions.AtmiTPEINVALException;
-import org.endurox.exceptions.AtmiTPETIMEException;
-
 /**
  * Async tpcall tests
  */
@@ -181,7 +176,8 @@ public class Commons {
      */
     public void bufferCrossTestX(AtmiCtx ctx, boolean syncMode) {
         
-        String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF"};
+        String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", 
+            "UBF", "CARRAY"};
         int i, j;
         for (i=0; i<buffers.length; i++) {
 
@@ -258,7 +254,7 @@ public class Commons {
         long gotval;
         
         ctx.tplogInfo("svc: [%s] input_type: [%s] input_sub: [%s] output_type: "+
-            "[%s] output_sub: [%s] flags: %d tpcallerr: %d validate: %b",
+            "[%s] output_sub: [%s] flags: %d tpcallerr: %d",
             svc, input_type, input_sub, output_type, output_sub, flags, 
             tpcallerr);
         
@@ -274,7 +270,7 @@ public class Commons {
             TprecvResult rec = null;
             
             try {
-                rec = ctx.tprecv(cd, b, 0);
+                rec = ctx.tprecv(cd, b, flags);
             } 
             catch (AtmiException e) {
                 excpt_err = e.getErrorCode();
@@ -303,27 +299,27 @@ public class Commons {
                 assertEquals(output_sub, retTyp.getSubType());
             }
 
-            if (input_type.equals("STRING")) {
+            if (output_type.equals("STRING")) {
                 TypedString s = (TypedString)b;
                 gotval = Integer.getInteger(s.getString());
             }
-            else if (input_type.equals("JSON")) {
+            else if (output_type.equals("JSON")) {
                 /* it is the same string... */
                 TypedJson j = (TypedJson)b;
                 gotval = Integer.getInteger(j.getJSON());
             }
-            else if (input_type.equals("CARRAY")) {
+            else if (output_type.equals("CARRAY")) {
                 TypedCarray c = (TypedCarray)b;
                 gotval = c.getBytes()[0];
             }
-            else if (input_type.equals("UBF")) {
+            else if (output_type.equals("UBF")) {
                 TypedUbf u = (TypedUbf)b;
                 gotval = u.BgetLong(test.T_LONG_FLD, 0);
             }
-            else if (input_type.equals("VIEW")) {
+            else if (output_type.equals("VIEW")) {
                 gotval = rcv + 3;
             }
-            else if (input_type.equals("NULL")) {
+            else if (output_type.equals("NULL")) {
                 gotval = rcv + 3;
             }
             else {
@@ -379,7 +375,7 @@ public class Commons {
                 /* nothing to send.. */
             }
             
-            assertEquals(0, ctx.tpsend(0, b, flags));
+            assertEquals(0, ctx.tpsend(cd, b, flags));
         }
         
         /* disconnect from conv */
@@ -393,7 +389,8 @@ public class Commons {
      */
     public void bufferCrossConvTestX(AtmiCtx ctx) {
         
-        String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF"};
+        String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", 
+            "UBF", "CARRAY"};
         int i, j;
         for (i=0; i<buffers.length; i++) {
 
