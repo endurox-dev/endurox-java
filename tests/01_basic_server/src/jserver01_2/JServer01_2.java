@@ -61,6 +61,8 @@ public class JServer01_2 implements Server, Service {
         
         //Forwarder
         ctx.tpadvertise("UBFOKFWD1", "UbfOkFwd1", new UbfOkFwd1());
+        ctx.tpadvertise("UBFCONV", "UbfConv", new UbfConv());
+        
         
         //TODO: Process exception here. If failed, then report fail to ndrx
         //for failed startup...
