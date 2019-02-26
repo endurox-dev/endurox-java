@@ -105,12 +105,12 @@ public class Convsv implements Service {
              */
             if (btype.equals("STRING")) {
                 TypedString s = (TypedString)b;
-                gotval = Integer.getInteger(s.getString());
+                gotval = Integer.parseInt(s.getString());
             }
             else if (btype.equals("JSON")) {
                 /* it is the same string... */
                 TypedJson j = (TypedJson)b;
-                gotval = Integer.getInteger(j.getJSON());
+                gotval = Integer.parseInt(j.getJSON());
             }
             else if (btype.equals("CARRAY")) {
                 TypedCarray c = (TypedCarray)b;

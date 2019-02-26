@@ -301,12 +301,14 @@ public class Commons {
 
             if (output_type.equals("STRING")) {
                 TypedString s = (TypedString)b;
-                gotval = Integer.getInteger(s.getString());
+                assertNotNull(s);
+                assertNotNull(s.getString());
+                gotval = Integer.parseInt(s.getString());
             }
             else if (output_type.equals("JSON")) {
                 /* it is the same string... */
                 TypedJson j = (TypedJson)b;
-                gotval = Integer.getInteger(j.getJSON());
+                gotval = Integer.parseInt(j.getJSON());
             }
             else if (output_type.equals("CARRAY")) {
                 TypedCarray c = (TypedCarray)b;
