@@ -5,16 +5,12 @@ import org.endurox.*;
  */
 public class Convsv implements Service {
 
-    /**
-     * COnversational testing server. The scenario will be following:
-     * - endpoint connects
-     * - we send 100 msg (UBF messages)
-     * - we receive 100 msg
-     * - perform tpreturn
-     * @param ctx Atmi context
-     * @param svcinfo service info
-     */
-    public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
+        /**
+         * Main logic implementation
+         * @param ctx
+         * @param svcinfo 
+         */
+        public void main(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
         String svcnm = svcinfo.getName();
         String fnnm = svcinfo.getFname();
@@ -34,7 +30,7 @@ public class Convsv implements Service {
                 svcnm, fnnm, btype, subtype);
         
         /* Allocate the correct buffer... */
-        TypedBuffer b = (TypedUbf)ctx.tpalloc(btype, subtype, 1024);
+        TypedBuffer b = ctx.tpalloc(btype, subtype, 1024);
         
         /* we send a stuff for 100x times */
         for (int i=0; i<100; i++)
@@ -95,8 +91,18 @@ public class Convsv implements Service {
             
             //No exception is expected here...
             rec = ctx.tprecv(cd, b, 0);
+            
             b = rec.getBuffer();
+            
+            if (null==b) {
+                btype = "NULL";
+            } else {
+                btype = b.tptypes().getType();
+            }
         
+            /* well here we can receive any type...
+             * thus service type does not matter, but buffer type recieved
+             */
             if (btype.equals("STRING")) {
                 TypedString s = (TypedString)b;
                 gotval = Integer.getInteger(s.getString());
@@ -133,5 +139,25 @@ public class Convsv implements Service {
         }
         
         ctx.tpreturn(AtmiConst.TPSUCCESS, 0, null, 0);
+    }
+    /**
+     * COnversational testing server. The scenario will be following:
+     * - endpoint connects
+     * - we send 100 msg (UBF messages)
+     * - we receive 100 msg
+     * - perform tpreturn
+     * @param ctx Atmi context
+     * @param svcinfo service info
+     */
+    public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
+        
+        try {
+            this.main(ctx, svcinfo);
+        } 
+        catch (ClassCastException e) {
+            ctx.tplogex(AtmiConst.LOG_INFO, "Type cast exception - ok "
+                    + "for alien types", e);
+            ctx.tpreturn(AtmiConst.TPFAIL, 0, null, 0);
+        }
     }
 }

@@ -77,7 +77,7 @@ xadmin psc
 
 
 if [ "X$1" != "X" ]; then
-    jexunit01b $1|| exit 11
+    jexunit01b $1 || go_out 11
 
 else
     jexunit01b Conversations || go_out 6
