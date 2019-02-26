@@ -813,7 +813,7 @@ public class AtmiCtx {
     public native void tpcancel(int cd);
     
     /**
-     * tpsetunsol(3) tpbroadcast(3) tpchkunsol(3) tpbrdcstsv(8)
+     * tpsetunsol(3) tpbroadcast(3) tpchkunsol(3) tpnotify(3)
      * tpdequeue(3) tpdequeueex(3) tpenqueue tpenqueueex
      * tpabort(3) tpbegin(3) tpcommit(3) tpopen(3) tpclose(3) tpsuspend(3) tpresume(3)
      */
