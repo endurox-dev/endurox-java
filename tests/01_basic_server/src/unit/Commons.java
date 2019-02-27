@@ -138,7 +138,7 @@ public class Commons {
             }
             else if (input_type.equals("CARRAY")) {
                 TypedCarray c = (TypedCarray)b_ret;
-                assertArrayEquals(new byte[]{1, 2, 5, 2, 1, 2, 3, 126}, c.getBytes());
+                assertArrayEquals(new byte [] {9, 4, 3, 2}, c.getBytes());
             }
             else if (input_type.equals("UBF")) {
                 TypedUbf u = (TypedUbf)b_ret;
@@ -157,7 +157,7 @@ public class Commons {
             }
             else if (output_type.equals("CARRAY")) {
                 TypedCarray c = (TypedCarray)b_ret;
-                assertArrayEquals(new byte [] {9, 4, 3, 2}, c.getBytes());
+                assertArrayEquals(new byte[]{1, 2, 5, 2, 1, 2, 3, 126}, c.getBytes());
             }
             else if (output_type.equals("UBF")) {
                 TypedUbf u = (TypedUbf)b_ret;
