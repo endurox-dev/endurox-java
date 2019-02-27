@@ -71,8 +71,9 @@ function test_leak {
 echo "debug off"
 export NDRX_CCTAG="off"
 
-xadmin start -y
 rm log/* 2>/dev/null
+xadmin start -y
+xadmin psc
 
 #
 # Running client 01
@@ -102,6 +103,11 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 # Start Enduro/X leak monitor...
 #
 xmemck -d45 -s50 -t90 -m jexunit01b -m jserver01_2b &
+
+export NDRXJ_LEAKTEST_NAME="tpcancelTest"
+jexunit01b TpacallTests || go_out 11
+tmshutdown -y; tmboot -y
+test_leak;
 
 export NDRXJ_LEAKTEST_NAME="convTest"
 jexunit01b Conversations || go_out 10

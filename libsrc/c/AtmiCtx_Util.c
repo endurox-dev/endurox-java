@@ -387,5 +387,27 @@ out:
     return ur;
 }
 
+/**
+ * Cancel the async call in progress
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param cd call descriptor
+ */
+JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpcancel
+  (JNIEnv *env, jobject atmiCtxObj, jint cd)
+{
+ 
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        goto out;
+    }
+    
+    tpcancel((int)cd);
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return;
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */
