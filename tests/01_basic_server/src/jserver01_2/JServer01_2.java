@@ -72,6 +72,8 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("UBFCONV", "Convsv", new Convsv());
         ctx.tpadvertise("VIEWCONV", "Convsv", new Convsv());
         ctx.tpadvertise("CARRAYCONV", "Convsv", new Convsv());
+
+        ctx.tpadvertise("DROPRSP", "DropRsp", new DropRsp());
         
         
         //for failed startup...

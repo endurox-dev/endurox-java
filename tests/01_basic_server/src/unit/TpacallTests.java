@@ -1,6 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
+import org.endurox.exceptions.AtmiTPEBADDESCException;
 import org.endurox.exceptions.UbfBNOTPRESException;
 import org.endurox.exceptions.AtmiTPEINVALException;
 import org.endurox.exceptions.AtmiTPETIMEException;
@@ -110,8 +111,10 @@ public class TpacallTests {
         ctx.tpinit(null);
         
         ctx.tptoutset(1);
+        
+        int cd = ctx.tpacall("DROPRSP", null, 0);
 
-        ctx.tpgetrply(55, ub, 0);
+        ctx.tpgetrply(cd, ub, 0);
         
         ub.cleanup();
         ctx.cleanup();
@@ -160,9 +163,7 @@ public class TpacallTests {
         boolean leaktest = false;
         int leaktestSec = 0;
         StopWatch w = new StopWatch();
-        
-        Commons com = new Commons();
-        
+
         String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
         
         if (null!=leaktestSecStr)
@@ -176,10 +177,13 @@ public class TpacallTests {
             }
         }
         
+        /* have some longer timeout */
+        ctx.tptoutset(10);
+        
         /* Overfill the max call descriptors, shall be no prob */
         for (int n=0; ((n<2000) || (leaktest && w.deltaSec() < leaktestSec)); n++) {
             
-            int cd = ctx.tpacall("NULLRSP", null, 0);
+            int cd = ctx.tpacall("DROPRSP", null, 0);
             ctx.tpcancel(cd);
             
             boolean got_inval = false;
