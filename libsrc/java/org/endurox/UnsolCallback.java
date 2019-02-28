@@ -1,5 +1,10 @@
 /**
  * @brief Interface for unsoliced callback message
+ *  Processing of unsol messages are done during the tpcall, tpgetrply and
+ *  tpchkunsol. Thus at these steps we shall set some TLS variables with
+ *  ATMI Context and Java env, so that we can perform the callback to java
+ *  side. The Atmi Context shall have the object to unsol interface for
+ *  callback.
  *
  * @interface UnsolCallback
  */
