@@ -120,6 +120,12 @@ public class AtmiCtx {
     
     
     /**
+     * Unsolicited callback handler
+     */
+    UnsolCallback usolcb = null;
+    
+    
+    /**
      * Server interface (if we run in server mode)
      */
     private Server svr = null;  
@@ -1024,6 +1030,30 @@ public class AtmiCtx {
      *  May be used for debug purposes, i.e. detect gc operations.
      */
     public native long [] getBuffers();
+    
+    
+    /**
+     * Set the notification handler at C side
+     * @param cb null or callback object. Used to detect when to deactivate
+     *  the unsolicited message handling.
+     */
+    native void tpsetunsolC(UnsolCallback cb);
+    
+    
+    /**
+     * Register unsolicited message callback handler
+     * @param cb callback handler
+     * @return previous callback handler
+     */
+    public UnsolCallback tpsetunsol(UnsolCallback cb) {
+        
+        UnsolCallback tmp = this.usolcb; 
+                
+        this.usolcb = cb;
+        
+        return tmp;
+    }
+    
     
     
 }
