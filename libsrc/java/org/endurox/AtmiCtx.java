@@ -719,6 +719,9 @@ public class AtmiCtx {
      *  See logs i.e. user log, or debugs for more info.
      * @throws AtmiTPEOSException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
+     * @thorws AtmiTPEBADDESCException Invalid call descriptor - out of range or
+     *  not issued/canceled value. This exception is thrown only in case if TPGETANY
+     *  flag is not passed to the call.
      */
     public native TpgetrplyResult tpgetrply(int cd, TypedBuffer idata, long flags);
     
@@ -807,8 +810,15 @@ public class AtmiCtx {
     /** @} */ // end of Convers
     
     /**
-     * Cancel a tpacall. This basically marks the responses from 
-     * @param cd 
+     * Cancel a tpacall(). This basically marks the in the call descriptor registry
+     * that response is no more waited from the caller.
+     * @param cd call descriptor from the tpacall()
+     * @throws AtmiTPEBADDESCException Invalid call descriptor (out of range).
+     * @throws AtmiTPEINVALException Enduro/X is not configured.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     * See logs i.e. user log, or debugs for more info.
      */
     public native void tpcancel(int cd);
     
