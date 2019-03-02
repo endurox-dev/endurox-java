@@ -1039,7 +1039,6 @@ public class AtmiCtx {
      */
     native void tpsetunsolC(UnsolCallback cb);
     
-    
     /**
      * Register unsolicited message callback handler
      * @param cb callback handler
@@ -1047,9 +1046,11 @@ public class AtmiCtx {
      */
     public UnsolCallback tpsetunsol(UnsolCallback cb) {
         
-        UnsolCallback tmp = this.usolcb; 
-                
+        UnsolCallback tmp = this.usolcb;
+        
         this.usolcb = cb;
+        
+        tpsetunsolC(cb);
         
         return tmp;
     }
