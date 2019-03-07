@@ -1032,29 +1032,20 @@ public class AtmiCtx {
     public native long [] getBuffers();
     
     
+    
     /**
      * Set the notification handler at C side
      * @param cb null or callback object. Used to detect when to deactivate
      *  the unsolicited message handling.
      */
-    native void tpsetunsolC(UnsolCallback cb);
+    //native void tpsetunsolC(UnsolCallback cb);
     
     /**
      * Register unsolicited message callback handler
      * @param cb callback handler
-     * @return previous callback handler
+     * @return previous callback handler if any or NULL
      */
-    public UnsolCallback tpsetunsol(UnsolCallback cb) {
-        
-        UnsolCallback tmp = this.usolcb;
-        
-        this.usolcb = cb;
-        
-        tpsetunsolC(cb);
-        
-        return tmp;
-    }
-    
+    public native UnsolCallback tpsetunsol(UnsolCallback cb);
     
     
 }
