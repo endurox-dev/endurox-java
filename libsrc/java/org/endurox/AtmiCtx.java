@@ -122,7 +122,7 @@ public class AtmiCtx {
     /**
      * Unsolicited callback handler
      */
-    UnsolCallback usolcb = null;
+    UnsolCallback unslcb = null;
     
     
     /**
@@ -1033,41 +1033,135 @@ public class AtmiCtx {
     
     
     /**
+     * Unsolicited message handling
+     * @defgroup Unsol unsolicited message handling group
+     * @{
+     */
+    
+    /**
      * Set the notification handler at C side
      * @param cb null or callback object. Used to detect when to deactivate
      *  the unsolicited message handling.
      */
     native void tpsetunsolC(UnsolCallback cb);
     
-    
     /**
-     * Unsolidated message handling
-     * Call the "usolcb" callback if have one registered.
-     * @param idata 
-     * @param flags 
+     * Unsolicited message handling
+     * Call the "unslcb" callback if have one registered.
+     * @param idata input data buffer for callback
+     * @param flags flags for callback
      */
-    void unsoldispatch(TypedBuffer idata, long flags) {
+    void unsolDispatch(TypedBuffer idata, long flags) {
         
+        if (null!=unslcb) {
+            unslcb.unsolCallback(this, idata, flags);
+        }
     }
     
     /**
      * Register unsolicited message callback handler
+     * See tpsetunsol(3) manpage for more information.
      * @param cb callback handler
      * @return previous callback handler
+     * @throws AtmiTPEINVALException Environment variables not configured, 
+     *  see ex_env(5) page.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
      */
     public UnsolCallback tpsetunsol(UnsolCallback cb) {
         
-        UnsolCallback tmp = this.usolcb;
+        UnsolCallback tmp = this.unslcb;
         
-        this.usolcb = cb;
+        this.unslcb = cb;
         
         tpsetunsolC(cb);
         
         return tmp;
     }
     
+    /**
+     * Send notification to clients
+     * See tpnotify(3) manpage for more information.
+     * @param clientid client id (received in service call)
+     * @param idata input typed buffer
+     * @param flags valid flags:
+     *  - TPNOBLOCK Do not block on full client queue, instead return error.
+     *  - TPNOTIME Do not timeout when waiting on full queue (TPNOBLOCK is not set).
+     *  - TPSIGRSTRT Restart the system call in progress if interrupted by signal 
+     *  handler. This affects only underlaying mq_* function calls.
+     *  - TPACK Reserved for future use, Enduro/X silently ignores this flag. 
+     *  Thus tpnotify() call does not get any acknowledgement signal that client 
+     *  is processed the message. This is limitation of Enduro/X.
+     * @throws AtmiTPEINVALException Environment variables not configured, 
+     *  see ex_env(5) page, or invalid parameters have been passed to the 
+     *  function, for example clientid is NULL or corrupted.
+     * @throws AtmiTPENOENTException The local delivery was about to be 
+     *  performed (no remote client call) and the client process did not 
+     *  exist on local machine. This error will be reported 
+     *  regardless of the TPACK flag.
+     * @throws AtmiTPETIMEException Blocking message delivery did timeout. 
+     *  Meaning that client queue was full and TPNOBLOCK nor TPNOTIME was set. 
+     *  Error is returned from local clients only regardless of the TPACK flag. 
+     *  If client resists on remote node,
+     *  then this error can be returned only when time-out occurred while s
+     *  ending message to then local bridge server.
+     * @throws AtmiTPEBLOCKException Client queue was full and TPNOBLOCK flag 
+     *  was not specified.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
+    public native void tpnotify(ClientId clientid, TypedBuffer idata, long flags);
     
+    /**
+     * Broadcast a message to matched clients or send message to remove
+     * remote server's '@TPBROADNNN' service for local broadcasting.
+     * See tpbroadcast(3) manpage for more information.
+     * @param lmid cluster node id to which message shall be delivered.
+     *  if flag TPREGEXMATCH is present, then regexp is used for the given
+     *  string to match the cluster nodes to which message shall be delivered.
+     *  Max string length is MAXTIDENT*2-1.
+     * @param usrname this is reserved for future use.
+     * @param cltname executable name which shall be matched for notification
+     *  delivery. If flag TPREGEXMATCH is set, then this is regular expression
+     *  of the binary name to be matched. Max string length in bytes
+     *  are MAXTIDENT*2-1.
+     * @param idata input typed buffer (can be null) for notification delivery
+     * @param flags following broadcast flags may be set:
+     *  - TPNOBLOCK Do not block on full client queue, instead return error.
+     *   - TPNOTIME Do not timeout when waiting on full queue (TPNOBLOCK is not set).
+     *   - TPSIGRSTRT Restart the system call in progress if interrupted by 
+     *      signal handler. This affects only underlaying mq_* function calls.
+     *   - TPREGEXMATCH Match lmid (cluster node id) and cltname by 
+     *      assuming that these are regular expressions.
+     * @throws AtmiTPEINVALException Environment variables not configured, see 
+     *      ex_env(5) page, or invalid parameters have been passed to the function, 
+     *      for example clientid, lmtid or username are set and they are invalid 
+     *      regular expressions (i.e. with TPREGEXMATCH set).
+     * @throws  AtmiTPESYSTEException System failure occurred during serving. 
+     *      See logs i.e. user log, or debugs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *      See logs i.e. user log, or debugs for more info.
+     */
+    public native void tpbroadcast(String lmid, String usrname, String cltname, 
+            TypedBuffer idata, long flags);
+   
+    /**
+     * Process received unsolicited messages and invoke callback set by
+     *  tpsetunsol(). 
+     * See tpchkunsol(3) manpage for more information.
+     * @return Number of unsolicited messages processed
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *      See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *      See logs i.e. user log, or debugs for more info.
+     */
+    public native int tpchkunsol();
     
+    /** @} */ // end of Unsol
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

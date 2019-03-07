@@ -80,6 +80,8 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
     
     jboolean n_svc_copy = EXFALSE;
     const char *n_svc = NULL;
+    
+    ndrxj_atmictx_unsol_globals_set(env, atmiCtxObj);
 
     /* get context & set */
     
@@ -282,6 +284,9 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
     jobject odata = NULL;
     char itype[XATMI_TYPE_LEN+1] = {EXEOS};
     char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
+    
+    /* store unsol globals */
+    ndrxj_atmictx_unsol_globals_set(env, atmiCtxObj);
     
     /* get context & set */
     

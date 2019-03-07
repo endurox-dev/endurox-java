@@ -178,6 +178,10 @@ extern jobject ndrxj_TpTypesResult_new(JNIEnv *env,
 extern jobject ndrxj_TprecvResult_new(JNIEnv *env, jobject ctx_obj,
         int cd, jobject odata, long revent);
 
+/* Unsol handling */
+
+extern void ndrxj_atmictx_unsol_globals_set(JNIEnv* env, jobject atmiCtxObj);
+
 #ifdef  __cplusplus
 }
 #endif
