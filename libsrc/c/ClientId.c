@@ -54,6 +54,19 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
+ * Translate java client id to C client id
+ * @param env java env
+ * @param in_jcltid java client id
+ * @param out_cltid c client id
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_atmi_ClientId_translate_toc(JNIEnv *env, 
+        jobject in_jcltid, CLIENTID *out_cltid)
+{
+    
+}
+
+/**
  * Translate CLIENTID to java ClientID object.
  * 
  * CONTEXT: Assume that it is already set.

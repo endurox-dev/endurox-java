@@ -206,4 +206,38 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);   
 }
 
+/**
+ * Perfrom notify call
+ * @param env java env
+ * @param atmiCtxObj Atmi context
+ * @param jclientid target client id
+ * @param idata input data buffer
+ * @param flags flags
+ */
+JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
+  (JNIEnv * env, jobject atmiCtxObj, jobject jclientid, jobject idata, jlong flags)
+{
+    int ret = EXSUCCEED;
+    TPCONTEXT_T ctx;
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    /* check client id */
+    if (NULL==jclientid)
+    {
+        ndrxj_atmi_throw(env, idata, TPEINVAL, "idata is NULL");
+    }
+    
+    
+    /* restore client id */
+    
+    out:
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+
 /* vim: set ts=4 sw=4 et smartindent: */
