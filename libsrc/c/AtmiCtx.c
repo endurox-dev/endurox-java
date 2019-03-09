@@ -86,7 +86,8 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 
     if (NULL==ctx)
     {
-        ndrxj_atmi_throw(env, NULL, TPEINVAL, "NULL C context for ATMI Context OP!");
+        ndrxj_atmi_throw(env, NULL, TPEINVAL, 
+                "NULL C context for ATMI Context OP!");
     }
     else
     {

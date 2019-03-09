@@ -32,7 +32,15 @@
  */
 package org.endurox;
 
+/**
+ * Client data is available when incoming call for service is received.
+ * Client ID is stored in TpSvcInfo.getCltId()
+ */
 public class ClientId {
+    
+    /**
+     * Client data is ASCII string for C
+     */
     String clientData;
 
     /**

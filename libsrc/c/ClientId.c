@@ -54,15 +54,62 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Translate java client id to C client id
+ * Translate java client id to C client id.
+ * This assumes that context is already set.
  * @param env java env
  * @param in_jcltid java client id
  * @param out_cltid c client id
- * @return EXSUCCEED/EXFAIL
+ * @return EXSUCCEED/EXFAIL. In case of failure, we shall check if exception exists,
+ * if it does not exists we shall throw one by our selves..
  */
 expublic int ndrxj_atmi_ClientId_translate_toc(JNIEnv *env, 
         jobject in_jcltid, CLIENTID *out_cltid)
 {
+    /* Copy client data from java object to c object */
+    int ret = EXSUCCEED;
+    jclass objClass;
+    jfieldID fldid;
+    jstring clientData;
+    const char *n_clientData;
+    jboolean n_clientData_copy = EXFALSE;
+    
+    objClass = (*env)->GetObjectClass(env, in_jcltid);
+    
+    if (NULL==objClass)
+    {
+        /* throw new exception?? */
+        NDRX_LOG(log_error, "Failed to get object class for ptr %p", in_jcltid);
+        EXFAIL_OUT(ret);
+    }
+    
+    fldid = (*env)->GetFieldID(env, objClass, "clientData", "Ljava/lang/String;");
+    
+    if (NULL==fldid)
+    {
+        NDRX_LOG(log_error, "Failed to get `clientData' for ClientID field");
+        EXFAIL_OUT(ret);
+    }
+    
+    clientData = (*env)->GetObjectField(env, in_jcltid, fldid);
+    
+    n_clientData  = (*env)->GetStringUTFChars(env, clientData, &n_clientData_copy);
+    
+    NDRX_STRCPY_SAFE(out_cltid->clientdata, n_clientData);
+    
+    NDRX_LOG(log_debug, "Restore C client data: [%s]", n_clientData);
+out:
+    
+    if (n_clientData_copy)
+    {
+         (*env)->ReleaseStringUTFChars(env, clientData, n_clientData);
+    }
+
+    if (NULL!=objClass)
+    {
+        (*env)->DeleteLocalRef(env, objClass);
+    }
+
+    return ret;
     
 }
 

@@ -242,7 +242,7 @@ public class AtmiConst {
     
     /**
      * Conversational IPC event flags
-     * @defgroup cnvevents
+     * @defgroup cnvevents Conversational control constants
      * @{
      */
     

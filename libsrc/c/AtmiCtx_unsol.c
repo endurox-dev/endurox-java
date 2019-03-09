@@ -219,6 +219,10 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
 {
     int ret = EXSUCCEED;
     TPCONTEXT_T ctx;
+    CLIENTID cltid;
+    char *ibuf = NULL;
+    long ilen = 0;
+    int err;
     
     if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
     {
@@ -228,15 +232,180 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
     /* check client id */
     if (NULL==jclientid)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "idata is NULL");
+        ndrxj_atmi_throw(env, idata, TPEINVAL, "jclientid is NULL");
     }
     
-    
     /* restore client id */
+    if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
+        jclientid, &cltid))
+    {
+        if ((*env)->ExceptionCheck(env))
+        {
+            EXFAIL_OUT(ret);
+        }
+        else
+        {
+            ndrxj_atmi_throw(env, idata, TPESYSTEM, 
+                    "Failed to translate jclientid to C");
+            EXFAIL_OUT(ret);
+        }
+    }
+    
+    /* translate the buffer to c */
+    
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+    }
+    
+    /* notify the client with data buffer */
+    if (EXSUCCEED!=tpnotify(&cltid, ibuf, ilen, (long)flags))
+    {
+        err = tperrno;
+        
+        NDRX_LOG(log_error, "Failed to notify client [%s]: %s", 
+                cltid.clientdata, strerror(err));
+        /* throw exception */
+        
+        ndrxj_atmi_throw(env, idata, err, tpstrerror(err));
+    }
     
     out:
     
     tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * tpbroadcast backend for java
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param lmid cluster node id/s (or regex mask)
+ * @param usrname RFU
+ * @param cltname client name/s (or regex mask)
+ * @param idata input data buffer, may be NULL
+ * @param flags flags
+ */
+JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpbroadcast
+  (JNIEnv * env, jobject atmiCtxObj, jstring lmid, jstring usrname, 
+        jstring cltname, jobject idata, jlong flags)
+{
+    int ret = EXSUCCEED;
+    TPCONTEXT_T ctx;
+    
+    const char *n_lmid = NULL;
+    jboolean n_lmid_copy = EXFALSE;
+    
+    const char *n_usrname = NULL;
+    jboolean n_usrname_copy = EXFALSE;
+    
+    const char *n_cltname = NULL;
+    jboolean n_cltname_copy = EXFALSE;
+    
+    char *ibuf = NULL;
+    long ilen = 0;
+    
+    int err;
+
+    /* switch to C */
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    /* get data buffer to broadcast */
+    
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+    }
+   
+    /* read the filter fields... */
+    n_lmid  = (*env)->GetStringUTFChars(env, lmid, &n_lmid_copy);
+    n_usrname  = (*env)->GetStringUTFChars(env, usrname, &n_usrname_copy);
+    n_cltname  = (*env)->GetStringUTFChars(env, cltname, &n_cltname_copy);
+    
+    if (EXSUCCEED!=tpbroadcast((char *)n_lmid, (char *)n_usrname, (char *)n_cltname, 
+            (char *)ibuf, ilen, (long)flags))
+    {
+        err = tperrno;
+        NDRX_LOG(log_error, "Failed to broadcast: %s", tpstrerror(err));
+        
+        /* generate exception... */
+        ndrxj_atmi_throw(env, idata, err, tpstrerror(err));
+
+    }
+    
+out:
+    
+    if (n_lmid_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, lmid, n_lmid);
+    }
+
+    if (n_usrname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, usrname, n_usrname);
+    }
+
+    if (n_cltname_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, cltname, n_cltname);
+    }
+
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return;
+}
+
+/**
+ * Check for any unsolicated messages
+ * @param env java env
+ * @param atmiCtxObj ATMI Con
+ * @return EXFAIL or 
+ */
+JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpchkunsol
+  (JNIEnv * env, jobject atmiCtxObj)
+{
+    
+    int ret = EXSUCCEED;
+    TPCONTEXT_T ctx;
+    int err;
+    
+    /* switch to C */
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return EXFAIL;
+    }
+    
+    if (EXFAIL==(ret = tpchkunsol()))
+    {
+        err = tperrno;
+        
+        NDRX_LOG(log_error, "Failed to run tpchkunsol():  %s", 
+                strerror(err));
+        
+        /* throw exception */
+        ndrxj_atmi_throw(env, NULL, err, tpstrerror(err));
+    }
+    
+    
+out:
+
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return (jint)ret;
+    
 }
 
 

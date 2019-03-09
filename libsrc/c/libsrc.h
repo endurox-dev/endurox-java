@@ -114,6 +114,9 @@ extern char *ndrxj_exception_backtrace(JNIEnv *env, jthrowable exc_in);
 extern jobject ndrxj_atmi_ClientId_translate(JNIEnv *env, 
             jobject ctx_obj, int is_ctxset, CLIENTID *cltid);
 
+extern int ndrxj_atmi_ClientId_translate_toc(JNIEnv *env, 
+        jobject in_jcltid, CLIENTID *out_cltid);
+
 /* TypedBuffer ops: */
 
 extern jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env, 
