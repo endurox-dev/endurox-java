@@ -75,6 +75,10 @@ public class JServer01_2 implements Server, Service {
 
         ctx.tpadvertise("DROPRSP", "DropRsp", new DropRsp());
         
+        //Notification servers:
+        ctx.tpadvertise("GLOBNOTIF", "GlobNotif", new GlobNotif());
+        
+        
         
         //for failed startup...
         return AtmiConst.SUCCEED;
