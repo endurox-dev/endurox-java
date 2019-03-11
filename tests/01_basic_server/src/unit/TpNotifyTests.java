@@ -29,7 +29,7 @@ public class TpNotifyTests implements UnsolCallback {
         } else if (t.getType().equals("JSON")) {
             nrjson++;
         } else if (t.getType().equals("UBF")) {
-            nrub++;
+            nrubf++;
         }
     }
     
