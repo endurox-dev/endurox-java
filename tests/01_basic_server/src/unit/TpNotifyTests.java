@@ -22,7 +22,15 @@ public class TpNotifyTests implements UnsolCallback {
      */
     public void unsolCallback(AtmiCtx ctx, TypedBuffer buf, long flags)
     {
+        TpTypesResult t = buf.tptypes();
         
+        if (t.getType().equals("STRING")) {
+            nrstrings++;
+        } else if (t.getType().equals("JSON")) {
+            nrjson++;
+        } else if (t.getType().equals("UBF")) {
+            nrub++;
+        }
     }
     
 }
