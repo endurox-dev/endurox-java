@@ -32,11 +32,11 @@ public class TpNotifyTests implements UnsolCallback {
             nrjson++;
         } else if (t.getType().equals("UBF")) {
             TypedUbf ub = (TypedUbf)buf;
-            nrubf++;
             
             /* Check the value sent in... */
             String s = ub.BgetString(test.T_STRING_10_FLD, 5);
             assertEquals("HELLO UBF FROM SERVICE", s);
+            nrubf++;
             
         }
     }
@@ -83,13 +83,16 @@ public class TpNotifyTests implements UnsolCallback {
             nrcarrays = 0;
             nrnull = 0;
             nrview = 0;
-            
             /* loop over the buffer types
              * send them to server and expect one to be received back..
              * each one we shall test with:
              * tpcall
              * tpgetrply
              * tpcheckunsol()
+             * In case of broadcast we can test following:
+             * - test deliver to this and other thread (our binary name), matched
+             * - test binary name not matched (0 bordcasts)
+             * - test binary named matched by regexp (i.e. flags test).
              */
             String reqData = String.format("loop %d", i);
             ub.Bchg(test.T_STRING_FLD, 0, String.format("loop %d", i));
