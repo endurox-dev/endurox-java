@@ -24,26 +24,47 @@ public class TpNotifyTests implements UnsolCallback {
      */
     public void unsolCallback(AtmiCtx ctx, TypedBuffer buf, long flags)
     {
-        TpTypesResult t = buf.tptypes();
+        TpTypesResult t = null;
         
-        if (t.getType().equals("STRING")) {
+        if (null!=t) {
+            t = buf.tptypes();
+        }
+        
+        if (null==buf) {
+            nrnull++;
+        }
+        else if (t.getType().equals("STRING")) {
             TypedString s = (TypedString)buf;
             /* Check the value sent in... */
             String ss = s.getString();
             assertEquals("HELLO NOTIF", ss);
             nrstring++;
-        } else if (t.getType().equals("JSON")) {
+        } 
+        else if (t.getType().equals("JSON")) {
             TypedJson j = (TypedJson)buf;
             /* Check the value sent in... */
             String js = j.getJSON();
             assertEquals("{}", js);
             nrjson++;
-        } else if (t.getType().equals("UBF")) {
+        } 
+        else if (t.getType().equals("CARRAY")) {
+            TypedCarray c = (TypedCarray)buf;
+            byte [] byt = c.getBytes();
+            
+            assertArrayEquals(new byte [] {0, 1, 2, 3, 4, 5, 6}, byt);
+            nrcarray++;
+        }
+        else if (t.getType().equals("UBF")) {
             TypedUbf ub = (TypedUbf)buf;
             /* Check the value sent in... */
             String s = ub.BgetString(test.T_STRING_10_FLD, 5);
             assertEquals("HELLO UBF FROM SERVICE", s);
             nrubf++;
+        }
+        else if (t.getType().equals("VIEW")) {
+            TypedView v = (TypedView)buf;
+            assertEquals("JVIEW2", t.getSubType());
+            nrview++;
         }
     }
     
