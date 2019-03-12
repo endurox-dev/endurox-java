@@ -429,6 +429,9 @@ out:
     {
         (*env)->DeleteLocalRef(env, frame_class);
     }
+
+
+    userlog("Backtrace done: %s", ret);
     
     return ret;
 }
