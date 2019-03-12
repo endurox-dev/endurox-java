@@ -141,7 +141,7 @@ out:
     {
         /* log exception, unset and continue... */
         NDRXJ_LOG_EXCEPTION(M_env, log_error, NDRXJ_LOGEX_TP, 
-                "Got exception during unsol handling.... ignore");
+                "Got exception during unsol handling (ignore): %s");
         (*M_env)->ExceptionClear(M_env);
     }
 

@@ -26,11 +26,11 @@ public class TpNotifyTests implements UnsolCallback {
     {
         TpTypesResult t = null;
         
-        if (null!=t) {
+        if (null!=buf) {
             t = buf.tptypes();
         }
         
-        ctx.tplogInfo("Got notif %p",buf);
+        ctx.tplogInfo("Got notif %b",buf);
         
         if (null==buf) {
             nrnull++;

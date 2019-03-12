@@ -431,7 +431,7 @@ out:
     }
 
 
-    userlog("Backtrace done: %s", ret);
+    /* userlog("Backtrace done: %s", ret); */
     
     return ret;
 }
