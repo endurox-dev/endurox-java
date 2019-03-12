@@ -80,33 +80,13 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
     jclass bclz;
     jmethodID mid;
     TPCONTEXT_T ctx;
+    
     /* here we will need a thread local java env handler and atmi context 
      * while performing C call from java 
      */
     
-    /* Get in java env context  */
-    
-    /* WARNING !!!! WARNING !!!! shall we set local reference here?
-     * as otherwise the buffer might get deleted!!!
-     * 
-     *  ????
-     * GC'd during creation of 
-     * N:NDRX:5:d190fd96:22947:7faf3dd17840:001:20190312:140030879:are_incoming:string.c:0186:STRING_prepare_incoming: Incoming buffer where missing - allocating new!
-N:NDRX:5:d190fd96:22947:7faf3dd17840:001:20190312:140030879:ndrx_tpalloc:ed_buf.c:0252:ndrx_tpalloc: type=NULL, subtype=NULL len=12
-N:NDRX:5:d190fd96:22947:7faf3dd17840:001:20190312:140030879:ndrx_tpalloc:ed_buf.c:0296:ndrx_tpalloc: type=STRING subtype=NULL len=12 allocated=0x563edb91a9a0
-N:NDRX:5:d190fd96:22947:7faee3ffe700:000:20190312:140030879:uffer_tpfree:Buffer.c:0208:About to free up buf: 0x563edb91a9a0
-N:NDRX:5:d190fd96:22947:7faf3dd17840:001:20190312:140030879:rocess_notif:notify.c:0364:Unsol handler set to 0x7faf08ed5c80 - invoking (buffer: 0x563edb91a9a0)
-N:NDRX:5:d190fd96:22947:7faee3ffe700:000:20190312:140030879:ndrx_tpfree :ed_buf.c:0405:_tpfree buf=0x563edb91a9a0
-N:NDRX:5:d190fd96:22947:7faf3dd17840:001:20190312:140030879:er_translate:Buffer.c:0261:Translating ATMI buffer: 0x563edb91a9a0
-N:NDRX:3:d190fd96:22947:7faf3dd17840:001:20190312:140030879:et_error_msg:perror.c:0249:_TPset_error_msg: 4 (TPEINVAL) [ptr points to unknown buffer, not allocated by tpalloc()!]
-N:NDRX:2:d190fd96:22947:7faf3dd17840:001:20190312:140030879:er_translate:Buffer.c:0277:Failed to get type for buffer: 4:TPEINVAL (last error 4: ptr points to unknown buffer, not allocated by tpalloc()!)
-N:NDRX:5:d190fd96:22947:7faee3ffe700:000:20190312:140030879:uffer_tpfree:Buffer.c:0208:About to free up buf: 0x563edb91a9a0
-N:NDRX:4:d190fd96:22947:7faf3dd17840:001:20190312:140030879:j_atmi_throw:ptions.c:0085:Throwing: [org/endurox/exceptions/AtmiTPEINVALException]: 4:TPEINVAL (last error 4: ptr points to unknown buffer, not allocated by tpalloc()!)
-N:NDRX:5:d190fd96:22947:7faee3ffe700:000:20190312:140030879:ndrx_tpfree :ed_buf.c:0405:_tpfree buf=0x563edb91a9a0
-N:NDRX:5:d190fd96:22947:7faee3ffe700:000:20190312:140030879:uffer_tpfree:Buffer.c:0208:About to free up buf: 0x563edb91a9a0N:NDRX:5:d190fd96:22947:7faf3dd17840:001:20190312:140030879:esourceBytes:ds/exj.c:0134:Loading class [org.endurox.exceptions.AtmiTPEABORTException]
-     */
     jobject jdata = ndrxj_atmi_TypedBuffer_translate(M_env, M_atmiCtxObj, 
-            EXTRUE, data, len, NULL, NULL, EXTRUE);
+            EXTRUE, data, len, NULL, NULL, EXFALSE);
     
     /* check if have exception..., then do not continue... */
     if ((*M_env)->ExceptionCheck(M_env))
