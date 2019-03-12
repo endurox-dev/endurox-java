@@ -5,7 +5,7 @@ import org.endurox.exceptions.UbfBNOTPRESException;
 import org.junit.Test;
 
 /**
- * Perform tpnotify tests
+ * Perform tpbroadcast tests
  */
 public class TpBroadcastTests implements UnsolCallback {
              
