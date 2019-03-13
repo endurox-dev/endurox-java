@@ -6,8 +6,9 @@ import org.junit.Test;
 
 /**
  * Perform tpbroadcast tests
+ * we will create another thread with this class 
  */
-public class TpBroadcastTests implements UnsolCallback {
+public class TpBroadcastTests implements UnsolCallback, Runnable {
              
     int nrstring = 0 ;
     int nrjson = 0;
@@ -15,6 +16,24 @@ public class TpBroadcastTests implements UnsolCallback {
     int nrcarray = 0;
     int nrnull = 0;
     int nrview = 0;
+    
+    boolean running = true;
+
+    public void run() {
+        
+        //Create new ATMI Context...
+        
+        //TODO: loop over the tpcheckunsol and test for responses....
+        //and count the calls...
+        
+        while (running) {
+            
+            //Check for unsol messages...
+            
+            //Sleep for some time period 1 ms?
+            
+        }
+    } 
     
     /**
      * Receive different types of messages
