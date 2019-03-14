@@ -143,6 +143,9 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         
         otherTh.start();
         
+        /* wait thread to start... */
+        Thread.sleep(1000);
+        
         /**
          * TODO: Have long term test for memory management.
          * ideally we would time terminated tests, for example 5 min...?
