@@ -237,6 +237,10 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             
         }
 
+        //Wait for other thread to finish...
+        other.running = false;
+        Thread.sleep(1000, 0);
+                
         ctx.cleanup();
     }
     
