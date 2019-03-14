@@ -392,13 +392,15 @@ JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpchkunsol
     int ret = EXSUCCEED;
     TPCONTEXT_T ctx;
     int err;
-    
+
+    ndrxj_atmictx_unsol_globals_set(env, atmiCtxObj);
+
     /* switch to C */
     if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
     {
         return EXFAIL;
     }
-    
+
     if (EXFAIL==(ret = tpchkunsol()))
     {
         err = tperrno;
@@ -410,13 +412,11 @@ JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpchkunsol
         ndrxj_atmi_throw(env, NULL, err, tpstrerror(err));
     }
     
-    
 out:
 
     tpsetctxt(TPNULLCONTEXT, 0L);
 
     return (jint)ret;
-    
 }
 
 

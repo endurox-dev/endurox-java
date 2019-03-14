@@ -42,6 +42,8 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             }
             
         }
+        
+        ctx.tplogError("Exitting...!");
     } 
     
     /**
@@ -167,57 +169,68 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
              * - test binary name not matched (0 bordcasts)
              * - test binary named matched by regexp (i.e. flags test).
              */
+            try {
+                
 
-            ctx.tplogInfo("*** NULL test *** ");
-            doCall(ctx, null);
+                ctx.tplogInfo("*** NULL test *** ");
+                doCall(ctx, null);
+
+                Thread.sleep(100);
+                assertEquals(prev_nrnull + 4, nrnull);
+                assertEquals(other.nrnull, nrnull);
+
+                ctx.tplogInfo("*** STRING test ***");
+                TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
+                assertNotEquals(s, null);            
+                doCall(ctx, s);
+                Thread.sleep(100);
+
+                assertEquals(prev_nrstring + 4, nrstring);
+                assertEquals(other.nrstring, nrstring);
+
+                ctx.tplogInfo("*** JSON test ***");
+                TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
+                assertNotEquals(j, null);            
+                doCall(ctx, j);
+                Thread.sleep(100);
+
+                assertEquals(prev_nrjson+4, nrjson);
+                assertEquals(other.nrjson, nrjson);
+
+                ctx.tplogInfo("*** CARRAY test ***");
+                TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
+                assertNotEquals(c, null);            
+                doCall(ctx, c);
+                Thread.sleep(100);
+
+                assertEquals(prev_nrcarray + 4, nrcarray);
+                assertEquals(other.nrjson, nrcarray);
+
+                ctx.tplogInfo("*** VIEW test ***");
+                TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
+                assertNotEquals(c, null);            
+                doCall(ctx, v);
+                Thread.sleep(100);
+
+                assertEquals(prev_nrview + 4, nrview);
+                assertEquals(other.nrview, nrview);
+
+                ctx.tplogInfo("*** UBF test ***");
+                TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+                assertNotEquals(ub, null);            
+                doCall(ctx, ub);
+                Thread.sleep(100);
+
+                assertEquals(prev_nrubf + 4, nrubf);
+                assertEquals(other.nrubf, nrubf);
             
-            assertEquals(prev_nrnull + 4, nrnull);
-            assertEquals(other.nrnull, nrnull);
-            
-            ctx.tplogInfo("*** STRING test ***");
-            TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
-            assertNotEquals(s, null);            
-            doCall(ctx, s);
-            Thread.sleep(0, 500);
-            
-            assertEquals(prev_nrstring + 4, nrstring);
-            assertEquals(other.nrstring, nrstring);
-            
-            ctx.tplogInfo("*** JSON test ***");
-            TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
-            assertNotEquals(j, null);            
-            doCall(ctx, j);
-            Thread.sleep(0, 500);
-            
-            assertEquals(prev_nrjson+4, nrjson);
-            assertEquals(other.nrjson, nrjson);
-            
-            ctx.tplogInfo("*** CARRAY test ***");
-            TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
-            assertNotEquals(c, null);            
-            doCall(ctx, c);
-            Thread.sleep(0, 500);
-            
-            assertEquals(prev_nrcarray + 4, nrcarray);
-            assertEquals(other.nrjson, nrcarray);
-            
-            ctx.tplogInfo("*** VIEW test ***");
-            TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
-            assertNotEquals(c, null);            
-            doCall(ctx, v);
-            Thread.sleep(0, 500);
-            
-            assertEquals(prev_nrview + 4, nrview);
-            assertEquals(other.nrview, nrview);
-            
-            ctx.tplogInfo("*** UBF test ***");
-            TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
-            assertNotEquals(ub, null);            
-            doCall(ctx, ub);
-            Thread.sleep(0, 500);
-            
-            assertEquals(prev_nrubf + 4, nrubf);
-            assertEquals(other.nrubf, nrubf);
+            } 
+            catch (AssertionError e) {
+                other.running = false;
+                Thread.sleep(1000, 0);
+                
+                throw e;
+            }
             
         }
 
