@@ -80,6 +80,7 @@ if [ "X$1" != "X" ]; then
     jexunit01b $1 || go_out 11
 
 else
+    jexunit01b TpBroadcastTests || go_out 8
     jexunit01b TpNotifyTests || go_out 7
     jexunit01b Conversations || go_out 6
     jexunit01b TpForward || go_out 5

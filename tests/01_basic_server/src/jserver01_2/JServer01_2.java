@@ -77,6 +77,7 @@ public class JServer01_2 implements Server, Service {
         
         //Notification servers:
         ctx.tpadvertise("GLOBNOTIF", "GlobNotif", new GlobNotif());
+        ctx.tpadvertise("GLOBBROAD", "GlobBroad", new GlobBroad());
         
         
         

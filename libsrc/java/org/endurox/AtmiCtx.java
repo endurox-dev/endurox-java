@@ -713,7 +713,9 @@ public class AtmiCtx {
      * @param flags  TPGETANY, TPNOBLOCK, TPSIGRSTRT, TPNOTIME,
      *  TPNOCHANGE, TPNOABORT 
      * @return result buffer and call descriptor of call returned.
-     * @throws AtmiTPEINVAL Invalid parameter is given to function. 
+     * @throws AtmiTPEBLOCKException *TPENOBLOCK* was specified in flags and no 
+     *  message is in queue.
+     * @throws AtmiTPEINVALException Invalid parameter is given to function. 
      *  Particularly pointer parameters are NULL.
      * @throws AtmiTPETIMEException Service did not reply in 
      *  given time (NDRX_TOUT time).

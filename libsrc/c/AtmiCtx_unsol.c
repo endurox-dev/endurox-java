@@ -331,9 +331,20 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpbroadcast
     }
    
     /* read the filter fields... */
-    n_lmid  = (*env)->GetStringUTFChars(env, lmid, &n_lmid_copy);
-    n_usrname  = (*env)->GetStringUTFChars(env, usrname, &n_usrname_copy);
-    n_cltname  = (*env)->GetStringUTFChars(env, cltname, &n_cltname_copy);
+    if (NULL!=lmid)
+    {
+        n_lmid  = (*env)->GetStringUTFChars(env, lmid, &n_lmid_copy);
+    }
+    
+    if (NULL!=usrname)
+    {
+        n_usrname  = (*env)->GetStringUTFChars(env, usrname, &n_usrname_copy);
+    }
+    
+    if (NULL!=cltname)
+    {
+        n_cltname  = (*env)->GetStringUTFChars(env, cltname, &n_cltname_copy);
+    }
     
     if (EXSUCCEED!=tpbroadcast((char *)n_lmid, (char *)n_usrname, (char *)n_cltname, 
             (char *)ibuf, ilen, (long)flags))

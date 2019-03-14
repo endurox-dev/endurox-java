@@ -1,7 +1,6 @@
 import static org.junit.Assert.*;
 import org.endurox.*;
 import org.endurox.exceptions.AtmiException;
-import org.endurox.exceptions.UbfBNOTPRESException;
 import org.junit.Test;
 
 /**
@@ -22,15 +21,25 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
     public void run() {
         
         //Create new ATMI Context...
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+        ctx.tpsetunsol(this);
         
-        //TODO: loop over the tpcheckunsol and test for responses....
+        //loop over the tpcheckunsol and test for responses....
         //and count the calls...
         
         while (running) {
             
             //Check for unsol messages...
             
-            //Sleep for some time period 1 ms?
+            ctx.tpchkunsol();
+            
+            try {
+                Thread.sleep(0, 100);
+            } 
+            catch (Exception e) {
+                ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to sleep", e);
+            }
             
         }
     } 
@@ -89,8 +98,20 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         }
     }
     
+    /**
+     * Perform server call, this will wait for reply 
+     * @param ctx
+     * @param buf
+     * @throws InterruptedException 
+     */
+    void doCall(AtmiCtx ctx, TypedBuffer buf) {
+        
+        int cd = ctx.tpacall("GLOBBROAD", buf, 0);
+        ctx.tpgetrply(cd, buf, 0);
+    }
+    
     @Test
-    public void tpnotifyTest() {
+    public void tpbroadcastTest() throws InterruptedException {
         
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
@@ -98,6 +119,8 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         boolean leaktest = false;
         int leaktestSec = 0;
         StopWatch w = new StopWatch();
+        
+        TpBroadcastTests other = new TpBroadcastTests();
         
         String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
         
@@ -107,12 +130,16 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             leaktest = true;
             
             //Nothing to test at the moment
-            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpnotifyTest")) {
+            if (!System.getenv("NDRXJ_LEAKTEST_NAME").equals("tpbroadcastTest")) {
                 return;
             }
         }
         
+        Thread otherTh = new Thread(other);
+        
         ctx.tpsetunsol(this);
+        
+        otherTh.start();
         
         /**
          * TODO: Have long term test for memory management.
@@ -122,12 +149,13 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
                          
-            nrnull = 0;
-            nrstring = 0 ;
-            nrjson = 0;
-            nrcarray = 0;
-            nrview = 0;
-            nrubf = 0 ;
+            int prev_nrnull = nrnull;
+            int prev_nrstring = nrstring;
+            int prev_nrjson = nrjson;
+            int prev_nrcarray = nrcarray;
+            int prev_nrview = nrview;
+            int prev_nrubf = nrubf;
+            
             /* loop over the buffer types
              * send them to server and expect one to be received back..
              * each one we shall test with:
@@ -141,38 +169,55 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
              */
 
             ctx.tplogInfo("*** NULL test *** ");
-            ctx.tpcall("GLOBNOTIF", null, 0);
-            assertEquals(1, nrnull);
+            doCall(ctx, null);
+            
+            assertEquals(prev_nrnull + 4, nrnull);
+            assertEquals(other.nrnull, nrnull);
             
             ctx.tplogInfo("*** STRING test ***");
             TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
             assertNotEquals(s, null);            
-            ctx.tpcall("GLOBNOTIF", s, 0);
-            assertEquals(1, nrstring);
+            doCall(ctx, s);
+            Thread.sleep(0, 500);
+            
+            assertEquals(prev_nrstring + 4, nrstring);
+            assertEquals(other.nrstring, nrstring);
             
             ctx.tplogInfo("*** JSON test ***");
             TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
             assertNotEquals(j, null);            
-            ctx.tpcall("GLOBNOTIF", j, 0);
-            assertEquals(1, nrjson);
+            doCall(ctx, j);
+            Thread.sleep(0, 500);
+            
+            assertEquals(prev_nrjson+4, nrjson);
+            assertEquals(other.nrjson, nrjson);
             
             ctx.tplogInfo("*** CARRAY test ***");
             TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
             assertNotEquals(c, null);            
-            ctx.tpcall("GLOBNOTIF", c, 0);
-            assertEquals(1, nrcarray);
+            doCall(ctx, c);
+            Thread.sleep(0, 500);
+            
+            assertEquals(prev_nrcarray + 4, nrcarray);
+            assertEquals(other.nrjson, nrcarray);
             
             ctx.tplogInfo("*** VIEW test ***");
             TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
             assertNotEquals(c, null);            
-            ctx.tpcall("GLOBNOTIF", v, 0);
-            assertEquals(1, nrview);
+            doCall(ctx, v);
+            Thread.sleep(0, 500);
+            
+            assertEquals(prev_nrview + 4, nrview);
+            assertEquals(other.nrview, nrview);
             
             ctx.tplogInfo("*** UBF test ***");
             TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);            
-            ctx.tpcall("GLOBNOTIF", ub, 0);
-            assertEquals(1, nrubf);
+            doCall(ctx, ub);
+            Thread.sleep(0, 500);
+            
+            assertEquals(prev_nrubf + 4, nrubf);
+            assertEquals(other.nrubf, nrubf);
             
         }
 
