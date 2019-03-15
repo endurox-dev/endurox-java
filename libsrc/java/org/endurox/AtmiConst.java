@@ -273,6 +273,26 @@ public class AtmiConst {
      */
     public static final int TPEV_SENDONLY  = 0x0020;
     /** @} */ // end of cnvevents
+    
+    
+     /**
+     * Enduro/X Queue control
+     * @defgroup qctl Queue control constants
+     * @{
+     */
+    
+    /**
+     * Queue correlator id, bin len
+     */
+    public static final int TMCORRIDLEN = 32;
+    
+    
+    /**
+     * Queueu message id len, bin
+     */
+    public static final int TMMSGIDLEN = 32;
+    
+    /** @} */ // end of qctl
 
 }
 /* vim: set ts=4 sw=4 et smartindent: */
