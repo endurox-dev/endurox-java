@@ -1164,6 +1164,74 @@ public class AtmiCtx {
     public native int tpchkunsol();
     
     /** @} */ // end of Unsol
+    
+    
+    
+    /**
+     * Queue handling
+     * @defgroup Queue Enduro/X queue routines
+     * @{
+     */
+    
+    /**
+     * Enqueue message to persistent storage
+     * See tpenqueue(3) manpage for more information.
+     * @param qspace queue space name
+     * @param qname queue name
+     * @param ctl queue control obj
+     * @param idata data buffer
+     * @param flags flags TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOBLOCK, TPNOABORT
+     * @throws  AtmiTPEINVALException data is NULL, qspace is NULL, or 
+     *  nodeid and srvid is 0. Error can be generate in case if qname is 
+     *  empty or NULL. ctl is NULL or data does not point to 	tpalloc() allocated buffer.
+     * @throws  AtmiTPENOENTException Tmqueue server is not available.
+     * @throws  AtmiTPETIMEException Service did not reply in given 
+     *  time (NDRX_TOUT).
+     * @throws  AtmiTPEDIAGNOSTICException More information is provided 
+     *  in TPQCTL.diagnostic field.
+     * @throws  AtmiTPESVCFAILException Tmqueue Service returned TPFAIL. This 
+     *  is application level failure.
+     * @throws  AtmiTPESVCERRException Tmqueue service got system level failure. 
+     *  Server died during the message presence in service queue.
+     * @throws  AtmiTPESYSTEMException Enduro/X internal error occurred. 
+     *  See logs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
+    public native void tpenqueue (String qspace, String qname, TPQCTL ctl, 
+            TypedBuffer idata, long flags);
+    
+    /**
+     * Enqueue message to persistent storage, extended
+     * See tpenqueueex(3) manpage for more information.
+     * @param nodeid Cluster node ID on which queue server is present
+     * @param srvid Queue Server ID on given cluster node id
+     * @param qname queue name
+     * @param ctl queue control obj
+     * @param idata data buffer
+     * @param flags flags TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOBLOCK, TPNOABORT
+     * @throws  AtmiTPEINVALException data is NULL, qspace is NULL, or 
+     *  nodeid and srvid is 0. Error can be generate in case if qname is 
+     *  empty or NULL. ctl is NULL or data does not point to 	tpalloc() allocated buffer.
+     * @throws  AtmiTPENOENTException Tmqueue server is not available.
+     * @throws  AtmiTPETIMEException Service did not reply in given 
+     *  time (NDRX_TOUT).
+     * @throws  AtmiTPEDIAGNOSTICException More information is provided 
+     *  in TPQCTL.diagnostic field.
+     * @throws  AtmiTPESVCFAILException Tmqueue Service returned TPFAIL. This 
+     *  is application level failure.
+     * @throws  AtmiTPESVCERRException Tmqueue service got system level failure. 
+     *  Server died during the message presence in service queue.
+     * @throws  AtmiTPESYSTEMException Enduro/X internal error occurred. 
+     *  See logs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
+    public native void tpenqueueex (short nodeid, short srvid, String qname, TPQCTL ctl, 
+            TypedBuffer idata, long flags);
+   
+    /** @} */ // end of Queue
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
