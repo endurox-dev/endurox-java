@@ -492,6 +492,11 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     
 out:
     
+    if (NULL!=clz)
+    {
+        (*env)->DeleteLocalRef( env, clz);
+    }
+    
     return ret;
 }
 

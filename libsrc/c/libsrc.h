@@ -99,6 +99,23 @@ extern "C" {
 }
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
+
+/**
+ *  Java/C Object mapper for simple types 
+ */
+struct exjobjmap
+{
+    char *field;    /**< field name                     */
+    char *ftype;    /**< field type in Java             */
+    long coffset;   /**< c field offset                 */
+    int csz;        /**< c field size                   */
+};
+
+/**
+ *  Java/C Object mapper for simple types 
+ */
+typedef struct exjobjmap exjobjmap_t;
+
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
@@ -184,6 +201,16 @@ extern jobject ndrxj_TprecvResult_new(JNIEnv *env, jobject ctx_obj,
 /* Unsol handling */
 
 extern void ndrxj_atmictx_unsol_globals_set(JNIEnv* env, jobject atmiCtxObj);
+
+/* Utils */
+extern int ndrxj_cvt_to_c(JNIEnv *env, 
+            jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
+            jobject jobj, void *cobj);
+
+
+extern int ndrxj_cvt_to_java(JNIEnv *env, 
+            jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
+            void *cobj, jobject jobj);
 
 #ifdef  __cplusplus
 }

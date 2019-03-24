@@ -86,6 +86,7 @@ add_library (exjava SHARED
                 TpTypesResult.c
                 TprecvResult.c
                 TPQCTL.c
+                util.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

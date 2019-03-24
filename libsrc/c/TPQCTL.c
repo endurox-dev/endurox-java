@@ -47,10 +47,35 @@
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 #define TPQCTL_CLASS     "org/endurox/TPQCTL"
+
+#define OFSZ(s,e)   EXOFFSET(s,e), EXELEM_SIZE(s,e)
+
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
+
+/**
+ * Only field not mapped is ClientId cltid, this shall be driven manually
+ */
+exprivate exjobjmap_t M_fieldmap[] =
+{    
+    {"flags",       "J",                    OFSZ(TPQCTL,flags)},
+    {"priority",    "J",                    OFSZ(TPQCTL,priority)},
+    {"diagnostic",  "J",                    OFSZ(TPQCTL,diagnostic)},
+    {"diagmsg",     "Ljava/lang/String;",   OFSZ(TPQCTL,diagmsg)},
+    {"msgid",       "[B",                   OFSZ(TPQCTL,diagmsg)},
+    {"corrid",      "[B",                   OFSZ(TPQCTL,corrid)},
+    {"replyqueue",  "Ljava/lang/String;",   OFSZ(TPQCTL,replyqueue)},
+    {"failurequeue","Ljava/lang/String;",   OFSZ(TPQCTL,failurequeue)},
+    {"urcode",      "J",                    OFSZ(TPQCTL,urcode)},
+    {"appkey",      "J",                    OFSZ(TPQCTL,appkey)},
+    {"delivery_qos","J",                    OFSZ(TPQCTL,delivery_qos)},
+    {"reply_qos",   "J",                    OFSZ(TPQCTL,reply_qos)},
+    {"exp_time",    "J",                    OFSZ(TPQCTL,exp_time)},
+    {NULL}
+};
+
 /*---------------------------Prototypes---------------------------------*/
 
 /**
@@ -66,7 +91,69 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
 {
     int ret = EXSUCCEED;
     
+    jclass clz;
+    jfieldID fid;
+    jobject jcltid;
+
+    clz = (*env)->FindClass(env, TPQCTL_CLASS);
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
+                    TPQCTL_CLASS);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* Load values to C */
+    
+    if (EXSUCCEED!=ndrxj_cvt_to_c(env, 
+            ctx_obj, M_fieldmap, clz, TPQCTL_CLASS,
+            ctl_Java, ctl_c))
+    {
+        NDRX_LOG(log_error, "Failed to convert %s to TPQCTL!", TPQCTL_CLASS);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* convert client id */
+    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Ljava/lang/ClientId;")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [cltid] descr from QTPQCTL: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* get object field */
+    jcltid = (*env)->GetObjectField(env, ctl_Java, fid);
+    
+    if (NULL==jcltid)
+    {
+        ndrxj_atmi_throw(env, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* convert to C */
+    if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
+        jcltid, &(ctl_c->cltid)))
+    {
+        NDRX_LOG(log_error, "Failed to convert client id");
+        EXFAIL_OUT(ret);
+    }
+    
 out:
+       
+    if (NULL!=clz)
+    {
+        (*env)->DeleteLocalRef( env, clz);
+    }
+
+    if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
+    {
+        ndrxj_atmi_throw(env, NULL, TPEINVAL, "Failed to convert TPQCTL to C "
+                "from java - see logs!");
+        EXFAIL_OUT(ret);
+    }
 
     return ret;
 }
