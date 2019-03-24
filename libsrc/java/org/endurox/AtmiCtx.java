@@ -708,7 +708,7 @@ public class AtmiCtx {
      * See tpgetrply(3) manpage for more information.
      * @param[in] cd call descriptor returned by  \ref tpacall(). In case if 
      *  TPGETANY flag is set, the field value is ignored
-     * @param[in] idata input data buffer used for receiving the reply data
+     * @param[in] odata input data buffer used for receiving the reply data
      *  copied/reallocated to TpgetrplyResult
      * @param flags  TPGETANY, TPNOBLOCK, TPSIGRSTRT, TPNOTIME,
      *  TPNOCHANGE, TPNOABORT 
@@ -731,7 +731,7 @@ public class AtmiCtx {
      *  not issued/canceled value. This exception is thrown only in case if TPGETANY
      *  flag is not passed to the call.
      */
-    public native TpgetrplyResult tpgetrply(int cd, TypedBuffer idata, long flags);
+    public native TpgetrplyResult tpgetrply(int cd, TypedBuffer odata, long flags);
     
     /**
      * Conversational methods group
@@ -1188,7 +1188,8 @@ public class AtmiCtx {
      * @throws  AtmiTPETIMEException Service did not reply in given 
      *  time (NDRX_TOUT).
      * @throws  AtmiTPEDIAGNOSTICException More information is provided 
-     *  in TPQCTL.diagnostic field.
+     *  in TPQCTL.diagnostic field. For this exception use getQctl() to get
+     *  original TPQCTL passed to method call.
      * @throws  AtmiTPESVCFAILException Tmqueue Service returned TPFAIL. This 
      *  is application level failure.
      * @throws  AtmiTPESVCERRException Tmqueue service got system level failure. 
@@ -1217,7 +1218,8 @@ public class AtmiCtx {
      * @throws  AtmiTPETIMEException Service did not reply in given 
      *  time (NDRX_TOUT).
      * @throws  AtmiTPEDIAGNOSTICException More information is provided 
-     *  in TPQCTL.diagnostic field.
+     *  in TPQCTL.diagnostic field. For this exception use getQctl() to get
+     *  original TPQCTL passed to method call.
      * @throws  AtmiTPESVCFAILException Tmqueue Service returned TPFAIL. This 
      *  is application level failure.
      * @throws  AtmiTPESVCERRException Tmqueue service got system level failure. 
@@ -1229,7 +1231,66 @@ public class AtmiCtx {
      */
     public native void tpenqueueex (short nodeid, short srvid, String qname, TPQCTL ctl, 
             TypedBuffer idata, long flags);
-   
+    
+    /**
+     * Dequeue message from Queue sub-system
+     * See tpdequeue(3) manpage for more information.
+     * @param qspace queue space name
+     * @param qname queue name
+     * @param ctl queue control obj
+     * @param odata output data to rewrite received message
+     * @param flags  TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPNOBLOCK 
+     * @return Returned buffer from queue. Not that \p ctl will contain metadata
+     *  about the message
+     * @throws  AtmiTPEINVALException data is NULL, qspace is NULL, or nodeid 
+     *  and srvid is 0. Error can be generate in case if qname is empty or 
+     *  NULL. ctl is NULL or data does not point to tpalloc() allocated buffer.
+     * @throws  AtmiTPENOENTException Tmqueue server is not available.
+     * @throws  AtmiTPETIMEException Service did not reply in given time (NDRX_TOUT).
+     * @throws  AtmiTPEDIAGNOSTICException More information is provided in 
+     *  TPQCTL.diagnostic field.
+     * @throws  AtmiTPESVCFAILException Tmqueue Service returned TPFAIL. This 
+     *  is application level failure.
+     * @throws  AtmiTPESVCERRException Tmqueue service got system level failure. 
+     *  Server died during the message presence in service queue.
+     * @throws  AtmiTPESYSTEMException Enduro/X internal error occurred. 
+     *  See logs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     * See logs i.e. user log, or debugs for more info.
+     */
+    public native TypedBuffer tpdequeue (String qspace, String qname, TPQCTL ctl, 
+            TypedBuffer odata, long flags);
+    
+    /**
+     * Dequeue message from Queue sub-system
+     * See tpdequeueex(3) manpage for more information.
+     * @param nodeid Cluster node ID on which queue server is present
+     * @param srvid Queue Server ID on given cluster node id
+     * @param qname queue name
+     * @param ctl queue control obj
+     * @param odata output data to rewrite received message
+     * @param flags  TPNOTRAN, TPSIGRSTRT, TPNOTIME, TPNOCHANGE, TPNOBLOCK 
+     * @return Returned buffer from queue. Not that \p ctl will contain metadata
+     *  about the message
+     * @throws  AtmiTPEINVALException data is NULL, qspace is NULL, or nodeid 
+     *  and srvid is 0. Error can be generate in case if qname is empty or 
+     *  NULL. ctl is NULL or data does not point to tpalloc() allocated buffer.
+     * @throws  AtmiTPENOENTException Tmqueue server is not available.
+     * @throws  AtmiTPETIMEException Service did not reply in given time (NDRX_TOUT).
+     * @throws  AtmiTPEDIAGNOSTICException More information is provided in 
+     *  TPQCTL.diagnostic field.
+     * @throws  AtmiTPESVCFAILException Tmqueue Service returned TPFAIL. This 
+     *  is application level failure.
+     * @throws  AtmiTPESVCERRException Tmqueue service got system level failure. 
+     *  Server died during the message presence in service queue.
+     * @throws  AtmiTPESYSTEMException Enduro/X internal error occurred. 
+     *  See logs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     * See logs i.e. user log, or debugs for more info.
+     */
+    public native TypedBuffer tpdequeueex (short nodeid, short srvid, String qname, 
+            TPQCTL ctl, TypedBuffer odata, long flags);
+
     /** @} */ // end of Queue
     
 }

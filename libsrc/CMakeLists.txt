@@ -92,6 +92,7 @@ if(Java_VERSION VERSION_LESS 1.10)
         org.endurox.TpgetrplyResult
         org.endurox.TpTypesResult
         org.endurox.UnsolCallback
+        org.endurox.TPQCTL
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     DEPENDS enduroxjava
     CLASSPATH enduroxjava)
