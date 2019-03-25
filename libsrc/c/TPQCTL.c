@@ -152,7 +152,6 @@ out:
     {
         ndrxj_atmi_throw(env, NULL, TPEINVAL, "Failed to convert TPQCTL to C "
                 "from java - see logs!");
-        EXFAIL_OUT(ret);
     }
 
     return ret;
@@ -168,11 +167,89 @@ out:
 expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env, 
             jobject ctx_obj, TPQCTL *ctl_c)
 {
-    jobject ret = NULL;
+    int ret = EXSUCCEED;
+    jobject retObj = NULL;
+    
+    jclass clz;
+    jfieldID fid;
+    jobject jcltid;
+    jmethodID mid;
+
+    clz = (*env)->FindClass(env, TPQCTL_CLASS);
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
+                    TPQCTL_CLASS);
+        EXFAIL_OUT(ret);
+    }
+    
+    
+    /* Allocate java object */
+        /* create buffer object... */
+    mid = (*env)->GetMethodID(env, clz, "<init>", "()V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        EXFAIL_OUT(ret);
+    }
+
+    NDRX_LOG(log_debug, "About to NewObject(%s)", TPQCTL_CLASS);
+    
+    retObj = (*env)->NewObject(env, clz, mid);
+    
+    /* Load values to C */
+    
+    if (EXSUCCEED!=ndrxj_cvt_to_java(env, 
+            ctx_obj, M_fieldmap, clz, TPQCTL_CLASS,
+            ctl_c, retObj))
+    {
+        NDRX_LOG(log_error, "Failed to convert C TPQCTL to java %s!", TPQCTL_CLASS);
+        EXFAIL_OUT(ret);
+    }
+    
+    /* convert client id */
+    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Ljava/lang/ClientId;")))
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to get [cltid] descr from QTPQCTL: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* convert to java */
+    if (NULL==(jcltid = ndrxj_atmi_ClientId_translate(env, ctx_obj, EXTRUE,
+        &(ctl_c->cltid))))
+    {
+        NDRX_LOG(log_error, "Failed to convert client id");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* set field */
+    
+    (*env)->SetObjectField(env, retObj, fid, jcltid);
     
 out:
+       
+    if (NULL!=clz)
+    {
+        (*env)->DeleteLocalRef( env, clz);
+    }
 
-    return ret;
+    if (NULL!=retObj)
+    {
+        (*env)->DeleteLocalRef( env, retObj);
+    }
+
+    if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
+    {
+        ndrxj_atmi_throw(env, NULL, TPEINVAL, "Failed to convert C TPQCTL to java "
+                "- see logs!");
+    }
+
+    return retObj;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

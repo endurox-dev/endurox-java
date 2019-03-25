@@ -62,17 +62,122 @@
  * @param idata input buffer (must not be NULL)
  * @param flags flags
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
-  (JNIEnv * env, jobject atmictx, jstring jqspace, jstring jqname, jobject jqctl, 
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue_int
+  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
     
     /* convert jqctl to C */
     TPQCTL q;
+    jint ret = EXFAIL;
+    TPCONTEXT_T ctx;
+    /* set context */
+    char *ibuf = NULL;
+    long ilen = 0;
+    char qspace[MAXTIDENT+1];
+    char qname[TMQNAMELEN+1];
     
+    /* get context & set */
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    }
     
+    if (NULL==jqspace)
+    {
+        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqspace");
+        EXFAIL_OUT(ret);
+    }
     
+    if (NULL==jqname)
+    {
+        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqname");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (NULL==jqctl)
+    {
+        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqctl");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_cvt_jstr_to_c(env, 
+            atmiCtxObj, jqspace, qspace, sizeof(qspace)))
+    {
+        NDRX_LOG(log_error, "Failed to convert qspace to C");
+        EXFAIL_OUT(ret);
+    }
+    
+    if (EXSUCCEED!=ndrxj_cvt_jstr_to_c(env, 
+            atmiCtxObj, jqname, qname, sizeof(qname)))
+    {
+        NDRX_LOG(log_error, "Failed to convert qname to C");
+        EXFAIL_OUT(ret);
+    }
+    
+    /* NOTE That will try NULL buffers too */
+    
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+    }
+    
+    /* convert qctl */
+    if (EXSUCCEED!=ndrxj_atmi_TPQCTL_translate2c(env, atmiCtxObj, jqctl, &q))
+    {
+        NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2c failed");
+    }
+    
+    if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, &ilen, flags))
+    {        
+        int err = tperrno;
+        char errbuf[MAX_ERROR_LEN+1];
+        
+        NDRX_LOG(log_debug, "tpenqueue failed with %d", err);
+        
+        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+        
+        ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+        goto out;
+        
+    }
+    
+    NDRX_LOG(log_debug, "tpenqueue to qspace[%s] queue [%s] OK", qspace, qname);
+    
+out:
+
+    NDRX_LOG(log_debug, "returns %d", ret);    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    return ret;
+
 }
+
+/**
+ * Enqueue message to disk
+ * @param env java env
+ * @param atmiCtxObj Atmi Context
+ * @param jqspace queue space
+ * @param jqname queue name
+ * @param jqctl queue control struct
+ * @param idata Input data
+ * @param flags queue flags
+ */
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
+  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, jobject jqctl, 
+        jobject idata, jlong flags)
+{
+    Java_org_endurox_AtmiCtx_tpenqueue_int(env, atmiCtxObj, jqspace, jqname, jqctl, 
+        idata, flags);
+}
+
 
 
 

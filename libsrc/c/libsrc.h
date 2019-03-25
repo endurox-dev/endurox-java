@@ -212,6 +212,19 @@ extern int ndrxj_cvt_to_java(JNIEnv *env,
             jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
             void *cobj, jobject jobj);
 
+extern int ndrxj_cvt_jstr_to_c(JNIEnv *env, 
+            jobject ctx_obj, jstring jstr, char *outstr, int outstrsz);
+
+/* TPQCTL */
+
+extern int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env, 
+            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c);
+
+
+extern jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env, 
+            jobject ctx_obj, TPQCTL *ctl_c);
+
+
 #ifdef  __cplusplus
 }
 #endif

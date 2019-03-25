@@ -110,7 +110,7 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                 
             }
             
-            NDRX_STRNCPY(cstr, n_str, tab->csz);
+            NDRX_STRNCPY_SAFE(cstr, n_str, tab->csz);
             
             if (n_str_copy)
             {
@@ -267,6 +267,44 @@ out:
     
     return ret;
     
+}
+
+/**
+ * Convert java string to c
+ * @param env java env
+ * @param ctx_obj ATMI context
+ * @param jstr java string
+ * @param outstr C string
+ * @param outstrsz C string size
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_cvt_jstr_to_c(JNIEnv *env, 
+            jobject ctx_obj, jstring jstr, char *outstr, int outstrsz)
+{
+    int ret = EXSUCCEED;
+    
+    jboolean n_str_copy = EXFALSE;
+    const char *n_str = "";
+    
+    n_str = (*env)->GetStringUTFChars(env, jstr, &n_str_copy);
+                
+    /* we got exception... */
+    if (NULL==n_str)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+            "Failed to convert to string: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    NDRX_STRNCPY_SAFE(outstr, n_str, outstrsz);
+
+    if (n_str_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, jstr, n_str);
+    }
+    
+out:
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
