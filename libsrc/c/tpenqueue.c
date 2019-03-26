@@ -57,13 +57,16 @@
  * @param env java env
  * @param atmictx ATMI CTX
  * @param jqspace queue space
+ * @param nodeid Cluster ID, -1 if not used
+ * @param srvid server id on cluster, -1 if not used
  * @param jqname queue name
  * @param jqctl queue control
  * @param idata input buffer (must not be NULL)
  * @param flags flags
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue_int
-  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, jobject jqctl, 
+exprivate void tpenqueue_int
+  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, 
+        jshort nodeid, jshort srvid, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
     
@@ -83,7 +86,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue_int
         goto out;
     }
     
-    if (NULL==jqspace)
+    if (EXFAIL==nodeid && EXFAIL==srvid && NULL==jqspace)
     {
         ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqspace");
         EXFAIL_OUT(ret);
@@ -134,18 +137,41 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue_int
         NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2c failed");
     }
     
-    if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, &ilen, flags))
-    {        
-        int err = tperrno;
-        char errbuf[MAX_ERROR_LEN+1];
-        
-        NDRX_LOG(log_debug, "tpenqueue failed with %d", err);
-        
-        NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
-        
-        ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
-        goto out;
-        
+    if (NULL!=jqspace)
+    {
+        NDRX_LOG(log_debug, "standard tpenqueue on [%s]/[%s]", qspace, qname);
+        if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, &ilen, flags))
+        {        
+            int err = tperrno;
+            char errbuf[MAX_ERROR_LEN+1];
+
+            NDRX_LOG(log_debug, "tpenqueue failed with %d", err);
+
+            NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+
+            ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+            goto out;
+
+        }
+    }
+    else
+    {
+        NDRX_LOG(log_debug, "extended tpenqueue on [%hd]/[%hd]", 
+                (short)nodeid, (short)srvid);
+        if (EXSUCCEED!=tpenqueueex((short)nodeid, (short)srvid, qname, 
+                &q, ibuf, &ilen, flags))
+        {        
+            int err = tperrno;
+            char errbuf[MAX_ERROR_LEN+1];
+
+            NDRX_LOG(log_debug, "tpenqueue failed with %d", err);
+
+            NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
+
+            ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+            goto out;
+
+        }
     }
     
     NDRX_LOG(log_debug, "tpenqueue to qspace[%s] queue [%s] OK", qspace, qname);
@@ -174,11 +200,27 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
   (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
-    Java_org_endurox_AtmiCtx_tpenqueue_int(env, atmiCtxObj, jqspace, jqname, jqctl, 
+    tpenqueue_int(env, atmiCtxObj, jqspace, EXFAIL, EXFAIL, jqname, jqctl, 
         idata, flags);
 }
 
-
-
+/**
+ * Dequeue message, extended version
+ * @param env java env
+ * @param atmiCtxObj Atmi Context
+ * @param nodeid nodeid
+ * @param srvid server id
+ * @param qname queue name
+ * @param ctl queue control struct
+ * @param idata input data
+ * @param flags queue flags
+ */
+expublic void JNICALL tpenqueue_int
+  (JNIEnv *env, jobject atmiCtxObj, jshort nodeid, jshort srvid, jstring qname, 
+        jobject ctl, jobject idata, jlong flags)
+{
+    tpenqueue_int(env, NULL, jqspace, nodeid, srvid, jqname, jqctl, 
+        idata, flags);
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */
