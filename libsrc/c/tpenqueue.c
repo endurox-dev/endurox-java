@@ -219,7 +219,7 @@ expublic void JNICALL tpenqueue_int
   (JNIEnv *env, jobject atmiCtxObj, jshort nodeid, jshort srvid, jstring qname, 
         jobject ctl, jobject idata, jlong flags)
 {
-    tpenqueue_int(env, NULL, jqspace, nodeid, srvid, jqname, jqctl, 
+    tpenqueue_int(env, NULL, nodeid, srvid, jqname, jqctl, 
         idata, flags);
 }
 
