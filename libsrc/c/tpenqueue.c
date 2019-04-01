@@ -140,7 +140,7 @@ exprivate void tpenqueue_int
     if (NULL!=jqspace)
     {
         NDRX_LOG(log_debug, "standard tpenqueue on [%s]/[%s]", qspace, qname);
-        if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, &ilen, flags))
+        if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, ilen, flags))
         {        
             int err = tperrno;
             char errbuf[MAX_ERROR_LEN+1];
@@ -159,7 +159,7 @@ exprivate void tpenqueue_int
         NDRX_LOG(log_debug, "extended tpenqueue on [%hd]/[%hd]", 
                 (short)nodeid, (short)srvid);
         if (EXSUCCEED!=tpenqueueex((short)nodeid, (short)srvid, qname, 
-                &q, ibuf, &ilen, flags))
+                &q, ibuf, ilen, flags))
         {        
             int err = tperrno;
             char errbuf[MAX_ERROR_LEN+1];
@@ -181,8 +181,6 @@ out:
     NDRX_LOG(log_debug, "returns %d", ret);    
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
-    
-    return ret;
 
 }
 
@@ -205,7 +203,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
 }
 
 /**
- * Dequeue message, extended version
+ * Enqueue message, extended version
  * @param env java env
  * @param atmiCtxObj Atmi Context
  * @param nodeid nodeid
@@ -215,12 +213,34 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
  * @param idata input data
  * @param flags queue flags
  */
-expublic void JNICALL tpenqueue_int
-  (JNIEnv *env, jobject atmiCtxObj, jshort nodeid, jshort srvid, jstring qname, 
-        jobject ctl, jobject idata, jlong flags)
+JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpenqueueex
+  (JNIEnv * env, jobject atmiCtxObj, jshort nodeid, jshort srvid, jstring jqname, 
+        jobject jqctl, jobject idata, jlong flags)
 {
-    tpenqueue_int(env, NULL, nodeid, srvid, jqname, jqctl, 
+    tpenqueue_int(env, atmiCtxObj, NULL, nodeid, srvid, jqname, jqctl, 
         idata, flags);
+}
+
+/**
+ * Dequeue message Enduro/X Q
+ * @param env java env
+ * @param atmiCtxObj Atmi Context
+ * @param jqspace java queue space name
+ * @param nodeid ... or cluster node id no which queue server is running
+ * @param srvid and queue server id
+ * @param jqname queue name
+ * @param jqctl queue control
+ * @param idata input data buffer into which to install output data (or reallocated
+ *  this to new buffer returned)
+ * @param flags dequeue flags
+ * @return Dequeued data buffer object
+ */
+exprivate jobject tpdequeue_int
+  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, 
+        jshort nodeid, jshort srvid, jstring jqname, jobject jqctl, 
+        jobject idata, jlong flags)
+{
+    return NULL;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

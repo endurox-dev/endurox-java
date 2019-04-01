@@ -87,6 +87,7 @@ add_library (exjava SHARED
                 TprecvResult.c
                 TPQCTL.c
                 util.c
+                tpenqueue.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)
