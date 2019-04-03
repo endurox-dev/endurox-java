@@ -69,10 +69,9 @@ exprivate void tpenqueue_int
         jshort nodeid, jshort srvid, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
-    
     /* convert jqctl to C */
     TPQCTL q;
-    jint ret = EXFAIL;
+    int ret = EXSUCCEED;
     TPCONTEXT_T ctx;
     /* set context */
     char *ibuf = NULL;
@@ -135,6 +134,7 @@ exprivate void tpenqueue_int
     if (EXSUCCEED!=ndrxj_atmi_TPQCTL_translate2c(env, atmiCtxObj, jqctl, &q))
     {
         NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2c failed");
+        EXFAIL_OUT(ret);
     }
     
     if (NULL!=jqspace)
@@ -172,6 +172,13 @@ exprivate void tpenqueue_int
             goto out;
 
         }
+    }
+    
+    /* restore the qctl */
+    if (NULL==ndrxj_atmi_TPQCTL_translate2java(env, atmiCtxObj, jqctl, &q))
+    {
+        NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2java failed");
+        EXFAIL_OUT(ret);
     }
     
     NDRX_LOG(log_debug, "tpenqueue to qspace[%s] queue [%s] OK", qspace, qname);

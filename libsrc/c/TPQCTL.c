@@ -160,11 +160,12 @@ out:
  * Translate C struct to Java
  * @param env java env
  * @param ctx_obj ATMI Ctx obj
+ * @param ctl_Java optional java control struct (use this, if passed)
  * @param ctl_c C Control struct
  * @return EXSUCCEED/EXFAIL
  */
 expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env, 
-            jobject ctx_obj, TPQCTL *ctl_c)
+            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c)
 {
     int ret = EXSUCCEED;
     jobject retObj = NULL;
@@ -174,32 +175,39 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
     jobject jcltid;
     jmethodID mid;
 
-    clz = (*env)->FindClass(env, TPQCTL_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
-        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPQCTL_CLASS);
-        EXFAIL_OUT(ret);
-    }
-    
-    
-    /* Allocate java object */
-        /* create buffer object... */
-    mid = (*env)->GetMethodID(env, clz, "<init>", "()V");
-    
-    if (NULL==mid)
+    if (NULL==ctl_Java)
     {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        EXFAIL_OUT(ret);
-    }
+        clz = (*env)->FindClass(env, TPQCTL_CLASS);
 
-    NDRX_LOG(log_debug, "About to NewObject(%s)", TPQCTL_CLASS);
-    
-    retObj = (*env)->NewObject(env, clz, mid);
-    
+        if (NULL==clz)
+        {        
+            /* I guess we need to abort here! */
+            NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
+            ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
+                        TPQCTL_CLASS);
+            EXFAIL_OUT(ret);
+        }
+
+
+        /* Allocate java object */
+            /* create buffer object... */
+        mid = (*env)->GetMethodID(env, clz, "<init>", "()V");
+
+        if (NULL==mid)
+        {
+            NDRX_LOG(log_error, "Cannot get buffer constructor!");
+            EXFAIL_OUT(ret);
+        }
+
+        NDRX_LOG(log_debug, "About to NewObject(%s)", TPQCTL_CLASS);
+
+        retObj = (*env)->NewObject(env, clz, mid);
+    }
+    else
+    {
+        NDRX_LOG(log_debug, "Re-use existing java qctl");
+        retObj = ctl_Java;
+    }
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_java(env, 
