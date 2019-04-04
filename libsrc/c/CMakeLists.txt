@@ -88,6 +88,7 @@ add_library (exjava SHARED
                 TPQCTL.c
                 util.c
                 tpenqueue.c
+                tpdequeue.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

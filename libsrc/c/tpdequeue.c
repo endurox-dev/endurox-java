@@ -1,7 +1,7 @@
 /**
- * @brief Queue access
+ * @brief Dequeue message from Q
  *
- * @file tpenqueue.c
+ * @file tpdequeue.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -53,23 +53,26 @@
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Enqueue message
+ * Dequeue message Enduro/X Q
  * @param env java env
- * @param atmictx ATMI CTX
- * @param jqspace queue space
- * @param nodeid Cluster ID, -1 if not used
- * @param srvid server id on cluster, -1 if not used
+ * @param atmiCtxObj Atmi Context
+ * @param jqspace java queue space name
+ * @param nodeid ... or cluster node id no which queue server is running
+ * @param srvid and queue server id
  * @param jqname queue name
  * @param jqctl queue control
- * @param idata input buffer (must not be NULL)
- * @param flags flags
+ * @param idata input data buffer into which to install output data (or reallocated
+ *  this to new buffer returned)
+ * @param flags dequeue flags
+ * @return Dequeued data buffer object
  */
-exprivate void tpenqueue_int
+exprivate jobject tpdequeue_int
   (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, 
         jshort nodeid, jshort srvid, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
     /* convert jqctl to C */
+    jobject retObj = NULL;
     TPQCTL q;
     int ret = EXSUCCEED;
     TPCONTEXT_T ctx;
@@ -78,6 +81,11 @@ exprivate void tpenqueue_int
     long ilen = 0;
     char qspace[MAXTIDENT+1];
     char qname[TMQNAMELEN+1];
+    
+    char itype[XATMI_TYPE_LEN+1] = "NULL";
+    char isubtype[XATMI_SUBTYPE_LEN+1]  = {EXEOS};
+    char *obuf;
+    long olen;
     
     /* get context & set */
     if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
@@ -110,23 +118,6 @@ exprivate void tpenqueue_int
         EXFAIL_OUT(ret);
     }
     
-    if (EXSUCCEED!=ndrxj_cvt_jstr_to_c(env, 
-            atmiCtxObj, jqname, qname, sizeof(qname)))
-    {
-        NDRX_LOG(log_error, "Failed to convert qname to C");
-        EXFAIL_OUT(ret);
-    }
-    
-    /* NOTE That will try NULL buffers too */
-    
-    /* get data buffer... */
-    if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
-            NULL, EXFALSE, EXFALSE))
-    {
-        NDRX_LOG(log_error, "Failed to get data buffer!");
-        goto out;
-    }
-    
     /* convert qctl */
     if (EXSUCCEED!=ndrxj_atmi_TPQCTL_translate2c(env, atmiCtxObj, jqctl, &q))
     {
@@ -134,10 +125,35 @@ exprivate void tpenqueue_int
         EXFAIL_OUT(ret);
     }
     
+    /* get data buffer... */
+    if (NULL!=idata)
+    {
+        if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, idata, &ibuf, &ilen, 
+                NULL, EXFALSE, EXFALSE))
+        {
+            NDRX_LOG(log_error, "Failed to get data buffer!");
+            goto out;
+        }
+        
+        /* read buffer types... */
+        if (EXFAIL==tptypes(ibuf, itype, isubtype))
+        {
+            NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
+                    tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+                    tpstrerror(tperrno));
+            goto out;
+        }
+
+    }
+    
+    obuf = ibuf;
+    olen = ilen;
+    
     if (NULL!=jqspace)
     {
-        NDRX_LOG(log_debug, "standard tpenqueue on [%s]/[%s]", qspace, qname);
-        if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, ilen, flags))
+        NDRX_LOG(log_debug, "standard tpeequeue on [%s]/[%s]", qspace, qname);
+        if (EXSUCCEED!=tpdequeue(qspace, qname, &q, &obuf, &olen, flags))
         {        
             int err = tperrno;
             char errbuf[MAX_ERROR_LEN+1];
@@ -153,10 +169,10 @@ exprivate void tpenqueue_int
     }
     else
     {
-        NDRX_LOG(log_debug, "extended tpenqueue on [%hd]/[%hd]", 
+        NDRX_LOG(log_debug, "extended tpdequeue on [%hd]/[%hd]", 
                 (short)nodeid, (short)srvid);
-        if (EXSUCCEED!=tpenqueueex((short)nodeid, (short)srvid, qname, 
-                &q, ibuf, ilen, flags))
+        if (EXSUCCEED!=tpdequeueex((short)nodeid, (short)srvid, qname, 
+                &q, &obuf, &olen, flags))
         {        
             int err = tperrno;
             char errbuf[MAX_ERROR_LEN+1];
@@ -178,51 +194,19 @@ exprivate void tpenqueue_int
         EXFAIL_OUT(ret);
     }
     
-    NDRX_LOG(log_debug, "tpenqueue to qspace[%s] queue [%s] OK", qspace, qname);
+    /* get reply buffer object */
+    retObj = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, idata, ibuf, 
+        ilen, obuf, olen, itype, isubtype);
+
     
 out:
-
-    NDRX_LOG(log_debug, "returns %d", ret);    
+        
+    NDRX_LOG(log_debug, "%s returns %p", __func__, retObj);
+    
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
-
-}
-
-/**
- * Enqueue message to disk
- * @param env java env
- * @param atmiCtxObj Atmi Context
- * @param jqspace queue space
- * @param jqname queue name
- * @param jqctl queue control struct
- * @param idata Input data
- * @param flags queue flags
- */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
-  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, jobject jqctl, 
-        jobject idata, jlong flags)
-{
-    tpenqueue_int(env, atmiCtxObj, jqspace, EXFAIL, EXFAIL, jqname, jqctl, 
-        idata, flags);
-}
-
-/**
- * Enqueue message, extended version
- * @param env java env
- * @param atmiCtxObj Atmi Context
- * @param nodeid nodeid
- * @param srvid server id
- * @param qname queue name
- * @param ctl queue control struct
- * @param idata input data
- * @param flags queue flags
- */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpenqueueex
-  (JNIEnv * env, jobject atmiCtxObj, jshort nodeid, jshort srvid, jstring jqname, 
-        jobject jqctl, jobject idata, jlong flags)
-{
-    tpenqueue_int(env, atmiCtxObj, NULL, nodeid, srvid, jqname, jqctl, 
-        idata, flags);
+    
+    return retObj;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

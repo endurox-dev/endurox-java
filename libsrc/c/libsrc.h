@@ -222,7 +222,7 @@ extern int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
 
 
 extern jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env, 
-            jobject ctx_obj, TPQCTL *ctl_c);
+            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c);
 
 
 #ifdef  __cplusplus
