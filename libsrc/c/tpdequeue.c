@@ -66,8 +66,7 @@
  * @param flags dequeue flags
  * @return Dequeued data buffer object
  */
-exprivate jobject tpdequeue_int
-  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, 
+exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, 
         jshort nodeid, jshort srvid, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
@@ -207,6 +206,44 @@ out:
     tpsetctxt(TPNULLCONTEXT, 0L);
     
     return retObj;
+}
+
+/**
+ * Dequeue message
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param jqspace queue space name
+ * @param jqname queue name
+ * @param jqctl queue control struct (will be updated)
+ * @param idata input buffer may be-reused on return
+ * @param flags flags
+ * @return output buffer, if have one then idata is no longer valid
+ */
+expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpdequeue
+  (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, 
+        jobject jqctl, jobject idata, jlong flags)
+{
+    return tpdequeue_int (env, atmiCtxObj, jqspace, 
+          EXFAIL, EXFAIL, jqname, jqctl, idata, flags);
+}
+/**
+ * Dequeue message
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param nodeid cluster node id
+ * @param srvid server id (XATMI) on node
+ * @param jqname queue name
+ * @param jqctl queue control struct (will be updated)
+ * @param idata input buffer may be-reused on return
+ * @param flags flags
+ * @return output buffer, if have one then idata is no longer valid
+ */
+expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpdequeueex
+  (JNIEnv * env, jobject atmiCtxObj, jshort nodeid, jshort srvid, 
+        jstring jqname, jobject jqctl, jobject idata, jlong flags)
+{
+    return tpdequeue_int (env, atmiCtxObj, NULL, 
+          nodeid, srvid, jqname, jqctl, idata, flags);
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
