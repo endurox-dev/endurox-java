@@ -72,6 +72,12 @@ import org.endurox.exceptions.AtmiTPEOSException;
  * There might be other exceptions thrown by the APIs, in case if there are
  * some issues with JNI calls, like out of memory or missing classes. This
  * normally shall not happen.
+ * 
+ * ATMI Exceptions may contain the input buffer assocated with the exception.
+ * If programmer have passed to method TypedBuffer and the exception does
+ * not contain the buffer, then assume that input buffer is still valid.
+ * If exception contains the buffer, then programmer shall continue to use that
+ * one from exception.
  */
 public class AtmiCtx {
 	
