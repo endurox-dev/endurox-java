@@ -20,6 +20,10 @@ if [ ! -f  conf/settest1 ]; then
 
 fi
 
+# prepare test dir..
+rm -rf QTEST 2>/dev/null
+mkdir QTEST
+
 #
 # Have some runtime 
 #

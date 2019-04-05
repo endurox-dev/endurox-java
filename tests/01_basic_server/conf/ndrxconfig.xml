@@ -18,6 +18,15 @@
         <ping_max>40</ping_max>
         <end_max>30</end_max>
         <killtime>1</killtime>
+        
+        <envs group="QTEST">
+            <env name="NDRX_XA_RES_ID">2</env>
+            <env name="NDRX_XA_OPEN_STR">${NDRX_APPHOME}/QTEST</env>
+            <env name="NDRX_XA_CLOSE_STR">${NDRX_APPHOME}/QTEST</env>
+            <env name="NDRX_XA_DRIVERLIB">libndrxxaqdisks.${NDRX_LIBEXT}</env>
+            <env name="NDRX_XA_RMLIB">libndrxxaqdisk.${NDRX_LIBEXT}</env>
+            <env name="NDRX_XA_LAZY_INIT">0</env>
+        </envs>
     </defaults>
     <servers>
         <server name="jserver01">
@@ -37,8 +46,26 @@
             <sysopt>-e ${NDRX_APPHOME}/log/JSERVER01_2B -r</sysopt>
         </server>
         
-        <!-- TOOD: Configure queue server -->
-	
+        <!-- Configure queue server -->
+        
+        <server name="tmsrv">
+            <max>1</max>
+            <srvid>200</srvid>
+            <envs>
+                <usegroup>QTEST</usegroup>
+            </envs>
+            <sysopt>-e ${NDRX_APPHOME}/log/tmsrv-dom1.log -r -- -t1 -l${TESTDIR}/RM1</sysopt>
+        </server>
+        
+        <server name="tmqueue">
+            <max>1</max>
+            <srvid>300</srvid>
+            <envs>
+                <usegroup>QTEST</usegroup>
+            </envs>
+            <sysopt>-e ${NDRX_APPHOME}/log/tmqueue-dom1.log -r -- -m MYSPACE -s1</sysopt>
+        </server>
+        
     </servers>
 </endurox>
 
