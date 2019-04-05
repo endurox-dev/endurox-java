@@ -54,7 +54,7 @@
             <envs>
                 <usegroup>QTEST</usegroup>
             </envs>
-            <sysopt>-e ${NDRX_APPHOME}/log/tmsrv-dom1.log -r -- -t1 -l${TESTDIR}/RM1</sysopt>
+            <sysopt>-e ${NDRX_APPHOME}/log/tmsrv-dom1.log -r -- -t1 -l${NDRX_APPHOME}/RM1</sysopt>
         </server>
         
         <server name="tmqueue">

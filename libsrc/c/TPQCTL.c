@@ -63,7 +63,7 @@ exprivate exjobjmap_t M_fieldmap[] =
     {"priority",    "J",                    OFSZ(TPQCTL,priority)},
     {"diagnostic",  "J",                    OFSZ(TPQCTL,diagnostic)},
     {"diagmsg",     "Ljava/lang/String;",   OFSZ(TPQCTL,diagmsg)},
-    {"msgid",       "[B",                   OFSZ(TPQCTL,diagmsg)},
+    {"msgid",       "[B",                   OFSZ(TPQCTL,msgid)},
     {"corrid",      "[B",                   OFSZ(TPQCTL,corrid)},
     {"replyqueue",  "Ljava/lang/String;",   OFSZ(TPQCTL,replyqueue)},
     {"failurequeue","Ljava/lang/String;",   OFSZ(TPQCTL,failurequeue)},
@@ -116,7 +116,7 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     }
     
     /* convert client id */
-    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Ljava/lang/ClientId;")))
+    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Lorg/endurox/ClientId;")))
     {
         NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
                 "Failed to get [cltid] descr from QTPQCTL: %s");
@@ -126,18 +126,18 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     /* get object field */
     jcltid = (*env)->GetObjectField(env, ctl_Java, fid);
     
-    if (NULL==jcltid)
+    if (NULL!=jcltid)
     {
         ndrxj_atmi_throw(env, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
         EXFAIL_OUT(ret);
-    }
-    
-    /* convert to C */
-    if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
-        jcltid, &(ctl_c->cltid)))
-    {
-        NDRX_LOG(log_error, "Failed to convert client id");
-        EXFAIL_OUT(ret);
+
+        /* convert to C */
+        if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
+            jcltid, &(ctl_c->cltid)))
+        {
+            NDRX_LOG(log_error, "Failed to convert client id");
+            EXFAIL_OUT(ret);
+        }
     }
     
 out:
@@ -219,7 +219,7 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
     }
     
     /* convert client id */
-    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Ljava/lang/ClientId;")))
+    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Lorg/endurox/ClientId;")))
     {
         NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
                 "Failed to get [cltid] descr from QTPQCTL: %s");
