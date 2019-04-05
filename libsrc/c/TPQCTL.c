@@ -175,20 +175,20 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
     jobject jcltid;
     jmethodID mid;
 
+    clz = (*env)->FindClass(env, TPQCTL_CLASS);
+
+    if (NULL==clz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
+        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
+                    TPQCTL_CLASS);
+        EXFAIL_OUT(ret);
+    }
+
+
     if (NULL==ctl_Java)
     {
-        clz = (*env)->FindClass(env, TPQCTL_CLASS);
-
-        if (NULL==clz)
-        {        
-            /* I guess we need to abort here! */
-            NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
-            ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
-                        TPQCTL_CLASS);
-            EXFAIL_OUT(ret);
-        }
-
-
         /* Allocate java object */
             /* create buffer object... */
         mid = (*env)->GetMethodID(env, clz, "<init>", "()V");
