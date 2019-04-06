@@ -1,7 +1,6 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
-import org.endurox.exceptions.AtmiException;
 import org.endurox.exceptions.UbfBNOTPRESException;
 
 /**
@@ -63,9 +62,9 @@ public class QueueTests {
             
             
             ctl = new TPQCTL();
-            TypedUbf retBuf = (TypedUbf)ctx.tpdequeue("MYSPACE", reqData, ctl, ub, 0);
+            TypedUbf retBuf = (TypedUbf)ctx.tpdequeue("MYSPACE", reqData, ctl, null, 0);
             
-            String rspData = retBuf.BgetString(test.T_STRING_2_FLD, 0);
+            String rspData = retBuf.BgetString(test.T_STRING_FLD, 0);
             assertEquals(String.format("loop %d", i), rspData);
             
             /* try to get msg... when emtpy... */            

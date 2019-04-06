@@ -117,6 +117,13 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
         EXFAIL_OUT(ret);
     }
     
+    if (EXSUCCEED!=ndrxj_cvt_jstr_to_c(env, 
+            atmiCtxObj, jqname, qname, sizeof(qname)))
+    {
+        NDRX_LOG(log_error, "Failed to convert qname to C");
+        EXFAIL_OUT(ret);
+    }
+    
     /* convert qctl */
     if (EXSUCCEED!=ndrxj_atmi_TPQCTL_translate2c(env, atmiCtxObj, jqctl, &q))
     {
