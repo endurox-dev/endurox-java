@@ -139,6 +139,10 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
             EXFAIL_OUT(ret);
         }
     }
+    else
+    {
+        ctl_c->cltid.clientdata[0] = EXEOS;
+    }
     
 out:
        
