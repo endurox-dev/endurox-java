@@ -202,41 +202,41 @@ public class AtmiConst {
      * @defgroup atmiflags XATMI tpcall/tpreturn, etc... flags
      * @{
      */
-    public static final int TPNOBLOCK       = 0x00000001;
-    public static final int TPSIGRSTRT      = 0x00000002;
-    public static final int TPNOREPLY       = 0x00000004;
-    public static final int TPNOTRAN        = 0x00000008;
-    public static final int TPTRAN          = 0x00000010;
-    public static final int TPNOTIME        = 0x00000020;
-    public static final int TPABSOLUTE      = 0x00000040;
-    public static final int TPGETANY        = 0x00000080;
-    public static final int TPNOCHANGE      = 0x00000100;
-    public static final int TPCONV          = 0x00000400;
-    public static final int TPSENDONLY      = 0x00000800;
-    public static final int TPRECVONLY      = 0x00001000;
-    public static final int TPACK           = 0x00002000;
+    public static final long TPNOBLOCK       = 0x00000001;
+    public static final long TPSIGRSTRT      = 0x00000002;
+    public static final long TPNOREPLY       = 0x00000004;
+    public static final long TPNOTRAN        = 0x00000008;
+    public static final long TPTRAN          = 0x00000010;
+    public static final long TPNOTIME        = 0x00000020;
+    public static final long TPABSOLUTE      = 0x00000040;
+    public static final long TPGETANY        = 0x00000080;
+    public static final long TPNOCHANGE      = 0x00000100;
+    public static final long TPCONV          = 0x00000400;
+    public static final long TPSENDONLY      = 0x00000800;
+    public static final long TPRECVONLY      = 0x00001000;
+    public static final long TPACK           = 0x00002000;
     /** Software raised service error, any   */
-    public static final int TPSOFTERR       = 0x00020000;
+    public static final long TPSOFTERR       = 0x00020000;
     /** Suspend current transaction          */
-    public static final int TPTRANSUSPEND   = 0x00040000;
+    public static final long TPTRANSUSPEND   = 0x00040000;
     /** Soft timout condition -> ret TPETIME */
-    public static final int TPSOFTTIMEOUT   = 0x00080000;
+    public static final long TPSOFTTIMEOUT   = 0x00080000;
     /** Simulate that service is not found   */
-    public static final int TPSOFTENOENT    = 0x00100000;
+    public static final long TPSOFTENOENT    = 0x00100000;
     /** Don't restore autbuf in srv context  */
-    public static final int TPNOAUTBUF      = 0x00200000;
+    public static final long TPNOAUTBUF      = 0x00200000;
     /** RFU, tux compatibility */
-    public static final int RESERVED_BIT1   = 0x00400000;
+    public static final long RESERVED_BIT1   = 0x00400000;
     /** Use regular expressions for match    */
-    public static final int TPREGEXMATCH    = 0x00800000;
+    public static final long TPREGEXMATCH    = 0x00800000;
     /** Do not lookup cache                  */
-    public static final int TPNOCACHELOOK   = 0x01000000;
+    public static final long TPNOCACHELOOK   = 0x01000000;
     /** Do not save data to cache            */
-    public static final int TPNOCACHEADD    = 0x02000000;
+    public static final long TPNOCACHEADD    = 0x02000000;
     /** Do not use cached data               */
-    public static final int TPNOCACHEDDATA  = 0x04000000;
+    public static final long TPNOCACHEDDATA  = 0x04000000;
     /** Do not abort global transaction, even if service failed */
-    public static final int TPNOABORT       = 0x08000000;
+    public static final long TPNOABORT       = 0x08000000;
             
     /** @} */ // end of atmiflags
     
@@ -275,7 +275,7 @@ public class AtmiConst {
     /** @} */ // end of cnvevents
     
     
-     /**
+    /**
      * Enduro/X Queue control
      * @defgroup qctl Queue control constants
      * @{
@@ -288,9 +288,64 @@ public class AtmiConst {
     
     
     /**
-     * Queueu message id len, bin
+     * Queue message id len, bin
      */
     public static final int TMMSGIDLEN = 32;
+    
+    /* structure elements that are valid - set in flags */
+    
+    /** No flags set */
+    public static final long TPNOFLAGS       = 0x00000;
+    /** set/get correlation id */          
+    public static final long TPQCORRID       = 0x00001;
+    /** set/get failure queue */
+    public static final long TPQFAILUREQ     = 0x00002;
+    /** RFU, enqueue before message id */
+    public static final long TPQBEFOREMSGID  = 0x00004;
+    /** RFU, deprecated */
+    public static final long TPQGETBYMSGIDOLD = 0x00008;
+    /** get msgid of enq/deq message */
+    public static final long TPQMSGID        = 0x00010;
+    /** set/get message priority */
+    public static final long TPQPRIORITY     = 0x00020;
+    /** RFU, enqueue at queue top */
+    public static final long TPQTOP          = 0x00040;
+    /** RFU, wait for dequeuing */
+    public static final long TPQWAIT         = 0x00080;
+    /** set/get reply queue */
+    public static final long TPQREPLYQ       = 0x00100;
+    /** RFU, set absolute time */
+    public static final long TPQTIME_ABS     = 0x00200;
+    /** RFU, set absolute time */
+    public static final long TPQTIME_REL     = 0x00400;
+    /** deprecated */
+    public static final long TPQGETBYCORRIDOLD = 0x00800;
+    /** peek */
+    public static final long TPQPEEK         = 0x01000;
+    /** RFU, delivery quality of service */
+    public static final long TPQDELIVERYQOS  = 0x02000;
+    /** RFU, reply message quality of service */
+    public static final long TPQREPLYQOS     = 0x04000;
+    /** RFU, absolute expiration time */
+    public static final long TPQEXPTIME_ABS  = 0x08000;
+    /** RFU, relative expiration time */
+    public static final long TPQEXPTIME_REL  = 0x10000;
+    /** RFU, never expire */
+    public static final long TPQEXPTIME_NONE = 0x20000;
+    /** dequeue by msgid */
+    public static final long TPQGETBYMSGID   = 0x40008;
+    /** dequeue by corrid */
+    public static final long TPQGETBYCORRID  = 0x80800;
+    /** Async complete */
+    public static final long TPQASYNC        = 0x100000;
+
+    /* Valid flags for the quality of service fileds in the TPQCTLstructure */
+    /** queue's default persistence policy */
+    public static final long TPQQOSDEFAULTPERSIST  = 0x00001;
+    /** disk message */
+    public static final long TPQQOSPERSISTENT      = 0x00002;
+    /** memory message */
+    public static final long TPQQOSNONPERSISTENT   = 0x00004;
     
     /** @} */ // end of qctl
 

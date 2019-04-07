@@ -15,15 +15,18 @@ public class GlobBroad implements Service {
     void doBroadcast(AtmiCtx ctx, TypedBuffer buf) {
         
         /* +1 */
-        ctx.tpbroadcast(null, null, null, buf, 0);
+        ctx.tpbroadcast(null, null, null, buf, AtmiConst.TPNOBLOCK);
         /* +1 */
-        ctx.tpbroadcast(null, null, "jexunit01b", buf, 0);
+        ctx.tpbroadcast(null, null, "jexunit01b", buf, AtmiConst.TPNOBLOCK);
         /* +1 */
-        ctx.tpbroadcast(null, null, "unit", buf, AtmiConst.TPREGEXMATCH);
+        ctx.tpbroadcast(null, null, "unit", buf, AtmiConst.TPREGEXMATCH | 
+                AtmiConst.TPNOBLOCK);
         /* +0 */
-        ctx.tpbroadcast(null, null, "hello", buf, AtmiConst.TPREGEXMATCH);
+        ctx.tpbroadcast(null, null, "hello", buf, AtmiConst.TPREGEXMATCH | 
+                AtmiConst.TPNOBLOCK);
         /* +1 */
-        ctx.tpbroadcast("[0-9]*", null, "unit", buf, AtmiConst.TPREGEXMATCH);
+        ctx.tpbroadcast("[0-9]*", null, "unit", buf, AtmiConst.TPREGEXMATCH | 
+                AtmiConst.TPNOBLOCK);
             
     }
     /**
