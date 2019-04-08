@@ -77,7 +77,7 @@ public class QueueTests {
                 String isub = "";
                 byte [] corrid = new byte[AtmiConst.TMCORRIDLEN];
                 if (buffers[j].equals("VIEW")) {
-                        isub = "JVIEW1";
+                    isub = "JVIEW1";
                 }
                 
                 int testid = (j<<27 | i)<<2;
@@ -97,10 +97,13 @@ public class QueueTests {
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 ctl = new TPQCTL();
                 
-                corrid[0] = (byte)(curTest >>> 24);
-                corrid[1] = (byte)(curTest >>> 16);
-                corrid[2] = (byte)(curTest >>> 8);
+                corrid[0] = (byte)(curTest >> 24);
+                corrid[1] = (byte)(curTest >> 16);
+                corrid[2] = (byte)(curTest >> 8);
                 corrid[3] = (byte)(curTest);
+                
+                ctx.userlog("corr id %d = %d %d %d %d %d", curTest, corrid[0], corrid[1], 
+                        corrid[2], corrid[3], corrid[4]);
                 
                 ctl.setCorrid(corrid);
                 ctl.setFlags(AtmiConst.TPQCORRID);
