@@ -33,6 +33,8 @@
  */
 package org.endurox;
 
+import java.util.Arrays;
+
 /**
  * Enduro/X Queue Message interface.
  * Holds infos about message to be enqueued or dequeued
@@ -92,7 +94,11 @@ public class TPQCTL {
     }
 
     public void setCorrid(byte[] corrid) {
+        /*
         this.corrid = corrid;
+        */
+        /* copy off!!! */
+        this.corrid = Arrays.copyOf(corrid, corrid.length);
     }
 
     public String getReplyqueue() {

@@ -493,7 +493,8 @@ public class Commons {
        /* New values shall be in buffer */
 	if (input_type.equals("STRING")) {
             TypedString s = (TypedString)b_ret;
-            assertEquals(String.format("This is unit test %d", testid), s.getString());
+            String comp = String.format("This is unit test %d", testid);
+            assertEquals(comp, s.getString());
 	}
 	else if (input_type.equals("JSON")) {
             TypedJson j = (TypedJson)b_ret;

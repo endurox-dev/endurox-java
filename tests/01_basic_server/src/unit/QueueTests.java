@@ -72,7 +72,7 @@ public class QueueTests {
             /* For types */
             String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF", "CARRAY"};
             
-            for (int j=0; i<buffers.length; i++) {
+            for (int j=0; j<buffers.length; j++) {
 
                 String isub = "";
                 byte [] corrid = new byte[AtmiConst.TMCORRIDLEN];
