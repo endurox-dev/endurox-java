@@ -94,6 +94,23 @@ public class QueueTests {
                 ctl = new TPQCTL();
                 ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
                 
+                curTest++;
+                int deqTestId4 = curTest;
+                
+                ctx.tplogInfo("Test id 4: %d", curTest);
+                b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
+                ctl = new TPQCTL();
+                ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
+/*                
+                curTest++;
+                int deqTestId5 = curTest;
+                
+                ctx.tplogInfo("Test id 5: %d", curTest);
+                b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
+                ctl = new TPQCTL();
+                ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
+*/              
+                
                 /* try to read by msg id... */
                 ctl = new TPQCTL();
                 
@@ -117,6 +134,11 @@ public class QueueTests {
                 ctl = new TPQCTL();
                 qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
                 com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId3);
+                
+                /* dequeue with out id, 4 */
+                ctl = new TPQCTL();
+                qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId4);
                 
                 
             }
