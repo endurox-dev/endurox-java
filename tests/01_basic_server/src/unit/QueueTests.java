@@ -50,17 +50,15 @@ public class QueueTests {
             String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF", "CARRAY"};
             
             for (int j=0; j<buffers.length; j++) {
-
-                
                 
                 String isub = "";
                 byte [] corrid = new byte[AtmiConst.TMCORRIDLEN];
                 if (buffers[j].equals("VIEW")) {
                     isub = "JVIEW1";
                 }
-                
-                //int testid = (j<<27 | i)<<2;
+
                 curTest++;
+                int deqTestId1 = curTest;
                 
                 /* Alloc value, enqueue with with out id */
                 ctx.tplogInfo("Test id 1: %d", curTest);
@@ -70,7 +68,7 @@ public class QueueTests {
                 
                 /* Alloc value, enqueue with with id */
                 curTest++;
-                int deqTestId = curTest;
+                int deqTestId2 = curTest;
                 ctx.tplogInfo("Test id 2: %d", curTest);
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 ctl = new TPQCTL();
@@ -89,6 +87,8 @@ public class QueueTests {
                 
                 /* Alloc value, enqueue with with out id */
                 curTest++;
+                int deqTestId3 = curTest;
+                
                 ctx.tplogInfo("Test id 3: %d", curTest);
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 ctl = new TPQCTL();
@@ -98,7 +98,7 @@ public class QueueTests {
                 ctl = new TPQCTL();
                 
                 /* set corr & test id we expected...*/
-                curTest = deqTestId;
+                curTest = deqTestId2;
                 ctx.tplogInfo("dequeue corr id %d = %d %d %d %d %d", 
                         curTest, corrid[0], corrid[1],  corrid[2], 
                         corrid[3], corrid[4]);
@@ -107,6 +107,17 @@ public class QueueTests {
                 TypedBuffer qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, b, 0);
                 
                 com.testBuffer(ctx, buffers[j], isub, qmsg, curTest);
+                
+                /* dequeue with out id, 1 */
+                ctl = new TPQCTL();
+                qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId1);
+                
+                /* dequeue with out id, 3 */
+                ctl = new TPQCTL();
+                qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId3);
+                
                 
             }
                 
