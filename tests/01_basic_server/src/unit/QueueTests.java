@@ -102,7 +102,7 @@ public class QueueTests {
                 corrid[2] = (byte)(curTest >> 8);
                 corrid[3] = (byte)(curTest);
                 
-                ctx.userlog("corr id %d = %d %d %d %d %d", curTest, corrid[0], corrid[1], 
+                ctx.tplogInfo("corr id %d = %d %d %d %d %d", curTest, corrid[0], corrid[1], 
                         corrid[2], corrid[3], corrid[4]);
                 
                 ctl.setCorrid(corrid);
@@ -120,6 +120,9 @@ public class QueueTests {
                 ctl = new TPQCTL();
                 
                 /* set corr */
+                ctx.tplogInfo("dequeue corr id %d = %d %d %d %d %d", 
+                        curTest, corrid[0], corrid[1],  corrid[2], 
+                        corrid[3], corrid[4]);
                 ctl.setCorrid(corrid);
                 ctl.setFlags(AtmiConst.TPQCORRID);
                 TypedBuffer qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, b, 0);

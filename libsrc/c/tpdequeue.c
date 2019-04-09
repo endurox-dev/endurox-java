@@ -159,6 +159,7 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
     if (NULL!=jqspace)
     {
         NDRX_LOG(log_debug, "standard tpeequeue on [%s]/[%s]", qspace, qname);
+        NDRX_DUMP(log_error, "YOPT 3", q.corrid, sizeof(q.corrid));
         if (EXSUCCEED!=tpdequeue(qspace, qname, &q, &obuf, &olen, flags))
         {        
             int err = tperrno;

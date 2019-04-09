@@ -161,6 +161,8 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                 
                 memcpy(cmem, n_carray, len);
                 
+                NDRX_DUMP(log_error, tab->field, cmem, len);
+                
                 if(n_carray_copy)
                 {
                    (*env)->ReleaseByteArrayElements(env, jb, n_carray, JNI_ABORT);

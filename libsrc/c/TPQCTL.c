@@ -144,6 +144,8 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
         ctl_c->cltid.clientdata[0] = EXEOS;
     }
     
+    NDRX_DUMP(log_error, "YOPT", ctl_c->corrid, sizeof(ctl_c->corrid));
+    
 out:
        
     if (NULL!=clz)
