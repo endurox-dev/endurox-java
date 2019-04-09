@@ -37,6 +37,7 @@ public class QueueTests {
         
         Commons com = new Commons();
         
+        int curTest = 4391;
         /**
          * TODO: Have long term test for memory management.
          * ideally we would time terminated tests, for example 5 min...?
@@ -44,55 +45,32 @@ public class QueueTests {
          */
         for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
-            /*
-            TPQCTL ctl = new TPQCTL();
-            
-            try {
-                ub.Bdel(test.T_STRING_2_FLD, 0);
-            } 
-            catch (UbfBNOTPRESException e)
-            {
-                // ignore.. 
-            }
-            
-            String reqData = String.format("loop %d", i);
-            ub.Bchg(test.T_STRING_FLD, 0, String.format("loop %d", i));
-            
-            ctx.tpenqueue("MYSPACE", reqData, ctl, ub, 0);
-            
-            
-            ctl = new TPQCTL();
-            TypedUbf retBuf = (TypedUbf)ctx.tpdequeue("MYSPACE", reqData, ctl, null, 0);
-            
-            String rspData = retBuf.BgetString(test.T_STRING_FLD, 0);
-            assertEquals(String.format("loop %d", i), rspData);
-            
-            */
             
             /* For types */
             String [] buffers = new String[] {"NULL", "STRING", "JSON", "VIEW", "UBF", "CARRAY"};
             
             for (int j=0; j<buffers.length; j++) {
 
+                
+                
                 String isub = "";
                 byte [] corrid = new byte[AtmiConst.TMCORRIDLEN];
                 if (buffers[j].equals("VIEW")) {
                     isub = "JVIEW1";
                 }
                 
-                int testid = (j<<27 | i)<<2;
-                int curTest;
-                
+                //int testid = (j<<27 | i)<<2;
+                curTest++;
                 
                 /* Alloc value, enqueue with with out id */
-                curTest = testid+1;
                 ctx.tplogInfo("Test id 1: %d", curTest);
                 TypedBuffer b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 TPQCTL ctl = new TPQCTL();
                 ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
                 
                 /* Alloc value, enqueue with with id */
-                curTest = testid+2;
+                curTest++;
+                int deqTestId = curTest;
                 ctx.tplogInfo("Test id 2: %d", curTest);
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 ctl = new TPQCTL();
@@ -110,7 +88,7 @@ public class QueueTests {
                 ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
                 
                 /* Alloc value, enqueue with with out id */
-                curTest = testid+3;
+                curTest++;
                 ctx.tplogInfo("Test id 3: %d", curTest);
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 ctl = new TPQCTL();
@@ -119,15 +97,16 @@ public class QueueTests {
                 /* try to read by msg id... */
                 ctl = new TPQCTL();
                 
-                /* set corr */
+                /* set corr & test id we expected...*/
+                curTest = deqTestId;
                 ctx.tplogInfo("dequeue corr id %d = %d %d %d %d %d", 
                         curTest, corrid[0], corrid[1],  corrid[2], 
                         corrid[3], corrid[4]);
                 ctl.setCorrid(corrid);
-                ctl.setFlags(AtmiConst.TPQCORRID);
+                ctl.setFlags(AtmiConst.TPQGETBYCORRID);
                 TypedBuffer qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, b, 0);
                 
-                com.testBuffer(ctx, buffers[j], isub, qmsg, testid+2);
+                com.testBuffer(ctx, buffers[j], isub, qmsg, curTest);
                 
             }
                 

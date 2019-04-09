@@ -137,7 +137,6 @@ exprivate void tpenqueue_int
     if (NULL!=jqspace)
     {
         NDRX_LOG(log_debug, "standard tpenqueue on [%s]/[%s]", qspace, qname);
-        NDRX_DUMP(log_error, "YOPT 3", q.corrid, sizeof(q.corrid));
         if (EXSUCCEED!=tpenqueue(qspace, qname, &q, ibuf, ilen, flags))
         {        
             int err = tperrno;
