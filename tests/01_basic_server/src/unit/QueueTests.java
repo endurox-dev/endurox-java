@@ -1,7 +1,8 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
-import org.endurox.exceptions.UbfBNOTPRESException;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
 
 /**
  * Queue tests
@@ -63,15 +64,16 @@ public class QueueTests {
                 /* Alloc value, enqueue with with out id */
                 ctx.tplogInfo("Test id 1: %d", curTest);
                 TypedBuffer b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
-                TPQCTL ctl = new TPQCTL();
-                ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
-                
+                TPQCTL ctl1 = new TPQCTL();
+                ctl1.setFlags(AtmiConst.TPQMSGID);
+                ctx.tpenqueue("MYSPACE", "TESTQ", ctl1, b, 0);
+                                
                 /* Alloc value, enqueue with with id */
                 curTest++;
                 int deqTestId2 = curTest;
                 ctx.tplogInfo("Test id 2: %d", curTest);
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
-                ctl = new TPQCTL();
+                TPQCTL ctl = new TPQCTL();
                 
                 corrid[0] = (byte)(curTest >> 24);
                 corrid[1] = (byte)(curTest >> 16);
@@ -81,8 +83,8 @@ public class QueueTests {
                 ctx.tplogInfo("corr id %d = %d %d %d %d %d", curTest, corrid[0], corrid[1], 
                         corrid[2], corrid[3], corrid[4]);
                 
-                //ctl.setCorrid(corrid);
-                //ctl.setFlags(AtmiConst.TPQCORRID);
+                ctl.setCorrid(corrid);
+                ctl.setFlags(AtmiConst.TPQCORRID);
                 ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
                 
                 /* Alloc value, enqueue with with out id */
@@ -127,9 +129,14 @@ public class QueueTests {
                 
                 /* dequeue with out id, 1 */
                 ctl = new TPQCTL();
+                ctl.setFlags(AtmiConst.TPQMSGID);
                 qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
                 com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId1);
-
+                
+                assertArrayEquals(ctl1.getMsgid(), ctl.getMsgid());
+                //Check that it is not empty...
+                assertThat(ctl1.getMsgid(), not(equalTo(new byte[AtmiConst.TMMSGIDLEN])));
+                
                 /* dequeue with out id, 3 */
                 ctl = new TPQCTL();
                 qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
