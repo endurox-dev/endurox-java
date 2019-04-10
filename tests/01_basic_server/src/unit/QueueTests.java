@@ -114,7 +114,7 @@ public class QueueTests {
                 /* try to read by msg id... */
                 ctl = new TPQCTL();
                 
-                /* set corr & test id we expected...*/
+                /* set corr & test id we expected...
                 curTest = deqTestId2;
                 ctx.tplogInfo("dequeue corr id %d = %d %d %d %d %d", 
                         curTest, corrid[0], corrid[1],  corrid[2], 
@@ -124,11 +124,17 @@ public class QueueTests {
                 TypedBuffer qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, b, 0);
                 
                 com.testBuffer(ctx, buffers[j], isub, qmsg, curTest);
+                */
                 
                 /* dequeue with out id, 1 */
                 ctl = new TPQCTL();
-                qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                TypedBuffer qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
                 com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId1);
+                
+                /* dequeue with out id, 2 */
+                ctl = new TPQCTL();
+                qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId2);
                 
                 /* dequeue with out id, 3 */
                 ctl = new TPQCTL();
