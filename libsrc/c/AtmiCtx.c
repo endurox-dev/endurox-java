@@ -192,7 +192,6 @@ out:
     }
 }
 
-
 /**
  * NDRX Log entry
  * @param env java nev
@@ -238,6 +237,108 @@ out:
     if (n_msg_copy)
     {
         (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+}
+
+/**
+ * Print hex dump to the log
+ * @param env Java env
+ * @param atmiCtxObj ATMI Context obj
+ * @param lev debug level
+ * @param msg message to print
+ * @param data buffer to dump
+ */
+extern void JNICALL Java_org_endurox_AtmiCtx_tplogDump
+  (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jbyteArray data)
+{
+    TPCONTEXT_T ctx;
+    char * n_carray = NULL;
+    jboolean n_msg_copy = EXFALSE;
+    jboolean n_carray_copy = EXFALSE;
+    jsize len;
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+    n_carray = (char*)(*env)->GetByteArrayElements(env, data, &n_carray_copy);
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    len = (*env)->GetArrayLength(env, data);
+    
+    tplogdump(lev, (char *)n_msg, n_carray, len);
+    
+out:
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+
+    if(n_carray_copy)
+    {
+       (*env)->ReleaseByteArrayElements(env, data, n_carray, JNI_ABORT);
+    }
+}
+
+/**
+ * Print the byte array differences to log file.
+ * @param env java env
+ * @param atmiCtxObj Atmi Context obj
+ * @param lev log level
+ * @param msg debug message
+ * @param data1 buffer 1
+ * @param data2 buffer 2 to compare
+ */
+extern void JNICALL Java_org_endurox_AtmiCtx_tplogDumpDiff
+  (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jbyteArray data1, jbyteArray data2)
+{
+    TPCONTEXT_T ctx;
+
+    
+    char * n_carray1 = NULL;
+    jboolean n_carray_copy1 = EXFALSE;
+    
+    char * n_carray2 = NULL;
+    jboolean n_carray_copy2 = EXFALSE;
+    
+    jsize len1;
+    jsize len2;
+    jboolean n_msg_copy = EXFALSE;
+    const char *n_msg = (*env)->GetStringUTFChars(env, msg, &n_msg_copy);
+    
+    n_carray1 = (char*)(*env)->GetByteArrayElements(env, data1, &n_carray_copy1);
+    n_carray2 = (char*)(*env)->GetByteArrayElements(env, data2, &n_carray_copy2);
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        return;
+    }
+    
+    len1 = (*env)->GetArrayLength(env, data1);
+    len2 = (*env)->GetArrayLength(env, data1);
+    
+    tplogdumpdiff(lev, (char *)n_msg, n_carray1, n_carray2, NDRX_MIN(len1, len2));
+    
+out:
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    if (n_msg_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, msg, n_msg);
+    }
+
+    if(n_carray_copy1)
+    {
+       (*env)->ReleaseByteArrayElements(env, data1, n_carray1, JNI_ABORT);
+    }
+
+    if(n_carray_copy2)
+    {
+       (*env)->ReleaseByteArrayElements(env, data1, n_carray2, JNI_ABORT);
     }
 }
 

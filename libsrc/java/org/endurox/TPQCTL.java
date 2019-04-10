@@ -86,7 +86,8 @@ public class TPQCTL {
     }
 
     public void setMsgid(byte[] msgid) {
-        this.msgid = msgid;
+        //this.msgid = msgid;
+        this.msgid = Arrays.copyOf(msgid, msgid.length);
     }
 
     public byte[] getCorrid() {

@@ -619,13 +619,20 @@ public class AtmiCtx {
     }
     
     /**
-     * Log Dump
-     * @param format format string
-     * @param arguments variable args 
+     * Write the hex dump to the log file
+     * @param msg Message to print in log
+     * @param data bytes to dump off
      */
-    public void tplogDump(String format, Object... arguments) {
-        tplog(AtmiConst.LOG_DUMP, false, format, arguments);
-    }
+    public native void tplogDump(int lev, String msg, byte[] data);
+    
+    /**
+     * Print the differences between two binary buffers
+     * @param lev log level at which to print
+     * @param msg hex dump message
+     * @param data1 first byte block
+     * @param data2 second byte block to compare
+     */
+    public native void tplogDumpDiff(int lev, String msg, byte[] data1, byte[] data2);
     
     /**
      * Initialize current ATMI Context as a ATMI client

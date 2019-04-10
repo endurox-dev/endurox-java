@@ -212,6 +212,7 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
         NDRX_LOG(log_debug, "Re-use existing java qctl");
         retObj = ctl_Java;
     }
+    
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_java(env, 

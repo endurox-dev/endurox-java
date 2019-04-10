@@ -161,8 +161,6 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                 
                 memcpy(cmem, n_carray, len);
                 
-                NDRX_DUMP(log_error, tab->field, cmem, len);
-                
                 if(n_carray_copy)
                 {
                    (*env)->ReleaseByteArrayElements(env, jb, n_carray, JNI_ABORT);
@@ -236,7 +234,7 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
         }
         else if (0==strcmp(tab->ftype, "[B"))
         {
-            char *cfld = ((char *)cobj)+ tab->coffset;
+            char *cfld = ((char *)cobj)+tab->coffset;
             jbyteArray jb = NULL;
     
             jb = (*env)->NewByteArray(env, (jsize)tab->csz);
@@ -249,6 +247,7 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
                 EXFAIL_OUT(ret);
             }
             (*env)->SetByteArrayRegion(env, jb, 0, tab->csz, (jbyte*)cfld);
+            (*env)->SetObjectField(env, jobj, fid, jb);
 
         } /* if [B */
         
