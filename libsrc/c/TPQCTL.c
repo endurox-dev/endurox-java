@@ -100,7 +100,7 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     {        
         /* I guess we need to abort here! */
         NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
-        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
+        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
                     TPQCTL_CLASS);
         EXFAIL_OUT(ret);
     }
@@ -128,7 +128,7 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     
     if (NULL!=jcltid)
     {
-        ndrxj_atmi_throw(env, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
+        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
         EXFAIL_OUT(ret);
 
         /* convert to C */
@@ -153,7 +153,7 @@ out:
 
     if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
     {
-        ndrxj_atmi_throw(env, NULL, TPEINVAL, "Failed to convert TPQCTL to C "
+        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Failed to convert TPQCTL to C "
                 "from java - see logs!");
     }
 
@@ -185,7 +185,7 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
     {        
         /* I guess we need to abort here! */
         NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
-        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed get class [%s]", 
+        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
                     TPQCTL_CLASS);
         EXFAIL_OUT(ret);
     }
@@ -257,7 +257,7 @@ out:
 
     if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
     {
-        ndrxj_atmi_throw(env, NULL, TPEINVAL, "Failed to convert C TPQCTL to java "
+        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Failed to convert C TPQCTL to java "
                 "- see logs!");
     }
 

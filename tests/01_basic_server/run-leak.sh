@@ -108,6 +108,11 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 xmemck -d45 -s50 -t90 -m jexunit01b -m jserver01_2b &
 
+export NDRXJ_LEAKTEST_NAME="basicQTest"
+jexunit01b QueueTests || go_out 14
+tmshutdown -y; tmboot -y
+test_leak;
+
 export NDRXJ_LEAKTEST_NAME="tpbroadcastTest"
 jexunit01b TpBroadcastTests || go_out 13
 tmshutdown -y; tmboot -y

@@ -1,6 +1,7 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
+import org.endurox.exceptions.AtmiTPEDIAGNOSTICException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 
@@ -141,9 +142,9 @@ public class QueueTests {
                 
                 ctx.tplogDumpDiff(AtmiConst.LOG_DEBUG, "CTL diff 1 vs got", 
                         ctl1.getMsgid(), ctl.getMsgid());
-                //assertArrayEquals(ctl1.getMsgid(), ctl.getMsgid());
+                assertArrayEquals(ctl1.getMsgid(), ctl.getMsgid());
                 //Check that it is not empty...
-                //assertThat(ctl1.getMsgid(), not(equalTo(new byte[AtmiConst.TMMSGIDLEN])));
+                assertThat(ctl1.getMsgid(), not(equalTo(new byte[AtmiConst.TMMSGIDLEN])));
                 
                 /* dequeue with out id, 3 */
                 ctl = new TPQCTL();
@@ -158,16 +159,25 @@ public class QueueTests {
                 
                 /* try to read empty Q, should have exception */
                 
+                boolean have_error = false;
+                
+                try {
+                    
+                    ctl = new TPQCTL();
+                    qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                }
+                catch (AtmiTPEDIAGNOSTICException e) {
+                    
+                    assertEquals(AtmiConst.QMENOMSG, e.getQctl().getDiagnostic());
+                    assertNotEquals("", e.getQctl().getDiagmsg());
+                    have_error = true;
+                }
+                
+                assertEquals(have_error, true);
+                
+                /* todo: check client id.. */
+                
             }
-                
-                /* Alloc value, enqueue with with out id */
-                
-                /* dequeue with id */
-                /* dequeue with id, no id */
-                /* dequeue with id, no id */
-                /* dequeue with id, no id => no msg exception..*/
-                /* dequeue invalid queue => no msg exception..*/
-
         }
         ctx.cleanup();
     }    

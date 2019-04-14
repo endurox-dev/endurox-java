@@ -186,7 +186,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpsetunsolC
         {
             err = tperrno;
             /* generate exception... */
-            ndrxj_atmi_throw(env, NULL, err, tpstrerror(err));
+            ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
             goto out;
         }
     }
@@ -196,7 +196,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpsetunsolC
         {
             err = tperrno;
             /* generate exception... */
-            ndrxj_atmi_throw(env, NULL, err, tpstrerror(err));
+            ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
             goto out;
         }
     }
@@ -232,7 +232,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
     /* check client id */
     if (NULL==jclientid)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "jclientid is NULL");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "jclientid is NULL");
     }
     
     /* restore client id */
@@ -245,7 +245,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
         }
         else
         {
-            ndrxj_atmi_throw(env, idata, TPESYSTEM, 
+            ndrxj_atmi_throw(env, idata, NULL, TPESYSTEM, 
                     "Failed to translate jclientid to C");
             EXFAIL_OUT(ret);
         }
@@ -273,7 +273,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
                 cltid.clientdata, strerror(err));
         /* throw exception */
         
-        ndrxj_atmi_throw(env, idata, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, idata, NULL, err, tpstrerror(err));
     }
     
     out:
@@ -353,7 +353,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpbroadcast
         NDRX_LOG(log_error, "Failed to broadcast: %s", tpstrerror(err));
         
         /* generate exception... */
-        ndrxj_atmi_throw(env, idata, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, idata, NULL, err, tpstrerror(err));
 
     }
     
@@ -409,7 +409,7 @@ JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpchkunsol
                 strerror(err));
         
         /* throw exception */
-        ndrxj_atmi_throw(env, NULL, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
     }
     
 out:

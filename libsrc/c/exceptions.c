@@ -56,11 +56,13 @@
 /**
  * Throw ATMI error 
  * @param env java env
- * @param data Any typed buffer associated with error / tpcall result
+ * @param data Any typed buffer associated with error / tpcall result 
+ * @param[in] addarg1 additional argument 1, error specific
  * @param err ATMI Errro code
  * @param msg message
  */
-expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt, ...)
+expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1, 
+        int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
@@ -83,17 +85,6 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
             tpecodestr(err));
     
     NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
-    
-    /*
-    ex = (*env)->FindClass(env, cls);
-    
-    if (!ex)
-    {
-        NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
-        abort();
-    }
-        
-     (*env)->ThrowNew(env, ex, error); */
     
     ex = (*env)->FindClass(env, cls);
     
@@ -139,9 +130,25 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt,
         (*env)->SetObjectField(env, exception, data_fldid, data);
     }
     
+    if (NULL!=addarg1 && TPEDIAGNOSTIC == err)
+    {
+        /* In this case addarg1 qctl buffer associated with the queue
+         * call
+         */
+        
+        jfieldID qctl_fldid;
+        
+    }
+    
     /* throw finally */
     (*env)->Throw(env, (jthrowable)exception);
     
+out:
+    
+    if (NULL!=ex)
+    {
+        (*env)->DeleteLocalRef(env, ex);
+    }
 }
 
 /**

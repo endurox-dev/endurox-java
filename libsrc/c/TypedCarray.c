@@ -76,7 +76,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedCarray_setBytes
     
     if (NULL==b)
     {
-         ndrxj_atmi_throw(env, data, TPEINVAL, "byte array must not be NULL!");
+         ndrxj_atmi_throw(env, data, NULL, TPEINVAL, "byte array must not be NULL!");
          return; /* <<<< RETURN !!! */
     }
     
@@ -100,7 +100,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedCarray_setBytes
     
     if (bufsz < 1)
     {
-         ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+         ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
          EXFAIL_OUT(ret);
     }
     
@@ -120,7 +120,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedCarray_setBytes
             }
             
             /* throw exception */
-            ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
             EXFAIL_OUT(ret);
         }
         else

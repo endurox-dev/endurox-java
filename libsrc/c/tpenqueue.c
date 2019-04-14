@@ -87,19 +87,19 @@ exprivate void tpenqueue_int
     
     if (EXFAIL==nodeid && EXFAIL==srvid && NULL==jqspace)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqspace");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "Null argument: jqspace");
         EXFAIL_OUT(ret);
     }
     
     if (NULL==jqname)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqname");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "Null argument: jqname");
         EXFAIL_OUT(ret);
     }
     
     if (NULL==jqctl)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqctl");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "Null argument: jqctl");
         EXFAIL_OUT(ret);
     }
     
@@ -146,7 +146,7 @@ exprivate void tpenqueue_int
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
-            ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+            ndrxj_atmi_throw(env, idata, NULL, err, "%s", errbuf);
             goto out;
 
         }
@@ -165,7 +165,7 @@ exprivate void tpenqueue_int
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
-            ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+            ndrxj_atmi_throw(env, idata, NULL, err, "%s", errbuf);
             goto out;
 
         }

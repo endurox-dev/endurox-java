@@ -76,7 +76,7 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
     
     if (NULL==s)
     {
-         ndrxj_atmi_throw(env, data, TPEINVAL, "string must not be NULL!");
+         ndrxj_atmi_throw(env, data, NULL, TPEINVAL, "string must not be NULL!");
          return; /* <<<< RETURN !!! */
     }
     
@@ -105,7 +105,7 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
     
     if (bufsz < 1)
     {
-         ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+         ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
          EXFAIL_OUT(ret);
     }
     
@@ -125,7 +125,7 @@ expublic void JNICALL Java_org_endurox_TypedString_setString
             }
             
             /* throw exception */
-            ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
             EXFAIL_OUT(ret);
         }
         else

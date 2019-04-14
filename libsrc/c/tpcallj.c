@@ -105,7 +105,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
         {
             NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
                     tpstrerror(tperrno));
-            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+            ndrxj_atmi_throw(env, NULL, NULL, tperrno, "Failed to get odata type infos: %s", 
                     tpstrerror(tperrno));
             goto out;
         }
@@ -142,7 +142,7 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
             errdatabuf = idata;
         }
             
-        ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
+        ndrxj_atmi_throw(env, errdatabuf, NULL, err, "%s", errbuf);
         goto out;
     }
     
@@ -233,7 +233,7 @@ JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpacall
         
         NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
         
-        ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
+        ndrxj_atmi_throw(env, idata, NULL, err, "%s", errbuf);
         goto out;
     }
     
@@ -310,7 +310,7 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
         {
             NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
                     tpstrerror(tperrno));
-            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+            ndrxj_atmi_throw(env, NULL, NULL, tperrno, "Failed to get odata type infos: %s", 
                     tpstrerror(tperrno));
             goto out;
         }
@@ -344,7 +344,7 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
         
         NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
         
-        ndrxj_atmi_throw(env, errdatabuf, err, "%s", errbuf);
+        ndrxj_atmi_throw(env, errdatabuf, NULL, err, "%s", errbuf);
         goto out;
     }
     

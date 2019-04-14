@@ -121,7 +121,7 @@ typedef struct exjobjmap exjobjmap_t;
 /*---------------------------Prototypes---------------------------------*/
 
 /* Exception ops: */
-extern void ndrxj_atmi_throw(JNIEnv *env, jobject data, int err, char *msgfmt, ...);
+extern void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1, int err, char *msgfmt, ...);
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);

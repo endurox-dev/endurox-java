@@ -348,6 +348,31 @@ public class AtmiConst {
     public static final long TPQQOSNONPERSISTENT   = 0x00004;
     
     /** @} */ // end of qctl
-
+    
+    
+    /**
+     * Enduro/X queue diagnostic codes. Returned by TPQCTL.getQctl()
+     * @defgroup qctldiag Queue diagnostic codes
+     * @{
+     */
+    public static final long QMEINVAL        = -1;
+    public static final long QMEBADRMID      = -2;
+    public static final long QMENOTOPEN      = -3;
+    public static final long QMETRAN         = -4;
+    public static final long QMEBADMSGID     = -5;
+    public static final long QMESYSTEM       = -6;
+    public static final long QMEOS           = -7;
+    public static final long QMEABORTED      = -8;
+    public static final long QMENOTA         = -8;              
+    public static final long QMEPROTO        = -9;
+    public static final long QMEBADQUEUE     = -10;
+    public static final long QMENOMSG        = -11;
+    public static final long QMEINUSE        = -12;
+    public static final long QMENOSPACE      = -13;
+    public static final long QMERELEASE      = -14;
+    public static final long QMEINVHANDLE    = -15;
+    public static final long QMESHARE        = -16;
+    /** @} */ // end of qctl
+   
 }
 /* vim: set ts=4 sw=4 et smartindent: */

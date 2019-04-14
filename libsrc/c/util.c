@@ -146,9 +146,8 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                     NDRX_LOG(log_error, "Class [%s] field [%s] "
                             "expected len in C %d but got from java %d", clzstr, 
                             tab->field, tab->csz, len);
-                    ndrxj_atmi_throw(env, NULL, TPEINVAL, "Class [%s] field [%s] "
-                            "expected len in C %d but got from java %d", clzstr, 
-                            tab->field, tab->csz, len);
+                    ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Class [%s] field [%s] "
+                            "expected len in C %d but got from java %d", clzstr);
                     
                     if(n_carray_copy)
                     {

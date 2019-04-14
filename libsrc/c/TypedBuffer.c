@@ -278,7 +278,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
             
             /* throw exception - format is required as if message will contain
              * some format symbols, then we get corrupted output.*/
-            ndrxj_atmi_throw(env, NULL, tperrno, "%s", tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
             
             ret = NULL;
             goto out;
@@ -332,7 +332,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     }
     else
     {
-        ndrxj_atmi_throw(env, NULL, TPEINVAL, "buffer type [%s] not supported", 
+        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "buffer type [%s] not supported", 
                 p_type);
         goto out;
     }
@@ -588,7 +588,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedBuffer_tprealloc
     if (NULL==(buf = tprealloc(buf, (long)size)))
     {
         NDRX_LOG(log_error, "Failed to reallocate buffer: %s", tpstrerror(tperrno));
-        ndrxj_atmi_throw(env, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
         goto out;
     }
     
@@ -650,7 +650,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
         {
             NDRX_LOG(log_error, "Failed to get odata type infos: %s", 
                     tpstrerror(tperrno));
-            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+            ndrxj_atmi_throw(env, NULL, NULL, tperrno, "Failed to get odata type infos: %s", 
                     tpstrerror(tperrno));
             goto out;
         }
@@ -812,7 +812,7 @@ expublic JNIEXPORT jobject JNICALL Java_org_endurox_TypedBuffer_tptypes
     /* read type infos */
     if (EXFAIL==(size = tptypes(cdata, btype, stype)))
     {
-        ndrxj_atmi_throw(env, data, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
         goto out;
     }
     

@@ -166,7 +166,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tptoutset
     
     if (EXSUCCEED!=tptoutset((int)tout))
     {
-        ndrxj_atmi_throw(env, NULL, tperrno, "%s", tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     
@@ -195,7 +195,7 @@ expublic JNIEXPORT jlongArray JNICALL Java_org_endurox_AtmiCtx_getBuffers
     
     if (EXSUCCEED!=ndrx_buffer_list(&list))
     {
-        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to get buffers list!");
+        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed to get buffers list!");
         goto out;
     }
     
@@ -207,7 +207,7 @@ expublic JNIEXPORT jlongArray JNICALL Java_org_endurox_AtmiCtx_getBuffers
     
     if (NULL==ret)
     {
-        ndrxj_atmi_throw(env, NULL, TPESYSTEM, "Failed to alloc java array!");
+        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed to alloc java array!");
         goto out;
     }
     
