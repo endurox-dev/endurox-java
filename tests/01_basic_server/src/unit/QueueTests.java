@@ -107,15 +107,6 @@ public class QueueTests {
                 b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
                 ctl = new TPQCTL();
                 ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
-/*                
-                curTest++;
-                int deqTestId5 = curTest;
-                
-                ctx.tplogInfo("Test id 5: %d", curTest);
-                b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
-                ctl = new TPQCTL();
-                ctx.tpenqueue("MYSPACE", "TESTQ", ctl, b, 0);
-*/              
                 
                 /* try to read by msg id... */
                 ctl = new TPQCTL();
@@ -176,6 +167,21 @@ public class QueueTests {
                 assertEquals(have_error, true);
                 
                 /* todo: check client id.. */
+                
+                /* enqueue to extended version */
+                curTest++;
+                int deqTestId5 = curTest;
+                
+                ctx.tplogInfo("Test id 5: %d", curTest);
+                b = com.getTestBuffer(ctx, buffers[j], isub, curTest);
+                ctl = new TPQCTL();
+                
+                ctx.tpenqueueex((short)1, (short)300,"TESTQ", ctl, b, 0);
+                
+                /* dequeue from extended version */
+                ctl = new TPQCTL();
+                qmsg = ctx.tpdequeueex((short)1, (short)300, "TESTQ", ctl, null, 0);
+                com.testBuffer(ctx, buffers[j], isub, qmsg, deqTestId5);
                 
             }
         }

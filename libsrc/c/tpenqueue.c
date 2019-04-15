@@ -103,7 +103,7 @@ exprivate void tpenqueue_int
         EXFAIL_OUT(ret);
     }
     
-    if (NULL!=jqname && EXSUCCEED!=ndrxj_cvt_jstr_to_c(env, 
+    if (NULL!=jqspace && EXSUCCEED!=ndrxj_cvt_jstr_to_c(env, 
             atmiCtxObj, jqspace, qspace, sizeof(qspace)))
     {
         NDRX_LOG(log_error, "Failed to convert qspace to C");
