@@ -146,8 +146,7 @@ exprivate void tpenqueue_int
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
-            ndrxj_atmi_throw(env, idata, NULL, err, "%s", errbuf);
-            goto out;
+            ndrxj_atmi_throw(env, idata, jqctl, err, "%s", errbuf);
 
         }
     }
@@ -165,8 +164,7 @@ exprivate void tpenqueue_int
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
-            ndrxj_atmi_throw(env, idata, NULL, err, "%s", errbuf);
-            goto out;
+            ndrxj_atmi_throw(env, idata, jqctl, err, "%s", errbuf);
 
         }
     }
@@ -178,7 +176,7 @@ exprivate void tpenqueue_int
         EXFAIL_OUT(ret);
     }
     
-    NDRX_LOG(log_debug, "tpenqueue to qspace[%s] queue [%s] OK", qspace, qname);
+    /* NDRX_LOG(log_debug, "tpenqueue to qspace[%s] queue [%s] OK", qspace, qname); */
     
 out:
 

@@ -94,19 +94,19 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
     
     if (EXFAIL==nodeid && EXFAIL==srvid && NULL==jqspace)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqspace");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "Null argument: jqspace");
         EXFAIL_OUT(ret);
     }
     
     if (NULL==jqname)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqname");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "Null argument: jqname");
         EXFAIL_OUT(ret);
     }
     
     if (NULL==jqctl)
     {
-        ndrxj_atmi_throw(env, idata, TPEINVAL, "Null argument: jqctl");
+        ndrxj_atmi_throw(env, idata, NULL, TPEINVAL, "Null argument: jqctl");
         EXFAIL_OUT(ret);
     }
     
@@ -146,7 +146,7 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
         {
             NDRX_LOG(log_error, "Failed to get idata type infos: %s", 
                     tpstrerror(tperrno));
-            ndrxj_atmi_throw(env, NULL, tperrno, "Failed to get odata type infos: %s", 
+            ndrxj_atmi_throw(env, NULL, NULL, tperrno, "Failed to get odata type infos: %s", 
                     tpstrerror(tperrno));
             goto out;
         }
@@ -168,8 +168,8 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
-            ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
-            goto out;
+            ndrxj_atmi_throw(env, idata, jqctl, err, "%s", errbuf);
+            goto errctl;
 
         }
     }
@@ -187,25 +187,27 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
-            ndrxj_atmi_throw(env, idata, err, "%s", errbuf);
-            goto out;
+            ndrxj_atmi_throw(env, idata, jqctl, err, "%s", errbuf);
+            goto errctl;
 
         }
     }
-    
+        
+    /* get reply buffer object */
+    retObj = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, idata, ibuf, 
+        ilen, obuf, olen, itype, isubtype);
+
+errctl:
     /* restore the qctl */
     if (NULL==ndrxj_atmi_TPQCTL_translate2java(env, atmiCtxObj, jqctl, &q))
     {
         NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2java failed");
         EXFAIL_OUT(ret);
     }
-    
-    /* get reply buffer object */
-    retObj = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, idata, ibuf, 
-        ilen, obuf, olen, itype, isubtype);
 
     
 out:
+        
         
     NDRX_LOG(log_debug, "%s returns %p", __func__, retObj);
     

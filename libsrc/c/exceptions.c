@@ -138,6 +138,20 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1,
         
         jfieldID qctl_fldid;
         
+        NDRX_LOG(log_debug, "Setting qctl for TPEDIAGNOSTIC");
+        
+        if (NULL==(qctl_fldid = (*env)->GetFieldID(env, ex, "qctl", 
+                "Lorg/endurox/TPQCTL;")))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Failed to find data field in exception: %s");
+        }
+        else
+        {
+            /* set object */
+            (*env)->SetObjectField(env, exception, qctl_fldid, addarg1);
+
+        }        
     }
     
     /* throw finally */

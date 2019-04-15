@@ -172,13 +172,6 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
             }
         } /* if [B */
         
-        if((*env)->ExceptionCheck(env))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to convert C to Java Struct: %s");
-            EXFAIL_OUT(ret);
-        }
-        
         tab++;
     }
     
@@ -223,6 +216,7 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
         if (0==strcmp(tab->ftype, "J"))
         {
             long *cfld = (long *)(((char *)cobj)+ tab->coffset);
+            NDRX_LOG(log_error, "YOPT!!!!!!!!!!!! %ld", *cfld);
             (*env)->SetLongField(env, jobj, fid, (jlong)*cfld);
         }
         else if (0==strcmp(tab->ftype, "Ljava/lang/String;"))
@@ -249,14 +243,6 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
             (*env)->SetObjectField(env, jobj, fid, jb);
 
         } /* if [B */
-        
-        
-        if((*env)->ExceptionCheck(env))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to convert C to Java Struct: %s");
-            EXFAIL_OUT(ret);
-        }
         
         tab++;
     }
