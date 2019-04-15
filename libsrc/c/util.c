@@ -216,7 +216,6 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
         if (0==strcmp(tab->ftype, "J"))
         {
             long *cfld = (long *)(((char *)cobj)+ tab->coffset);
-            NDRX_LOG(log_error, "YOPT!!!!!!!!!!!! %ld", *cfld);
             (*env)->SetLongField(env, jobj, fid, (jlong)*cfld);
         }
         else if (0==strcmp(tab->ftype, "Ljava/lang/String;"))
