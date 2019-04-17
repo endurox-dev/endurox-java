@@ -211,6 +211,15 @@ public class AtmiCtx {
     }
     
     /**
+     * Create new ATMI Context, from existing C/external context.
+     * This does not perform C context deallocation
+     * @param ctx ptr to C context
+     */
+    public AtmiCtx(long ctx) {        
+        this.ctx = ctx;
+    }
+    
+    /**
      * Terminate XATMI Session. This does not remove the context.
      * To remove context (including XATMI terminate), use \ref cleanup() method.
      * @throws AtmiTPEPROTOException Called from XATMI server (main thread)
