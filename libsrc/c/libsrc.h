@@ -228,8 +228,8 @@ extern jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
 
 /* XA Driver */
 
-extern int ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
-            string_list_t **sets, char *clazz, int clazz_bufsz);
+extern int ndrxj_xa_cfgparse(char *buffer, string_list_t **props, int *nrprops,
+            string_list_t **sets, int *nrsets, char *clazz, int clazz_bufsz);
 
 #ifdef  __cplusplus
 }

@@ -292,4 +292,18 @@ out:
     return ret;
 }
 
+/**
+ * Convert array from C string list to java
+ * @param list Enduro/X string list
+ * @param nrel number of elements in string list
+ * @return Java array of string
+ * @return NULL on failure
+ */
+expublic jobjectArray ndrxj_cvt_arr_c_to_java(string_list_t *list, int nrel)
+{
+    jobjectArray ret= (jobjectArray)env->NewObjectArray(5,env->FindClass("java/lang/String"),env->NewStringUTF(""));
+
+    for(i=0;i<5;i++) env->SetObjectArrayElement(ret,i,env->NewStringUTF(data[i]));
+}
+
 /* vim: set ts=4 sw=4 et smartindent: */

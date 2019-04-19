@@ -107,15 +107,37 @@ expublic int ndrxj_xa_init(void)
 {
     int ret = EXSUCCEED;
     string_list_t *props = NULL;
+    int nrprops =0;
+    int nrsets = 0;
     string_list_t *sets = NULL;
     char class[PATH_MAX] = {EXEOS};
+    char *opensrv = getenv(CONF_NDRX_XA_OPEN_STR);
+    
+    jobjectArray jprops = NULL;
+    jobjectArray jsets = NULL;
+    jstring jclazz = NULL;
+    
     
     /* The JDBC driver shall library shall be added   */
     
     /* NDRX_XA_OPEN_STR -> json */
     
-    ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
-            string_list_t **sets, char *clazz, int clazz_bufsz);
+    if (EXSUCCEED!=ndrxj_xa_cfgparse(opensrv, &props, &nrprops, 
+        &sets, &nrsets, class, sizeof(class)))
+    {
+        NDRX_LOG(log_error, "Failed to parse %s env", CONF_NDRX_XA_OPEN_STR);
+        ret = TPEINVAL;
+        goto out;
+    }
+    
+    if (EXEOS==class[0])
+    {
+        NDRX_LOG(log_error, "Class name not specified!");
+        ret = TPEINVAL;
+        goto out;
+    }
+    
+    /* build list of strings to send to Java loader... */
     
     
 out:

@@ -65,37 +65,38 @@
  * set = ["SetHost<FS>192.168.0.1","SetPort<FS>7777"]
  * props = ["PROP<FS>VAL", "PROP2<FS>VAL2"]
  * 
- * @param buffer - json text to parse
+ * @param [in] buffer - json text to parse
  * @param [out] props - parsed properties of XA string. The key/value separator
  *  is "\n" - newline.
+ * @param [out] nrprops number of properties loaded
  * @param [out[ sets - parsed set commands. The key/value separator
  *  is "\n" - newline.
+ * @param [out] nrsets number of strings loaded in sets
+ * @param [out] clazz driver class
+ * @param [out] clazz_bufsz buffer size of class
  * @return SUCCEED/FAIL
  */
-expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
-            string_list_t **sets, char *clazz, int clazz_bufsz)
+expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **props, int *nrprops,
+            string_list_t **sets, int *nrsets, char *clazz, int clazz_bufsz)
 {
     int ret = EXSUCCEED;
     EXJSON_Value *root_value=NULL;
     EXJSON_Object *root_object;
     EXJSON_Object *sub_obj;    
     size_t i, cnt, j, sub_cnt;
-    int type;
     char *name, *sub_name;
     char    *str_val;
-    char *cstruct = NULL;
     char tmpbuf[2048];
     
     NDRX_LOG(log_debug, "Parsing buffer: [%s]", buffer);
 
     root_value = exjson_parse_string_with_comments(buffer);
-    type = exjson_value_get_type(root_value);
-    NDRX_LOG(log_debug, "Type is %d", type);
 
     if (exjson_value_get_type(root_value) != EXJSONObject)
     {
         NDRX_LOG(log_debug, "Failed to parse root element");
-        return NULL;
+        EXFAIL_OUT(ret);
+        goto out;
     }
     root_object = exjson_value_get_object(root_value);
 
@@ -144,22 +145,28 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
                     if (EXSUCCEED!=ndrx_string_list_add(props, tmpbuf))
                     {
                         NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
-                                tmbuf);
+                                tmpbuf);
                         EXFAIL_OUT(ret);
                     }
+                    (*nrprops)++;
                 }
                 else
                 {
-                    if (EXSUCCEED!=ndrx_string_list_add(props, tmpbuf))
+                    if (EXSUCCEED!=ndrx_string_list_add(sets, tmpbuf))
                     {
                         NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
-                                tmbuf);
+                                tmpbuf);
                         EXFAIL_OUT(ret);
                     }
+                    (*nrsets)++;
                 }
             }
+        } /* for settings */ 
+        else
+        {
+            NDRX_LOG(log_warn, "Skipping [%s] - unsupported", name);
         }
-    }
+    } /* for root object elements */
     
 out:
     /* cleanup code */
@@ -167,15 +174,8 @@ out:
     {
         exjson_value_free(root_value);
     }
-
-    if (EXSUCCEED!=ret && NULL!=cstruct)
-    {
-        tpfree(cstruct);
-        cstruct = NULL;
-    }
     
-    
-    return cstruct;
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
