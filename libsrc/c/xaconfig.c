@@ -42,37 +42,29 @@
 #include <ndebug.h>
 
 #include <exparson.h>
-#include <view2exjson.h>
 #include <ubf.h>
-#include <atmi_int.h>
-#include <typed_buf.h>
-#include <exbase64.h>
-
-#include "tperror.h"
-
 
 /*------------------------------Externs---------------------------------------*/
 /*------------------------------Macros----------------------------------------*/
-#define IS_INT(X) (BFLD_CHAR == X || BFLD_SHORT == X || BFLD_LONG == X || BFLD_INT == X)
-#define IS_NUM(X) (BFLD_SHORT == X || BFLD_LONG == X || BFLD_FLOAT == X || BFLD_DOUBLE == X)
-#define IS_BIN(X) (BFLD_CARRAY == X)
-
-/* TODO: Fix atmi buffer size to match size of ATMI buffer size. */
-#define CARR_BUFFSIZE       NDRX_MSGSIZEMAX
-#define CARR_BUFFSIZE_B64   (4 * (CARR_BUFFSIZE) / 3)
+#define NDRXJ_FS            0x1C
 /*------------------------------Enums-----------------------------------------*/
 /*------------------------------Typedefs--------------------------------------*/
 /*------------------------------Globals---------------------------------------*/
 /*------------------------------Statics---------------------------------------*/
 /*------------------------------Prototypes------------------------------------*/
 
-
-exprivate long round_long( double r ) {
-    return (r > 0.0) ? (r + 0.5) : (r - 0.5); 
-}
-
 /**
  * Parse XA Config.
+ * JSON to parse is following:
+ * 
+ * {"class":"org.postgresql.xa.PGXADataSource", "props":{"PROP":"VAL", "PROP2":"VAL2"}, 
+ *  "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
+ * 
+ * Output is following:
+ * class = "org.postgresql.xa.PGXADataSource"
+ * set = ["SetHost<FS>192.168.0.1","SetPort<FS>7777"]
+ * props = ["PROP<FS>VAL", "PROP2<FS>VAL2"]
+ * 
  * @param buffer - json text to parse
  * @param [out] props - parsed properties of XA string. The key/value separator
  *  is "\n" - newline.
@@ -80,28 +72,19 @@ exprivate long round_long( double r ) {
  *  is "\n" - newline.
  * @return SUCCEED/FAIL
  */
-expublic char* ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
-            string_list_t **sets)
+expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
+            string_list_t **sets, char *clazz, int clazz_bufsz)
 {
     int ret = EXSUCCEED;
     EXJSON_Value *root_value=NULL;
     EXJSON_Object *root_object;
-    
-    EXJSON_Object *view_object;
-    
-    EXJSON_Array *array;
-    size_t i, cnt, j, arr_cnt;
+    EXJSON_Object *sub_obj;    
+    size_t i, cnt, j, sub_cnt;
     int type;
-    char *name;
+    char *name, *sub_name;
     char    *str_val;
-    double d_val;
-    int f_type;
-    short   bool_val;
-    char bin_buf[CARR_BUFFSIZE+1];
-    char    *s_ptr;
-    long vsize;
-    int cnametyp;
     char *cstruct = NULL;
+    char tmpbuf[2048];
     
     NDRX_LOG(log_debug, "Parsing buffer: [%s]", buffer);
 
@@ -112,7 +95,6 @@ expublic char* ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
     if (exjson_value_get_type(root_value) != EXJSONObject)
     {
         NDRX_LOG(log_debug, "Failed to parse root element");
-        ndrx_TPset_error_fmt(TPEINVAL, "exjson: Failed to parse root element");
         return NULL;
     }
     root_object = exjson_value_get_object(root_value);
@@ -120,310 +102,62 @@ expublic char* ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
     cnt = exjson_object_get_count(root_object);
     NDRX_LOG(log_debug, "cnt = %d", cnt);
     
-    if (NULL==(name = (char *)exjson_object_get_name(root_object, 0)))
+    for (i=0; i<cnt; i++)
     {
-	NDRX_LOG(log_error, "exjson: Invalid json no root VIEW object");
-	ndrx_TPset_error_msg(TPEINVAL, "exjson: Invalid json no root VIEW object");
-	EXFAIL_OUT(ret);
-    }
-    
-    vsize = Bvsizeof(name);
-    
-    if (vsize < 0)
-    {
-        NDRX_LOG(log_error, "Failed to get view [%s] size: %s", 
-                name, Bstrerror(Berror));
+        name = (char *)exjson_object_get_name(root_object, i);
         
-        ndrx_TPset_error_fmt(TPEINVAL, "Failed to get view [%s] size: %s", 
-                name, Bstrerror(Berror));
-        
-        EXFAIL_OUT(ret);
-    }
-    
-    NDRX_LOG(log_debug, "Allocating view [%s]: %ld", name, vsize);
-    
-    cstruct = tpalloc("VIEW", name, vsize);
-    
-    if (NULL==cstruct)
-    {
-        NDRX_LOG(log_error, "Failed to allocate view: %s", tpstrerror(tperrno));
-        /* error must be set already! */
-        EXFAIL_OUT(ret);
-    }
-
-    strcpy(view, name);
-    
-    view_object = exjson_object_get_object(root_object, name);
-    
-    if (NULL==view_object)
-    {
-        NDRX_LOG(log_error, "exjson: Failed to get view object");
-        ndrx_TPset_error_msg(TPESYSTEM, "exjson: Failed to get view object");
-        EXFAIL_OUT(ret);
-    }
-
-    cnt = exjson_object_get_count(view_object);
-    NDRX_LOG(log_debug, "cnt = %d", cnt);
-    
-    for (i =0; i< cnt; i++)
-    {
-        name = (char *)exjson_object_get_name(view_object, i);
-
-        NDRX_LOG(log_debug, "came: [%s]", name);
-        
-        if (EXFAIL==Bvoccur(cstruct, view, name, NULL, NULL, NULL, &cnametyp))
+        if (0==strcmp(name, "class"))
         {
-            NDRX_LOG(log_error, "Error getting field %s.%s infos: %s",
-                    view, name, Bstrerror(Berror));
-            
-            if (BNOCNAME==Berror)
+            sub_obj = exjson_object_get_object(root_object, name);
+            sub_cnt = exjson_object_get_count(sub_obj);
+                    
+            for (j=0; j<sub_cnt; j++)
             {
-                NDRX_LOG(log_debug, "%s.%s not found in view -> ignore",
-                        view, name);
-                continue;
-            }
-            else
-            {
-                ndrx_TPset_error_fmt(TPESYSTEM, "Failed to get %s.%s infos: %s",
-                        view, name, Bstrerror(Berror));
-                EXFAIL_OUT(ret);
+                sub_name = (char *)exjson_object_get_name(sub_obj, i);
+                
+                if (0==strcmp(sub_name, "class"))
+                {
+                    str_val = (char *)exjson_object_get_string(sub_obj, sub_name);
+                    NDRX_STRNCPY_SAFE(clazz, str_val, clazz_bufsz);
+                    NDRX_LOG(log_debug, "Got JDBC XA Class: [%s]", clazz);
+                }
             }
         }
-
-        switch ((f_type=exjson_value_get_type(exjson_object_get_value_at(view_object, i))))
+        else if (0==strcmp(name, "props") || 
+                0==strcmp(name, "set"))
         {
-            case EXJSONString:
+            sub_obj = exjson_object_get_object(root_object, name);
+            sub_cnt = exjson_object_get_count(sub_obj);
+                    
+            for (j=0; j<sub_cnt; j++)
             {
-                BFLDLEN str_len;
-                s_ptr = str_val = (char *)exjson_object_get_string(view_object, name);
-                NDRX_LOG(log_debug, "Str Value: [%s]", str_val);
-
-                /* If it is carray - parse hex... */
-                if (IS_BIN(cnametyp))
+                sub_name = (char *)exjson_object_get_name(sub_obj, i);
+                str_val = (char *)exjson_object_get_string(sub_obj, sub_name);
+                
+                /* Add to queue the argument - data seperator is newline ..*/
+                snprintf(tmpbuf, sizeof(tmpbuf), "%s%c%s", sub_name, NDRXJ_FS, str_val);
+                
+                NDRX_LOG(log_debug, "Got property: [%s]", tmpbuf);
+                
+                if (0==strcmp(name, "props"))
                 {
-                    size_t st_len;
-                    NDRX_LOG(log_debug, "Field is binary..."
-                            " convert from b64...");
-
-                    if (NULL==ndrx_base64_decode(str_val,
-                            strlen(str_val),
-                            &st_len,
-                            bin_buf))
+                    if (EXSUCCEED!=ndrx_string_list_add(props, tmpbuf))
                     {
-                        NDRX_LOG(log_debug, "Failed to "
-                                "decode base64!");
-                        
-                        ndrx_TPset_error_fmt(TPEINVAL, "Failed to "
-                                "decode base64: %s", name);
-                        
+                        NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
+                                tmbuf);
                         EXFAIL_OUT(ret);
                     }
-                    str_len = st_len;
-                    s_ptr = bin_buf;
-                    NDRX_LOG(log_debug, "got binary len [%d]", str_len);
                 }
                 else
                 {
-                    str_len = strlen(s_ptr);
-                }
-
-                if (EXSUCCEED!=CBvchg(cstruct, view, name, 0, s_ptr, 
-                        str_len, BFLD_CARRAY))
-                {
-                    NDRX_LOG(log_error, "Failed to set view field %s.%s: %s",
-                            view, name, Bstrerror(Berror));
-                    ndrx_TPset_error_fmt(TPESYSTEM, "Failed to set view field %s.%s: %s",
-                            view, name, Bstrerror(Berror));
-                    EXFAIL_OUT(ret);
-                }
-                
-                break;
-            }
-            case EXJSONNumber:
-            {
-                long l;
-                d_val = exjson_object_get_number(view_object, name);
-                NDRX_LOG(log_debug, "Double Value: [%lf]", d_val);
-
-                if (IS_INT(cnametyp))
-                {
-                    l = round_long(d_val);
-                    if (EXSUCCEED!=CBvchg(cstruct, view, name, 0, 
-                            (char *)&l, 0L, BFLD_LONG))
+                    if (EXSUCCEED!=ndrx_string_list_add(props, tmpbuf))
                     {
-                        NDRX_LOG(log_error, "Failed to set [%s] to [%ld]!", 
-                            name, l);
-                        
-                        ndrx_TPset_error_fmt(TPESYSTEM, "Failed to set [%s] to [%ld]!", 
-                            name, l);
-                        
+                        NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
+                                tmbuf);
                         EXFAIL_OUT(ret);
                     }
                 }
-                else if (EXSUCCEED!=CBvchg(cstruct, view, name, 0, 
-                        (char *)&d_val, 0L, BFLD_DOUBLE))
-                {
-                    NDRX_LOG(log_error, "Failed to set [%s] to [%lf]: %s", 
-                            name, d_val, Bstrerror(Berror));
-                    
-                    ndrx_TPset_error_fmt(TPESYSTEM, "Failed to set [%s] to [%lf]: %s", 
-                            name, d_val, Bstrerror(Berror));
-                    
-                    EXFAIL_OUT(ret);
-                }
             }
-                    break;
-            case EXJSONBoolean:
-            {
-                bool_val = (short)exjson_object_get_boolean(view_object, name);
-                NDRX_LOG(log_debug, "Bool Value: [%hd]", bool_val);
-                if (EXSUCCEED!=CBvchg(cstruct, view, name, 0, 
-                        (char *)&bool_val, 0L, BFLD_SHORT))
-                {
-                    NDRX_LOG(log_error, "Failed to set [%s] to [%hd]: %s", 
-                            name, bool_val, Bstrerror(Berror));
-                    
-                    ndrx_TPset_error_fmt(TPESYSTEM, "Failed to set [%s] to [%hd]: %s", 
-                            name, bool_val, Bstrerror(Berror));
-                    
-                    EXFAIL_OUT(ret);
-                }
-            }
-            break;
-            /* Fielded buffer fields with more than one occurrance will go to array: 
-             * Stuff here is almost identicial to above!
-             */
-            case EXJSONArray:
-            {
-                if (NULL==(array = exjson_object_get_array(view_object, name)))
-                {
-                    NDRX_LOG(log_error, "Failed to get array object!");
-                    ndrx_TPset_error_fmt(TPESYSTEM, "Failed to get array object!");
-                    EXFAIL_OUT(ret);
-                }
-                arr_cnt = exjson_array_get_count(array);
-
-                for (j = 0; j<arr_cnt; j++ )
-                {
-                    switch (f_type = exjson_value_get_type(
-                            exjson_array_get_value(array, j)))
-                    {
-                        case EXJSONString:
-                        {
-                            BFLDLEN str_len;
-                            s_ptr = str_val = (char *)exjson_array_get_string(array, j);
-                            NDRX_LOG(log_debug, 
-                                        "Array j=%d, Str Value: [%s]", j, str_val);
-
-                            /* If it is carray - parse hex... */
-                            if (IS_BIN(cnametyp))
-                            {
-                                size_t st_len;
-                                if (NULL==ndrx_base64_decode(str_val,
-                                        strlen(str_val),
-                                        &st_len,
-                                        bin_buf))
-                                {
-                                    NDRX_LOG(log_debug, "Failed to "
-                                            "decode base64!");
-                                    
-                                    ndrx_TPset_error_fmt(TPEINVAL, "Failed to "
-                                            "decode base64!");
-                                    
-                                    EXFAIL_OUT(ret);
-                                }
-                                str_len = st_len;
-                                s_ptr = bin_buf;
-                                NDRX_LOG(log_debug, "got binary len [%d]", str_len);
-                            }
-                            else
-                            {
-                                str_len = strlen(s_ptr);
-                            }
-
-                            if (EXSUCCEED!=CBvchg(cstruct, view, name, j, 
-                                    s_ptr, str_len, BFLD_CARRAY))
-                            {
-                                NDRX_LOG(log_error, "Failed to set [%s] to [%s]: %s", 
-                                        name, str_val, Bstrerror(Berror));
-                                ndrx_TPset_error_fmt(TPESYSTEM, "Failed to set [%s] "
-                                        "to [%s]: %s", 
-                                        name, str_val, Bstrerror(Berror));
-                                
-                                EXFAIL_OUT(ret);
-                            }
-                        }
-                        break;
-                        case EXJSONNumber:
-                        {
-                            long l;
-                            d_val = exjson_array_get_number(array, j);
-                            NDRX_LOG(log_debug, "Array j=%d, Double Value: [%lf]", j, d_val);
-
-                            if (IS_INT(cnametyp))
-                            {
-                                l = round_long(d_val);
-                                NDRX_LOG(log_debug, "Array j=%d, Long value: [%ld]", j, l);
-                                if (EXSUCCEED!=CBvchg(cstruct, view, name, j, 
-                                        (char *)&l, 0L, BFLD_LONG))
-                                {
-                                        NDRX_LOG(log_error, "Failed to set [%s] to [%ld]: %s", 
-                                                name, l, Bstrerror(Berror));
-                                        
-                                        ndrx_TPset_error_fmt(TPESYSTEM, 
-                                                "Failed to set [%s] to [%ld]: %s", 
-                                                name, l, Bstrerror(Berror));
-                                        
-                                        EXFAIL_OUT(ret);
-                                }
-                            }
-                            else if (EXSUCCEED!=CBvchg(cstruct, view, name, j, 
-                                    (char *)&d_val, 0L, BFLD_DOUBLE))
-                            {
-                                NDRX_LOG(log_error, "Failed to set [%s] to [%lf]: %s", 
-                                        name, d_val, Bstrerror(Berror));
-                                
-                                ndrx_TPset_error_fmt(TPESYSTEM,"Failed to set "
-                                        "[%s] to [%lf]: %s", 
-                                        name, d_val, Bstrerror(Berror));
-                                
-                                EXFAIL_OUT(ret);
-                            }
-                        }
-                        break;
-                        case EXJSONBoolean:
-                        {
-                            bool_val = (short)exjson_array_get_boolean(array, j);
-                            NDRX_LOG(log_debug, "Array j=%d, Bool Value: [%hd]", j, bool_val);
-                            if (EXSUCCEED!=CBvchg(cstruct, view, name, j, 
-                                    (char *)&bool_val, 0L, BFLD_SHORT))
-                            {
-                                NDRX_LOG(log_error, "Failed to set [%s] to [%hd]: %s", 
-                                        name, bool_val, Bstrerror(Berror));
-                                
-                                ndrx_TPset_error_fmt(TPESYSTEM,"Failed to set "
-                                        "[%s] to [%hd]: %s", 
-                                        name, bool_val, Bstrerror(Berror));
-                                
-                                EXFAIL_OUT(ret);
-                            }
-                        }
-                        default:
-                            NDRX_LOG(log_error, 
-                                        "Unsupported array elem "
-                                        "type: %d", f_type);                            
-                        break;
-                    }
-                }
-
-            }
-            break;
-            default:
-            {
-                NDRX_LOG(log_error, "Unsupported type: %d", f_type);
-            }
-            break;
-
         }
     }
     

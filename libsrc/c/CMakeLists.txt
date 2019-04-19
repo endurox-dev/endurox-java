@@ -89,6 +89,8 @@ add_library (exjava SHARED
                 util.c
                 tpenqueue.c
                 tpdequeue.c
+                xa.c
+                xaconfig.c
 	)
 
 if(Java_VERSION VERSION_LESS 1.10)

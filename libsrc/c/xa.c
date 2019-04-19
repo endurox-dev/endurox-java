@@ -98,6 +98,31 @@ struct xa_switch_t ndrxdumssw =
 };
 
 /**
+ * Perform init of the xa driver
+ * this will parse the open string and will create XADataSource
+ * the class name also needs to be set in the ini file.,
+ * {"class":"org.postgresql.xa.PGXADataSource", "props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
+ */
+expublic int ndrxj_xa_init(void)
+{
+    int ret = EXSUCCEED;
+    string_list_t *props = NULL;
+    string_list_t *sets = NULL;
+    char class[PATH_MAX] = {EXEOS};
+    
+    /* The JDBC driver shall library shall be added   */
+    
+    /* NDRX_XA_OPEN_STR -> json */
+    
+    ndrxj_xa_cfgparse(char *buffer, string_list_t **props,
+            string_list_t **sets, char *clazz, int clazz_bufsz);
+    
+    
+out:
+    return ret;
+}
+
+/**
  * Open API.
  * This is called per thread. For java this will open an connection.
  * The connection handler must be kept within ATMI Context.
@@ -139,7 +164,6 @@ exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lo
 {
     NDRX_LOG(log_error, "xa_close_entry() called");
     
-    M_is_open = EXFALSE;
     return XA_OK;
 }
 
@@ -154,12 +178,6 @@ exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lo
  */
 exprivate int xa_start_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_start_entry() - XA not open!");
-        return XAER_RMERR;
-    }
-    
     return XA_OK;
 }
 
@@ -173,11 +191,6 @@ exprivate int xa_start_entry(struct xa_switch_t *sw, XID *xid, int rmid, long fl
  */
 exprivate int xa_end_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_end_entry() - XA not open!");
-        return XAER_RMERR;
-    }
     
 out:
     
@@ -194,12 +207,6 @@ out:
  */
 exprivate int xa_rollback_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_rollback_entry() - XA not open!");
-        return XAER_RMERR;
-    }
-    
     return XA_OK;
 }
 
@@ -213,11 +220,6 @@ exprivate int xa_rollback_entry(struct xa_switch_t *sw, XID *xid, int rmid, long
  */
 exprivate int xa_prepare_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_prepare_entry() - XA not open!");
-        return XAER_RMERR;
-    }
     
     return XA_OK;
 }
@@ -232,12 +234,6 @@ exprivate int xa_prepare_entry(struct xa_switch_t *sw, XID *xid, int rmid, long 
  */
 exprivate int xa_commit_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_commit_entry() - XA not open!");
-        return XAER_RMERR;
-    }
-    
     return XA_OK;
 }
 
@@ -252,12 +248,6 @@ exprivate int xa_commit_entry(struct xa_switch_t *sw, XID *xid, int rmid, long f
  */
 exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_recover_entry() - XA not open!");
-        return XAER_RMERR;
-    }
-    
     return 0; /* 0 transactions found... */
 }
 
@@ -271,11 +261,6 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
  */
 exprivate int xa_forget_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-   if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_forget_entry() - XA not open!");
-        return XAER_RMERR;
-    }
     
     NDRX_LOG(log_error, "xa_forget_entry() - not implemented!!");
     return XA_OK;
@@ -292,11 +277,6 @@ exprivate int xa_forget_entry(struct xa_switch_t *sw, XID *xid, int rmid, long f
  */
 exprivate int xa_complete_entry(struct xa_switch_t *sw, int *handle, int *retval, int rmid, long flags)
 {
-    if (!M_is_open)
-    {
-        NDRX_LOG(log_error, "xa_complete_entry() - XA not open!");
-        return XAER_RMERR;
-    }
     
     NDRX_LOG(log_error, "xa_complete_entry() - not using!!");
     return XAER_RMERR;
@@ -358,8 +338,6 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
 {
     return &ndrxdumssw;
 }
-
-
 
 
 /* vim: set ts=4 sw=4 et smartindent: */
