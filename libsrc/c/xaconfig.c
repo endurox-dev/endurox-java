@@ -66,9 +66,6 @@
  * props = ["PROP<FS>VAL", "PROP2<FS>VAL2"]
  * 
  * @param [in] buffer - json text to parse
- * @param [out] props - parsed properties of XA string. The key/value separator
- *  is "\n" - newline.
- * @param [out] nrprops number of properties loaded
  * @param [out[ sets - parsed set commands. The key/value separator
  *  is "\n" - newline.
  * @param [out] nrsets number of strings loaded in sets
@@ -76,17 +73,19 @@
  * @param [out] clazz_bufsz buffer size of class
  * @return SUCCEED/FAIL
  */
-expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **props, int *nrprops,
-            string_list_t **sets, int *nrsets, char *clazz, int clazz_bufsz)
+expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets, 
+        char *clazz, int clazz_bufsz)
 {
     int ret = EXSUCCEED;
     EXJSON_Value *root_value=NULL;
     EXJSON_Object *root_object;
-    EXJSON_Object *sub_obj;    
-    size_t i, cnt, j, sub_cnt;
-    char *name, *sub_name;
+    EXJSON_Object *sub_obj;
+    EXJSON_Object *sub_obj2;
+    size_t i, cnt, j, sub_cnt, sub_cnt2, n;
+    char *name, *sub_name, *sub_name2;
     char    *str_val;
     char tmpbuf[2048];
+    int typ;
     
     NDRX_LOG(log_debug, "Parsing buffer: [%s]", buffer);
 
@@ -109,57 +108,105 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **props, int *nrprops
         
         if (0==strcmp(name, "class"))
         {
+            
+            typ = exjson_value_get_type(exjson_object_get_value_at(root_object, i));
+
+            if (EXJSONString!=typ)
+            {
+                NDRX_LOG(log_error, "Invalid type %d for `class', must be string", 
+                        typ);
+                EXFAIL_OUT(ret);
+            }
+            
+            str_val = (char *)exjson_object_get_string(root_object, name);
+            NDRX_STRNCPY_SAFE(clazz, str_val, clazz_bufsz);
+            NDRX_LOG(log_debug, "Got JDBC XA Class: [%s]", clazz);
+
+        }
+        else if (0==strcmp(name, "set"))
+        {
+            
+            typ = exjson_value_get_type(exjson_object_get_value_at(root_object, i));
+
+            if (EXJSONObject!=typ)
+            {
+                NDRX_LOG(log_error, "Invalid type %d for `set', must be Object", 
+                        typ);
+                EXFAIL_OUT(ret);
+            }
+            
+            /* get the object there... and loop over
+             * it might contain only String keys
+             * or object
+             */
             sub_obj = exjson_object_get_object(root_object, name);
             sub_cnt = exjson_object_get_count(sub_obj);
                     
             for (j=0; j<sub_cnt; j++)
             {
-                sub_name = (char *)exjson_object_get_name(sub_obj, i);
                 
-                if (0==strcmp(sub_name, "class"))
+                sub_name = (char *)exjson_object_get_name(sub_obj, i);
+                typ = exjson_value_get_type(exjson_object_get_value_at(sub_obj, i));
+
+                /* Check the type it must be object or string! */
+                if (EXJSONObject!=typ && EXJSONString!=typ)
+                {
+                    NDRX_LOG(log_error, "Invalid type for `set.%s' expected "
+                            "object or string, but got: %d", sub_name, typ);
+                    EXFAIL_OUT(ret);
+                }
+                
+                if (EXJSONString!=typ)
                 {
                     str_val = (char *)exjson_object_get_string(sub_obj, sub_name);
-                    NDRX_STRNCPY_SAFE(clazz, str_val, clazz_bufsz);
-                    NDRX_LOG(log_debug, "Got JDBC XA Class: [%s]", clazz);
-                }
-            }
-        }
-        else if (0==strcmp(name, "props") || 
-                0==strcmp(name, "set"))
-        {
-            sub_obj = exjson_object_get_object(root_object, name);
-            sub_cnt = exjson_object_get_count(sub_obj);
-                    
-            for (j=0; j<sub_cnt; j++)
-            {
-                sub_name = (char *)exjson_object_get_name(sub_obj, i);
-                str_val = (char *)exjson_object_get_string(sub_obj, sub_name);
-                
-                /* Add to queue the argument - data seperator is newline ..*/
-                snprintf(tmpbuf, sizeof(tmpbuf), "%s%c%s", sub_name, NDRXJ_FS, str_val);
-                
-                NDRX_LOG(log_debug, "Got property: [%s]", tmpbuf);
-                
-                if (0==strcmp(name, "props"))
-                {
-                    if (EXSUCCEED!=ndrx_string_list_add(props, tmpbuf))
-                    {
-                        NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
-                                tmpbuf);
-                        EXFAIL_OUT(ret);
-                    }
-                    (*nrprops)++;
+                    /* Add to queue the argument - data seperator is newline ..*/
+                    snprintf(tmpbuf, sizeof(tmpbuf), "%s%c%s", sub_name, NDRXJ_FS, str_val);
                 }
                 else
                 {
-                    if (EXSUCCEED!=ndrx_string_list_add(sets, tmpbuf))
+                    /* step inside */
+                    int len;
+                    char tmp2[2] = {NDRXJ_FS, EXEOS};
+                    NDRX_STRCPY_SAFE(tmpbuf, sub_name);
+                    /* add first sep */
+                    NDRX_STRCAT_S(tmpbuf, sizeof(tmpbuf), tmp2);
+                    
+                    sub_obj2 = exjson_object_get_object(sub_obj, name);
+                    sub_cnt2 = exjson_object_get_count(sub_obj);
+                    
+                    for (n=0; n<sub_cnt2; n++)
                     {
-                        NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
-                                tmpbuf);
-                        EXFAIL_OUT(ret);
+                        sub_name2 = (char *)exjson_object_get_name(sub_obj, n);
+                        typ = exjson_value_get_type(exjson_object_get_value_at(sub_obj2, n));
+                        
+                        if (EXJSONString!=typ)
+                        {
+                            NDRX_LOG(log_error, "Invalid type %d for `set.%s.%s', must be string", 
+                                    typ, sub_name, sub_name2);
+                            EXFAIL_OUT(ret);
+                        }
+                        str_val = (char *)exjson_object_get_string(sub_obj2, sub_name2);
+                        
+                        len = strlen(tmpbuf);
+                        
+                        snprintf(tmpbuf+len, sizeof(tmpbuf) - len, "%s%c%s", sub_name2, 
+                                NDRXJ_FS, str_val);
                     }
-                    (*nrsets)++;
                 }
+                
+                /* Check the value type, if it is sub-object
+                 * then probably we need to load as "properties" driver...
+                 */
+                NDRX_LOG(log_debug, "Got Setting: [%s]", tmpbuf);
+                
+                if (EXSUCCEED!=ndrx_string_list_add(sets, tmpbuf))
+                {
+                    NDRX_LOG(log_error, "Failed to add props to list: [%s]", 
+                            tmpbuf);
+                    EXFAIL_OUT(ret);
+                }
+                
+                (*nrsets)++;
             }
         } /* for settings */ 
         else

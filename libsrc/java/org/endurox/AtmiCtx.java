@@ -34,15 +34,34 @@
 package org.endurox;
 
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import org.endurox.exceptions.AtmiTPEINVALException;
 import org.endurox.exceptions.AtmiTPESYSTEMException;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.sql.XADataSource;
+import org.endurox.exceptions.AtmiTPEBADDESCException;
+import org.endurox.exceptions.AtmiTPEBLOCKException;
+import org.endurox.exceptions.AtmiTPEDIAGNOSTICException;
+import org.endurox.exceptions.AtmiTPELIMITException;
+import org.endurox.exceptions.AtmiTPENOENTException;
 import org.endurox.exceptions.AtmiTPEOSException;
+import org.endurox.exceptions.AtmiTPEPROTOException;
+import org.endurox.exceptions.AtmiTPESVCERRException;
+import org.endurox.exceptions.AtmiTPESVCFAILException;
+import org.endurox.exceptions.AtmiTPETIMEException;
+import org.endurox.exceptions.UbfBALIGNERRException;
+import org.endurox.exceptions.UbfBBADFLDException;
+import org.endurox.exceptions.UbfBBADNAMEException;
+import org.endurox.exceptions.UbfBNOTFLDException;
+import org.endurox.exceptions.UbfBNOTPRESException;
+import org.endurox.exceptions.UbfBSYNTAXException;
+import org.endurox.exceptions.UbfBTYPERRException;
 
 /*! @mainpage Enduro/X Programming main page
  *
@@ -85,6 +104,12 @@ public class AtmiCtx {
      * Pointer to C ATMI Context object
      */
     long ctx = 0;
+    
+    /**
+     * XA Data source for distributed transaction processing
+     * This is singleton shared between threads
+     */
+    static XADataSource xads = null;
 
     /**
      * Get The C Context
@@ -1314,6 +1339,150 @@ public class AtmiCtx {
             TPQCTL ctl, TypedBuffer odata, long flags);
 
     /** @} */ // end of Queue
+    
+    /**
+     * Initialize XA Data source
+     * @param clazz class to create
+     * @param props array of properties to set for data source class
+     *  each line consists of key<FS>value
+     * @param sets  setting to set for data source class
+     *  each line consists of key (func name)<FS>value
+     * @return TPERROR Code, so that it can be used from C side.
+     */
+    public int initXADataSource(String clazz, String []sets) {
+        
+        Class cls = null;
+        
+        tplogInfo("Initalizing XADataSource: [%s]", clazz);
+        
+        try {
+            cls = Class.forName(clazz);
+        }
+        catch (ClassNotFoundException ex) {
+            
+            tplogex(AtmiConst.LOG_ERROR, String.format("XA Datsource class not found [%s]", 
+                    clazz), ex);
+            
+            return AtmiConst.TPEINVAL; /* <<<< Return! */
+        }
+        
+        try {
+            xads = (XADataSource) cls.newInstance();
+        } 
+        catch (Exception ex) {
+            
+            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to create intance of [%s]", 
+                    clazz), ex);
+            return AtmiConst.TPEINVAL; /* <<<< Return! */
+        }
+        
+        
+        Method m[] = cls.getMethods();
+         
+        /* Load the sets... */
+        for (int i=0; i<sets.length; i++) {
+            
+            String []setting = sets[i].split(Character.toString((char)0x1c));
+            Properties p = null;
+            
+            if (setting.length > 2)
+            {
+                p = new Properties();
+                
+                tplogDebug("This is property type with %d props for %s", 
+                        (setting.length-1) / 2, setting[0]);
+                
+                /* Load properties values */
+                for (int j=1; j<setting.length; j+=2)
+                {
+                    tplogDebug("Setting param [%s] property [%s] to value [%s]",
+                            setting[0], setting[j], setting[j+1]);
+                    
+                    p.setProperty(setting[j], setting[j+1]);
+                }
+            }
+            else
+            {
+                tplogDebug("Setting param [%s] to value [%s]",
+                            setting[0] , setting[1]);
+            }
+            
+            /* Find the correspoding method and check it's data types.. */
+            for(int j = 0; j < m.length; j++) {
+                
+                if (m[j].getName().equals(setting[0]))
+                {
+                    tplogDebug("Testing method: %s", m[j].getName());
+                    
+                    /* Check arguments */
+                    
+                    if (m[j].getParameterCount() !=1)
+                    {
+                        tplogWarn("Ignoring [%s] with %d argruments, expected 1", 
+                                m[j].getName(), m[j].getParameterCount());
+                        continue;
+                    }
+                    
+                    /* test first argument type.. */
+                    
+                    String ptype = m[j].getParameters()[0].getType().getName();
+                    try {
+                        
+                        if (null==p && ptype.equals("[Ljava.util.Properties;") ||
+                                null!=p && !ptype.equals("[Ljava.util.Properties;")) {
+                            tplogError("Invalid parameter for [%s] either it needs properties, "
+                                    + "or properties have given to primitive setting", setting[0]);
+                            return AtmiConst.TPEINVAL;
+                        }
+                        
+                        /* Load short */
+                        if (ptype.equals("[S") || ptype.equals("[Ljava.lang.Short;")) {
+
+                            short s = Short.valueOf(setting[1]);
+                            m[j].invoke(xads, s);
+                        } 
+                        else if (ptype.equals("[J") || ptype.equals("[Ljava.lang.Long;")) {
+                            long l = Long.valueOf(setting[1]);
+                            m[j].invoke(xads, l);
+                        }
+                        else if (ptype.equals("[B") || ptype.equals("[Ljava.lang.Byte;")) {
+
+                            byte b = Byte.valueOf(setting[1]);
+                            m[j].invoke(xads, b);
+                        }
+                        else if (ptype.equals("[F") || ptype.equals("[Ljava.lang.Float;")) {
+                            float f = Float.valueOf(setting[1]);
+                            m[j].invoke(xads, f);
+                        }
+                        else if (ptype.equals("[D") || ptype.equals("[Ljava.lang.Double;")) {
+                            double d = Double.valueOf(setting[1]);
+                            m[j].invoke(xads, d);
+                        }
+                        else if (ptype.equals("[Z") || ptype.equals("[Ljava.lang.Boolean;")) {
+                            Boolean b = Boolean.valueOf(setting[1]);
+                            m[j].invoke(xads, b);
+                        }
+                        else if (ptype.equals("[Ljava.lang.String;")) {
+                            m[j].invoke(xads, setting[0]);
+                        }
+                        else if (ptype.equals("Ljava.util.Properties;")) {
+                            m[j].invoke(xads, p);
+                        }
+                    } 
+                    catch (Exception ex) {
+                        tplogex(AtmiConst.LOG_ERROR, String.format("Failed to apply setting [%s]", 
+                            setting[0]), ex);
+                        return AtmiConst.TPEINVAL; /* <<<< Return! */
+                    }
+                }
+            } /* for methods in class */
+            
+        } /* for set arguments */        
+        
+        tplogInfo("XA Data Source [%s] registered OK", clazz);
+        
+        return AtmiConst.SUCCEED;
+    }
     
 }
 

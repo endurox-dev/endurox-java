@@ -110,27 +110,27 @@ expublic int ndrxj_xa_init(void)
     int nrprops =0;
     int nrsets = 0;
     string_list_t *sets = NULL;
-    char class[PATH_MAX] = {EXEOS};
+    char clazz[PATH_MAX] = {EXEOS};
     char *opensrv = getenv(CONF_NDRX_XA_OPEN_STR);
     
-    jobjectArray jprops = NULL;
     jobjectArray jsets = NULL;
     jstring jclazz = NULL;
+    
+    ndrx_ctx_priv_t ctxpriv;
     
     
     /* The JDBC driver shall library shall be added   */
     
     /* NDRX_XA_OPEN_STR -> json */
     
-    if (EXSUCCEED!=ndrxj_xa_cfgparse(opensrv, &props, &nrprops, 
-        &sets, &nrsets, class, sizeof(class)))
+    if (EXSUCCEED!=ndrxj_xa_cfgparse(opensrv, &sets, &nrsets, clazz, sizeof(clazz)))
     {
         NDRX_LOG(log_error, "Failed to parse %s env", CONF_NDRX_XA_OPEN_STR);
         ret = TPEINVAL;
         goto out;
     }
     
-    if (EXEOS==class[0])
+    if (EXEOS==clazz[0])
     {
         NDRX_LOG(log_error, "Class name not specified!");
         ret = TPEINVAL;
@@ -139,8 +139,39 @@ expublic int ndrxj_xa_init(void)
     
     /* build list of strings to send to Java loader... */
     
+    ndrx_ctx_priv_get(&ctxpriv);
+    
+    if (NULL==(jsets = ndrxj_cvt_arr_c_to_java((JNIEnv *)ctxpriv.integptr1, 
+        sets, nrsets)))
+    {
+        NDRX_LOG(log_error, "Failed to coverts sets to Java");
+        ret = TPESYSTEM;
+        goto out;
+    }
+    
+    /* get the class string */
+    jclazz = (*((JNIEnv *)ctxpriv.integptr1))->NewStringUTF((JNIEnv *)ctxpriv.integptr1, 
+            clazz);
+    
+    if (NULL==jclazz)
+    {
+        NDRX_LOG(log_error, "Failed to coverts sets to Java");
+        ret = TPESYSTEM;
+        goto out;
+    }
+    
+    /* lets initialize the class..., invoke the ATMI Context. 
+     * so needs to find class, lets find method and then call it.
+     */
+    
+    
     
 out:
+        
+    /* TODO: Check exception and log it. */
+    
+    /* clear up references... */
+    
     return ret;
 }
 

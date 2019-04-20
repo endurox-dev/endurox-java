@@ -294,16 +294,30 @@ out:
 
 /**
  * Convert array from C string list to java
+ * @param env java env
  * @param list Enduro/X string list
  * @param nrel number of elements in string list
  * @return Java array of string
  * @return NULL on failure
  */
-expublic jobjectArray ndrxj_cvt_arr_c_to_java(string_list_t *list, int nrel)
+expublic jobjectArray ndrxj_cvt_arr_c_to_java(JNIEnv *env, string_list_t *list, int nrel)
 {
-    jobjectArray ret= (jobjectArray)env->NewObjectArray(5,env->FindClass("java/lang/String"),env->NewStringUTF(""));
+    jstring str;
+    jobjectArray ret = NULL;
+    int i;
+    string_list_t *el;
+    
+    ret = (*env)->NewObjectArray(env,(jsize)nrel,(*env)->FindClass(env,"java/lang/String"),0);
 
-    for(i=0;i<5;i++) env->SetObjectArrayElement(ret,i,env->NewStringUTF(data[i]));
+    for (el=list, i=0; el; el=el->next, i++)
+    {
+        str = (*env)->NewStringUTF(env, el->qname);
+
+        (*env)->SetObjectArrayElement(env,ret,i,str);
+        (*env)->DeleteLocalRef(env, str);
+    }
+    
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
