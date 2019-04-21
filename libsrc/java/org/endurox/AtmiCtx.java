@@ -35,6 +35,7 @@ package org.endurox;
 
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,7 +45,9 @@ import org.endurox.exceptions.AtmiTPESYSTEMException;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.sql.XAConnection;
 import javax.sql.XADataSource;
+import javax.transaction.xa.Xid;
 import org.endurox.exceptions.AtmiTPEBADDESCException;
 import org.endurox.exceptions.AtmiTPEBLOCKException;
 import org.endurox.exceptions.AtmiTPEDIAGNOSTICException;
@@ -110,6 +113,17 @@ public class AtmiCtx {
      * This is singleton shared between threads
      */
     static XADataSource xads = null;
+    
+    /**
+     * XA Connection handler, i.e. if the context have invoked
+     * tpopen().
+     */
+    XAConnection connXA = null;
+    
+    /**
+     * Currently active connection
+     */
+    Connection conn = null;
 
     /**
      * Get The C Context
@@ -1342,6 +1356,7 @@ public class AtmiCtx {
     
     /**
      * Initialize XA Data source
+     * Access from package only.
      * @param clazz class to create
      * @param props array of properties to set for data source class
      *  each line consists of key<FS>value
@@ -1349,7 +1364,7 @@ public class AtmiCtx {
      *  each line consists of key (func name)<FS>value
      * @return TPERROR Code, so that it can be used from C side.
      */
-    public int initXADataSource(String clazz, String []sets) {
+    int xa_open_entry(String clazz, String []sets) {
         
         Class cls = null;
         

@@ -1248,7 +1248,7 @@ exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
     if (NULL==ba)
     {
         NDRXJ_LOG_EXCEPTION((ctl->env), log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to create byte array with: %s, size: %d", (int)datalen);
+                "Failed to create byte array with size: %d: %s", (int)datalen);
         EXFAIL_OUT(ret);
     }
     

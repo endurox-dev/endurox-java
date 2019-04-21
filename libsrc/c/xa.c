@@ -102,22 +102,21 @@ struct xa_switch_t ndrxdumssw =
  * this will parse the open string and will create XADataSource
  * the class name also needs to be set in the ini file.,
  * {"class":"org.postgresql.xa.PGXADataSource", "props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
+ * TODO: Move To XA Errors!
  */
-expublic int ndrxj_xa_init(void)
+expublic int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
 {
     int ret = EXSUCCEED;
-    string_list_t *props = NULL;
-    int nrprops =0;
     int nrsets = 0;
     string_list_t *sets = NULL;
     char clazz[PATH_MAX] = {EXEOS};
     char *opensrv = getenv(CONF_NDRX_XA_OPEN_STR);
-    
     jobjectArray jsets = NULL;
     jstring jclazz = NULL;
+    ndrx_ctx_priv_t *ctxpriv;
+    jmethodID mid;
     
-    ndrx_ctx_priv_t ctxpriv;
-    
+    jclass ctxClass = NULL;
     
     /* The JDBC driver shall library shall be added   */
     
@@ -139,9 +138,9 @@ expublic int ndrxj_xa_init(void)
     
     /* build list of strings to send to Java loader... */
     
-    ndrx_ctx_priv_get(&ctxpriv);
+    ctxpriv = ndrx_ctx_priv_get();
     
-    if (NULL==(jsets = ndrxj_cvt_arr_c_to_java((JNIEnv *)ctxpriv.integptr1, 
+    if (NULL==(jsets = ndrxj_cvt_arr_c_to_java((JNIEnv *)ctxpriv->integptr1, 
         sets, nrsets)))
     {
         NDRX_LOG(log_error, "Failed to coverts sets to Java");
@@ -150,7 +149,7 @@ expublic int ndrxj_xa_init(void)
     }
     
     /* get the class string */
-    jclazz = (*((JNIEnv *)ctxpriv.integptr1))->NewStringUTF((JNIEnv *)ctxpriv.integptr1, 
+    jclazz = (*((JNIEnv *)ctxpriv->integptr1))->NewStringUTF((JNIEnv *)ctxpriv->integptr1, 
             clazz);
     
     if (NULL==jclazz)
@@ -164,49 +163,78 @@ expublic int ndrxj_xa_init(void)
      * so needs to find class, lets find method and then call it.
      */
     
+    /* Get the class for the context object */
+    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2);
     
+    if (NULL==ctxClass)
+    {
+        NDRX_LOG(log_error, "Failed to get ctx object class");
+        ret = TPESYSTEM;
+        goto out;
+    }
+    
+    /* Get the method id  */
+    
+    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+        ctxClass, "xa_open_entry",
+        "(Ljava/lang/String;[Ljava/lang/String;)I");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Failed to get initXADataSource() method!");
+        ret = TPESYSTEM;
+        goto out;
+    }
+    
+    /* Call the method */
+    ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2, mid, jclazz, jsets);
+    
+    if (EXSUCCEED!=ret)
+    {
+        NDRX_LOG(log_error, "Failed to create XA Data Source in Java side: %d",
+                tpstrerror(ret));
+        ret = TPESYSTEM;
+        goto out;
+    }
+    
+    NDRX_LOG(log_info, "XA Data Source [%s] registered OK", clazz);
     
 out:
-        
-    /* TODO: Check exception and log it. */
     
+    /* Check exception and log it. */
+    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    {
+        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to active XA Data Source class [%s]: %s", clazz);
+    }
+
     /* clear up references... */
+    if (NULL!=ctxClass)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                ctxClass);
+    }
+
+    if (NULL!=jsets)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                jsets);
+    }
+
+    if (NULL!=jclazz)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                jclazz);
+    }
     
     return ret;
 }
 
 /**
- * Open API.
- * This is called per thread. For java this will open an connection.
- * The connection handler must be kept within ATMI Context.
- * Active Java ATMI Context shall be stored in context data.
- * The open data shall be parsed with parson.
- * then configuration arrays as key:value props and sets must be loaded to java
- * The JSON could look like:
- * 
- * {"props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
- * 
- * This opens connection which in turn is stored in the ATMI Java Context.
- * 
- * @param switch 
- * @param xa_info
- * @param rmid
- * @param flags
- * @return 
- */
-exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
-{
-    
-    /* TODO: Do we need to check for existing open call?
-     * the handler shall be present in java side..
-     * So we need two string lists?
-     */
-             
-    return XA_OK;
-}
-
-/**
- * Close entry
+ * Close entry.
+ * This will remove connection & resource from Atmi Context
  * @param sw
  * @param xa_info
  * @param rmid
