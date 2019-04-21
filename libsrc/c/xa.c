@@ -102,9 +102,8 @@ struct xa_switch_t ndrxdumssw =
  * this will parse the open string and will create XADataSource
  * the class name also needs to be set in the ini file.,
  * {"class":"org.postgresql.xa.PGXADataSource", "props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
- * TODO: Move To XA Errors!
  */
-expublic int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
+expublic int ndrxj_xa_init(void)
 {
     int ret = EXSUCCEED;
     int nrsets = 0;
@@ -177,7 +176,7 @@ expublic int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long
     /* Get the method id  */
     
     mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
-        ctxClass, "xa_open_entry",
+        ctxClass, "initXADataSource",
         "(Ljava/lang/String;[Ljava/lang/String;)I");
     
     if (NULL==mid)
@@ -233,8 +232,90 @@ out:
 }
 
 /**
+ * Open API.
+ * This is called per thread. For java this will open an connection.
+ * The connection handler must be kept within ATMI Context.
+ * Active Java ATMI Context shall be stored in context data.
+ * The open data shall be parsed with parson.
+ * then configuration arrays as key:value props and sets must be loaded to java
+ * The JSON could look like:
+ * 
+ * {"props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
+ * 
+ * This opens connection which in turn is stored in the ATMI Java Context.
+ * 
+ * @param switch 
+ * @param xa_info
+ * @param rmid
+ * @param flags
+ * @return 
+ */
+exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
+{
+    /* TODO: Do we need to check for existing open call?
+     * the handler shall be present in java side..
+     * So we need two string lists?
+     */
+    ndrx_ctx_priv_t *ctxpriv;
+    jmethodID mid;
+    jclass ctxClass = NULL;
+    int ret = XA_OK;
+    
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    /* Get the class for the context object */
+    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2);
+    
+    if (NULL==ctxClass)
+    {
+        NDRX_LOG(log_error, "Failed to get ctx object class");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* Get the method id  */
+    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+        ctxClass, "xa_open_entry",
+        "(J)I");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Failed to get xa_open_entry() method!");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2, mid, (jlong)0);
+    
+    NDRX_LOG(log_debug, "Java xa_open_entry returns %d", ret);
+    
+out:
+    
+    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    {
+        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+                "xa_open_entry failed: %s");
+        if (XA_OK==ret)
+        {
+            ret = XAER_RMERR;
+        }
+    }
+
+    /* clear up references... */
+    if (NULL!=ctxClass)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                ctxClass);
+    }
+    
+    return ret;
+}
+
+/**
  * Close entry.
- * This will remove connection & resource from Atmi Context
+ * This will close connections at java side only.
  * @param sw
  * @param xa_info
  * @param rmid
@@ -250,7 +331,7 @@ exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lo
 
 /**
  * Open text file in RMID folder. Create file by TXID.
- * Check for file existance. If start & not exists - ok .
+ * Check for file existence. If start & not exists - ok .
  * If exists and join - ok. Otherwise fail.
  * @param xa_info
  * @param rmid

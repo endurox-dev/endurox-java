@@ -36,6 +36,7 @@ package org.endurox;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -47,6 +48,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
+import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import org.endurox.exceptions.AtmiTPEBADDESCException;
 import org.endurox.exceptions.AtmiTPEBLOCKException;
@@ -118,12 +120,17 @@ public class AtmiCtx {
      * XA Connection handler, i.e. if the context have invoked
      * tpopen().
      */
-    XAConnection connXA = null;
+    XAConnection xaConn = null;
     
     /**
      * Currently active connection
      */
-    Connection conn = null;
+    Connection dbConn = null;
+    
+    /**
+     * Currently active resource
+     */
+    XAResource xaRes = null;
 
     /**
      * Get The C Context
@@ -1357,6 +1364,8 @@ public class AtmiCtx {
     /**
      * Initialize XA Data source
      * Access from package only.
+     * This just initalizes data source.
+     * tpopen() will acquire connection.
      * @param clazz class to create
      * @param props array of properties to set for data source class
      *  each line consists of key<FS>value
@@ -1364,7 +1373,7 @@ public class AtmiCtx {
      *  each line consists of key (func name)<FS>value
      * @return TPERROR Code, so that it can be used from C side.
      */
-    int xa_open_entry(String clazz, String []sets) {
+    int ndrxj_xa_init(String clazz, String []sets) {
         
         Class cls = null;
         
@@ -1499,6 +1508,103 @@ public class AtmiCtx {
         return AtmiConst.SUCCEED;
     }
     
+    /**
+     * Open XA Entry / Get Connect
+     * @param flags not used
+     * @return XA_OK, XAER_RMERR
+     */
+    int xa_open_entry(long flags) {
+        
+        int ret = AtmiConst.XA_OK;
+        
+        /* Check some conditions */
+        
+        if (null==xads) {
+            tplogError("xa_open_entry: called, but XA Data Source not initialized");
+            return AtmiConst.XAER_PROTO;
+        }
+        
+        if (null!=xaConn && null!=dbConn && null!=xaRes) {
+            tplogError("xa_open_entry: Already open");
+            return AtmiConst.XAER_PROTO;
+        }
+        
+        try {
+            tplogInfo("xa_open_entry: get XA Connection");
+            xaConn = xads.getXAConnection();
+        }
+        catch (SQLException ex) {
+            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to get XA "
+                    + "connection: SQL state %s", ex.getSQLState()), ex);
+            
+            return AtmiConst.XAER_RMERR;
+            
+        }
+        
+        try {
+            tplogInfo("Getting DB Connection");
+            dbConn = xaConn.getConnection();
+        }
+        catch (SQLException ex) {
+            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to get DB "
+                    + "connection: SQL state %s", ex.getSQLState()), ex);
+         
+            xaConn = null;
+            return AtmiConst.XAER_RMERR;
+        }
+        
+        try {
+            tplogInfo("Getting XA Resource");
+            xaRes = xaConn.getXAResource();
+        }
+        catch (SQLException ex) {
+            
+            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to get "
+                    + "XA resource: SQL state %s", ex.getSQLState()), ex);
+            
+            xaConn = null;
+            dbConn = null;
+            return AtmiConst.XAER_RMERR;
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Close entry. Close XA Connections.
+     * Cannot be closed if transaction is started?
+     * @param flags not used currently
+     * @return XA_OK or error code
+     */
+    int xa_close_entry(long flags) {
+        
+        /* Close database connection */
+        try {
+            if (null!=dbConn) {
+                dbConn.close();
+                dbConn = null;
+            }
+        } catch (SQLException ex) {
+            
+        }
+        
+        /* Close XA Connection */
+        try {
+            if (null!=xaConn) {
+                xaConn.close();
+                xaConn = null;
+            }
+        } catch (SQLException ex) {
+            
+        }
+
+        /* Forget the XA Resource */
+        xaRes = null;
+        
+        
+        return AtmiConst.XA_OK;
+        
+    }
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
