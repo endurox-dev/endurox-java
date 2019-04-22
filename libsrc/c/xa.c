@@ -232,27 +232,17 @@ out:
 }
 
 /**
- * Open API.
- * This is called per thread. For java this will open an connection.
- * The connection handler must be kept within ATMI Context.
- * Active Java ATMI Context shall be stored in context data.
- * The open data shall be parsed with parson.
- * then configuration arrays as key:value props and sets must be loaded to java
- * The JSON could look like:
- * 
- * {"props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
- * 
- * This opens connection which in turn is stored in the ATMI Java Context.
- * 
- * @param switch 
- * @param xa_info
- * @param rmid
- * @param flags
- * @return 
+ * Perform info call
+ * @param func function name
+ * @param sw XA Switch current
+ * @param xa_info XA Info string
+ * @param rmid rmid
+ * @param flags flags
+ * @return error code, XA
  */
-exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
+exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
 {
-    /* TODO: Do we need to check for existing open call?
+   /* TODO: Do we need to check for existing open call?
      * the handler shall be present in java side..
      * So we need two string lists?
      */
@@ -276,31 +266,32 @@ exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lon
     
     /* Get the method id  */
     mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
-        ctxClass, "xa_open_entry",
+        ctxClass, func,
         "(J)I");
     
     if (NULL==mid)
     {
-        NDRX_LOG(log_error, "Failed to get xa_open_entry() method!");
+        NDRX_LOG(log_error, "Failed to get %s() method!", func);
         ret = XAER_RMERR;
         goto out;
     }
     
     ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2, mid, (jlong)0);
+        (jobject)ctxpriv->integptr2, mid, (jlong)flags);
     
-    NDRX_LOG(log_debug, "Java xa_open_entry returns %d", ret);
+    NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
     
 out:
     
     if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
     {
         NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
-                "xa_open_entry failed: %s");
+                "% failed: %s", func);
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
         }
+        (*(JNIEnv *)ctxpriv->integptr1)-> ExceptionClear((JNIEnv *)ctxpriv->integptr1);
     }
 
     /* clear up references... */
@@ -314,25 +305,128 @@ out:
 }
 
 /**
- * Close entry.
- * This will close connections at java side only.
- * @param sw
+ * Open API.
+ * This is called per thread. For java this will open an connection.
+ * The connection handler must be kept within ATMI Context.
+ * Active Java ATMI Context shall be stored in context data.
+ * The open data shall be parsed with parson.
+ * then configuration arrays as key:value props and sets must be loaded to java
+ * The JSON could look like:
+ * 
+ * {"props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
+ * 
+ * This opens connection which in turn is stored in the ATMI Java Context.
+ * 
+ * @param switch 
  * @param xa_info
  * @param rmid
  * @param flags
  * @return 
  */
-exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
+exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
 {
-    NDRX_LOG(log_error, "xa_close_entry() called");
-    
-    return XA_OK;
+    return xa_info_entry("xa_open_entry",  sw, xa_info, rmid, flags);
 }
 
 /**
- * Open text file in RMID folder. Create file by TXID.
- * Check for file existence. If start & not exists - ok .
- * If exists and join - ok. Otherwise fail.
+ * Close entry.
+ * This will close connections at java side only.
+ * @param sw xa switch
+ * @param xa_info close string
+ * @param rmid RM id
+ * @param flags flags
+ * @return xa err
+ */
+exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
+{
+    return xa_info_entry("xa_close_entry",  sw, xa_info, rmid, flags);
+}
+
+
+/**
+ * Call the java with XID related operation
+ * @param func function name
+ * @param sw xa switch 
+ * @param xid xid for trx
+ * @param rmid resource manager id
+ * @param flags flags
+ * @return xa err
+ */
+exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmid, long flags)
+{
+    ndrx_ctx_priv_t *ctxpriv;
+    jmethodID mid;
+    jclass ctxClass = NULL;
+    int ret = XA_OK;
+    jobject jxid = NULL;
+    
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    /* create xid first */
+    xid = ndrxj_cvt_xid_to_java((JNIEnv *)ctxpriv->integptr1, xid);
+    
+    if (NULL==xid)
+    {
+        NDRX_LOG(log_error, "Failed to convert C xid to Java");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* Get the class for the context object */
+    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2);
+    
+    if (NULL==ctxClass)
+    {
+        NDRX_LOG(log_error, "Failed to get ctx object class");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* Get the method id  */
+    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+        ctxClass, func,
+        "(Ljavax/transaction/xa/Xid;J)I");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Failed to get %s() method!", func);
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2, mid, jxid, (jlong)flags);
+    
+    NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
+    
+out:
+    
+    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    {
+        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+                "% failed: %s", func);
+        if (XA_OK==ret)
+        {
+            ret = XAER_RMERR;
+        }
+        (*(JNIEnv *)ctxpriv->integptr1)-> ExceptionClear((JNIEnv *)ctxpriv->integptr1);
+    }
+
+    /* clear up references... */
+    if (NULL!=ctxClass)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                ctxClass);
+    }
+    
+    return ret;
+}
+
+
+/**
+ * In this case we need to convert our internal XID format to java XID
+ * and pass it in the call.
  * @param xa_info
  * @param rmid
  * @param flags
@@ -340,7 +434,7 @@ exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lo
  */
 exprivate int xa_start_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return XA_OK;
+    return xa_xid_entry("xa_start_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -353,10 +447,7 @@ exprivate int xa_start_entry(struct xa_switch_t *sw, XID *xid, int rmid, long fl
  */
 exprivate int xa_end_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    
-out:
-    
-    return XA_OK;
+    return xa_xid_entry("xa_end_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -369,7 +460,7 @@ out:
  */
 exprivate int xa_rollback_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return XA_OK;
+    return xa_xid_entry("xa_rollback_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -382,8 +473,7 @@ exprivate int xa_rollback_entry(struct xa_switch_t *sw, XID *xid, int rmid, long
  */
 exprivate int xa_prepare_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    
-    return XA_OK;
+    return xa_xid_entry("xa_prepare_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -396,7 +486,7 @@ exprivate int xa_prepare_entry(struct xa_switch_t *sw, XID *xid, int rmid, long 
  */
 exprivate int xa_commit_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return XA_OK;
+    return xa_xid_entry("xa_commit_entry", sw, xid, rmid, flags);
 }
 
 /**

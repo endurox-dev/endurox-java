@@ -48,6 +48,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import org.endurox.exceptions.AtmiTPEBADDESCException;
@@ -1509,15 +1510,10 @@ public class AtmiCtx {
     }
     
     /**
-     * Open XA Entry / Get Connect
-     * @param flags not used
-     * @return XA_OK, XAER_RMERR
+     * Check is XA Open
+     * @return 
      */
-    int xa_open_entry(long flags) {
-        
-        int ret = AtmiConst.XA_OK;
-        
-        /* Check some conditions */
+    int xa_is_open() {
         
         if (null==xads) {
             tplogError("xa_open_entry: called, but XA Data Source not initialized");
@@ -1529,6 +1525,26 @@ public class AtmiCtx {
             return AtmiConst.XAER_PROTO;
         }
         
+        return AtmiConst.XA_OK;
+    }
+    
+    /**
+     * Open XA Entry / Get Connect
+     * @param flags not used
+     * @return XA_OK, XAER_RMERR
+     */
+    int xa_open_entry(long flags) {
+        
+        int ret;
+        
+        /* Check some conditions */
+        ret = xa_is_open();
+        
+        if (AtmiConst.XA_OK!=ret)
+        {
+            return ret;
+        }
+        
         try {
             tplogInfo("xa_open_entry: get XA Connection");
             xaConn = xads.getXAConnection();
@@ -1538,7 +1554,6 @@ public class AtmiCtx {
                     + "connection: SQL state %s", ex.getSQLState()), ex);
             
             return AtmiConst.XAER_RMERR;
-            
         }
         
         try {
@@ -1579,6 +1594,7 @@ public class AtmiCtx {
     int xa_close_entry(long flags) {
         
         /* Close database connection */
+        boolean got_err = false;
         try {
             if (null!=dbConn) {
                 dbConn.close();
@@ -1586,6 +1602,9 @@ public class AtmiCtx {
             }
         } catch (SQLException ex) {
             
+            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to close db connection %s",
+                    ex.getSQLState()), ex);
+            got_err = true;
         }
         
         /* Close XA Connection */
@@ -1595,16 +1614,172 @@ public class AtmiCtx {
                 xaConn = null;
             }
         } catch (SQLException ex) {
-            
+            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to close xa connection %s",
+                    ex.getSQLState()), ex);
+            got_err = true;
         }
 
         /* Forget the XA Resource */
         xaRes = null;
         
         
-        return AtmiConst.XA_OK;
-        
+        if (got_err) {
+            return AtmiConst.XAER_RMERR;
+        }
+        else {
+            return AtmiConst.XA_OK;
+        }
     }
+    
+    /**
+     * Map the C flags to the java XAResource flags.
+     * Translate all flags, not?
+     * @param cflags c flags
+     * @return Java flags
+     */
+    int xa_xaresource_flags_map(long cflags) {
+        int ret = XAResource.TMNOFLAGS;
+        
+        if ( (cflags & AtmiConst.TMJOIN) > 0) {
+            
+            ret = XAResource.TMJOIN;
+        }
+        else if ( (cflags & AtmiConst.TMSUSPEND) > 0) {
+            ret = XAResource.TMSUSPEND;
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Map the java errors to c code
+     * @param jerr java error code
+     * @return  C error code
+     */
+    int xa_jerror_map(int jerr) {
+        
+        int ret;
+        
+        switch (jerr)
+        {
+            case XAException.XA_HEURCOM:
+                ret = AtmiConst.XA_HEURCOM;
+                break;
+            case XAException.XA_HEURHAZ:
+                ret = AtmiConst.XA_HEURHAZ;
+                break;
+            case XAException.XA_HEURMIX:
+                ret = AtmiConst.XA_HEURMIX;
+                break;
+            case XAException.XA_HEURRB:
+                ret = AtmiConst.XA_HEURRB;
+                break;
+            case XAException.XA_NOMIGRATE:
+                ret = AtmiConst.XA_NOMIGRATE;
+                break;
+            case XAException.XA_RBBASE:
+                ret = AtmiConst.XA_RBBASE;
+                break;
+            case XAException.XA_RBCOMMFAIL:
+                ret = AtmiConst.XA_RBCOMMFAIL;
+                break;
+            case XAException.XA_RBDEADLOCK:
+                ret = AtmiConst.XA_RBDEADLOCK;
+                break;
+            case XAException.XA_RBEND:
+                ret = AtmiConst.XA_RBEND;
+                break;
+            case XAException.XA_RBINTEGRITY:
+                ret = AtmiConst.XA_RBINTEGRITY;
+                break;
+            case XAException.XA_RBOTHER:
+                ret = AtmiConst.XA_RBOTHER;
+                break;
+            case XAException.XA_RBPROTO:
+                ret = AtmiConst.XA_RBPROTO;
+                break;
+            
+            /*dup
+                case XAException.XA_RBROLLBACK:
+                ret = AtmiConst.XA_RBROLLBACK;
+                break;
+                */
+            case XAException.XA_RBTIMEOUT:
+                ret = AtmiConst.XA_RBTIMEOUT;
+                break; 
+                /*
+                dup
+            case XAException.XA_RBTRANSIENT:
+                ret = AtmiConst.XA_RBTRANSIENT;
+                break;
+                */
+                
+            case XAException.XA_RDONLY:
+                ret = AtmiConst.XA_RDONLY;
+                break;
+            case XAException.XA_RETRY:
+                ret = AtmiConst.XA_RETRY;
+                break;
+            case XAException.XAER_ASYNC:
+                ret = AtmiConst.XAER_ASYNC;
+                break;
+            case XAException.XAER_DUPID:
+                ret = AtmiConst.XAER_DUPID;
+                break;
+            case XAException.XAER_INVAL:
+                ret = AtmiConst.XAER_INVAL;
+                break;
+            case XAException.XAER_NOTA:
+                ret = AtmiConst.XAER_NOTA;
+                break;
+            case XAException.XAER_OUTSIDE:
+                ret = AtmiConst.XAER_OUTSIDE;
+                break;
+            case XAException.XAER_PROTO:
+                ret = AtmiConst.XAER_PROTO;
+                break;
+            case XAException.XAER_RMFAIL:
+                ret = AtmiConst.XAER_RMFAIL;
+                break;
+            default:
+                ret = AtmiConst.XAER_RMERR;
+                break;
+        }
+        
+        tplogWarn("Java XA Error code %d mapped to %d c code", jerr, ret);
+        
+        return ret;
+    }
+    
+    /**
+     * Start transaction.
+     * Check are we already in transaction? Or that will be checked by Enduro/X
+     * @param xid
+     * @param flags
+     * @return 
+     */
+    int xa_start_entry(Xid xid, long flags) {
+        
+        int ret = xa_is_open();
+        
+        int jflags = XAResource.TMNOFLAGS;
+        
+        if (ret!=AtmiConst.XA_OK)
+        {
+            return ret;
+        }
+        
+        /* start the tranaction */
+        try {
+            xaRes.start(xid, jflags);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_start_entry got exception: %s", ex);
+            ret = xa_jerror_map(ex.errorCode);
+        }
+        return ret;
+    }
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

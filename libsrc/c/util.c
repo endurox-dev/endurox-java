@@ -48,6 +48,7 @@
 #include <ndrstandard.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+#define EXXID_CLASS     "org/endurox/ExXid"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -315,6 +316,83 @@ expublic jobjectArray ndrxj_cvt_arr_c_to_java(JNIEnv *env, string_list_t *list, 
 
         (*env)->SetObjectArrayElement(env,ret,i,str);
         (*env)->DeleteLocalRef(env, str);
+    }
+    
+    return ret;
+}
+
+/**
+ * Convert XID from C to Enduro/X ExXid
+ * @param env java env
+ * @param xid C Xid
+ * @return NULL or ExXid
+ */
+expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
+{
+    jobject ret = NULL;
+    jclass bclz;
+    jmethodID mid;
+    
+    /* OK we to convert data array to java array */
+    
+    jbyteArray jb = NULL;
+    
+    jb = (*env)->NewByteArray(env, (jsize)sizeof(xid->data));
+
+    if (NULL==jb)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to create byte array of size %d: %s", 
+                sizeof(xid->data));
+        EXFAIL_OUT(ret);
+    }
+
+    (*env)->SetByteArrayRegion(env, jb, 0, sizeof(xid->data), (jbyte*)xid->data);
+    
+    /* Create that ExXid object */
+    
+    bclz = (*env)->FindClass(env, EXXID_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        NDRX_LOG(log_error, "Failed to find class [%s]", clazz);
+        goto out;
+        
+    }
+    
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, bclz, "<init>", "(JJJ[B)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        goto out;
+    }
+
+    NDRX_LOG(log_debug, "About to NewObject(%s)", clazz);
+    
+    ret = (*env)->NewObject(env, bclz, mid, xid->formatID, xid->gtrid_length, 
+            xid->bqual_length, jb);
+    
+    /* check result.. */
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to create java ExXid!");
+        goto out;
+    }
+    
+
+out:
+            
+    if (NULL!=bclz)
+    {
+        (*env)->DeleteLocalRef( env, bclz);
+    }
+
+    if (NULL!=jb)
+    {
+        (*env)->DeleteLocalRef( env, jb);
     }
     
     return ret;

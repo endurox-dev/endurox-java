@@ -445,6 +445,45 @@ public class AtmiConst {
     /** resource manager doing work outside global transaction */
     public static final int XAER_OUTSIDE = -9;
     
+    /*
+     * Flag definitions for the RM switch
+     */
+    /** no resource manager features selected */
+    public static final long TMNOFLAGS = 0x00000000L;
+    /** resource manager dynamically registers */
+    public static final long TMREGISTER = 0x00000001L;
+    /** resource manager does not support association migration */
+    public static final long TMNOMIGRATE = 0x00000002L;
+    /** resource manager supports asynchronous operations */
+    public static final long TMUSEASYNC = 0x00000004L;
+    
+    /*
+     * Flag definitions for xa_ and ax_ routines
+     */
+    /* use TMNOFLAGS, defined above, when not specifying other flags */
+    /** perform routine asynchronously */
+    public static final long TMASYNC = 0x80000000L;
+    /** caller is using one-phase commit optimisation */
+    public static final long TMONEPHASE = 0x40000000L;
+    /** dissociates caller and marks transaction branch rollback-only */
+    public static final long TMFAIL = 0x20000000L;
+    /** return if blocking condition exists */
+    public static final long TMNOWAIT = 0x10000000L;
+    /** caller is resuming association with suspended transaction branch */
+    public static final long TMRESUME = 0x08000000L;
+    /** dissociate caller from transaction branch*/
+    public static final long TMSUCCESS = 0x04000000L;
+    /** caller is suspending, not ending, association */
+    public static final long TMSUSPEND = 0x02000000L;
+    /** start a recovery scan */
+    public static final long TMSTARTRSCAN = 0x01000000L;
+    /** end a recovery scan */
+    public static final long TMENDRSCAN = 0x00800000L;
+    /** wait for any asynchronous operation */
+    public static final long TMMULTIPLE = 0x00400000L;
+    /** caller is joining existing transaction branch */
+    public static final long TMJOIN = 0x00200000L;
+    
     /** @} */ // end of xaconst
     
 }

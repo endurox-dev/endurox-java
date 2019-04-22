@@ -231,6 +231,7 @@ extern int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
         char *clazz, int clazz_bufsz);
 
 extern jobjectArray ndrxj_cvt_arr_c_to_java(JNIEnv *env, string_list_t *list, int nrel);
+extern jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid);
 
 #ifdef  __cplusplus
 }
