@@ -398,4 +398,32 @@ out:
     return ret;
 }
 
+/**
+ * Convert Java XID to C
+ * @param[in] env java env
+ * @param[in] j_xid java xid
+ * @param[out] c_xid converted C xid
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid)
+{
+    int ret = EXSUCCEED;
+
+    /* TODO: */
+    
+    /* Get xid class */
+    
+    /* Get format id */
+    
+    /* Get Bqual bytes */
+    
+    /* Get tranid bytes */
+    
+    /* buld the xid */
+    
+    /* get  */
+out:    
+    return ret;
+}
+
 /* vim: set ts=4 sw=4 et smartindent: */

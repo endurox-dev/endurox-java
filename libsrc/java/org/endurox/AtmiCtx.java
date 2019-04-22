@@ -1638,16 +1638,29 @@ public class AtmiCtx {
      * @return Java flags
      */
     int xa_xaresource_flags_map(long cflags) {
-        int ret = XAResource.TMNOFLAGS;
+        int ret = 0;
         
         if ( (cflags & AtmiConst.TMJOIN) > 0) {
             
-            ret = XAResource.TMJOIN;
-        }
-        else if ( (cflags & AtmiConst.TMSUSPEND) > 0) {
-            ret = XAResource.TMSUSPEND;
+            ret |= XAResource.TMJOIN;
         }
         
+        if ( (cflags & AtmiConst.TMSUSPEND) > 0) {
+            ret |= XAResource.TMSUSPEND;
+        }
+        
+        if ( (cflags & AtmiConst.TMSTARTRSCAN) > 0) {
+            ret |= XAResource.TMSTARTRSCAN;
+        }
+        
+        if ( (cflags & AtmiConst.TMENDRSCAN) > 0) {
+            ret |= XAResource.TMENDRSCAN;
+        }
+        
+        if (0==ret) {
+            ret = XAResource.TMNOFLAGS;
+        }
+
         return ret;
     }
     
@@ -1756,20 +1769,22 @@ public class AtmiCtx {
      * Check are we already in transaction? Or that will be checked by Enduro/X
      * @param xid
      * @param flags
-     * @return 
+     * @return XA_OK, XERR
      */
     int xa_start_entry(Xid xid, long flags) {
         
         int ret = xa_is_open();
         
-        int jflags = XAResource.TMNOFLAGS;
+        int jflags = xa_xaresource_flags_map(flags);
         
         if (ret!=AtmiConst.XA_OK)
         {
+            tplogError("xa_start_entry: XA Not open, did you call tpopen()?");
             return ret;
         }
         
         /* start the tranaction */
+        
         try {
             xaRes.start(xid, jflags);
         } catch (XAException ex) {
@@ -1778,6 +1793,180 @@ public class AtmiCtx {
             ret = xa_jerror_map(ex.errorCode);
         }
         return ret;
+    }
+    
+    /**
+     * Perform XA End
+     * @param xid xid
+     * @param flags flags
+     * @return XA_OK, err
+     */
+    int xa_end_entry(Xid xid, long flags) {
+        
+        int ret = xa_is_open();
+        
+        int jflags = xa_xaresource_flags_map(flags);
+        
+        if (ret!=AtmiConst.XA_OK)
+        {
+            tplogError("xa_start_entry: XA Not open, did you call tpopen()?");
+            return ret;
+        }
+        
+        /* end xid session */
+        
+        try {
+            xaRes.end(xid, jflags);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_end_entry got exception: %s", ex);
+            ret = xa_jerror_map(ex.errorCode);
+        }
+        return ret;
+    }
+    
+    /**
+     * Perform rollback
+     * @param xid XID of transaction
+     * @param flags not used
+     * @return XA_OK, XAERR
+     */
+    int xa_rollback_entry(Xid xid, long flags) {
+        
+        int ret = xa_is_open();
+        
+        if (ret!=AtmiConst.XA_OK)
+        {
+            tplogError("xa_rollback_entry: XA Not open, did you call tpopen()?");
+            return ret;
+        }
+        
+        /* rollback transaction */
+        
+        try {
+            xaRes.rollback(xid);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_rollback_entry got exception: %s", ex);
+            ret = xa_jerror_map(ex.errorCode);
+        }
+        return ret;
+    }
+    
+    /**
+     * Prepare transaction for commit
+     * @param xid xid
+     * @param flags Not used
+     * @return XA_OK, XAERR
+     */
+    int xa_prepare_entry(Xid xid, long flags) {
+        
+        int ret = xa_is_open();
+        
+        if (ret!=AtmiConst.XA_OK)
+        {
+            tplogError("xa_prepare_entry: XA Not open, did you call tpopen()?");
+            return ret;
+        }
+        
+        /* prepare for commit */
+        
+        try {
+            xaRes.prepare(xid);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_prepare_entry got exception: %s", ex);
+            ret = xa_jerror_map(ex.errorCode);
+        }
+        return ret;
+    }
+    
+    /**
+     * Commit transaction
+     * @param xid xid
+     * @param flags Not used
+     * @return XA_OK, XAERR
+     */
+    int xa_commit_entry(Xid xid, long flags) {
+        
+        int ret = xa_is_open();
+        
+        if (ret!=AtmiConst.XA_OK)
+        {
+            tplogError("xa_commit_entry: XA Not open, did you call tpopen()?");
+            return ret;
+        }
+        
+        /* prepare for commit */
+        
+        try {
+            xaRes.commit(xid, false);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_commit_entry got exception: %s", ex);
+            ret = xa_jerror_map(ex.errorCode);
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Commit transaction
+     * @param xid xid
+     * @param flags Not used
+     * @return XA_OK, XAERR
+     */
+    int xa_forget_entry(Xid xid, long flags) {
+        
+        int ret = xa_is_open();
+        
+        if (ret!=AtmiConst.XA_OK)
+        {
+            tplogError("xa_forget_entry: XA Not open, did you call tpopen()?");
+            return ret;
+        }
+        
+        /* prepare for commit */
+        
+        try {
+            xaRes.forget(xid);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_forget_entry got exception: %s", ex);
+            ret = xa_jerror_map(ex.errorCode);
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Recover transactions
+     * @param flags recover flags
+     * @return List or error
+     */
+    XidList xa_recover_entry(long flags) {
+        
+        XidList ret = new XidList();
+        int jflags = xa_xaresource_flags_map(flags);
+        
+        ret.ret = xa_is_open();
+        
+        if (ret.ret!=AtmiConst.XA_OK)
+        {
+            tplogError("xa_recover_entry: XA Not open, did you call tpopen()?");
+            return ret;
+        }
+        
+        try {
+            ret.list = xaRes.recover(jflags);
+        } catch (XAException ex) {
+            /* Log exception here */
+            tplogex(AtmiConst.LOG_ERROR,"xa_forget_entry got exception: %s", ex);
+            ret.ret = xa_jerror_map(ex.errorCode);
+        }
+        
+        return ret;
+        
     }
     
 }

@@ -490,32 +490,179 @@ exprivate int xa_commit_entry(struct xa_switch_t *sw, XID *xid, int rmid, long f
 }
 
 /**
- * Return list of trans
- * @param sw
- * @param xid
- * @param count
- * @param rmid
- * @param flags
- * @return 
+ * Return list of trans.
+ * Java returns full list, but our buffer is limited.
+ * Thus we load the `count' number of items, but we will return the actual
+ * number of java items
+ * @param sw xa switch
+ * @param xid buffer where to load xids
+ * @param count number of xid buffer size
+ * @param rmid resourcemanager id
+ * @param flags flags
+ * @return XA_OK, XERR
  */
 exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int rmid, long flags)
 {
-    return 0; /* 0 transactions found... */
+    ndrx_ctx_priv_t *ctxpriv;
+    jmethodID mid;
+    jclass ctxClass = NULL;
+    jclass xidClass = NULL;
+    
+    jfieldID fxidarr; /* Array of xids */
+    jfieldID fret;  /* return code */
+            
+    jobject retObj = NULL;
+    int ret = XA_OK;
+    jarray xarr = NULL;
+    int jcount;
+    
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    /* create xid first */
+    xid = ndrxj_cvt_xid_to_java((JNIEnv *)ctxpriv->integptr1, xid);
+    
+    if (NULL==xid)
+    {
+        NDRX_LOG(log_error, "Failed to convert C xid to Java");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* Get the class for the context object */
+    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2);
+    
+    if (NULL==ctxClass)
+    {
+        NDRX_LOG(log_error, "Failed to get ctx object class");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* Get the method id */
+    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+        ctxClass, "xa_recover_entry", "(J)Lorg/endurox/XidList;");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Failed to get %s() method!", func);
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    retObj = (*(JNIEnv *)ctxpriv->integptr1)->CallObjectMethod((JNIEnv *)ctxpriv->integptr1, 
+        (jobject)ctxpriv->integptr2, mid, (jlong)flags);
+    
+    
+    /* get xid class */
+    xidClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
+        retObj);
+    
+    if (NULL==xidClass)
+    {
+        NDRX_LOG(log_error, "Failed to get ctx object class");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* get ret field */
+    
+    if (NULL==(fret = (*(JNIEnv *)ctxpriv->integptr1)->GetFieldID(
+            (JNIEnv *)ctxpriv->integptr1, xidClass, "ret", "I")))
+    {
+        NDRX_LOG(log_error, "Failed to get ret field");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    if (NULL==(fxidarr = (*(JNIEnv *)ctxpriv->integptr1)->GetFieldID(
+            (JNIEnv *)ctxpriv->integptr1, xidClass, "list", "[Ljavax/transaction/xa/Xid;")))
+    {
+        NDRX_LOG(log_error, "Failed to get ret field");
+        ret = XAER_RMERR;
+        goto out;
+    }
+    
+    /* get return code */
+    ret = (*(JNIEnv *)ctxpriv->integptr1)->GetIntField((JNIEnv *)ctxpriv->integptr1, retObj, fret);
+    
+    if (XA_OK!=ret)
+    {
+        NDRX_LOG(log_error, "xa_recover returns %d error", ret);
+        goto out;
+    }
+    
+    xarr = (jarray)(*(JNIEnv *)ctxpriv->integptr1)->GetObjectField(
+            (JNIEnv *)ctxpriv->integptr1, retObj, fxidarr);
+    
+    if (NULL!=xarr)
+    {
+        
+        jcount = (*(JNIEnv *)ctxpriv->integptr1)->GetArrayLength((JNIEnv *)ctxpriv->integptr1, xarr);
+        int minf = NDRX_MIN(count, jcount);
+        int i;
+        
+        NDRX_LOG(log_debug, "Xids in returned from jdb: %d, but in c side: %d",
+                jcount, count);
+        
+        for (i=0; i<minf; i++)
+        {
+            jobject jxid = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectArrayElement
+                    ((JNIEnv *)ctxpriv->integptr1, xarr, i);
+            
+            /* Convect java xid to C */
+        }
+        
+
+        //xarr = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectArrayElement((JNIEnv *)ctxpriv->integptr1, retObj, fret);
+
+        /* get list of xids... */
+        //ret = (*(JNIEnv *)ctxpriv->integptr1)->GetArrayLength
+        
+    }
+    
+    NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
+    
+out:
+    
+    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    {
+        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+                "% failed: %s", func);
+        if (XA_OK==ret)
+        {
+            ret = XAER_RMERR;
+        }
+        (*(JNIEnv *)ctxpriv->integptr1)-> ExceptionClear((JNIEnv *)ctxpriv->integptr1);
+    }
+
+    /* clear up references... */
+    if (NULL!=ctxClass)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                ctxClass);
+    }
+
+    if (NULL!=xidClass)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+                xidClass);
+    }
+    
+    return ret;
 }
 
 /**
- * Forget tran
- * @param sw
- * @param xid
- * @param rmid
- * @param flags
- * @return 
+ * Forget transaction
+ * @param sw xa switch
+ * @param xid XID
+ * @param rmid RM ID
+ * @param flags flags
+ * @return XA_OK, XERR
  */
 exprivate int xa_forget_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    
-    NDRX_LOG(log_error, "xa_forget_entry() - not implemented!!");
-    return XA_OK;
+    return xa_xid_entry("xa_forget_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -530,7 +677,7 @@ exprivate int xa_forget_entry(struct xa_switch_t *sw, XID *xid, int rmid, long f
 exprivate int xa_complete_entry(struct xa_switch_t *sw, int *handle, int *retval, int rmid, long flags)
 {
     
-    NDRX_LOG(log_error, "xa_complete_entry() - not using!!");
+    NDRX_LOG(log_error, "xa_complete_entry() - not supported!");
     return XAER_RMERR;
 }
 
