@@ -49,6 +49,7 @@
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 #define EXXID_CLASS     "org/endurox/ExXid"
+#define XID_CLASS       "javax/transaction/xa/Xid"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -344,7 +345,8 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
         NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to create byte array of size %d: %s", 
                 sizeof(xid->data));
-        EXFAIL_OUT(ret);
+        ret = NULL;
+        goto out;
     }
 
     (*env)->SetByteArrayRegion(env, jb, 0, sizeof(xid->data), (jbyte*)xid->data);
@@ -355,7 +357,7 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
     
     if (NULL==bclz)
     {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", clazz);
+        NDRX_LOG(log_error, "Failed to find class [%s]", EXXID_CLASS);
         goto out;
         
     }
@@ -369,7 +371,7 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
         goto out;
     }
 
-    NDRX_LOG(log_debug, "About to NewObject(%s)", clazz);
+    NDRX_LOG(log_debug, "About to NewObject(%s)", EXXID_CLASS);
     
     ret = (*env)->NewObject(env, bclz, mid, xid->formatID, xid->gtrid_length, 
             xid->bqual_length, jb);
@@ -408,21 +410,123 @@ out:
 expublic int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid)
 {
     int ret = EXSUCCEED;
-
-    /* TODO: */
+    jclass bclz;
+    /* get some mids */
+    jmethodID mid_getBranchQualifier;
+    jmethodID mid_getGlobalTransactionId;
+    jmethodID mid_getFormatId;
+    jbyteArray jbqa = NULL;
+    jbyteArray jgtid = NULL;
+    int jbqa_len, jgtid_len;
+    long formatId;
+    
+    jboolean n_bqa_copy = EXFALSE;
+    char * n_bqa = NULL;
+    
+    jboolean n_gtid_copy = EXFALSE;
+    char * n_gtid = NULL;
     
     /* Get xid class */
+    bclz = (*env)->FindClass(env, XID_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        NDRX_LOG(log_error, "Failed to find class [%s]", XID_CLASS);
+        goto out;
+        
+    }
     
     /* Get format id */
+    mid_getFormatId = (*env)->GetMethodID(env, bclz, "getFormatId", "()I");
+    
+    if (NULL==mid_getFormatId)
+    {
+        NDRX_LOG(log_error, "Failed to get MID of `getFormatId'!");
+        ret = EXFAIL;
+        goto out;
+    }
+    
+    /* get format id */
+    formatId = (*env)->CallLongMethod(env, j_xid, mid_getFormatId);
+    
+    NDRX_LOG(log_debug, "Got format id: %ld", formatId);
     
     /* Get Bqual bytes */
+    mid_getBranchQualifier = (*env)->GetMethodID(env, bclz, "getBranchQualifier", "()[B");
+    
+    if (NULL==mid_getBranchQualifier)
+    {
+        NDRX_LOG(log_error, "Failed to get MID of `getBranchQualifier'!");
+        ret = EXFAIL;
+        goto out;
+    }
+    
+    jbqa = (*env)->CallObjectMethod(env, j_xid, mid_getBranchQualifier);
+    jbqa_len = (*env)->GetArrayLength(env, jbqa);
+    
+    NDRX_LOG(log_debug, "Branch qualifier len: %d", jbqa_len);
     
     /* Get tranid bytes */
+    mid_getGlobalTransactionId = (*env)->GetMethodID(env, bclz, "getGlobalTransactionId", "()[B");
     
-    /* buld the xid */
+    if (NULL==mid_getBranchQualifier)
+    {
+        NDRX_LOG(log_error, "Failed to get MID of `getGlobalTransactionId'!");
+        ret = EXFAIL;
+        goto out;
+    }
     
-    /* get  */
-out:    
+    jgtid = (*env)->CallObjectMethod(env, j_xid, mid_getBranchQualifier);
+    jgtid_len = (*env)->GetArrayLength(env, jgtid);
+    
+    NDRX_LOG(log_debug, "Transaction id len len: %d", jgtid_len);
+    
+    /* build the xid */
+    memset(c_xid, 0, sizeof(*c_xid));
+    
+    c_xid->formatID = formatId;
+    c_xid->bqual_length = jbqa_len;
+    c_xid->gtrid_length = jgtid_len;
+    
+    /* Copy off data portions */
+    
+    n_gtid = (char*)(*env)->GetByteArrayElements(env, jgtid, &n_gtid_copy);
+    
+    memcpy(c_xid->data, n_gtid, c_xid->gtrid_length);
+    
+    n_bqa = (char*)(*env)->GetByteArrayElements(env, jbqa, &n_bqa_copy);
+    
+    memcpy(c_xid->data+c_xid->gtrid_length, n_bqa, c_xid->bqual_length);
+    
+    NDRX_DUMP(log_debug, "Restored XID", c_xid, sizeof(c_xid));
+    
+out:
+
+    if (NULL!=bclz)
+    {
+        (*env)->DeleteLocalRef( env, bclz);
+    }
+
+    if (NULL!=jbqa)
+    {
+        (*env)->DeleteLocalRef( env, jbqa);
+    }
+
+    if (NULL!=jgtid)
+    {
+        (*env)->DeleteLocalRef( env, jgtid);
+    }
+
+    if(n_gtid_copy)
+    {
+       (*env)->ReleaseByteArrayElements(env, jgtid, n_gtid, JNI_ABORT);
+    }
+
+    if(n_bqa_copy)
+    {
+       (*env)->ReleaseByteArrayElements(env, jbqa, n_bqa, JNI_ABORT);
+    }
+
     return ret;
 }
 

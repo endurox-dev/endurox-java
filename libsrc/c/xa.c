@@ -363,7 +363,7 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
     ctxpriv = ndrx_ctx_priv_get();
     
     /* create xid first */
-    xid = ndrxj_cvt_xid_to_java((JNIEnv *)ctxpriv->integptr1, xid);
+    jxid = ndrxj_cvt_xid_to_java((JNIEnv *)ctxpriv->integptr1, xid);
     
     if (NULL==xid)
     {
@@ -519,7 +519,6 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     ctxpriv = ndrx_ctx_priv_get();
     
     /* create xid first */
-    xid = ndrxj_cvt_xid_to_java((JNIEnv *)ctxpriv->integptr1, xid);
     
     if (NULL==xid)
     {
@@ -545,7 +544,7 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     
     if (NULL==mid)
     {
-        NDRX_LOG(log_error, "Failed to get %s() method!", func);
+        NDRX_LOG(log_error, "Failed to get xa_recover_entry() method!");
         ret = XAER_RMERR;
         goto out;
     }
@@ -611,24 +610,26 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
                     ((JNIEnv *)ctxpriv->integptr1, xarr, i);
             
             /* Convect java xid to C */
+            if (EXSUCCEED!=ndrxj_cvt_xid_to_c((JNIEnv *)ctxpriv->integptr1, jxid, 
+                    (xid+i)))
+            {
+                NDRX_LOG(log_error, "Failed to convert XID to C!");
+                ret = XAER_RMERR;
+                goto out;
+            }
+            ret++;
         }
-        
-
-        //xarr = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectArrayElement((JNIEnv *)ctxpriv->integptr1, retObj, fret);
-
-        /* get list of xids... */
-        //ret = (*(JNIEnv *)ctxpriv->integptr1)->GetArrayLength
-        
     }
     
-    NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
+    NDRX_LOG(log_debug, "Recover OK");
     
 out:
+    NDRX_LOG(log_debug, "Java xa_recover_entry() returns %d", ret);
     
     if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
     {
         NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
-                "% failed: %s", func);
+                "xa_recover_entry() failed: %s");
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
@@ -648,7 +649,13 @@ out:
         (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
                 xidClass);
     }
-    
+
+    if (NULL!=xarr)
+    {
+        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+               xarr);
+    }
+
     return ret;
 }
 

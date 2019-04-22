@@ -1920,6 +1920,7 @@ public class AtmiCtx {
         
         int ret = xa_is_open();
         
+        
         if (ret!=AtmiConst.XA_OK)
         {
             tplogError("xa_forget_entry: XA Not open, did you call tpopen()?");
