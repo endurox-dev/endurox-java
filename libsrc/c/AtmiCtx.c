@@ -41,8 +41,9 @@
 #include <ndebug.h>
 #include <ondebug.h>
 #include <oatmisrv_integra.h>
-#include "libsrc.h"
+#include <libsrc.h>
 #include <sys_unix.h>
+#include <tmenv.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -93,9 +94,11 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
     {
         if (do_set)
         {
-            ndrx_ctx_priv_t *ctxpriv = ndrx_ctx_priv_get();
+            ndrx_ctx_priv_t *ctxpriv;
             
             tpsetctxt(ctx, 0L);
+
+            ctxpriv = ndrx_ctx_priv_get();
             
             /* update private data storage in context */
             

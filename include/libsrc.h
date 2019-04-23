@@ -252,6 +252,9 @@ extern jobjectArray ndrxj_cvt_arr_c_to_java(JNIEnv *env, string_list_t *list, in
 extern jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid);
 extern int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid);
 
+/* TODO: How about dllimport/export? */
+extern int ndrxj_xa_init(void);
+
 #ifdef  __cplusplus
 }
 #endif

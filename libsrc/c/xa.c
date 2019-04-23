@@ -44,7 +44,8 @@
 #include <ndebug.h>
 #include <ondebug.h>
 #include <oatmisrv_integra.h>
-#include "libsrc.h"
+#include <libsrc.h>
+#include <tmenv.h>
 #include <sys_unix.h>
 #include "nerror.h"
 #include <ndrstandard.h>
@@ -692,46 +693,46 @@ exprivate int xa_complete_entry(struct xa_switch_t *sw, int *handle, int *retval
 /* Static entries */
 exprivate int xa_open_entry_stat( char *xa_info, int rmid, long flags)
 {
-    return xa_open_entry(&ndrxdumssw, xa_info, rmid, flags);
+    return xa_open_entry(&ndrxjsw, xa_info, rmid, flags);
 }
 exprivate int xa_close_entry_stat(char *xa_info, int rmid, long flags)
 {
-    return xa_close_entry(&ndrxdumssw, xa_info, rmid, flags);
+    return xa_close_entry(&ndrxjsw, xa_info, rmid, flags);
 }
 exprivate int xa_start_entry_stat(XID *xid, int rmid, long flags)
 {
-    return xa_start_entry(&ndrxdumssw, xid, rmid, flags);
+    return xa_start_entry(&ndrxjsw, xid, rmid, flags);
 }
 
 exprivate int xa_end_entry_stat(XID *xid, int rmid, long flags)
 {
-    return xa_end_entry(&ndrxdumssw, xid, rmid, flags);
+    return xa_end_entry(&ndrxjsw, xid, rmid, flags);
 }
 exprivate int xa_rollback_entry_stat(XID *xid, int rmid, long flags)
 {
-    return xa_rollback_entry(&ndrxdumssw, xid, rmid, flags);
+    return xa_rollback_entry(&ndrxjsw, xid, rmid, flags);
 }
 exprivate int xa_prepare_entry_stat(XID *xid, int rmid, long flags)
 {
-    return xa_prepare_entry(&ndrxdumssw, xid, rmid, flags);
+    return xa_prepare_entry(&ndrxjsw, xid, rmid, flags);
 }
 
 exprivate int xa_commit_entry_stat(XID *xid, int rmid, long flags)
 {
-    return xa_commit_entry(&ndrxdumssw, xid, rmid, flags);
+    return xa_commit_entry(&ndrxjsw, xid, rmid, flags);
 }
 
 exprivate int xa_recover_entry_stat(XID *xid, long count, int rmid, long flags)
 {
-    return xa_recover_entry(&ndrxdumssw, xid, count, rmid, flags);
+    return xa_recover_entry(&ndrxjsw, xid, count, rmid, flags);
 }
 exprivate int xa_forget_entry_stat(XID *xid, int rmid, long flags)
 {
-    return xa_forget_entry(&ndrxdumssw, xid, rmid, flags);
+    return xa_forget_entry(&ndrxjsw, xid, rmid, flags);
 }
 exprivate int xa_complete_entry_stat(int *handle, int *retval, int rmid, long flags)
 {
-    return xa_complete_entry(&ndrxdumssw, handle, retval, rmid, flags);
+    return xa_complete_entry(&ndrxjsw, handle, retval, rmid, flags);
 }
 
 /**

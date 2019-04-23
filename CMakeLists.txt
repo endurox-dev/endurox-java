@@ -329,6 +329,7 @@ add_subdirectory (libsrc)
 #add_subdirectory (include)
 add_subdirectory (libexjlds)
 add_subdirectory (exjld)
+add_subdirectory (xadrv)
 add_subdirectory (tests)
 add_subdirectory (doc)
 

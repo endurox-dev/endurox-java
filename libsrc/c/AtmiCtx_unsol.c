@@ -41,7 +41,8 @@
 #include <ndebug.h>
 #include <ondebug.h>
 #include <oatmisrv_integra.h>
-#include "libsrc.h"
+#include <libsrc.h>
+#include <tmenv.h>
 #include <sys_unix.h>
 #include <tpadm.h>
 /*---------------------------Externs------------------------------------*/
