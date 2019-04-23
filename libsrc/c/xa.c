@@ -80,7 +80,7 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
 exprivate int xa_forget_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags);
 exprivate int xa_complete_entry(struct xa_switch_t *sw, int *handle, int *retval, int rmid, long flags);
 
-struct xa_switch_t ndrxdumssw = 
+struct xa_switch_t ndrxjsw = 
 { 
     .name = "ndrxjsw",
     .flags = TMNOFLAGS,
@@ -742,7 +742,7 @@ exprivate int xa_complete_entry_stat(int *handle, int *retval, int rmid, long fl
  */
 struct xa_switch_t *ndrx_get_xa_switch(void)
 {
-    return &ndrxdumssw;
+    return &ndrxjsw;
 }
 
 
