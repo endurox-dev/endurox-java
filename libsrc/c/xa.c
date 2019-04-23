@@ -139,7 +139,7 @@ expublic int ndrxj_xa_init(void)
     
     ctxpriv = ndrx_ctx_priv_get();
     
-    if (NULL==(jsets = ndrxj_cvt_arr_c_to_java((JNIEnv *)ctxpriv->integptr1, 
+    if (NULL==(jsets = ndrxj_cvt_arr_c_to_java(NDRXJ_JENV(ctxpriv), 
         sets, nrsets)))
     {
         NDRX_LOG(log_error, "Failed to coverts sets to Java");
@@ -148,7 +148,7 @@ expublic int ndrxj_xa_init(void)
     }
     
     /* get the class string */
-    jclazz = (*((JNIEnv *)ctxpriv->integptr1))->NewStringUTF((JNIEnv *)ctxpriv->integptr1, 
+    jclazz = (*(NDRXJ_JENV(ctxpriv)))->NewStringUTF(NDRXJ_JENV(ctxpriv), 
             clazz);
     
     if (NULL==jclazz)
@@ -163,8 +163,8 @@ expublic int ndrxj_xa_init(void)
      */
     
     /* Get the class for the context object */
-    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2);
+    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==ctxClass)
     {
@@ -175,7 +175,7 @@ expublic int ndrxj_xa_init(void)
     
     /* Get the method id  */
     
-    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
         ctxClass, "initXADataSource",
         "(Ljava/lang/String;[Ljava/lang/String;)I");
     
@@ -187,8 +187,8 @@ expublic int ndrxj_xa_init(void)
     }
     
     /* Call the method */
-    ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2, mid, jclazz, jsets);
+    ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv), mid, jclazz, jsets);
     
     if (EXSUCCEED!=ret)
     {
@@ -203,28 +203,28 @@ expublic int ndrxj_xa_init(void)
 out:
     
     /* Check exception and log it. */
-    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
-        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to active XA Data Source class [%s]: %s", clazz);
     }
 
     /* clear up references... */
     if (NULL!=ctxClass)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 ctxClass);
     }
 
     if (NULL!=jsets)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 jsets);
     }
 
     if (NULL!=jclazz)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 jclazz);
     }
     
@@ -254,8 +254,8 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
     ctxpriv = ndrx_ctx_priv_get();
     
     /* Get the class for the context object */
-    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2);
+    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==ctxClass)
     {
@@ -265,7 +265,7 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
     }
     
     /* Get the method id  */
-    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
         ctxClass, func,
         "(J)I");
     
@@ -276,28 +276,28 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
         goto out;
     }
     
-    ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2, mid, (jlong)flags);
+    ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv), mid, (jlong)flags);
     
     NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
     
 out:
     
-    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
-        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
                 "% failed: %s", func);
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
         }
-        (*(JNIEnv *)ctxpriv->integptr1)-> ExceptionClear((JNIEnv *)ctxpriv->integptr1);
+        (*NDRXJ_JENV(ctxpriv))-> ExceptionClear(NDRXJ_JENV(ctxpriv));
     }
 
     /* clear up references... */
     if (NULL!=ctxClass)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 ctxClass);
     }
     
@@ -363,7 +363,7 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
     ctxpriv = ndrx_ctx_priv_get();
     
     /* create xid first */
-    jxid = ndrxj_cvt_xid_to_java((JNIEnv *)ctxpriv->integptr1, xid);
+    jxid = ndrxj_cvt_xid_to_java(NDRXJ_JENV(ctxpriv), xid);
     
     if (NULL==xid)
     {
@@ -373,8 +373,8 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
     }
     
     /* Get the class for the context object */
-    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2);
+    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==ctxClass)
     {
@@ -384,7 +384,7 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
     }
     
     /* Get the method id  */
-    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
         ctxClass, func,
         "(Ljavax/transaction/xa/Xid;J)I");
     
@@ -395,28 +395,28 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
         goto out;
     }
     
-    ret = (*(JNIEnv *)ctxpriv->integptr1)->CallIntMethod((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2, mid, jxid, (jlong)flags);
+    ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv), mid, jxid, (jlong)flags);
     
     NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
     
 out:
     
-    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
-        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
                 "% failed: %s", func);
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
         }
-        (*(JNIEnv *)ctxpriv->integptr1)-> ExceptionClear((JNIEnv *)ctxpriv->integptr1);
+        (*NDRXJ_JENV(ctxpriv))-> ExceptionClear(NDRXJ_JENV(ctxpriv));
     }
 
     /* clear up references... */
     if (NULL!=ctxClass)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 ctxClass);
     }
     
@@ -528,8 +528,8 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     }
     
     /* Get the class for the context object */
-    ctxClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2);
+    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==ctxClass)
     {
@@ -539,7 +539,7 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     }
     
     /* Get the method id */
-    mid = (*(JNIEnv *)ctxpriv->integptr1)->GetMethodID((JNIEnv *)ctxpriv->integptr1, 
+    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
         ctxClass, "xa_recover_entry", "(J)Lorg/endurox/XidList;");
     
     if (NULL==mid)
@@ -549,12 +549,12 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
         goto out;
     }
     
-    retObj = (*(JNIEnv *)ctxpriv->integptr1)->CallObjectMethod((JNIEnv *)ctxpriv->integptr1, 
-        (jobject)ctxpriv->integptr2, mid, (jlong)flags);
+    retObj = (*NDRXJ_JENV(ctxpriv))->CallObjectMethod(NDRXJ_JENV(ctxpriv), 
+        NDRXJ_JATMICTX(ctxpriv), mid, (jlong)flags);
     
     
     /* get xid class */
-    xidClass = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectClass((JNIEnv *)ctxpriv->integptr1, 
+    xidClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
         retObj);
     
     if (NULL==xidClass)
@@ -566,16 +566,16 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     
     /* get ret field */
     
-    if (NULL==(fret = (*(JNIEnv *)ctxpriv->integptr1)->GetFieldID(
-            (JNIEnv *)ctxpriv->integptr1, xidClass, "ret", "I")))
+    if (NULL==(fret = (*NDRXJ_JENV(ctxpriv))->GetFieldID(
+            NDRXJ_JENV(ctxpriv), xidClass, "ret", "I")))
     {
         NDRX_LOG(log_error, "Failed to get ret field");
         ret = XAER_RMERR;
         goto out;
     }
     
-    if (NULL==(fxidarr = (*(JNIEnv *)ctxpriv->integptr1)->GetFieldID(
-            (JNIEnv *)ctxpriv->integptr1, xidClass, "list", "[Ljavax/transaction/xa/Xid;")))
+    if (NULL==(fxidarr = (*NDRXJ_JENV(ctxpriv))->GetFieldID(
+            NDRXJ_JENV(ctxpriv), xidClass, "list", "[Ljavax/transaction/xa/Xid;")))
     {
         NDRX_LOG(log_error, "Failed to get ret field");
         ret = XAER_RMERR;
@@ -583,7 +583,7 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     }
     
     /* get return code */
-    ret = (*(JNIEnv *)ctxpriv->integptr1)->GetIntField((JNIEnv *)ctxpriv->integptr1, retObj, fret);
+    ret = (*NDRXJ_JENV(ctxpriv))->GetIntField(NDRXJ_JENV(ctxpriv), retObj, fret);
     
     if (XA_OK!=ret)
     {
@@ -591,13 +591,13 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
         goto out;
     }
     
-    xarr = (jarray)(*(JNIEnv *)ctxpriv->integptr1)->GetObjectField(
-            (JNIEnv *)ctxpriv->integptr1, retObj, fxidarr);
+    xarr = (jarray)(*NDRXJ_JENV(ctxpriv))->GetObjectField(
+            NDRXJ_JENV(ctxpriv), retObj, fxidarr);
     
     if (NULL!=xarr)
     {
         
-        jcount = (*(JNIEnv *)ctxpriv->integptr1)->GetArrayLength((JNIEnv *)ctxpriv->integptr1, xarr);
+        jcount = (*NDRXJ_JENV(ctxpriv))->GetArrayLength(NDRXJ_JENV(ctxpriv), xarr);
         int minf = NDRX_MIN(count, jcount);
         int i;
         
@@ -606,11 +606,11 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
         
         for (i=0; i<minf; i++)
         {
-            jobject jxid = (*(JNIEnv *)ctxpriv->integptr1)->GetObjectArrayElement
-                    ((JNIEnv *)ctxpriv->integptr1, xarr, i);
+            jobject jxid = (*NDRXJ_JENV(ctxpriv))->GetObjectArrayElement
+                    (NDRXJ_JENV(ctxpriv), xarr, i);
             
             /* Convect java xid to C */
-            if (EXSUCCEED!=ndrxj_cvt_xid_to_c((JNIEnv *)ctxpriv->integptr1, jxid, 
+            if (EXSUCCEED!=ndrxj_cvt_xid_to_c(NDRXJ_JENV(ctxpriv), jxid, 
                     (xid+i)))
             {
                 NDRX_LOG(log_error, "Failed to convert XID to C!");
@@ -626,33 +626,33 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
 out:
     NDRX_LOG(log_debug, "Java xa_recover_entry() returns %d", ret);
     
-    if ((*(JNIEnv *)ctxpriv->integptr1)->ExceptionCheck((JNIEnv *)ctxpriv->integptr1))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
-        NDRXJ_LOG_EXCEPTION(((JNIEnv *)ctxpriv->integptr1), log_error, NDRXJ_LOGEX_ULOG, 
+        NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
                 "xa_recover_entry() failed: %s");
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
         }
-        (*(JNIEnv *)ctxpriv->integptr1)-> ExceptionClear((JNIEnv *)ctxpriv->integptr1);
+        (*NDRXJ_JENV(ctxpriv))-> ExceptionClear(NDRXJ_JENV(ctxpriv));
     }
 
     /* clear up references... */
     if (NULL!=ctxClass)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 ctxClass);
     }
 
     if (NULL!=xidClass)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 xidClass);
     }
 
     if (NULL!=xarr)
     {
-        (*(JNIEnv *)ctxpriv->integptr1)->DeleteLocalRef((JNIEnv *)ctxpriv->integptr1, 
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                xarr);
     }
 

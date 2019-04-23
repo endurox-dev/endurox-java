@@ -97,6 +97,24 @@ extern "C" {
         TP_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     NDRX_FREE(jerr__);\
 }
+
+/**
+ * Get java env from tls data
+ */
+#define NDRXJ_JENV(X)   ( ((JNIEnv *)(X->integptr1)) )
+#define NDRXJ_JENV_LVAL(X)   X->integptr1
+    
+/**
+ * Get ATMI Context from TLS data
+ */
+#define NDRXJ_JATMICTX(X)   ( ((jobject)(X->integptr2)) )
+#define NDRXJ_JATMICTX_LVAL(X)   X->integptr2
+    
+/**
+ * Get C Context from TLS data
+ */
+#define NDRXJ_CCTX(X)   ( ((TPCONTEXT_T)(X->integptr3)) )
+#define NDRXJ_CCTX_LVAL(X)  X->integptr3
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 

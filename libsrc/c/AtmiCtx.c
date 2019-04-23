@@ -53,13 +53,13 @@
 /* NOTE: we can have single main thread only, thus we may use globals */
 
 /** Java env for server operations */
-exprivate JNIEnv *M_srv_ctx_env = NULL;
+/* exprivate JNIEnv *NDRXJ_JENV(ctxpriv) = NULL; */
 
 /** Context object */
-exprivate jobject M_srv_ctx_obj = NULL;
+/* exprivate jobject NDRXJ_JATMICTX(ctxpriv) = NULL; */
 
 /** Resolve context */
-exprivate TPCONTEXT_T M_srv_ctx = NULL;
+/* exprivate TPCONTEXT_T M_srv_ctx = NULL; */
 
 /** Command line arguments as passed to the server runner */
 exprivate jobjectArray M_jargv;
@@ -93,7 +93,15 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
     {
         if (do_set)
         {
+            ndrx_ctx_priv_t *ctxpriv = ndrx_ctx_priv_get();
+            
             tpsetctxt(ctx, 0L);
+            
+            /* update private data storage in context */
+            
+            NDRXJ_JENV_LVAL(ctxpriv) = env;
+            NDRXJ_JATMICTX_LVAL(ctxpriv) = atmiCtxObj;
+            
         }
     }
     
@@ -395,13 +403,10 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jobject 
     /* get context handler */
 
     /* exception will thown if invalid object... */
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         goto out;
     }
-
-    /* set context */
-    tpsetctxt(ctx, 0L);
 
     /* allocate buffer, if error throw exception  */
     data = tpalloc((char *)n_btype, (char *)n_bsubtype, (long)size);
@@ -470,12 +475,10 @@ JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jo
     jobject errObj = NULL;
     
     /* exception will thrown if invalid object... */
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         return NULL;
     }
-
-    tpsetctxt(ctx, 0L);
 
     NDRX_LOG(log_debug, "context: (%p)", ctx);
     err = tperrno;
@@ -519,13 +522,16 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     jclass objClass = NULL;
     jfieldID myFieldID;        
     jobject svrObj = NULL;
+    ndrx_ctx_priv_t *ctxpriv;
     
     /* Attribs of the server to invoke */
     jclass svrClass = NULL;
     jmethodID svr_mid;
     
+    ctxpriv = ndrx_ctx_priv_get();
+    
     NDRX_LOG(log_info, "Into tpsrvinit -> java");
-    objClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, M_srv_ctx_obj);
+    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==objClass)
     {
@@ -534,7 +540,7 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
         EXFAIL_OUT(ret);   
     }
     
-    myFieldID = (*M_srv_ctx_env)->GetFieldID(M_srv_ctx_env, objClass, "svr", 
+    myFieldID = (*NDRXJ_JENV(ctxpriv))->GetFieldID(NDRXJ_JENV(ctxpriv), objClass, "svr", 
             "Lorg/endurox/Server;");
     
     if (NULL==myFieldID)
@@ -544,7 +550,7 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
         EXFAIL_OUT(ret);
     }
     
-    svrObj = (*M_srv_ctx_env)->GetObjectField(M_srv_ctx_env, M_srv_ctx_obj, myFieldID);
+    svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), myFieldID);
     
     if (NULL==svrObj)
     {
@@ -555,7 +561,7 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     
     /* Now invoke the interface method */
     
-    svrClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, svrObj);
+    svrClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), svrObj);
     
     if (NULL==svrClass)
     {
@@ -564,7 +570,7 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
         EXFAIL_OUT(ret);
     }
     
-    svr_mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, svrClass, "tpSvrInit",
+    svr_mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), svrClass, "tpSvrInit",
             "(Lorg/endurox/AtmiCtx;[Ljava/lang/String;)I");
     
     if (NULL==svr_mid)
@@ -582,19 +588,19 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     tpsetctxt(TPNULLCONTEXT, 0L);
     
 
-    ret = (int)(*M_srv_ctx_env)->CallIntMethod(M_srv_ctx_env, svrObj, svr_mid,
-            M_srv_ctx_obj, M_jargv);
+    ret = (int)(*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), svrObj, svr_mid,
+            NDRXJ_JATMICTX(ctxpriv), M_jargv);
     
     /* set back actual context */
-    tpsetctxt(M_srv_ctx, 0L);
+    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
     
     /* check for exception, if have one the return  */
     
-    if ((*M_srv_ctx_env)->ExceptionCheck(M_srv_ctx_env))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
-        NDRXJ_LOG_EXCEPTION(M_srv_ctx_env, log_error, 
+        NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, 
             NDRXJ_LOGEX_NDRX, "Java tpSvrInit failed:\n%s");
-        (*M_srv_ctx_env)->ExceptionClear(M_srv_ctx_env);
+        (*NDRXJ_JENV(ctxpriv))->ExceptionClear(NDRXJ_JENV(ctxpriv));
         EXFAIL_OUT(ret);
     }
     
@@ -602,13 +608,13 @@ out:
 
     if (NULL!=objClass)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, objClass);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), objClass);
     }
 
 
     if (NULL!=svrClass)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, svrClass);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), svrClass);
     }
 
     return ret;
@@ -629,10 +635,12 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
     jobject jcltid = NULL;
     jstring jname = NULL;
     jstring jfname = NULL;
-            
+    ndrx_ctx_priv_t *ctxpriv;
     
-    if (NULL==(jsvcinfo = ndrxj_atmi_TpSvcInfo_translate(M_srv_ctx_env,
-            M_srv_ctx_obj, EXTRUE, svcinfo, &jdata, &jcltid, &jname, &jfname)))
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    if (NULL==(jsvcinfo = ndrxj_atmi_TpSvcInfo_translate(NDRXJ_JENV(ctxpriv),
+            NDRXJ_JATMICTX(ctxpriv), EXTRUE, svcinfo, &jdata, &jcltid, &jname, &jfname)))
     {
         NDRX_LOG(log_error, "Failed to translate service call to java!");
     }
@@ -644,7 +652,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         /* Call method from Atmi Context, before that unset the C
          * context, because we do not know in what threads java does works.
          */
-        bclz = (*M_srv_ctx_env)->FindClass(M_srv_ctx_env, "org/endurox/AtmiCtx");
+        bclz = (*NDRXJ_JENV(ctxpriv))->FindClass(NDRXJ_JENV(ctxpriv), "org/endurox/AtmiCtx");
     
         if (NULL==bclz)
         {        
@@ -655,7 +663,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         }
 
         /* create buffer object... */
-        mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, bclz, 
+        mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), bclz, 
                 "tpCallDispatch", "(Lorg/endurox/TpSvcInfo;)V");
 
         if (NULL==mid)
@@ -667,30 +675,30 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         /* unset context */
         tpsetctxt(TPNULLCONTEXT, 0L);
         
-        (*M_srv_ctx_env)->CallVoidMethod(M_srv_ctx_env, M_srv_ctx_obj, 
+        (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), 
                 mid, jsvcinfo);
         
         /* set context back... */
-        tpsetctxt(M_srv_ctx, 0L);
+        tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
         
         /* Check exceptions, if have one, I guess we abort or return TPFAIL? 
          * If get get exception here, log down the output and abort the process
          * It is up to developer to handle the exceptions before doing
          * tpreturn...
          */
-        if ((*M_srv_ctx_env)->ExceptionCheck(M_srv_ctx_env))
+        if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
         {
-            (*M_srv_ctx_env)->DeleteLocalRef( M_srv_ctx_env, bclz);
+            (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef( NDRXJ_JENV(ctxpriv), bclz);
             
-            NDRXJ_LOG_EXCEPTION(M_srv_ctx_env, log_error, 
+            NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, 
                 NDRXJ_LOGEX_ULOG, "Service have thrown unexpected exception: "
                     "[%s] - ignoring (continue)");
             
-            (*M_srv_ctx_env)->ExceptionClear(M_srv_ctx_env);
+            (*NDRXJ_JENV(ctxpriv))->ExceptionClear(NDRXJ_JENV(ctxpriv));
         }
         else
         {
-            (*M_srv_ctx_env)->DeleteLocalRef( M_srv_ctx_env, bclz);
+            (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef( NDRXJ_JENV(ctxpriv), bclz);
         }
         
     }
@@ -701,27 +709,27 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
      */
     if (NULL!=jsvcinfo)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jsvcinfo);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jsvcinfo);
     }
     
     if (NULL!=jcltid)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jcltid);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jcltid);
     }
     
     if (NULL!=jdata)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jdata);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jdata);
     }
     
     if (NULL!=jname)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jname);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jname);
     }
     
     if (NULL!=jfname)
     {
-        (*M_srv_ctx_env)->DeleteLocalRef(M_srv_ctx_env, jfname);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jfname);
     }
     
     NDRX_LOG(log_error, "%s return", __func__);
@@ -782,8 +790,11 @@ exprivate void ndrxj_tpsvrdone(void)
     /* Attribs of the server to invoke */
     jclass svrClass;
     jmethodID svr_mid;
+    ndrx_ctx_priv_t *ctxpriv;
     
-    objClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, M_srv_ctx_obj);
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==objClass)
     {
@@ -792,7 +803,7 @@ exprivate void ndrxj_tpsvrdone(void)
         EXFAIL_OUT(ret);   
     }
     
-    myFieldID = (*M_srv_ctx_env)->GetFieldID(M_srv_ctx_env, objClass, "svr", 
+    myFieldID = (*NDRXJ_JENV(ctxpriv))->GetFieldID(NDRXJ_JENV(ctxpriv), objClass, "svr", 
             "Lorg/endurox/Server;");
     
     if (NULL==myFieldID)
@@ -802,7 +813,7 @@ exprivate void ndrxj_tpsvrdone(void)
         EXFAIL_OUT(ret);
     }
     
-    svrObj = (*M_srv_ctx_env)->GetObjectField(M_srv_ctx_env, M_srv_ctx_obj, myFieldID);
+    svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), myFieldID);
     
     if (NULL==svrObj)
     {
@@ -813,7 +824,7 @@ exprivate void ndrxj_tpsvrdone(void)
     
     /* Now invoke the interface method */
     
-    svrClass = (*M_srv_ctx_env)->GetObjectClass(M_srv_ctx_env, svrObj);
+    svrClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), svrObj);
     
     if (NULL==svrClass)
     {
@@ -822,7 +833,7 @@ exprivate void ndrxj_tpsvrdone(void)
         EXFAIL_OUT(ret);
     }
     
-    svr_mid = (*M_srv_ctx_env)->GetMethodID(M_srv_ctx_env, svrClass, "tpSvrDone",
+    svr_mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), svrClass, "tpSvrDone",
             "(Lorg/endurox/AtmiCtx;)V");
     
     if (NULL==svr_mid)
@@ -838,10 +849,10 @@ exprivate void ndrxj_tpsvrdone(void)
     tpsetctxt(TPNULLCONTEXT, 0L);
     
     /* Call server object */
-    (*M_srv_ctx_env)->CallVoidMethod(M_srv_ctx_env, svrObj, svr_mid, M_srv_ctx_obj);
+    (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), svrObj, svr_mid, NDRXJ_JATMICTX(ctxpriv));
     
     /* set back actual context */
-    tpsetctxt(M_srv_ctx, 0L);
+    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
     
 out:
             
@@ -866,6 +877,9 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     jstring jstr;
     jboolean n_elm_copy = EXFALSE;
     const char *n_elm;
+    ndrx_ctx_priv_t *ctxpriv;
+    
+    ctxpriv = ndrx_ctx_priv_get();
     
     M_jargv = jargv;
         
@@ -883,8 +897,8 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
      * */
     /*TODO: Check the NULL? */
 
-    M_srv_ctx_env = env;
-    M_srv_ctx_obj = obj;
+    NDRXJ_JENV_LVAL(ctxpriv) = env;
+    NDRXJ_JATMICTX_LVAL(ctxpriv) = obj;
 
     if (!nocheck)
     {
@@ -896,7 +910,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
         }
     }
     
-    if (NULL==(M_srv_ctx = ndrxj_get_ctx(env, obj, EXTRUE)))
+    if (NULL==(NDRXJ_CCTX_LVAL(ctxpriv) = ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         EXFAIL_OUT(ret);
     }
@@ -1009,8 +1023,11 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpreturn
     /* set context */
     char *buf = NULL;
     long len = 0;
+    ndrx_ctx_priv_t *ctxpriv;
     
-    tpsetctxt(M_srv_ctx, 0L);
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
     
     /* get data buffer... */
     if (NULL!=data)
@@ -1049,8 +1066,11 @@ expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpforward
     long len = 0;
     jboolean n_svcname_copy = EXFALSE;
     const char *n_svcname = (*env)->GetStringUTFChars(env, svcname, &n_svcname_copy);
-
-    tpsetctxt(M_srv_ctx, 0L);
+    ndrx_ctx_priv_t *ctxpriv;
+    
+    ctxpriv = ndrx_ctx_priv_get();
+    
+    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
     
     /* get data buffer... */
     if (NULL!=data)

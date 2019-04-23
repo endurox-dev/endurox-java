@@ -50,22 +50,13 @@
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
 
+/*
 exprivate __thread JNIEnv* M_env;
 exprivate __thread jobject M_atmiCtxObj;
+ */
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
-
-/**
- * Set globals for unsolicated handling
- * @param env java env
- * @param atmiCtxObj Atmi context for the tpcall/tpgetrply/tpchkunsol callers
- */
-expublic void ndrxj_atmictx_unsol_globals_set(JNIEnv* env, jobject atmiCtxObj)
-{
-    M_env = env;
-    M_atmiCtxObj = atmiCtxObj;
-}
 
 /**
  * Unsolicited message dispatcher.
@@ -80,16 +71,19 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
     jclass bclz;
     jmethodID mid;
     TPCONTEXT_T ctx;
+    ndrx_ctx_priv_t *ctxpriv;
+    
+    ctxpriv = ndrx_ctx_priv_get();
     
     /* here we will need a thread local java env handler and atmi context 
      * while performing C call from java 
      */
     
-    jobject jdata = ndrxj_atmi_TypedBuffer_translate(M_env, M_atmiCtxObj, 
-            EXTRUE, data, len, NULL, NULL, EXFALSE);
+    jobject jdata = ndrxj_atmi_TypedBuffer_translate(NDRXJ_JENV(ctxpriv), 
+            NDRXJ_JATMICTX(ctxpriv), EXTRUE, data, len, NULL, NULL, EXFALSE);
     
     /* check if have exception..., then do not continue... */
-    if ((*M_env)->ExceptionCheck(M_env))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
         /* log exception, unset and continue... */
         EXFAIL_OUT(ret);
@@ -98,7 +92,7 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
     /* Call method from Atmi Context, before that unset the C
      * context, because we do not know in what threads java does works.
      */
-    bclz = (*M_env)->FindClass(M_env, "org/endurox/AtmiCtx");
+    bclz = (*NDRXJ_JENV(ctxpriv))->FindClass(NDRXJ_JENV(ctxpriv), "org/endurox/AtmiCtx");
 
     if (NULL==bclz)
     {        
@@ -109,7 +103,7 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
     }
 
     /* create buffer object... */
-    mid = (*M_env)->GetMethodID(M_env, bclz, 
+    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), bclz, 
            "unsolDispatch", "(Lorg/endurox/TypedBuffer;J)V");
 
     if (NULL==mid)
@@ -125,7 +119,7 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
     
     tpgetctxt(&ctx, 0L);
 
-    (*M_env)->CallVoidMethod(M_env, M_atmiCtxObj, 
+    (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), 
             mid, jdata, (jlong)flags);
 
     /* set context back... */
@@ -137,24 +131,24 @@ out:
     
     /* clear any exception if have one */
     
-    if ((*M_env)->ExceptionCheck(M_env))
+    if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
         /* log exception, unset and continue... */
-        NDRXJ_LOG_EXCEPTION(M_env, log_error, NDRXJ_LOGEX_TP, 
+        NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, NDRXJ_LOGEX_TP, 
                 "Got exception during unsol handling (ignore): %s");
-        (*M_env)->ExceptionClear(M_env);
+        (*NDRXJ_JENV(ctxpriv))->ExceptionClear(NDRXJ_JENV(ctxpriv));
     }
 
     /* delete any references.. */
 
     if (NULL!=jdata)
     {
-        (*M_env)->DeleteLocalRef(M_env, jdata);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jdata);
     }
 
     if (NULL!=bclz)
     {
-        (*M_env)->DeleteLocalRef(M_env, bclz);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), bclz);
     }
 
     return;
@@ -388,12 +382,9 @@ out:
 JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpchkunsol
   (JNIEnv * env, jobject atmiCtxObj)
 {
-    
     int ret = EXSUCCEED;
     TPCONTEXT_T ctx;
     int err;
-
-    ndrxj_atmictx_unsol_globals_set(env, atmiCtxObj);
 
     /* switch to C */
     if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
