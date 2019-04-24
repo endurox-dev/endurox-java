@@ -85,7 +85,6 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 
     ctx = (TPCONTEXT_T)fieldVal;
 
-    userlog("YOPT CONTEXT got: %p", ctx);
     if (NULL==ctx)
     {
         ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, 
@@ -101,8 +100,6 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 
             
             ctxpriv = ndrx_ctx_priv_get();
-            
-            userlog("YOPT GOT PRIV: %p ctx %p", ctxpriv, ctx);
             
             /* update private data storage in context */
             
@@ -137,8 +134,6 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject 
         goto out;
     }
     
-    userlog("Current CTX %p", ctx);
-    
     ret = tplogqinfo((int)lev, (long)flags);
     
     if (ret < 0)
@@ -147,8 +142,6 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject 
         ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
     }
     tpgetctxt(&ctx, 0);
-    
-    userlog("Restored CTX %p", ctx);
     
 out:
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -472,8 +465,6 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
         /* unset */
         tpsetctxt(TPNULLCONTEXT, 0L);
     }
-    
-    userlog("YOPT CONTEXT NEW: %p", ctx);
     
     return (long)ctx;
 }
