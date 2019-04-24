@@ -99,7 +99,10 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
             
             tpsetctxt(ctx, 0L);
 
+            
             ctxpriv = ndrx_ctx_priv_get();
+            
+            userlog("YOPT GOT PRIV: %p ctx %p", ctxpriv, ctx);
             
             /* update private data storage in context */
             
@@ -134,6 +137,8 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject 
         goto out;
     }
     
+    userlog("Current CTX %p", ctx);
+    
     ret = tplogqinfo((int)lev, (long)flags);
     
     if (ret < 0)
@@ -141,6 +146,9 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject 
         /* throw exception */
         ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
     }
+    tpgetctxt(&ctx, 0);
+    
+    userlog("Restored CTX %p", ctx);
     
 out:
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -900,9 +908,10 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     jboolean n_elm_copy = EXFALSE;
     const char *n_elm;
     ndrx_ctx_priv_t *ctxpriv;
+    TPCONTEXT_T ctx;
     
     
-    if (NULL== ndrxj_get_ctx(env, obj, EXTRUE))
+    if (NULL== (ctx=ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         ret=EXFAIL;
         goto out;
@@ -929,6 +938,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
 
     NDRXJ_JENV_LVAL(ctxpriv) = env;
     NDRXJ_JATMICTX_LVAL(ctxpriv) = obj;
+    NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
 
     if (!nocheck)
     {
@@ -938,11 +948,6 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
                     "expected at least 4, got %d", size);
             EXFAIL_OUT(ret);
         }
-    }
-    
-    if (NULL==(NDRXJ_CCTX_LVAL(ctxpriv) = ndrxj_get_ctx(env, obj, EXTRUE)))
-    {
-        EXFAIL_OUT(ret);
     }
     
     argv = NDRX_CALLOC(sizeof(char *), size+1);
