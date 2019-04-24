@@ -887,6 +887,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     const char *n_elm;
     ndrx_ctx_priv_t *ctxpriv;
     
+    /* WELL WE SHALL GET CONTEXT HERE!!!! The one allocated by java*/
     ctxpriv = ndrx_ctx_priv_get();
     
     M_jargv = jargv;
