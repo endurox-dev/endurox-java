@@ -85,6 +85,7 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 
     ctx = (TPCONTEXT_T)fieldVal;
 
+    userlog("YOPT CONTEXT got: %p", ctx);
     if (NULL==ctx)
     {
         ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, 
@@ -463,7 +464,9 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
         /* unset */
         tpsetctxt(TPNULLCONTEXT, 0L);
     }
-
+    
+    userlog("YOPT CONTEXT NEW: %p", ctx);
+    
     return (long)ctx;
 }
 
@@ -749,6 +752,14 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
 expublic void JNICALL Java_org_endurox_AtmiCtx_tpadvertiseC
       (JNIEnv *env, jobject obj, jstring svcname, jstring funcname)
 {
+    
+    /* What about context? */
+    
+    if (NULL== ndrxj_get_ctx(env, obj, EXTRUE))
+    {
+        goto out;
+    }
+    
     /* Hmm we could do advertise directly here the hash table could be stored
      * at C level, no need to proxy up to java for switching the service 
      * only then we might have some issues with garbage collector. So better
@@ -779,6 +790,9 @@ out:
     {
         (*env)->ReleaseStringUTFChars(env, funcname, n_funcname);
     }
+
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
 }
 
 
@@ -886,6 +900,13 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
     jboolean n_elm_copy = EXFALSE;
     const char *n_elm;
     ndrx_ctx_priv_t *ctxpriv;
+    
+    
+    if (NULL== ndrxj_get_ctx(env, obj, EXTRUE))
+    {
+        ret=EXFAIL;
+        goto out;
+    }
     
     /* WELL WE SHALL GET CONTEXT HERE!!!! The one allocated by java*/
     ctxpriv = ndrx_ctx_priv_get();
