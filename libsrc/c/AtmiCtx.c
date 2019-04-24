@@ -534,7 +534,8 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     ctxpriv = ndrx_ctx_priv_get();
     
     NDRX_LOG(log_info, "Into tpsrvinit -> java");
-    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv));
+    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
+            NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==objClass)
     {
@@ -553,7 +554,8 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
         EXFAIL_OUT(ret);
     }
     
-    svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), myFieldID);
+    svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), 
+            NDRXJ_JATMICTX(ctxpriv), myFieldID);
     
     if (NULL==svrObj)
     {
@@ -797,7 +799,8 @@ exprivate void ndrxj_tpsvrdone(void)
     
     ctxpriv = ndrx_ctx_priv_get();
     
-    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv));
+    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
+            NDRXJ_JATMICTX(ctxpriv));
     
     if (NULL==objClass)
     {
@@ -816,7 +819,8 @@ exprivate void ndrxj_tpsvrdone(void)
         EXFAIL_OUT(ret);
     }
     
-    svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), myFieldID);
+    svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), 
+            NDRXJ_JATMICTX(ctxpriv), myFieldID);
     
     if (NULL==svrObj)
     {
@@ -836,8 +840,8 @@ exprivate void ndrxj_tpsvrdone(void)
         EXFAIL_OUT(ret);
     }
     
-    svr_mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), svrClass, "tpSvrDone",
-            "(Lorg/endurox/AtmiCtx;)V");
+    svr_mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), svrClass, 
+            "tpSvrDone", "(Lorg/endurox/AtmiCtx;)V");
     
     if (NULL==svr_mid)
     {
@@ -852,7 +856,8 @@ exprivate void ndrxj_tpsvrdone(void)
     tpsetctxt(TPNULLCONTEXT, 0L);
     
     /* Call server object */
-    (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), svrObj, svr_mid, NDRXJ_JATMICTX(ctxpriv));
+    (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), svrObj, svr_mid, 
+            NDRXJ_JATMICTX(ctxpriv));
     
     /* set back actual context */
     tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
@@ -1095,7 +1100,7 @@ out:
         (*env)->ReleaseStringUTFChars(env, svcname, n_svcname);
     }
 
-    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    NDRX_LOG(log_debug, "returns %d", ret);
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
