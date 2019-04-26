@@ -42,7 +42,7 @@ import org.endurox.exceptions.UbfBNOTPRESException;
 public class TypedUbf extends TypedBuffer {
 	
     static {
-       System.loadLibrary("exjava"); // Load native library at runtime
+       System.loadLibrary("exjavald"); // Load native library at runtime
     }
     
     /**

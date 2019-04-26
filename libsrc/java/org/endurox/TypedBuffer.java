@@ -126,7 +126,7 @@ public class TypedBuffer {
     public native TpTypesResult tptypes();    
     
     static {
-       System.loadLibrary("exjava"); // Load native library at runtime
+       System.loadLibrary("exjavald"); // Load native library at runtime
     }
 }
 /* vim: set ts=4 sw=4 et smartindent: */

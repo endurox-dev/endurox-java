@@ -451,7 +451,7 @@ out:
  * Method:    sayHello
  * Signature: ()V
  */
-jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
+jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt_int (JNIEnv *env, jclass cls)
 {
     TPCONTEXT_T ctx = tpnewctxt(0, 1);
 

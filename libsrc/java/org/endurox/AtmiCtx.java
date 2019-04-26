@@ -150,6 +150,8 @@ public class AtmiCtx {
     }
 
     static {
+        /* Use external loader??? */
+       System.loadLibrary("exjavald"); // Load native library at runtime
        System.loadLibrary("exjava"); // Load native library at runtime
                             // *.dll (Windows) or *.so (Unixes)
     }
@@ -1969,6 +1971,12 @@ public class AtmiCtx {
         return ret;
         
     }
+
+    /*
+     * TODO: tpsrvsetctxdata
+     * tpsrvfreectxdata
+     * tpsrvgetctxdata
+     */
     
 }
 

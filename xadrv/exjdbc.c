@@ -57,16 +57,18 @@
  * The function is exported and dynamically retrieved after the module was
  * fetched
  */
-struct xa_switch_t *ndrx_get_xa_switch_int(char *symbol, char *descr, char *init_func)
+struct xa_switch_t *ndrx_get_xa_switch(void)
 {
     struct xa_switch_t * sw = NULL;
     void *handle = NULL;
     int ret = EXSUCCEED;
+    char *symbol = "ndrxjsw";
+    char *descr = "Enduro/X JDBC";
     char *rmlib = getenv(CONF_NDRX_XA_RMLIB);
     ndrx_ctx_priv_t *ctxpriv = ndrx_ctx_priv_get();
     ndrx_env_priv_t *envpriv = ndrx_env_priv_get();
     
-    NDRX_LOG(log_debug, "%s rmlib = [%s]", descr, rmlib);
+    NDRX_LOG(log_debug, "ex java rmlib = [%s]", descr, rmlib);
     
     sw = (struct xa_switch_t * )dlsym( RTLD_DEFAULT, symbol );
     if( sw == NULL )

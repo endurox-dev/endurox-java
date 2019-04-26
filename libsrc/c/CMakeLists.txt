@@ -93,14 +93,20 @@ add_library (exjava SHARED
                 xaconfig.c
 	)
 
+add_library (exjavald SHARED
+                loader.c
+	)
+
 if(Java_VERSION VERSION_LESS 1.10)
     add_dependencies(exjava enduroxjh)
+    add_dependencies(exjavald enduroxjh)
 endif()
 
 target_link_libraries (exjava atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 
 install (TARGETS 
-    exjava
+    exjava 
+    exjavald
     DESTINATION "${INSTALL_LIB_DIR}"
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE 
                 GROUP_EXECUTE WORLD_EXECUTE
