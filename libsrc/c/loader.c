@@ -39,6 +39,7 @@
 #include <ndebug.h>
 #include <atmi.h>
 #include <sys_mqueue.h>
+#include <thlock.h>
 
 #include <tmenv.h>
 #include <libsrc.h>
@@ -50,65 +51,160 @@
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
+
+/**
+ * Symbol mapping table
+ */
+struct ndrxj_loader_map
+{
+    char    *symbol;        /**< Symbol name                                  */
+    void    **funcptr;      /**< Pointer to function                          */
+};
+typedef struct ndrxj_loader_map ndrxj_loader_map_t;
+
+
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
+
+/* resolved funcs, generated list: */
+exprivate jlong (*p_ndrxj_Java_org_endurox_AtmiCtx_tpnewctxt)
+        (JNIEnv *, jclass) = NULL;
+
+exprivate jint (*p_ndrxj_Java_org_endurox_AtmiCtx_tplogqinfo) 
+        (JNIEnv *, jobject, jint, jlong) = NULL;
+
+exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tplogC)(JNIEnv *, jobject, jint, 
+        jstring, jlong, jstring);
+
+/**
+ * Function mapping table
+ */
+exprivate ndrxj_loader_map_t M_funcmap[] =
+{  
+    /* generated list of maps: */
+    {"ndrxj_Java_org_endurox_AtmiCtx_tpnewctxt", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpnewctxt},
+    {"ndrxj_Java_org_endurox_AtmiCtx_tplogqinfo", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tplogqinfo},
+    {"ndrxj_Java_org_endurox_AtmiCtx_tplogC", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tplogC},
+    {NULL, NULL}
+};
+    
+/**
+ * Set to true if library is initialize / ptrs resolved
+ */
+exprivate int volatile M_lib_init = EXFALSE;
+exprivate void * M_handle = NULL;
+
+/**
+ * Lock for init
+ */
+MUTEX_LOCKDECL(M_lib_init_lock);
+
 /*---------------------------Prototypes---------------------------------*/
+
+/**
+ * Throw exception
+ * @param env java env
+ * @param msg message
+ */
+exprivate void ndrxj_lite_exception(JNIEnv *env, char *msg)
+{
+    (*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/Exception"), msg);
+}
+
+/**
+ * Perform library init with mutex lock to avoid twice init - protect from
+ * threaded access
+ * @param[in] env Java env
+ * @return EXSUCCEED/EXFAIL
+ */
+exprivate int ndrxj_lib_init(JNIEnv *env)
+{
+    int ret = EXSUCCEED;
+    char buf[512];
+#if EX_OS_DARWIN   
+    char *lib = "libexjava.dylib";
+#else
+    char *lib = "libexjava.so";
+#endif
+    int i;
+    
+    MUTEX_LOCK_V(M_lib_init_lock);
+    
+    if (!M_lib_init)
+    {
+        /* check the symbol, if have one, then load directly
+         * if does not have symbol, then load the library
+         * Symbol mapping shall be done in separate function.
+         */
+        
+        if (NULL==dlsym( RTLD_DEFAULT, "ndrxj_Java_org_endurox_AtmiCtx_tpnewctxt" ))
+        {
+            /* load shared library */
+            M_handle = dlopen (lib, RTLD_NOW | RTLD_GLOBAL);
+            
+            if (!M_handle)
+            {
+                snprintf(buf, sizeof(buf), "Failed to load %s: %s", lib, dlerror());
+                ndrxj_lite_exception(env, buf);
+                EXFAIL_OUT(ret);
+            }
+        }
+        
+        /* load mappings, all maps shall succeed, else we give error */
+        for (i=0; NULL!=M_funcmap[i].symbol; i++)
+        {
+            (*M_funcmap[i].funcptr) = dlsym(M_handle, M_funcmap[i].symbol);
+            
+            if (NULL==(*M_funcmap[i].funcptr))
+            {
+                snprintf(buf, sizeof(buf), "Failed to resolve `%s' function", 
+                        M_funcmap[i].symbol);
+                ndrxj_lite_exception(env, buf);
+                EXFAIL_OUT(ret);
+            }
+        }
+    }
+    
+out:
+    MUTEX_UNLOCK_V(M_lib_init_lock);
+    
+    return ret;
+}
 
 /**
  * All Enduro/X Ops requires Atmi Context, thus
  * catch the call and load symbols globally...
  */
-jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
+jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *v1, jclass v2)
 {
-    static int loaded = EXFALSE;
-    static jlong (*fpFunc)(JNIEnv *env, jclass cls) = NULL;
-    jlong ctx = 0;
-    void *handle = NULL;
-    
-    /* use locked loder! */
-    if (!loaded)
+    if (!M_lib_init)
     {
-        
-        /* TODO: Have ptr to func: jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls) */
-        /* Loading the symbol... */
-        handle = dlopen ("libexjava.so", RTLD_NOW | RTLD_GLOBAL);
-        if (!handle)
+        if (EXSUCCEED!=ndrxj_lib_init(v1))
         {
-            fprintf(stderr, "Failed to load libexjava.so: %s\n", dlerror());
-            ctx = 0;
-            goto out;
+            return (jlong)0;
         }
-        else
-        {
-            loaded = EXTRUE;
-        }
-        
-        /* get the symbol */
-        if (NULL==(fpFunc = dlsym( handle, "Java_org_endurox_AtmiCtx_tpnewctxt_int" )))
-        {
-            fprintf(stderr, "Failed to resolve: Java_org_endurox_AtmiCtx_tpnewctxt_int: %s\n", 
-                    dlerror());
-            ctx = 0;
-            goto out;
-        }
-        
-        fprintf(stderr, "YOPT !Loaded!!!!!");
     }
     
-    /* call the symbol */
-    ctx = fpFunc (env, cls);
-    
-out:
-    
-    if (ctx = 0 && NULL!=handle)
-    {
-        dlclose(handle);
-    }
-
-    return (long)ctx;
+    return p_ndrxj_Java_org_endurox_AtmiCtx_tpnewctxt(v1, v2);
 }
 
-
+/**
+ * All Enduro/X Ops requires Atmi Context, thus
+ * catch the call and load symbols globally...
+ */
+void Java_org_endurox_AtmiCtx_tplogC(JNIEnv* v1, jobject v2, jint v3, 
+        jstring v4, jlong v5, jstring v6)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v1))
+        {
+            return;
+        }
+    }
+    
+    p_ndrxj_Java_org_endurox_AtmiCtx_tplogC(v1, v2, v3, v4, v5, v6);
+}
 
 
 #undef __USE_GNU

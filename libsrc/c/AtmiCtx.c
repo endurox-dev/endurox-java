@@ -123,7 +123,7 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
  * @param flags flags
  * @return logger configuration
  */
-expublic jint JNICALL Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject obj, 
+expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jobject obj, 
         jint lev, jlong flags)
 {
     TPCONTEXT_T ctx;
@@ -157,7 +157,7 @@ out:
  * @param line line number of -1 if no detailed log user
  * @param msg message to log
  */
-void JNICALL Java_org_endurox_AtmiCtx_tplogC(JNIEnv * env, jobject obj, jint lev, 
+void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogC(JNIEnv * env, jobject obj, jint lev, 
         jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;

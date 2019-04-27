@@ -39,11 +39,38 @@
 
 @ARGS = '-' if !@ARGV;
 
+#
+# Read all CLI files..
+#
 for my $qfn (@ARGV) {
-    open($fh, $qfn);
+	open($fh, $qfn);
 
-    while (<$fh>) {
-       printf( "got: [$_]\n");
-    }
-    close($fh);
+	while (<$fh>) {
+		chomp;
+		my $line = $_;
+		my $func = "";
+		my $typ = "";
+		my $sign = "";
+		
+		
+		printf( "got: [$line]\n");
+		
+		if ($line ~= /^JNIEXPORT/)
+		{
+			($typ, $func) = $line =~ /^JNIEXPORT (.*) JNICALL (.*)/g;
+			my $line2 = <$fh>;
+			chomp $line2;
+			
+			printf("got line 2 [$line2]\n");
+			
+		}
+	}
+	close($fh);
 }
+
+
+
+
+
+
+
