@@ -35,7 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -59,7 +59,7 @@
  * @param bfldid compiled field id
  * @return 
  */
-expublic jstring JNICALL Java_org_endurox_AtmiCtx_Btype
+expublic jstring JNICALL ndrxj_Java_org_endurox_AtmiCtx_Btype
   (JNIEnv * env, jobject atmiCtxObj, jint bfldid)
 {
     TPCONTEXT_T ctx;
@@ -95,7 +95,7 @@ out:
  * @param bfldid compiled field id
  * @return field name instring
  */
-expublic jstring JNICALL Java_org_endurox_AtmiCtx_Bfname
+expublic jstring JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bfname
   (JNIEnv * env, jobject atmiCtxObj, jint bfldid)
 {
     TPCONTEXT_T ctx;
@@ -130,7 +130,7 @@ out:
  * @param atmiCtxObj atmi context object
  * @return timeout in secnods
  */
-expublic JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tptoutget
+expublic JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tptoutget
   (JNIEnv * env, jobject atmiCtxObj)
 {
     jint ret = EXFAIL;
@@ -154,7 +154,7 @@ out:
  * @param atmiCtxObj atmi context
  * @param tout timeout in seconds
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tptoutset
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tptoutset
   (JNIEnv * env, jobject atmiCtxObj, jint tout)
 {
     int ret = EXSUCCEED;
@@ -180,7 +180,7 @@ out:
  * @param data 
  * @return list of pointers
  */
-expublic JNIEXPORT jlongArray JNICALL Java_org_endurox_AtmiCtx_getBuffers
+expublic JNIEXPORT jlongArray JNICALL ndrxj_Java_org_endurox_AtmiCtx_getBuffers
   (JNIEnv * env, jobject atmiCtxObj)
 {
     jlongArray ret = NULL;
@@ -233,7 +233,7 @@ out:
  * @param msg message to print
  * @param e exception to backtrace
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tplogubfex
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogubfex
   (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jthrowable e)
 {
     
@@ -269,7 +269,7 @@ out:
  * @param msg custom message
  * @param e exception
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tplogndrxex
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogndrxex
   (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jthrowable e)
 {
     jboolean n_msg_copy = EXFALSE;
@@ -303,7 +303,7 @@ out:
  * @param msg custom message
  * @param e exception
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tplogex
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogex
   (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jthrowable e)
 {
     jboolean n_msg_copy = EXFALSE;
@@ -337,7 +337,7 @@ out:
  * @param msg custom message
  * @param e exception
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogex
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_userlogex
   (JNIEnv * env, jobject atmiCtxObj, jstring msg, jthrowable e)
 {
     jboolean n_msg_copy = EXFALSE;
@@ -369,7 +369,7 @@ out:
  * @param atmiCtxObj atmi context
  * @return user return code
  */
-JNIEXPORT jlong JNICALL Java_org_endurox_AtmiCtx_tpurcode
+JNIEXPORT jlong JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpurcode
   (JNIEnv *env, jobject atmiCtxObj)
 {
     long ur = 0;
@@ -393,7 +393,7 @@ out:
  * @param atmiCtxObj ATMI Context
  * @param cd call descriptor
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpcancel
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpcancel
   (JNIEnv *env, jobject atmiCtxObj, jint cd)
 {
  

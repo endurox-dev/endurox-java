@@ -35,7 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -183,7 +183,7 @@ out:
  * @param exptree expression tree object onto which this method is called
  * @param cPtr C pointer
  */
-expublic void JNICALL Java_org_endurox_BExprTree_Btreefree
+expublic void JNICALL ndrxj_Java_org_endurox_BExprTree_Btreefree
   (JNIEnv * env, jobject exptree, jlong cPtr)
 {
     /* switch contexts & perform free 

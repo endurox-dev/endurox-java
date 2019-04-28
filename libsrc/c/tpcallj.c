@@ -35,8 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -62,7 +61,7 @@
  * @param data ATMI Buffer reference
  * @param flags standard tpcall(3) flags
  */
-JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpcall
+JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpcall
   (JNIEnv *env, jobject atmiCtxObj, jstring svc, jobject idata, jlong flags)
 
 {
@@ -184,7 +183,7 @@ out:
  * @param flags call flags
  * @return call descriptor
  */
-JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpacall
+JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpacall
   (JNIEnv * env, jobject atmiCtxObj, jstring svc, jobject idata, jlong flags)
 {
     jint ret = EXFAIL;
@@ -261,7 +260,7 @@ out:
  * @param flags java flags
  * @return TpgetrplyResult with result data cd & buffer
  */
-expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpgetrply
+expublic JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpgetrply
   (JNIEnv *env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
 {
     jint ret = EXFAIL;

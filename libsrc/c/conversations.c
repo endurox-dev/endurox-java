@@ -35,8 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -63,7 +62,7 @@
  * @param flags connect flags
  * @return connection descriptor
  */
-expublic JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpconnect
+expublic JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpconnect
   (JNIEnv * env, jobject atmiCtxObj, jstring svc, jobject idata, jlong flags)
 {
     jint ret = EXFAIL;
@@ -139,7 +138,7 @@ out:
  * @param flags input flags
  * @return TprecvResult obj
  */
-expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tprecv
+expublic JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tprecv
   (JNIEnv * env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
 {
     jint ret = EXFAIL;
@@ -250,7 +249,7 @@ out:
  * @param flags ATMI Flags
  * @return ATMI Conv event or 0 (on OK)
  */
-expublic JNIEXPORT jlong JNICALL Java_org_endurox_AtmiCtx_tpsend
+expublic JNIEXPORT jlong JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsend
   (JNIEnv * env, jobject atmiCtxObj, jint cd, jobject idata, jlong flags)
 {
     jint ret = EXFAIL;
@@ -319,7 +318,7 @@ out:
  * @param atmiCtxObj ATMI Context object
  * @param cd call descriptor
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpdiscon
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpdiscon
   (JNIEnv * env, jobject atmiCtxObj, jint cd)
 {
     jint ret = EXFAIL;

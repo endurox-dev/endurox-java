@@ -35,7 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>

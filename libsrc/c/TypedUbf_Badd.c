@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -107,7 +105,7 @@ out:
  * @param bfldid field id
  * @param js short type
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Badd__IS
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__IS
   (JNIEnv *env, jobject data, jint bfldid, jshort js)
 {
    short s = (short)js;
@@ -121,7 +119,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Badd__IS
  * @param bfldid field id
  * @param jl long value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__IJ
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__IJ
   (JNIEnv * env, jobject data, jint bfldid, jlong jl)
 {
     long l = (long)jl;
@@ -135,7 +133,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__IJ
  * @param bfldid field id
  * @param jb char to add
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__IB
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__IB
   (JNIEnv * env, jobject data, jint bfldid, jbyte jb)
 {
     char c = (long)jb;
@@ -149,7 +147,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__IB
  * @param bfldid field id
  * @param jf float value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__IF
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__IF
   (JNIEnv * env, jobject data, jint bfldid, jfloat jf)
 {
     float f = (float)jf;
@@ -163,7 +161,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__IF
  * @param bfldid field id
  * @param jd float value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__ID
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__ID
   (JNIEnv * env, jobject data, jint bfldid, jdouble jd)
 {
     double d = (double)jd;
@@ -177,7 +175,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__ID
  * @param bfldid field id
  * @param js java string
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__ILjava_lang_String_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__ILjava_lang_String_2
   (JNIEnv *env, jobject data, jint bfldid, jstring js)
 {
     jboolean n_str_copy = EXFALSE;
@@ -208,7 +206,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__ILjava_lang_Stri
  * @param bfldid field id
  * @param jb java byte array
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Badd__I_3B
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__I_3B
   (JNIEnv * env, jobject data, jint bfldid, jbyteArray jb)
 {
     jboolean n_carray_copy;

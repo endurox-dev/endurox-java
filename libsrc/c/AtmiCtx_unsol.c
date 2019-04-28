@@ -35,7 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -162,7 +162,7 @@ out:
  * @param jcb java object for unsol callback
  * @return curren unsol java hanlder
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpsetunsolC
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsetunsolC
   (JNIEnv * env, jobject atmiCtxObj, jobject jcb)
 {
     TPCONTEXT_T ctx;
@@ -209,7 +209,7 @@ out:
  * @param idata input data buffer
  * @param flags flags
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpnotify
   (JNIEnv * env, jobject atmiCtxObj, jobject jclientid, jobject idata, jlong flags)
 {
     int ret = EXSUCCEED;
@@ -286,7 +286,7 @@ JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpnotify
  * @param idata input data buffer, may be NULL
  * @param flags flags
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpbroadcast
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpbroadcast
   (JNIEnv * env, jobject atmiCtxObj, jstring lmid, jstring usrname, 
         jstring cltname, jobject idata, jlong flags)
 {
@@ -380,7 +380,7 @@ out:
  * @param atmiCtxObj ATMI Con
  * @return EXFAIL or 
  */
-JNIEXPORT jint JNICALL Java_org_endurox_AtmiCtx_tpchkunsol
+JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpchkunsol
   (JNIEnv * env, jobject atmiCtxObj)
 {
     int ret = EXSUCCEED;

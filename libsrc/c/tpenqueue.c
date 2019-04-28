@@ -35,7 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -196,7 +196,7 @@ out:
  * @param idata Input data
  * @param flags queue flags
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
+expublic void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpenqueue
   (JNIEnv * env, jobject atmiCtxObj, jstring jqspace, jstring jqname, jobject jqctl, 
         jobject idata, jlong flags)
 {
@@ -215,7 +215,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpenqueue
  * @param idata input data
  * @param flags queue flags
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpenqueueex
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpenqueueex
   (JNIEnv * env, jobject atmiCtxObj, jshort nodeid, jshort srvid, jstring jqname, 
         jobject jqctl, jobject idata, jlong flags)
 {

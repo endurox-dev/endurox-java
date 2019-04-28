@@ -35,8 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedString.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -62,7 +61,7 @@
  * @param data TypedString object
  * @param s Sring value to set
  */
-expublic void JNICALL Java_org_endurox_TypedString_setString
+expublic void JNICALL ndrxj_Java_org_endurox_TypedString_setString
   (JNIEnv * env, jobject data, jstring s)
 {
     char *cdata;
@@ -161,7 +160,7 @@ out:
  * @param data TypedString object
  * @return Java string
  */
-expublic jstring JNICALL Java_org_endurox_TypedString_getString
+expublic jstring JNICALL ndrxj_Java_org_endurox_TypedString_getString
   (JNIEnv * env, jobject data)
 {
     char *cdata;

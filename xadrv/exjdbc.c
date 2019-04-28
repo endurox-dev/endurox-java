@@ -132,6 +132,7 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
         if (EXSUCCEED!=ndrxj_xa_init())
         {
             NDRX_LOG(log_error, "Failed to init JDBC driver");
+            sw = NULL;
         }
     }
     
@@ -142,7 +143,6 @@ out:
         dlclose(handle);
     }
 
-    
     return sw;
 }
 

@@ -33,7 +33,7 @@
  * -----------------------------------------------------------------------------
  */
 #include <jni.h>
-#include "org_endurox_TypedBuffer.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -178,7 +178,7 @@ out:
  * @param obj ATMI buffer Object
  * @param cPtr C pointer to ATMI Buffer
  */
-expublic void JNICALL Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject obj, 
+expublic void JNICALL ndrxj_Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jobject obj, 
         jlong cPtr)
 {
     TPCONTEXT_T ctx;
@@ -565,7 +565,7 @@ out:
  * @param data ATMI buffer object
  * @param size new buffer size
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedBuffer_tprealloc
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedBuffer_tprealloc
   (JNIEnv *env, jobject data, jlong size)
 {
     char *buf;
@@ -786,7 +786,7 @@ out:
  * @param data ATMI Buffer
  * @return TpTypesResult object
  */
-expublic JNIEXPORT jobject JNICALL Java_org_endurox_TypedBuffer_tptypes
+expublic JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_TypedBuffer_tptypes
   (JNIEnv * env, jobject data)
 {
     char btype[16] = {EXEOS};

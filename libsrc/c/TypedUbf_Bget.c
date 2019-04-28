@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -116,7 +114,7 @@ out:
  * @return short value
  * @throws any UBF
  */
-expublic JNIEXPORT jshort JNICALL Java_org_endurox_TypedUbf_BgetShort
+expublic JNIEXPORT jshort JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetShort
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
@@ -142,7 +140,7 @@ expublic JNIEXPORT jshort JNICALL Java_org_endurox_TypedUbf_BgetShort
  * @return long value
  * @throws any UBF
  */
-JNIEXPORT jlong JNICALL Java_org_endurox_TypedUbf_BgetLong
+JNIEXPORT jlong JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetLong
       (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
@@ -168,7 +166,7 @@ JNIEXPORT jlong JNICALL Java_org_endurox_TypedUbf_BgetLong
  * @return char value
  * @throws any UBF
  */
-JNIEXPORT jbyte JNICALL Java_org_endurox_TypedUbf_BgetByte
+JNIEXPORT jbyte JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetByte
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
@@ -195,7 +193,7 @@ JNIEXPORT jbyte JNICALL Java_org_endurox_TypedUbf_BgetByte
  * @return float value
  * @throws any UBF
  */
-JNIEXPORT jfloat JNICALL Java_org_endurox_TypedUbf_BgetFloat
+JNIEXPORT jfloat JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetFloat
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
@@ -221,7 +219,7 @@ JNIEXPORT jfloat JNICALL Java_org_endurox_TypedUbf_BgetFloat
  * @return double value
  * @throws any UBF
  */
-JNIEXPORT jdouble JNICALL Java_org_endurox_TypedUbf_BgetDouble
+JNIEXPORT jdouble JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetDouble
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;
@@ -247,7 +245,7 @@ JNIEXPORT jdouble JNICALL Java_org_endurox_TypedUbf_BgetDouble
  * @return string value
  * @throws any UBF
  */
-JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_BgetString
+JNIEXPORT jstring JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetString
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf = NULL;
@@ -273,7 +271,7 @@ JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_BgetString
  * @return java byte array value
  * @throws any UBF
  */
-JNIEXPORT jbyteArray JNICALL Java_org_endurox_TypedUbf_BgetByteArr
+JNIEXPORT jbyteArray JNICALL ndrxj_Java_org_endurox_TypedUbf_BgetByteArr
   (JNIEnv * env, jobject data, jint bfldid, jint occ)
 {
     char *buf;

@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -60,7 +58,7 @@
  * @param env java env
  * @param data TypedUbf object
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bprint(JNIEnv *env, jobject data)
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bprint(JNIEnv *env, jobject data)
 {
     char *cdata;
     long clen;
@@ -188,7 +186,7 @@ out:
  * @param data UBF buffer
  * @param reader buffered input reader
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bextread
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bextread
   (JNIEnv * env, jobject data, jobject reader)
 {
     char *cdata;
@@ -288,7 +286,7 @@ out:
  * @param data UBF buffer
  * @param jb platform specific UBF bytes to read from
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bread
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bread
   (JNIEnv * env, jobject data, jbyteArray jb)
 {
     rw_data_t ctl;
@@ -402,7 +400,7 @@ out:
  * @param data UBF buffer
  * @return byte array of the serialized platform specific UBF 
  */
-expublic jbyteArray JNICALL Java_org_endurox_TypedUbf_Bwrite
+expublic jbyteArray JNICALL ndrxj_Java_org_endurox_TypedUbf_Bwrite
   (JNIEnv * env, jobject data)
 {
     rw_data_t ctl;

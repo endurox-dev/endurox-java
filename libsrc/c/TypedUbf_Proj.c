@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -61,7 +59,7 @@
  * @param data UBF buffer
  * @param bfldida list of fields to leave in buffer
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bproj
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bproj
   (JNIEnv * env, jobject data, jintArray bfldida)
 {
     char *cdata;
@@ -146,7 +144,7 @@ out:
  * @param data dest buffer/this
  * @param src source buffer
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bconcat
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bconcat
   (JNIEnv * env, jobject data, jobject src)
 {
     char *cdata_dst;
@@ -199,7 +197,7 @@ out:
  * @param data UBF data / this object / dest
  * @param src source UBF buffer
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bcpy
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bcpy
   (JNIEnv *env, jobject data, jobject src)
 {
     char *cdata_dst;
@@ -254,7 +252,7 @@ out:
  * @param src source buffer
  * @param bfldida array of fields
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bprojcpy
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bprojcpy
   (JNIEnv *env, jobject data, jobject src, jintArray bfldida)
 {
     jboolean jarr_copy = JNI_FALSE;
@@ -349,7 +347,7 @@ out:
  * @param data UBF data / this object / dest
  * @param src source UBF buffer
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bupdate
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bupdate
   (JNIEnv * env, jobject data, jobject src)
 {
     char *cdata_dst;
@@ -403,7 +401,7 @@ out:
  * @param ub2 that UBF buffer
  * @return -1, 0, 1
  */
-JNIEXPORT jint JNICALL Java_org_endurox_TypedUbf_Bcmp
+JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_TypedUbf_Bcmp
   (JNIEnv *env, jobject data, jobject src)
 {
     char *cdata_dst;
@@ -460,7 +458,7 @@ out:
  * @param src data to search for
  * @return true - is subset, false - not a subset
  */
-expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bsubset
+expublic jboolean JNICALL ndrxj_Java_org_endurox_TypedUbf_Bsubset
   (JNIEnv * env, jobject data, jobject src)
 {
     char *cdata_dst;
@@ -517,7 +515,7 @@ out:
  * @param data UBF data buffer (dest)
  * @param src source buffer to take data from
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bjoin
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bjoin
   (JNIEnv * env, jobject data, jobject src)
 {
     char *cdata_dst;
@@ -571,7 +569,7 @@ out:
  * @param data dest buffer
  * @param src source buffer
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bojoin
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bojoin
   (JNIEnv * env, jobject data, jobject src)
 {
     char *cdata_dst;

@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -63,7 +61,7 @@
  * @param bfldid Compiled field id
  * @param occ field occurrence to delete
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bdel
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bdel
   (JNIEnv *env, jobject data, jint bfldid, jint occ) 
 {
     char *cdata;
@@ -108,7 +106,7 @@ out:
  * @param data UBF data buffer
  * @param bfldid compiled field id
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bdelall
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bdelall
   (JNIEnv * env, jobject data, jint bfldid)
 {
     char *cdata;
@@ -150,7 +148,7 @@ out:
  * @param data UBF buffer
  * @param bfldida array of fields to be erased with out terminating BBADFLDID.
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bdelete
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bdelete
   (JNIEnv * env, jobject data, jintArray bfldida)
 {
     char *cdata;

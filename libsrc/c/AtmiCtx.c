@@ -35,7 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
+#include "exjglue.h"
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -104,8 +104,18 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
             /* update private data storage in context */
             
             NDRXJ_JENV_LVAL(ctxpriv) = env;
-            NDRXJ_JATMICTX_LVAL(ctxpriv) = atmiCtxObj;
             
+            /* why it changes ptr??? because function receives local reference
+             * So for client processes we do not have global ref?
+             * Only in case of server process we shall not override the context
+             * we have passed in.
+             * 
+             * Context is stored only for servers.
+             */
+            if (NULL==NDRXJ_CCTX_LVAL(ctxpriv))
+            {
+                NDRXJ_JATMICTX_LVAL(ctxpriv) = atmiCtxObj;
+            }
         }
     }
     
@@ -214,7 +224,7 @@ out:
  * @param line line number of -1 if no detailed log user
  * @param msg message to log
  */
-void JNICALL Java_org_endurox_AtmiCtx_tplogndrxC(JNIEnv * env, jobject obj, jint lev, 
+void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogndrxC(JNIEnv * env, jobject obj, jint lev, 
         jstring file, jlong line, jstring msg)
 {
     TPCONTEXT_T ctx;
@@ -261,7 +271,7 @@ out:
  * @param msg message to print
  * @param data buffer to dump
  */
-extern void JNICALL Java_org_endurox_AtmiCtx_tplogDump
+extern void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogDump
   (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jbyteArray data)
 {
     TPCONTEXT_T ctx;
@@ -305,7 +315,7 @@ out:
  * @param data1 buffer 1
  * @param data2 buffer 2 to compare
  */
-extern void JNICALL Java_org_endurox_AtmiCtx_tplogDumpDiff
+extern void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogDumpDiff
   (JNIEnv * env, jobject atmiCtxObj, jint lev, jstring msg, jbyteArray data1, jbyteArray data2)
 {
     TPCONTEXT_T ctx;
@@ -361,7 +371,7 @@ out:
  * @param cls class on which method is called (Atmi Context this case), static
  * @param cPtr pointer to context C object 
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env, 
+expublic void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env, 
         jclass cls, jlong cPtr)
 {
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
@@ -374,7 +384,7 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env,
  * Method:    tpalloc
  * Signature: (Ljava/lang/String;Ljava/lang/String;J)Lorg/endurox/TypedBuffer;
  */
-expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jobject obj, 
+expublic jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jobject obj, 
         jstring btype, jstring bsubtype, jlong size)
 {
     jobject ret = NULL;
@@ -451,7 +461,7 @@ out:
  * Method:    sayHello
  * Signature: ()V
  */
-jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt_int (JNIEnv *env, jclass cls)
+jlong JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpnewctxt (JNIEnv *env, jclass cls)
 {
     TPCONTEXT_T ctx = tpnewctxt(0, 1);
 
@@ -472,7 +482,7 @@ jlong JNICALL Java_org_endurox_AtmiCtx_tpnewctxt_int (JNIEnv *env, jclass cls)
 /**
  * Get ATMI Error result
  */
-JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jobject obj)
+JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *env, jobject obj)
 {
     TPCONTEXT_T ctx;
     int err;
@@ -748,7 +758,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
  * Method:    tpAdvertiseC
  * Signature: (Ljava/lang/String;Ljava/lang/String;)V
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_tpadvertiseC
+expublic void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpadvertiseC
       (JNIEnv *env, jobject obj, jstring svcname, jstring funcname)
 {
     
@@ -887,7 +897,7 @@ out:
  * @param obj ATMI Context
  * @param jargv command line arguments passed to Java
  */
-expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj, 
+expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj, 
         jobjectArray jargv, jboolean nocheck)
 {
     char **argv = NULL;
@@ -922,12 +932,13 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject obj,
         size = 0;
     }
 
-    /* lock up th context object 
+    /* lock up th context object */
     obj=(*env)->NewGlobalRef(env, obj);
-     * */
-    /*TODO: Check the NULL? */
 
     NDRXJ_JENV_LVAL(ctxpriv) = env;
+    
+    /* shall we lock the global */
+    
     NDRXJ_JATMICTX_LVAL(ctxpriv) = obj;
     NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
 
@@ -1027,9 +1038,8 @@ out:
         NDRX_FREE(argv);
     }
 
-/*
     (*env)->DeleteGlobalRef(env, obj);
-*/
+
     return (jint)ret;
 }
 
@@ -1042,7 +1052,7 @@ out:
  * @param data data buffer
  * @param flags return flags
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpreturn
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpreturn
   (JNIEnv *env, jobject obj, jint rval, jlong rcode, jobject data, jlong flags)
 {
     int ret = EXSUCCEED;
@@ -1083,7 +1093,7 @@ out:
  * @param data data buffer
  * @param flags RFU flags
  */
-expublic  JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpforward
+expublic  JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpforward
   (JNIEnv *env, jobject obj, jstring svcname, jobject data, jlong flags)
 {
     int ret = EXSUCCEED;
@@ -1129,7 +1139,7 @@ out:
  * @param cls static class
  * @param ctx C Context pointer
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_finalizeC
   (JNIEnv *env, jclass cls, jlong cPtr)
 {
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
@@ -1152,7 +1162,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_finalizeC
  * @param atmiCtxObj ATMI Context object
  * @param tpinfo TpInit object (infos)
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpinit
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpinit
   (JNIEnv * env, jobject atmiCtxObj, jobject tpinfo)
 {
     TPCONTEXT_T ctx;
@@ -1177,7 +1187,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpinit
  * @param atmiCtxObj ATMI Object
  * @param msg message to log
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_userlogC
   (JNIEnv *env, jobject atmiCtxObj, jstring msg)
 {
     jboolean n_msg_copy = EXFALSE;
@@ -1209,7 +1219,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_userlogC
  * @param jexpr boolean expression string to compile
  * @return BExprTree object ptr
  */
-expublic JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_Bboolco 
+expublic JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bboolco 
     (JNIEnv * env, jobject atmiCtxObj, jstring jexpr)
 {
     jobject ret = NULL;
@@ -1353,7 +1363,7 @@ out:
  * @param compexpr compiled expression
  * @param outstream output stream object
  */
-JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_Bboolpr
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bboolpr
   (JNIEnv * env, jobject atmiCtxObj, jobject compexpr, jobject outstream)
 {
     /* set context */    
@@ -1391,7 +1401,7 @@ out:
  * @param atmiCtxObj ATMI Context object
  * @param funcname funcname
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_BboolsetcbfC
+expublic void JNICALL ndrxj_Java_org_endurox_AtmiCtx_BboolsetcbfC
   (JNIEnv * env, jobject atmiCtxObj, jstring funcname)
 {
     TPCONTEXT_T ctx;
@@ -1421,7 +1431,26 @@ out:
         (*env)->ReleaseStringUTFChars(env, funcname, n_funcname);
     }
 
-    tpsetctxt(TPNULLCONTEXT, 0L);    
+    tpsetctxt(TPNULLCONTEXT, 0L);
 }
+
+/**
+ * Terminate the Atmi Context
+ * @param env
+ * @param atmiCtxObj
+ */
+expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpterm
+        (JNIEnv * env,  jobject atmiCtxObj)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    tpterm();
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
 
 /* vim: set ts=4 sw=4 et smartindent: */

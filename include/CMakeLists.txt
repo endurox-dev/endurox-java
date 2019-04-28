@@ -1,5 +1,5 @@
 ##
-## @brief Includes for Java pacakge support
+## @brief Includes for Java package support
 ##
 ## @file CMakeLists.txt
 ##

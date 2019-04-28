@@ -1,14 +1,5 @@
 package org.endurox.loader;
 
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.lang.InstantiationException;
-import java.lang.IllegalAccessException;
-import java.lang.NoSuchMethodException;
-import java.lang.IllegalArgumentException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.SecurityException;
-import java.lang.reflect.Method;
 import java.net.URL;
 
 
@@ -23,6 +14,7 @@ public class StaticClassLoader extends ClassLoader {
         if (clazz == null) {
             try {
                 byte [] b = getResourceBytes(name);
+                
                 clazz = defineClass(name, b, 0, b.length);
                 if (resolve) {
                     resolveClass(clazz);

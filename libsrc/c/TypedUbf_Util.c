@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -64,7 +62,7 @@
  * @return JNI_TRUE in case if field present, JNI_FALSE field does not exists or
  *     error occurred.
  */
-expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bpres
+expublic jboolean JNICALL ndrxj_Java_org_endurox_TypedUbf_Bpres
   (JNIEnv *env, jobject data, jint bfldid, jint occ)
 {
     char *cdata;
@@ -102,7 +100,7 @@ out:
  * @param data UBF buffer object
  * @return JNI_TRUE if buffer is UBF, JNI_FALSE buffer is not UBF.
  */
-expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bisubf
+expublic jboolean JNICALL ndrxj_Java_org_endurox_TypedUbf_Bisubf
   (JNIEnv * env, jobject data)
 {
     char *cdata;
@@ -142,7 +140,7 @@ out:
  * @param occ field occurrence
  * @return field length in bytes
  */
-expublic jint JNICALL Java_org_endurox_TypedUbf_Blen
+expublic jint JNICALL ndrxj_Java_org_endurox_TypedUbf_Blen
   (JNIEnv *env, jobject data, jint bfldid, jint occ)
 {
     char *cdata;
@@ -187,7 +185,7 @@ out:
  * @param first do we restart the iteration?
  * @return BNextResult
  */
-expublic jobject JNICALL Java_org_endurox_TypedUbf_Bnext
+expublic jobject JNICALL ndrxj_Java_org_endurox_TypedUbf_Bnext
   (JNIEnv *env, jobject data, jboolean first)
 {
     char *cdata;
@@ -257,7 +255,7 @@ out:
  * @param bfldid compiled field id
  * @return number of occurrences of field
  */
-expublic jint JNICALL Java_org_endurox_TypedUbf_Boccur
+expublic jint JNICALL ndrxj_Java_org_endurox_TypedUbf_Boccur
   (JNIEnv *env, jobject data, jint bfldid)
 {
     char *cdata;
@@ -294,7 +292,7 @@ out:
  * @param data UBF buffer object
  * @return size in bytes
  */
-expublic jlong JNICALL Java_org_endurox_TypedUbf_Bsizeof
+expublic jlong JNICALL ndrxj_Java_org_endurox_TypedUbf_Bsizeof
   (JNIEnv * env, jobject data)
 {
     char *cdata;
@@ -331,7 +329,7 @@ out:
  * @param data UBF data
  * @return free space in bytes
  */
-expublic jlong JNICALL Java_org_endurox_TypedUbf_Bunused
+expublic jlong JNICALL ndrxj_Java_org_endurox_TypedUbf_Bunused
   (JNIEnv * env, jobject data)
 {
     char *cdata;
@@ -368,7 +366,7 @@ out:
  * @param data UBF buffer obj
  * @return used bytes
  */
-expublic jlong JNICALL Java_org_endurox_TypedUbf_Bused
+expublic jlong JNICALL ndrxj_Java_org_endurox_TypedUbf_Bused
   (JNIEnv * env, jobject data)
 {
     char *cdata;
@@ -405,7 +403,7 @@ out:
  * @param data UBF buffer
  * @return total size of the buffer
  */
-expublic jlong JNICALL Java_org_endurox_TypedUbf_Binit
+expublic jlong JNICALL ndrxj_Java_org_endurox_TypedUbf_Binit
   (JNIEnv *env, jobject data)
 {
     char *cdata;
@@ -458,7 +456,7 @@ out:
  * @param data UBF buffer
  * @param json json data
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tpjsontoubf
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_tpjsontoubf
   (JNIEnv * env, jobject data, jstring json)
 {
     char *cdata;
@@ -502,7 +500,7 @@ out:
  * @param data UBF buffer
  * @return allocated string with json
  */
-JNIEXPORT jstring JNICALL Java_org_endurox_TypedUbf_tpubftojson
+JNIEXPORT jstring JNICALL ndrxj_Java_org_endurox_TypedUbf_tpubftojson
   (JNIEnv * env, jobject data)
 {
     char *cdata;
@@ -565,7 +563,7 @@ out:
  * @param lev debug level
  * @param debug title
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_tplogprintubf
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_tplogprintubf
   (JNIEnv * env, jobject data, jint lev, jstring title)
 {
     char *cdata;
@@ -610,7 +608,7 @@ out:
  * @param data UBF buffer obj
  * @return number of fields (including occurrences) present in buffer
  */
-expublic jint JNICALL Java_org_endurox_TypedUbf_Bnum
+expublic jint JNICALL ndrxj_Java_org_endurox_TypedUbf_Bnum
   (JNIEnv * env, jobject data)
 {
     char *cdata;

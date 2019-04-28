@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -139,7 +137,7 @@ out:
  * @param js java short value
  * @param fldloc field location holder
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__ISLorg_endurox_BFldLocInfo_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__ISLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jshort js, jobject fldloc) 
 {
     
@@ -160,7 +158,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__ISLorg_endur
  * @param js java long value
  * @param fldloc field location holder
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Baddfast__IJLorg_endurox_BFldLocInfo_2
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__IJLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jlong jl, jobject fldloc)
 {
     long l = (long)jl;
@@ -178,7 +176,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Baddfast__IJLorg_endurox_BFldLoc
  * @param js java long value
  * @param fldloc field location holder
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__IBLorg_endurox_BFldLocInfo_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__IBLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jbyte jb, jobject fldloc)
 {
     char c = (char)jb;
@@ -194,7 +192,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__IBLorg_endur
  * @param jf java float value
  * @param fldloc field location holder
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__IFLorg_endurox_BFldLocInfo_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__IFLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jfloat jf, jobject fldloc)
 {
     float f = (float)jf;
@@ -210,7 +208,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__IFLorg_endur
  * @param jd double value, java
  * @param fldloc field location holder
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__IDLorg_endurox_BFldLocInfo_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__IDLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jdouble jd, jobject fldloc)
 {
     double d = (double)jd;
@@ -226,7 +224,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__IDLorg_endur
  * @param js java string value
  * @param fldloc field location holder
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__ILjava_lang_String_2Lorg_endurox_BFldLocInfo_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__ILjava_lang_String_2Lorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jstring js, jobject fldloc)
 {
     jboolean n_str_copy = EXFALSE;
@@ -249,7 +247,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__ILjava_lang_
  * @param jb java byte array value
  * @param fldloc field location holder
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Baddfast__I_3BLorg_endurox_BFldLocInfo_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Baddfast__I_3BLorg_endurox_BFldLocInfo_2
   (JNIEnv * env, jobject data, jint bfldid, jbyteArray jb, jobject fldloc)
 {
     jboolean n_carray_copy;

@@ -37,8 +37,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -118,6 +117,8 @@ expublic int ndrxj_xa_init(void)
     
     jclass ctxClass = NULL;
     
+    ctxpriv = ndrx_ctx_priv_get();
+        
     /* The JDBC driver shall library shall be added   */
     
     /* NDRX_XA_OPEN_STR -> json */
@@ -137,8 +138,6 @@ expublic int ndrxj_xa_init(void)
     }
     
     /* build list of strings to send to Java loader... */
-    
-    ctxpriv = ndrx_ctx_priv_get();
     
     if (NULL==(jsets = ndrxj_cvt_arr_c_to_java(NDRXJ_JENV(ctxpriv), 
         sets, nrsets)))
@@ -177,7 +176,7 @@ expublic int ndrxj_xa_init(void)
     /* Get the method id  */
     
     mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
-        ctxClass, "initXADataSource",
+        ctxClass, "ndrxj_xa_init",
         "(Ljava/lang/String;[Ljava/lang/String;)I");
     
     if (NULL==mid)
@@ -187,14 +186,20 @@ expublic int ndrxj_xa_init(void)
         goto out;
     }
     
-    /* Call the method */
+    /* Call the method */    
+    /* unset context */
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
     ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
         NDRXJ_JATMICTX(ctxpriv), mid, jclazz, jsets);
+
+    /* set context back... */
+    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
     
     if (EXSUCCEED!=ret)
     {
-        NDRX_LOG(log_error, "Failed to create XA Data Source in Java side: %d",
-                tpstrerror(ret));
+
+        NDRX_LOG(log_error, "Failed to create XA Data Source in Java side!");
         ret = TPESYSTEM;
         goto out;
     }

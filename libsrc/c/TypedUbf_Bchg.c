@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -109,7 +107,7 @@ out:
  * @param occ field occurrence
  * @param js short type
  */
-expublic void JNICALL Java_org_endurox_TypedUbf_Bchg__IIS
+expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__IIS
 (JNIEnv *env, jobject data, jint bfldid, jint occ, jshort js)
 {
    short s = (short)js;
@@ -124,7 +122,7 @@ expublic void JNICALL Java_org_endurox_TypedUbf_Bchg__IIS
  * @param occ occurrence to change
  * @param jl long value
  */
-expublic JNIEXPORT void Java_org_endurox_TypedUbf_Bchg__IIJ
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__IIJ
   (JNIEnv * env, jobject data, jint bfldid, jint occ, jlong jl)
 {
     long l = (long)jl;
@@ -139,7 +137,7 @@ expublic JNIEXPORT void Java_org_endurox_TypedUbf_Bchg__IIJ
  * @param occ occurrence
  * @param jb char to add
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIB
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__IIB
   (JNIEnv * env, jobject data, jint bfldid, jint occ, jbyte jb)
 {
     char c = (long)jb;
@@ -154,7 +152,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIB
  * @param occ occurrence
  * @param jf float value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIF
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__IIF
   (JNIEnv * env, jobject data, jint bfldid, jint occ, jfloat jf)
 {
     float f = (float)jf;
@@ -169,7 +167,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IIF
  * @param occ occurrence
  * @param jd float value
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IID
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__IID
   (JNIEnv * env, jobject data, jint bfldid, jint occ, jdouble jd)
 {
     double d = (double)jd;
@@ -184,7 +182,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IID
  * @param occ occurrence
  * @param js java string
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IILjava_lang_String_2
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__IILjava_lang_String_2
   (JNIEnv *env, jobject data, jint bfldid, jint occ, jstring js)
 {
     jboolean n_str_copy = EXFALSE;
@@ -217,7 +215,7 @@ expublic JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__IILjava_lang_Str
  * @param occ occurrence
  * @param jb java byte array
  */
-JNIEXPORT void JNICALL Java_org_endurox_TypedUbf_Bchg__II_3B
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__II_3B
   (JNIEnv * env, jobject data, jint bfldid,  jint occ, jbyteArray jb)
 {
     jboolean n_carray_copy;

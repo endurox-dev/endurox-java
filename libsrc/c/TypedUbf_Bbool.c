@@ -35,9 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedBuffer.h"
-#include "org_endurox_TypedUbf.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -144,7 +142,7 @@ out:
  * @param jexpr compiled boolean expression
  * @return JNI_TRUE, JNI_FALSE
  */
-JNIEXPORT jboolean JNICALL Java_org_endurox_TypedUbf_Bboolev
+JNIEXPORT jboolean JNICALL ndrxj_Java_org_endurox_TypedUbf_Bboolev
   (JNIEnv * env, jobject data, jobject jexpr) 
 {
     jboolean jret = JNI_FALSE;
@@ -218,7 +216,7 @@ out:
  * @param jexpr compiled boolean expression
  * @return  evaluated float value
  */
-expublic jdouble JNICALL Java_org_endurox_TypedUbf_Bfloatev
+expublic jdouble JNICALL ndrxj_Java_org_endurox_TypedUbf_Bfloatev
   (JNIEnv *env, jobject data, jobject jexpr)
 {
     jdouble jret = EXFAIL;
@@ -283,7 +281,7 @@ out:
  * @param data UBF buffer
  * @param jexprstr boolean expression string
  */
-expublic jboolean JNICALL Java_org_endurox_TypedUbf_Bqboolev
+expublic jboolean JNICALL ndrxj_Java_org_endurox_TypedUbf_Bqboolev
   (JNIEnv * env, jobject data, jstring jexprstr)
 {
     jboolean jret = JNI_FALSE;

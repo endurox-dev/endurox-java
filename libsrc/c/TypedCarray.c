@@ -35,8 +35,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
-#include "org_endurox_AtmiCtx.h"
-#include "org_endurox_TypedCarray.h"
+#include <exjglue.h>
 #include <atmi.h>
 #include <oatmi.h>
 #include <ndebug.h>
@@ -62,7 +61,7 @@
  * @param data TypedString object
  * @param s Sring value to set
  */
-expublic JNIEXPORT void JNICALL Java_org_endurox_TypedCarray_setBytes
+expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedCarray_setBytes
   (JNIEnv * env, jobject data, jbyteArray b)
 {
     char *cdata;
@@ -166,7 +165,7 @@ out:
  * @param data TypedString object
  * @return Java string
  */
-expublic JNIEXPORT jbyteArray JNICALL Java_org_endurox_TypedCarray_getBytes
+expublic JNIEXPORT jbyteArray JNICALL ndrxj_Java_org_endurox_TypedCarray_getBytes
   (JNIEnv * env, jobject data)
 {
     char *cdata;

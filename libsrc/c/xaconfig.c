@@ -145,8 +145,8 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
             for (j=0; j<sub_cnt; j++)
             {
                 
-                sub_name = (char *)exjson_object_get_name(sub_obj, i);
-                typ = exjson_value_get_type(exjson_object_get_value_at(sub_obj, i));
+                sub_name = (char *)exjson_object_get_name(sub_obj, j);
+                typ = exjson_value_get_type(exjson_object_get_value_at(sub_obj, j));
 
                 /* Check the type it must be object or string! */
                 if (EXJSONObject!=typ && EXJSONString!=typ)
@@ -156,7 +156,7 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
                     EXFAIL_OUT(ret);
                 }
                 
-                if (EXJSONString!=typ)
+                if (EXJSONString==typ)
                 {
                     str_val = (char *)exjson_object_get_string(sub_obj, sub_name);
                     /* Add to queue the argument - data seperator is newline ..*/
@@ -171,12 +171,12 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
                     /* add first sep */
                     NDRX_STRCAT_S(tmpbuf, sizeof(tmpbuf), tmp2);
                     
-                    sub_obj2 = exjson_object_get_object(sub_obj, name);
-                    sub_cnt2 = exjson_object_get_count(sub_obj);
+                    sub_obj2 = exjson_object_get_object(sub_obj, sub_name);
+                    sub_cnt2 = exjson_object_get_count(sub_obj2);
                     
                     for (n=0; n<sub_cnt2; n++)
                     {
-                        sub_name2 = (char *)exjson_object_get_name(sub_obj, n);
+                        sub_name2 = (char *)exjson_object_get_name(sub_obj2, n);
                         typ = exjson_value_get_type(exjson_object_get_value_at(sub_obj2, n));
                         
                         if (EXJSONString!=typ)
