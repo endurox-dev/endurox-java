@@ -627,6 +627,9 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
                          options[n_opt].optionString);
 
                 n_opt++;
+                /* TODO: Check the classpath if have any..
+                 * this class path shall be stored in separate list
+                 */
             }
         }
     }

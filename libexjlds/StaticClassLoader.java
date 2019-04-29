@@ -5,6 +5,12 @@ import java.net.URL;
 
 public class StaticClassLoader extends ClassLoader {
 
+    /**
+     * We need custom loader URL here:
+     * https://examples.javacodegeeks.com/core-java/net/urlclassloader/java-net-urlclassloader-example/
+     * Create instance by passing list of files from -cp or -classpath.
+     * Also this shall expand the URL from CLASSPATH env variable
+     */
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     

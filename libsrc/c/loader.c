@@ -51,20 +51,11 @@
 /* List of pointers to loaded library functions: */
 #include <org_endurox_AtmiCtx.h>
 #include <org_endurox_BExprTree.h>
-#include <org_endurox_BFldLocInfo.h>
-#include <org_endurox_TpCallResult.h>
-#include <org_endurox_TpgetrplyResult.h>
-#include <org_endurox_TpInit.h>
-#include <org_endurox_TPQCTL.h>
-#include <org_endurox_TpTypesResult.h>
 #include <org_endurox_TypedBuffer.h>
-#include <org_endurox_TypedBufferRef.h>
 #include <org_endurox_TypedCarray.h>
 #include <org_endurox_TypedJson.h>
 #include <org_endurox_TypedString.h>
 #include <org_endurox_TypedUbf.h>
-#include <org_endurox_TypedView.h>
-#include <org_endurox_UnsolCallback.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
