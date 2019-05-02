@@ -73,7 +73,7 @@ exprivate string_list_t *M_classpath_url = NULL;
  */
 #define EXJLD_LOG_EXCEPTION(ENV__, LEV__, FMT__, ...) {\
 \
-    char *jerr__ = ndrxj_exjld_exception_backtrace(ENV__);\
+    char *jerr__ = expublic char *ndrxj_ldr_exception_backtrace(ENV__, NULL);\
     userlog(FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_FREE(jerr__);\
@@ -84,39 +84,6 @@ exprivate string_list_t *M_classpath_url = NULL;
  */
 exprivate ndrxj_class_index_t *M_index = NULL;
 exprivate int M_index_len = 0;
-
-/**
- * Return stacktrace of the exception into allocated buffer
- * @param env Java env where exception is set
- * @return allocated string with exception data
- */
-expublic char *ndrxj_exjld_exception_backtrace(JNIEnv *env)
-{
-    jthrowable exc;
-    jstring s;
-    const char* utf;
-    jboolean isCopy = EXFALSE;
-    char *ret = NULL;
-
-    jmethodID toString = (*env)->GetMethodID(env, 
-            (*env)->FindClass(env, "java/lang/Object"), 
-            "toString", "()Ljava/lang/String;");
-
-    exc = (*env)->ExceptionOccurred(env);
-
-    s = (jstring)(*env)->CallObjectMethod(env, exc, toString);
-
-    utf = (*env)->GetStringUTFChars(env, s, &isCopy);
-
-    ret = NDRX_STRDUP(utf);
-
-    if (isCopy)
-    {
-            (*env)->ReleaseStringUTFChars(env, s, utf);
-    }
-
-    return ret;
-}
 
 /**
  * Get the bytes of the class
@@ -488,6 +455,7 @@ exprivate int run_ldr_main(JNIEnv *env,
             EXJLD_LOG_EXCEPTION(env, log_error, 
                             "Failed to run main: %s (%s)",
                             main_class_str);
+            (*env)->ExceptionClear(env);
             EXFAIL_OUT(ret);
         }
 
@@ -699,6 +667,14 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
 
 out:
     
+    if((*env)->ExceptionCheck(env))
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                        "Failed to run main: %s (%s)",
+                        main_class_str);
+        EXFAIL_OUT(ret);
+    }
+
     if (NULL!=M_classpath_url)
     {
         ndrx_string_list_free(M_classpath_url);

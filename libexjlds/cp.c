@@ -69,7 +69,8 @@ expublic jobjectArray ndrxj_build_classpath_urls(JNIEnv *env, string_list_t *lis
     do
     {
         count++;
-    } while (NULL!=(elm=elm->next));
+    } 
+    while (NULL!=(elm=elm->next));
     
     
     clazz = (*env)->FindClass(env, URL_CLASS);
@@ -81,10 +82,14 @@ expublic jobjectArray ndrxj_build_classpath_urls(JNIEnv *env, string_list_t *lis
         EXFAIL_OUT(ret);
     }
         
-    /*
     retArr = (*env)->NewObjectArray( count, clazz, NULL);
     
+    if (NULL==retArr)
+    {
+        
+    }
     
+    /*
     
     if( ret ){
         for( int i = 0; i < count; i++ ) {

@@ -72,6 +72,7 @@ add_custom_command(
 add_library (exjlds SHARED
                 exj.c
                 cp.c
+                except.c
                 StaticClassLoader.cinclude
 	)
 
