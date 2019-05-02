@@ -41,7 +41,8 @@
 #include <inicfg.h>
 #include <cconfig.h>
 #include <exjlds.h>
-
+#include <nstdutil.h>
+#include <exj.h>
 /* Include generated resources */
 #include "StaticClassLoader.cinclude"
 
@@ -55,6 +56,11 @@ exprivate jclass M_classLoaderClass = NULL;
 exprivate jobject M_classLoader = NULL;
 exprivate jmethodID M_class_getctors_method;
 
+/**
+ * URL Based classpath to fallback to when we do not find the compile
+ * bytes
+ */
+exprivate string_list_t *M_classpath_url = NULL;
 /*---------------------------Prototypes---------------------------------*/
 
 /**
@@ -282,7 +288,12 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
             EXFAIL_OUT(ret);
     }
 
-    ldr_ctor = (*env)->GetMethodID(env, M_classLoaderClass, "<init>", "()V");
+    /* TODO: Create list of URLs for -cp -classpath and CLASSPATH env. 
+     * Convert String List to object array
+     */
+    
+    
+    ldr_ctor = (*env)->GetMethodID(env, M_classLoaderClass, "<init>", "(Ljava/net/URL;)V");
 
     if(!ldr_ctor) 
 {
@@ -560,7 +571,7 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
     JNIEnv *env = NULL; 
     JavaVMInitArgs vm_args;
     jint res;
-
+    char *cp_env = NULL;
     ndrx_inicfg_t *cfg = NULL;
     ndrx_inicfg_section_keyval_t *out = NULL;
     ndrx_inicfg_section_keyval_t *val, *val_tmp;
@@ -630,7 +641,28 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
                 /* TODO: Check the classpath if have any..
                  * this class path shall be stored in separate list
                  */
+                
+                /* check is it class path & load */
+                if (EXSUCCEED!=ndrxj_cp_proc(&M_classpath_url,  val->val))
+                {
+                    NDRX_LOG(log_error, "Failed to process config string [%s] "
+                            "for classpath", val->val);
+                    EXFAIL_OUT(ret);
+                }
+                
             }
+        }
+    }
+    
+    /* Load classpath from env */
+    cp_env = getenv("CLASSPATH");
+    
+    if (NULL!=cp_env)
+    {
+        if (EXSUCCEED!=ndrx_string_list_splitadd(&M_classpath_url, cp_env, ":"))
+        {
+            NDRX_LOG(log_error, "");
+            EXFAIL_OUT(ret);
         }
     }
 
@@ -666,6 +698,11 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
     }
 
 out:
+    
+    if (NULL!=M_classpath_url)
+    {
+        ndrx_string_list_free(M_classpath_url);
+    }
 
     if (NULL!=options)
     {

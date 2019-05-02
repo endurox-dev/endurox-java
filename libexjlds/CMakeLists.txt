@@ -70,7 +70,9 @@ add_custom_command(
 
 # Shared static loader library
 add_library (exjlds SHARED
-                exj.c StaticClassLoader.cinclude
+                exj.c
+                cp.c
+                StaticClassLoader.cinclude
 	)
 
 # target_link_libraries (exjld atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)

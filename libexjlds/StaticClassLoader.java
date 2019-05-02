@@ -1,9 +1,28 @@
 package org.endurox.loader;
 
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLStreamHandlerFactory;
 
+/**
+ * This is extended class loader which performs following actions:
+ * 1. Tries to get get class bytes from embedded resources
+ * 2. Fallback to system class loader / URL Loader. Which includes
+ *  resources such as -cp or -classpath on CLI and data from CLASSPATH variable.
+ */
+public class StaticClassLoader extends URLClassLoader {
 
-public class StaticClassLoader extends ClassLoader {
+    public StaticClassLoader(URL[] urls, ClassLoader cl) {
+        super(urls, cl);
+    }
+
+    public StaticClassLoader(URL[] urls) {
+        super(urls);
+    }
+
+    public StaticClassLoader(URL[] urls, ClassLoader cl, URLStreamHandlerFactory urlshf) {
+        super(urls, cl, urlshf);
+    }
 
     /**
      * We need custom loader URL here:
