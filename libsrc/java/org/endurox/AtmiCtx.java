@@ -113,7 +113,8 @@ public class AtmiCtx {
     
     /**
      * XA Data source for distributed transaction processing
-     * This is singleton shared between threads
+     * This is singleton shared between threads. Initialized
+     * when Enduro/X Boots.
      */
     static XADataSource xads = null;
     
@@ -1453,10 +1454,11 @@ public class AtmiCtx {
                     String ptype = m[j].getParameters()[0].getType().getName();
                     try {
                         
-                        if (null==p && ptype.equals("[Ljava.util.Properties;") ||
-                                null!=p && !ptype.equals("[Ljava.util.Properties;")) {
+                        if (null==p && ptype.equals("java.util.Properties") ||
+                                null!=p && !ptype.equals("java.util.Properties")) {
                             tplogError("Invalid parameter for [%s] either it needs properties, "
-                                    + "or properties have given to primitive setting", setting[0]);
+                                    + "or properties have given to primitive setting [type: %s]", 
+                                    setting[0], ptype);
                             return AtmiConst.TPEINVAL;
                         }
                         
@@ -1975,6 +1977,11 @@ public class AtmiCtx {
      * tpsrvfreectxdata
      * tpsrvgetctxdata
      */
+    
+    /**
+     * Open the XA sub-system.
+     */
+    public native void tpopen();
     
 }
 

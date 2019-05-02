@@ -64,14 +64,22 @@ expublic jobjectArray ndrxj_build_classpath_urls(JNIEnv *env, string_list_t *lis
     jobjectArray retArr = NULL;
     int count = 0;
     jclass clazz = NULL;
-    string_list_t *elm = list;
+    string_list_t *elm;
+    int i;
+    jmethodID mid;
+    char resource[PATH_MAX];
+    jobject obj = NULL;
+    jstring jstr = NULL;
     
-    do
+    elm = list;
+    if (NULL!=elm)
     {
-        count++;
-    } 
-    while (NULL!=(elm=elm->next));
-    
+        do
+        {
+            count++;
+        } 
+        while (NULL!=(elm=elm->next));
+    }
     
     clazz = (*env)->FindClass(env, URL_CLASS);
 
@@ -81,37 +89,98 @@ expublic jobjectArray ndrxj_build_classpath_urls(JNIEnv *env, string_list_t *lis
         NDRX_LOG(log_error, "Failed to to get [%s] class!", URL_CLASS);
         EXFAIL_OUT(ret);
     }
-        
-    retArr = (*env)->NewObjectArray( count, clazz, NULL);
+
+    /* create buffer object... */
+    mid = (*env)->GetMethodID(env, clazz, "<init>", "(Ljava/lang/String;)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        goto out;
+    }
+
+    
+    retArr = (*env)->NewObjectArray( env, count, clazz, NULL);
     
     if (NULL==retArr)
     {
-        
+        NDRX_LOG(log_error, "Failed to allocate array of [%s] count %d",
+                URL_CLASS, count);
+        EXFAIL_OUT(ret);
     }
-    
-    /*
-    
-    if( ret ){
-        for( int i = 0; i < count; i++ ) {
-            jobject obj = env->NewObject( cls, constructor);
-            if( obj ){
-            env->SetIntField( obj, fieldID1, 2);
 
-            jstring str = env->NewStringUTF("XXX");
-            if( str )
-                env->SetObjectField( obj, fieldID2, str);
+    elm = list;
+    
+    i = 0;
+    if (NULL!=elm)
+    {
+        do
+        {
+            snprintf(resource, sizeof(resource), "file://%s", elm->qname);
 
-            env->SetObjectArrayElement( ret, i, obj);
+            NDRX_LOG(log_debug, "Adding classpath resource [%s]", resource);
+
+            jstr = (*env)->NewStringUTF(env, resource);
+
+            if (NULL==jstr)
+            {
+                NDRX_LOG(log_error, "Failed to create java string for [%s]!",
+                        jstr);
+                EXFAIL_OUT(ret);
             }
+
+            NDRX_LOG(log_debug, "About to new obj [%s]", URL_CLASS);
+
+            obj = (*env)->NewObject(env, clazz, mid, jstr);
+
+            if (NULL==obj)
+            {
+                NDRX_LOG(log_error, "Failed to create object of [%s]", URL_CLASS);
+                EXFAIL_OUT(ret);
+            }
+
+            /* remove local ref */
+            (*env)->DeleteLocalRef( env, jstr);
+            jstr=NULL;
+
+            (*env)->SetObjectArrayElement(env, retArr, i, obj);
+
+            /* remove local object */
+            (*env)->DeleteLocalRef( env, obj);
+            obj = NULL;
+
+            i++;
+
         }
+        while (NULL!=(elm=elm->next));
     }
-    */
     
 out:
    
     if (NULL!=clazz)
     {
         (*env)->DeleteLocalRef( env, clazz);
+    }
+
+    /* remove any left overs in case of failure: */
+    if (NULL!=jstr)
+    {
+        (*env)->DeleteLocalRef( env, jstr);
+    }
+
+    if (NULL!=obj)
+    {
+        (*env)->DeleteLocalRef( env, obj);
+    }
+
+    if (EXSUCCEED!=ret)
+    {
+        if (NULL!=retArr)
+        {
+            (*env)->DeleteLocalRef( env, retArr);
+            retArr = NULL;
+        }
+        retArr = NULL;
     }
 
     return retArr;
@@ -130,7 +199,7 @@ expublic int ndrxj_cp_proc(string_list_t**list, char *config_line)
     char *tag = buf;
     int taglen = 0;
     
-    while (' '==*p || '\t'!=*p)
+    while (' '==*p || '\t'==*p)
     {
         p++;
         

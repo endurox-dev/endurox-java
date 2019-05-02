@@ -48,7 +48,7 @@ extern "C" {
 /*---------------------------Globals------------------------------------*/
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
-    
+extern jobjectArray ndrxj_build_classpath_urls(JNIEnv *env, string_list_t *list);
 extern int ndrxj_cp_proc(string_list_t**list, char *config_line);
 extern char *ndrxj_ldr_exception_backtrace(JNIEnv *env, jthrowable exc_in);
 #ifdef  __cplusplus

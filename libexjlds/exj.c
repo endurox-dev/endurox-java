@@ -73,7 +73,8 @@ exprivate string_list_t *M_classpath_url = NULL;
  */
 #define EXJLD_LOG_EXCEPTION(ENV__, LEV__, FMT__, ...) {\
 \
-    char *jerr__ = expublic char *ndrxj_ldr_exception_backtrace(ENV__, NULL);\
+    char *jerr__ = ndrxj_ldr_exception_backtrace(ENV__, NULL);\
+    (*ENV__)->ExceptionClear(ENV__);\
     userlog(FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_LOG(LEV__, FMT__, jerr__, ##__VA_ARGS__);\
     NDRX_FREE(jerr__);\
@@ -139,7 +140,7 @@ expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
 
     if (first > last)
     {
-        NDRX_LOG(log_debug, "%s not found - ignore", utf);
+        NDRX_LOG(log_debug, "%s not found - fallback to URL", utf);
         goto out;
     }
 
@@ -192,8 +193,9 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     jobject ldr_obj;
     JNINativeMethod m[1];
     jclass cl;
-
+    jobjectArray cpUrls = NULL;
     loaderClass = (*env)->FindClass(env, "java/lang/ClassLoader"); 
+    
     if(NULL==loaderClass) {
         EXJLD_LOG_EXCEPTION(env, log_error, "Failed to load initial class loader: %s");
         EXFAIL_OUT(ret);
@@ -224,8 +226,8 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
 
     if (NULL==loader)
     {
-            NDRX_LOG(log_error, "Failed to create global ref of loader");
-            EXFAIL_OUT(ret);
+        NDRX_LOG(log_error, "Failed to create global ref of loader");
+        EXFAIL_OUT(ret);
     }
 
     cl = (*env)->DefineClass(env, "org/endurox/loader/StaticClassLoader", loader, 
@@ -250,31 +252,40 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
 
     if((*env)->ExceptionCheck(env))
     {
-            EXJLD_LOG_EXCEPTION(env, log_error, 
-                                "Failed to register native methods: %s");
-            EXFAIL_OUT(ret);
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to register native methods: %s");
+        EXFAIL_OUT(ret);
     }
 
     /* TODO: Create list of URLs for -cp -classpath and CLASSPATH env. 
      * Convert String List to object array
      */
+    cpUrls = ndrxj_build_classpath_urls(env, M_classpath_url);
     
+    if (NULL==cpUrls)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to create array classpath URLs: %s");
+        EXFAIL_OUT(ret);
+    }
     
-    ldr_ctor = (*env)->GetMethodID(env, M_classLoaderClass, "<init>", "(Ljava/net/URL;)V");
+    ldr_ctor = (*env)->GetMethodID(env, M_classLoaderClass, "<init>", "([Ljava/net/URL;)V");
 
     if(!ldr_ctor) 
-{
+    {
         EXJLD_LOG_EXCEPTION(env, log_error, 
                             "Failed to get static loader constructor: %s");
         EXFAIL_OUT(ret);
     }
 
-    ldr_obj = (*env)->NewObject(env, M_classLoaderClass, ldr_ctor);
+    
+    ldr_obj = (*env)->NewObject(env, M_classLoaderClass, ldr_ctor, cpUrls);
 
     if(!ldr_obj) 
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
                             "Cannot create loader instance: %s");
+        NDRX_LOG(log_error, "Failed to create class loader object");
         EXFAIL_OUT(ret);
     }
 
@@ -284,6 +295,11 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
 	
 out:
 
+    if (NULL!=cpUrls)
+    {
+        (*env)->DeleteLocalRef( env, cpUrls);
+    }
+        
     NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
 
     return ret;
@@ -671,7 +687,7 @@ out:
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
                         "Failed to run main: %s (%s)",
-                        main_class_str);
+                        main_class);
         EXFAIL_OUT(ret);
     }
 

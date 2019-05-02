@@ -1452,5 +1452,25 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpterm
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
+/**
+ * Open XA Connection
+ * @param env
+ * @param atmiCtxObj
+ */
+expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpopen
+        (JNIEnv * env,  jobject atmiCtxObj)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpopen())
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */

@@ -142,6 +142,8 @@ extern NDRX_JAVA_API jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpdequeue
         (JNIEnv *, jobject, jstring, jstring, jobject, jobject, jlong);
 extern NDRX_JAVA_API jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpdequeueex
         (JNIEnv *, jobject, jshort, jshort, jstring, jobject, jobject, jlong);
+extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpopen
+        (JNIEnv *, jobject);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_BExprTree_Btreefree
         (JNIEnv *, jobject, jlong);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_TypedBuffer_tpfree
