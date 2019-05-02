@@ -156,7 +156,7 @@ expublic int ndrxj_cp_proc(string_list_t**list, char *config_line)
     if (' ' == config_line[taglen] ||
             '\t' == config_line[taglen])
     {
-        if (0==strcmp(buf, '-cp') || 0==strcmp(buf, '-classpath'))
+        if (0==strcmp(buf, "-cp") || 0==strcmp(buf, "-classpath"))
         {
             NDRX_LOG(log_debug, "Got classpath argument -> append to list");
             
