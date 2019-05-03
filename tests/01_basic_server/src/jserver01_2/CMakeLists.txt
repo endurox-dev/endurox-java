@@ -63,6 +63,7 @@ add_jar(jserver01_2
         ${JAVASRC}
     INCLUDE_JARS 
         ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
+        ../../jdbcdrivers/ojdbc8-full/ojdbc8.jar
         ../ubftab/ubf01.jar
         )
 
@@ -75,6 +76,7 @@ ndrx_java_link(
                 jserver01_2.jar
                 ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
                 ../ubftab/ubf01.jar
+                ../../jdbcdrivers/ojdbc8-full/ojdbc8.jar
             DEPENDS jview01.V
 )
 

@@ -75,17 +75,23 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
     char tmp[PATH_MAX];
     char *p = tmp;
     int i;
+    int is_class = EXFALSE;
     resgen_thread_data_t *data;
     len = strlen(filepath);
     
     /* Accept files only... */
-    if (FTW_F == typeflag && len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
+    if (FTW_F == typeflag /*&& len > 6  && 0==strcmp(filepath + (len - 6), ".class") */)
     {
         id++;
         exjld_thread_debug_lock();
         NDRX_LOG(log_dump, "Processing as class: [%s]", filepath);
         exjld_thread_debug_unlock();
         
+        
+        if (len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
+        {
+            is_class = EXTRUE;
+        }
         NDRX_STRCPY_SAFE(tmp, filepath);
         
         /* Extract class name (build from path and file name) */
@@ -96,16 +102,22 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
         }
         
         /* replace dir sep with . */
-        for (i=0; i<len; i++)
+        if (is_class)
         {
-            if ('/'==p[i])
+            /* transform to class path, for resources leave as is. */
+            for (i=0; i<len; i++)
             {
-                p[i]='.';
+                if ('/'==p[i])
+                {
+                    p[i]='.';
+                }
             }
         }
         
-        /* strip down lass 5 symbols */
+        /* strip down lass 5 symbols
         p[len-6] = EXEOS;
+         * - leave class suffix
+        */
         
         exjld_thread_debug_lock();
         NDRX_LOG(log_dump, "Got class: [%s]", p);
@@ -130,6 +142,11 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
             EXFAIL_OUT(ret);
         }
         
+        
+        /* TODO: is_class -> for class, others goes to resource files
+         * update class loader to resolve resources via different function
+         * and we would remove the -e key.
+         */
         /* fill up the call */
         data->head = &ndrx_G_classes_hash;
         data->id = id;

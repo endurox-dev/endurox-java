@@ -1,5 +1,7 @@
 package org.endurox.loader;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
@@ -38,7 +40,7 @@ public class StaticClassLoader extends URLClassLoader {
         Class<?> clazz = findLoadedClass(name);
         if (clazz == null) {
             try {
-                byte [] b = getResourceBytes(name);
+                byte [] b = getResourceBytes(name.concat(".class"));
                 
                 clazz = defineClass(name, b, 0, b.length);
                 if (resolve) {
@@ -58,7 +60,39 @@ public class StaticClassLoader extends URLClassLoader {
      */
     @Override
     public URL getResource(String name) {
+        
+        byte [] b = getResourceBytes(name);
+        
+        if (null!=b)
+        {
+            try
+            {
+                return new URL("emb://".concat(name));
+            }
+            catch (Exception e)
+            {
+                System.err.printf("Failed to create URL to %s\n", name);
+            }
+        }
         return super.getResource(name);
+    }
+
+    /**
+     * It would be possible to get resource from
+     * @param string
+     * @return 
+     */
+    @Override
+    public InputStream getResourceAsStream(String string) {
+        
+        byte [] b = getResourceBytes(string);
+        
+        if (null!=b)
+        {
+            return new ByteArrayInputStream(b);
+        }
+        
+        return super.getResourceAsStream(string); //To change body of generated methods, choose Tools | Templates.
     }
     
     /* Get class data from C side */

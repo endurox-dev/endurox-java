@@ -5,6 +5,13 @@
  *   command with custom main entry. The main class shall be specified at build time.
  *   Also include/library path to libraries shall be given too (i.e. where to find
  *   java VM libs and headers)
+ *   
+ *   All files from jars ar included in class lists, with file extensions.
+ *   resources like properties are generated and stored in hash as file path
+ *   classes are stored with dot syntax. 
+ * 
+ *   We could store the resources in resource list for performance and
+ *   name collision reasons.
  *
  * @file exjld.c
  */

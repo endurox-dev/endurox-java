@@ -251,6 +251,7 @@ function(ndrx_java_link)
                             -L ${CMAKE_BINARY_DIR}/libexjlds 
                             -L ${NDRX_JAVA_LIBDIR_JAVA} 
                             -L ${NDRX_JAVA_LIBDIR_JVM}
+                            -k
                             -n
                             ${PARSED_ARGS_JARS}
                    DEPENDS ${PARSED_ARGS_JARS})
