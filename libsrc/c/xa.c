@@ -256,7 +256,7 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
     jmethodID mid;
     jclass ctxClass = NULL;
     int ret = XA_OK;
-    
+    TPCONTEXT_T ctx;
     ctxpriv = ndrx_ctx_priv_get();
     
     /* Get the class for the context object */
@@ -282,8 +282,16 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
         goto out;
     }
     
+    
+    /* unset context */
+    tpgetctxt(&ctx, 0L);
+    
     ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
         NDRXJ_JATMICTX(ctxpriv), mid, (jlong)flags);
+    
+    /* set context back... */
+    tpsetctxt(ctx, 0L);
+    
     
     NDRX_LOG(log_debug, "Java %s returns %d", func, ret);
     

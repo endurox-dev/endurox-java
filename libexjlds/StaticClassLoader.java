@@ -51,9 +51,14 @@ public class StaticClassLoader extends URLClassLoader {
         return clazz;
     }
 
+    /**
+     * TODO: Implement local resource lookup!
+     * @param name
+     * @return 
+     */
     @Override
     public URL getResource(String name) {
-        return null;
+        return super.getResource(name);
     }
     
     /* Get class data from C side */
