@@ -94,9 +94,6 @@ expublic string_list_t* ndrx_G_incpath = NULL;
 /** Override libs for build */
 expublic string_list_t* ndrx_G_libs = NULL;
 
-/** Resource files*/
-expublic string_list_t* ndrx_G_embedded_res = NULL;
-
 /** shall we keep temp files? */
 expublic int ndrx_G_keep_temp = EXFALSE;
 
@@ -169,8 +166,6 @@ exprivate void usage(char *progname)
     "   -b 'build_cmd'      Build command, default is Enduro/X 'buildserver'\n"
     "   -n                  Do not perform test run (i.e. check class loader)\n"
     "   -t 'temp_dir_pfx'   Tempdir prefix instead of './'.\n"
-    "   -e 'file_name'      Embed resource into exe file. Multiple occurrences\n"
-    "                        are allowed. File name must be unique among embedded.\n"
     "                        Accessed via org.endurox.AtmiCtx.getResource(<name>);\n"
     "   -k                  Keep temp files/folder when running in non -t mode\n"
     "   -j 'nr_jobs'        Number of concurrent jobs, default is 4\n"
@@ -357,16 +352,6 @@ int main(int argc, char **argv)
                 }
 
                 break;
-            case 'e':
-                
-                NDRX_LOG(log_debug, "Embedding resource: [%s]", optarg);
-                if (EXSUCCEED!=ndrx_string_list_add(&ndrx_G_embedded_res, optarg))
-                {
-                    NDRX_LOG(log_error, "Failed to add: [%s] to ndrx_G_embedded_res",
-                            optarg);
-                    EXFAIL_OUT(ret);
-                }
-                break;
             case 'j':
                 
                 tmpi = atoi(optarg);
@@ -517,13 +502,6 @@ int main(int argc, char **argv)
             NDRX_LOG(log_error, "Failed to extract JARs!");
             EXFAIL_OUT(ret);
         }
-    }
-    
-    /* Allocate embedded resources */
-    if (EXSUCCEED!=exjld_emb_build_hash())
-    {
-        NDRX_LOG(log_error, "Failed to generate embedded resources!");
-        EXFAIL_OUT(ret);
     }
     
     /* generate resource files with exjlib_N+.cinclude */

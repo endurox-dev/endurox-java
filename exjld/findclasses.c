@@ -71,7 +71,8 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
 {
     int ret = EXSUCCEED;
     int len;
-    static int id = 0;
+    static int id_class = 0;
+    static int id_res = 0;
     char tmp[PATH_MAX];
     char *p = tmp;
     int i;
@@ -82,7 +83,7 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
     /* Accept files only... */
     if (FTW_F == typeflag /*&& len > 6  && 0==strcmp(filepath + (len - 6), ".class") */)
     {
-        id++;
+        
         exjld_thread_debug_lock();
         NDRX_LOG(log_dump, "Processing as class: [%s]", filepath);
         exjld_thread_debug_unlock();
@@ -90,7 +91,12 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
         
         if (len > 6 && 0==strcmp(filepath + (len - 6), ".class"))
         {
+            id_class++;
             is_class = EXTRUE;
+        }
+        else
+        {
+            id_res++;
         }
         NDRX_STRCPY_SAFE(tmp, filepath);
         
@@ -112,12 +118,10 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
                     p[i]='.';
                 }
             }
+            
+            /* strip down lass 5 symbols */
+            p[len-6] = EXEOS;
         }
-        
-        /* strip down lass 5 symbols
-        p[len-6] = EXEOS;
-         * - leave class suffix
-        */
         
         exjld_thread_debug_lock();
         NDRX_LOG(log_dump, "Got class: [%s]", p);
@@ -147,17 +151,27 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
          * update class loader to resolve resources via different function
          * and we would remove the -e key.
          */
-        /* fill up the call */
-        data->head = &ndrx_G_classes_hash;
-        data->id = id;
+        if (is_class)
+        {
+            /* fill up the call */
+            data->head = &ndrx_G_classes_hash;
+            data->id = id_class;
+            NDRX_STRDUP_OUT(data->emb_pfx, "class");
+        }
+        else
+        {
+            data->head = &ndrx_G_emb_res_hash;
+            data->id = id_res;
+            NDRX_STRDUP_OUT(data->emb_pfx, "emb");
+        }
         
         NDRX_STRDUP_OUT(data->resname, p);
         NDRX_STRDUP_OUT(data->respath, filepath);
-        NDRX_STRDUP_OUT(data->emb_pfx, "class");
+        
         M_was_file = EXTRUE;
         
         thpool_add_work(ndrx_G_thpool, (void*)exljd_res_add_th, (void *)data);
-         
+        
     }
     
 out:

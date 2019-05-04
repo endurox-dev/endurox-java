@@ -41,7 +41,6 @@ include_directories ( ${PROJECT_SOURCE_DIR}/include)
 add_executable (exjld   exjld.c
                         findclasses.c
                         resources.c
-                        emb.c
                         codegen.c
                         zip.c
                 )

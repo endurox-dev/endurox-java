@@ -40,7 +40,7 @@ public class StaticClassLoader extends URLClassLoader {
         Class<?> clazz = findLoadedClass(name);
         if (clazz == null) {
             try {
-                byte [] b = getResourceBytes(name.concat(".class"));
+                byte [] b = getClassBytes(name);
                 
                 clazz = defineClass(name, b, 0, b.length);
                 if (resolve) {
@@ -97,5 +97,8 @@ public class StaticClassLoader extends URLClassLoader {
     
     /* Get class data from C side */
     public native byte[] getResourceBytes(String name);
+    
+    /* read from resource list */
+    public native byte[] getClassBytes(String name);
     
 }

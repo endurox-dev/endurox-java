@@ -48,21 +48,6 @@
 
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
-/*---------------------------Enums--------------------------------------*/
-/*---------------------------Typedefs-----------------------------------*/
-/*---------------------------Globals------------------------------------*/
-/*---------------------------Statics------------------------------------*/
-exprivate jclass M_classLoaderClass = NULL;
-exprivate jobject M_classLoader = NULL;
-exprivate jmethodID M_class_getctors_method;
-
-/**
- * URL Based classpath to fallback to when we do not find the compile
- * bytes
- */
-exprivate string_list_t *M_classpath_url = NULL;
-/*---------------------------Prototypes---------------------------------*/
-
 /**
  * Log exception
  * @param ENV__ Java Env for which exception have occurred
@@ -80,37 +65,58 @@ exprivate string_list_t *M_classpath_url = NULL;
     NDRX_FREE(jerr__);\
 }
 
+/*---------------------------Enums--------------------------------------*/
+/*---------------------------Typedefs-----------------------------------*/
+/*---------------------------Globals------------------------------------*/
+/*---------------------------Statics------------------------------------*/
+exprivate jclass M_classLoaderClass = NULL;
+exprivate jobject M_classLoader = NULL;
+exprivate jmethodID M_class_getctors_method;
+
+/**
+ * URL Based classpath to fallback to when we do not find the compile
+ * bytes
+ */
+exprivate string_list_t *M_classpath_url = NULL;
+
 /* library globals... JNI does not allow mulit threading, thus
  * lets leave them for global..
  */
-exprivate ndrxj_class_index_t *M_index = NULL;
-exprivate int M_index_len = 0;
+exprivate ndrxj_class_index_t *M_class_index = NULL;
+exprivate int M_class_index_len = 0;
+
+
+exprivate ndrxj_class_index_t *M_res_index = NULL;
+exprivate int M_res_index_len = 0;
+
+/*---------------------------Prototypes---------------------------------*/
 
 /**
- * Get the bytes of the class
- * This is callback from java Static Class Loader.
- * Searches class into sorted array.
- * @param env Java ENV
- * @param ldrobj Java class loader instance
- * @param clsclass name to be loaded
- * @return instance to byte array of class data if found or NULL
+ * Resolve stored 
+ * @param env java env
+ * @param ldrobj class loader object
+ * @param cls class/resource to load
+ * @param index index table to use for search
+ * @param index_len length of resource index table
+ * @return class bytes or NULL if not found
  */
-expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
+exprivate jbyteArray getIndexBytes(JNIEnv * env, jobject ldrobj, jstring cls, 
+        ndrxj_class_index_t *index, int index_len)
 {
     jbyteArray ret = NULL;
     const char* utf;
     jboolean isCopy = EXFALSE;
 
-    int c, first, last, middle;
+    int first, last, middle;
 
     utf = (*env)->GetStringUTFChars(env, cls, &isCopy);
 
-    NDRX_LOG(log_debug, "Loading class [%s]", utf);
+    NDRX_LOG(log_debug, "Loading class/resource [%s]", utf);
 
     /* perform binary search for class data */
 
     first = 0;
-    last = M_index_len - 1;
+    last = index_len - 1;
     middle = (first+last)/2;
 
     while (first <= last) 
@@ -118,7 +124,7 @@ expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
         /* -1 cls < utf */
         /* 0 cls == utf */
         /* 1 cls > utf */
-        int res = strcmp(M_index[middle].cls, utf);
+        int res = strcmp(index[middle].cls, utf);
 
         if (res < 0)
         {
@@ -145,23 +151,23 @@ expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
     }
 
 
-    ret = (*env)->NewByteArray(env, M_index[middle].len);
+    ret = (*env)->NewByteArray(env, index[middle].len);
 
     if (NULL==ret)
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
-                "Failed to allocate Byte Array: %s (%d)", M_index[middle].len);
+                "Failed to allocate Byte Array: %s (%d)", index[middle].len);
         goto out;
     }
 
-    (*env)->SetByteArrayRegion(env, ret, 0, M_index[middle].len, 
-                            (jbyte*)M_index[middle].data);
+    (*env)->SetByteArrayRegion(env, ret, 0, index[middle].len, 
+                            (jbyte*)index[middle].data);
 
     if((*env)->ExceptionCheck(env))
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
                         "Failed to set class data bytes: %s (%d)",
-                        M_index[middle].len
+                        index[middle].len
                         );
         ret = NULL;
         goto out;
@@ -178,6 +184,34 @@ out:
 }
 
 /**
+ * Get the bytes of resource
+ * This is callback from java Static Class Loader.
+ * Searches class into sorted array.
+ * @param env Java ENV
+ * @param ldrobj Java class loader instance
+ * @param clsclass name to be loaded
+ * @return instance to byte array of class data if found or NULL
+ */
+expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
+{
+    return getIndexBytes(env, ldrobj, cls, M_res_index, M_res_index_len);
+}
+
+/**
+ * Get the bytes of class
+ * This is callback from java Static Class Loader.
+ * Searches class into sorted array.
+ * @param env Java ENV
+ * @param ldrobj Java class loader instance
+ * @param clsclass name to be loaded
+ * @return instance to byte array of class data if found or NULL
+ */
+expublic jbyteArray getClassBytes(JNIEnv * env, jobject ldrobj, jstring cls)
+{
+    return getIndexBytes(env, ldrobj, cls, M_class_index, M_class_index_len);
+}
+
+/**
  * Create/load the Enduro/X Static Class Loader
  * @param env java env
  * @param vm Java virtual machine
@@ -191,7 +225,7 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     jobject loader;
     jmethodID ldr_ctor;
     jobject ldr_obj;
-    JNINativeMethod m[1];
+    JNINativeMethod m[2];
     jclass cl;
     jobjectArray cpUrls = NULL;
     loaderClass = (*env)->FindClass(env, "java/lang/ClassLoader"); 
@@ -247,8 +281,12 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     m[0].fnPtr = getResourceBytes;
     m[0].name = "getResourceBytes";
     m[0].signature = "(Ljava/lang/String;)[B";
+    
+    m[1].fnPtr = getClassBytes;
+    m[1].name = "getClassBytes";
+    m[1].signature = "(Ljava/lang/String;)[B";
 
-    (*env)->RegisterNatives(env, M_classLoaderClass, m, 1);
+    (*env)->RegisterNatives(env, M_classLoaderClass, m, 2);
 
     if((*env)->ExceptionCheck(env))
     {
@@ -565,8 +603,11 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
 
     int n_opt = 0;
 
-    M_index = class_index;
-    M_index_len = class_index_len;
+    M_class_index = class_index;
+    M_class_index_len = class_index_len;
+    
+    M_res_index = emb_index;
+    M_res_index_len = emb_index_len;
 
     NDRX_LOG(log_debug, "Loading config...");
     
