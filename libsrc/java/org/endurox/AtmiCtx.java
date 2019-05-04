@@ -2033,6 +2033,17 @@ public class AtmiCtx {
     
     public native TPTRANID tpresume (long flags);
     
+    /**
+     * Get database connection
+     * There is single database connection per context.
+     * The connection object is accessible only if there was tpopen() called.
+     * @return DB connection, null in case if there was no tpopen(), or there was tpclose().
+     */
+    public Connection getConnection() {
+        return dbConn;
+    }
+    
+    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
