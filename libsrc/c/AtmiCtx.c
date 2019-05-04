@@ -1454,8 +1454,8 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpterm
 
 /**
  * Open XA Connection
- * @param env
- * @param atmiCtxObj
+ * @param env java env
+ * @param atmiCtxObj Atmi Context obj
  */
 expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpopen
         (JNIEnv * env,  jobject atmiCtxObj)
@@ -1472,5 +1472,66 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpopen
     
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
+
+/**
+ * Close XA sub-system, jdbc connection
+ * @param env Java env
+ * @param atmiCtxObj ATMI Context obj
+ */
+expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpclose
+  (JNIEnv * env, jobject atmiCtxObj)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpclose())
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Begin transaction
+ * @param env java env
+ * @param atmiCtxObj Atmi context
+ * @param timeout timeout in seconds for transaction
+ * @param flags flags
+ */
+expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpbegin
+  (JNIEnv * env, jobject atmiCtxObj, jlong timeout, jlong flags)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpbegin((unsigned long)timeout, (long)flags))
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/*
+ TODO:
+ 
+ * JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpcommit
+  (JNIEnv *, jobject, jlong);
+
+ * JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpabort
+  (JNIEnv *, jobject, jlong);
+ * 
+ * JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpsuspend
+  (JNIEnv *, jobject, jlong);
+ * 
+ * JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpresume
+  (JNIEnv *, jobject, jlong);
+ 
+ */
 
 /* vim: set ts=4 sw=4 et smartindent: */

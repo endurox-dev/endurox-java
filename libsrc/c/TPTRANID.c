@@ -1,7 +1,7 @@
 /**
- * @brief TPQCTL structure translate from/to Java/C
+ * @brief TPTRANID structure translate from/to Java/C
  *
- * @file TPQCTL.c
+ * @file TPTRANID.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -45,7 +45,7 @@
 #include <sys_unix.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
-#define TPQCTL_CLASS     "org/endurox/TPQCTL"
+#define TPTRANID_CLASS     "org/endurox/TPTRANID"
 
 #define OFSZ(s,e)   EXOFFSET(s,e), EXELEM_SIZE(s,e)
 
@@ -55,93 +55,49 @@
 /*---------------------------Statics------------------------------------*/
 
 /**
- * Only field not mapped is ClientId cltid, this shall be driven manually
+ * Copy C tid to java byte array and vice versa
  */
 exprivate exjobjmap_t M_fieldmap[] =
 {    
-    {"flags",       "J",                    OFSZ(TPQCTL,flags)},
-    {"priority",    "J",                    OFSZ(TPQCTL,priority)},
-    {"diagnostic",  "J",                    OFSZ(TPQCTL,diagnostic)},
-    {"diagmsg",     "Ljava/lang/String;",   OFSZ(TPQCTL,diagmsg)},
-    {"msgid",       "[B",                   OFSZ(TPQCTL,msgid)},
-    {"corrid",      "[B",                   OFSZ(TPQCTL,corrid)},
-    {"replyqueue",  "Ljava/lang/String;",   OFSZ(TPQCTL,replyqueue)},
-    {"failurequeue","Ljava/lang/String;",   OFSZ(TPQCTL,failurequeue)},
-    {"urcode",      "J",                    OFSZ(TPQCTL,urcode)},
-    {"appkey",      "J",                    OFSZ(TPQCTL,appkey)},
-    {"delivery_qos","J",                    OFSZ(TPQCTL,delivery_qos)},
-    {"reply_qos",   "J",                    OFSZ(TPQCTL,reply_qos)},
-    {"exp_time",    "J",                    OFSZ(TPQCTL,exp_time)},
+    {"data",       "[B",                    OFSZ(TPTRANID_conv,tid)},
     {NULL}
 };
 
 /*---------------------------Prototypes---------------------------------*/
 
 /**
- * Translate TPQCTL to C from java
+ * Translate TPTRANID to C from java
  * @param env java env
  * @param ctx_obj ATMI Context
- * @param ctl_Java Java object
- * @param ctl_c C object
+ * @param tid_Java Java object
+ * @param tid_c C object
  * @return EXSUCCEED/EXFAIL
  */
-expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env, 
-            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c)
+expublic int ndrxj_atmi_TPTRANID_translate2c(JNIEnv *env, 
+            jobject ctx_obj, jobject tid_Java, TPTRANID_conv *tid_c)
 {
     int ret = EXSUCCEED;
-    
     jclass clz;
-    jfieldID fid;
-    jobject jcltid;
 
-    clz = (*env)->FindClass(env, TPQCTL_CLASS);
+    clz = (*env)->FindClass(env, TPTRANID_CLASS);
 
     if (NULL==clz)
     {        
         /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
+        NDRX_LOG(log_error, "Failed to to get %s class!", TPTRANID_CLASS);
         ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPQCTL_CLASS);
+                    TPTRANID_CLASS);
         EXFAIL_OUT(ret);
     }
     
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_c(env, 
-            ctx_obj, M_fieldmap, clz, TPQCTL_CLASS,
-            ctl_Java, ctl_c))
+            ctx_obj, M_fieldmap, clz, TPTRANID_CLASS,
+            tid_Java, tid_c))
     {
-        NDRX_LOG(log_error, "Failed to convert %s to TPQCTL!", TPQCTL_CLASS);
+        NDRX_LOG(log_error, "Failed to convert %s to TPTRANID!", TPTRANID_CLASS);
         EXFAIL_OUT(ret);
-    }
-    
-    /* convert client id */
-    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Lorg/endurox/ClientId;")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [cltid] descr from QTPQCTL: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    /* get object field */
-    jcltid = (*env)->GetObjectField(env, ctl_Java, fid);
-    
-    if (NULL!=jcltid)
-    {
-        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
-        EXFAIL_OUT(ret);
-
-        /* convert to C */
-        if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
-            jcltid, &(ctl_c->cltid)))
-        {
-            NDRX_LOG(log_error, "Failed to convert client id");
-            EXFAIL_OUT(ret);
-        }
-    }
-    else
-    {
-        ctl_c->cltid.clientdata[0] = EXEOS;
     }
     
 out:
@@ -153,7 +109,7 @@ out:
 
     if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Failed to convert TPQCTL to C "
+        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Failed to convert TPTRANID to C "
                 "from java - see logs!");
     }
 
@@ -164,34 +120,31 @@ out:
  * Translate C struct to Java
  * @param env java env
  * @param ctx_obj ATMI Ctx obj
- * @param ctl_Java optional java control struct (use this, if passed)
- * @param ctl_c C Control struct
+ * @param tid_Java java transaction id (optional)
+ * @param tid_c C Control struct
  * @return EXSUCCEED/EXFAIL
  */
-expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env, 
-            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c)
+expublic jobject ndrxj_atmi_TPTRANID_translate2java(JNIEnv *env, 
+            jobject ctx_obj, jobject tid_Java, TPTRANID_conv *tid_c)
 {
     int ret = EXSUCCEED;
     jobject retObj = NULL;
-    
     jclass clz;
-    jfieldID fid;
-    jobject jcltid;
     jmethodID mid;
 
-    clz = (*env)->FindClass(env, TPQCTL_CLASS);
+    clz = (*env)->FindClass(env, TPTRANID_CLASS);
 
     if (NULL==clz)
     {        
         /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
+        NDRX_LOG(log_error, "Failed to to get %s class!", TPTRANID_CLASS);
         ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPQCTL_CLASS);
+                    TPTRANID_CLASS);
         EXFAIL_OUT(ret);
     }
 
 
-    if (NULL==ctl_Java)
+    if (NULL==tid_Java)
     {
         /* Allocate java object */
             /* create buffer object... */
@@ -203,45 +156,25 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
             EXFAIL_OUT(ret);
         }
 
-        NDRX_LOG(log_debug, "About to NewObject(%s)", TPQCTL_CLASS);
+        NDRX_LOG(log_debug, "About to NewObject(%s)", TPTRANID_CLASS);
 
         retObj = (*env)->NewObject(env, clz, mid);
     }
     else
     {
-        NDRX_LOG(log_debug, "Re-use existing java qctl");
-        retObj = ctl_Java;
+        NDRX_LOG(log_debug, "Re-use existing java qtid");
+        retObj = tid_Java;
     }
     
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_java(env, 
-            ctx_obj, M_fieldmap, clz, TPQCTL_CLASS,
-            ctl_c, retObj))
+            ctx_obj, M_fieldmap, clz, TPTRANID_CLASS,
+            tid_c, retObj))
     {
-        NDRX_LOG(log_error, "Failed to convert C TPQCTL to java %s!", TPQCTL_CLASS);
+        NDRX_LOG(log_error, "Failed to convert C TPTRANID to java %s!", TPTRANID_CLASS);
         EXFAIL_OUT(ret);
     }
-    
-    /* convert client id */
-    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Lorg/endurox/ClientId;")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [cltid] descr from QTPQCTL: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    /* convert to java */
-    if (NULL==(jcltid = ndrxj_atmi_ClientId_translate(env, ctx_obj, EXTRUE,
-        &(ctl_c->cltid))))
-    {
-        NDRX_LOG(log_error, "Failed to convert client id");
-        EXFAIL_OUT(ret);
-    }
-    
-    /* set field */
-    
-    (*env)->SetObjectField(env, retObj, fid, jcltid);
     
 out:
        
@@ -250,14 +183,14 @@ out:
         (*env)->DeleteLocalRef( env, clz);
     }
 
-    if (NULL!=retObj && EXSUCCEED!=ret && NULL==ctl_Java)
+    if (EXSUCCEED!=ret && NULL!=retObj && NULL==tid_Java)
     {
         (*env)->DeleteLocalRef( env, retObj);
     }
 
     if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Failed to convert C TPQCTL to java "
+        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "Failed to convert C TPTRANID to java "
                 "- see logs!");
     }
 

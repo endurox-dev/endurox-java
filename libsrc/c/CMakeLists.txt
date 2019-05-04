@@ -91,6 +91,7 @@ add_library (exjava SHARED
                 tpdequeue.c
                 xa.c
                 xaconfig.c
+                TPTRANID.c
 	)
 
 add_library (exjavald SHARED

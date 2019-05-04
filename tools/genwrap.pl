@@ -45,11 +45,19 @@ use File::Basename;
 #
 @AoH = ();
   
+
+#
+# Have a list of headers which actually emitted exports
+#
+@M_usedhdrs = ();
+
 #
 # Read all CLI files..
 #
 for my $qfn (@ARGV) {
 	open($fh, $qfn);
+
+        my $firsthdr = 0;
 
 	while (<$fh>) {
 		chomp;
@@ -63,6 +71,12 @@ for my $qfn (@ARGV) {
 		
 		if ($line =~ /^JNIEXPORT/)
 		{
+			if (!$firsthdr)
+			{
+				my $hdr_nm = basename($qfn);
+				push @M_usedhdrs, $hdr_nm;
+				$firsthdr = 1;
+			}
 			($typ, $func) = $line =~ /^JNIEXPORT (.*) JNICALL (.*)/g;
 			my $line2 = <$fh>;
 			chomp $line2;
@@ -163,9 +177,8 @@ print OUTC << 'BLOCK';
 /* List of pointers to loaded library functions: */
 BLOCK
 
-for my $qfn (@ARGV) {
-	$file = basename($qfn);
-	print OUTC "#include <$file>\n";
+for my $qfn (@M_usedhdrs) {
+	print OUTC "#include <$qfn>\n";
 }
 
 print OUTC << 'BLOCK';

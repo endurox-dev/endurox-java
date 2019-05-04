@@ -1434,6 +1434,7 @@ public class AtmiCtx {
             }
             
             /* Find the correspoding method and check it's data types.. */
+            boolean paramSet = false;
             for(int j = 0; j < m.length; j++) {
                 
                 if (m[j].getName().equals(setting[0]))
@@ -1463,37 +1464,54 @@ public class AtmiCtx {
                         }
                         
                         /* Load short */
-                        if (ptype.equals("[S") || ptype.equals("[Ljava.lang.Short;")) {
+                        if (ptype.equals("short") || ptype.equals("java.lang.Short")) {
 
                             short s = Short.valueOf(setting[1]);
                             m[j].invoke(xads, s);
+                            paramSet = true;
                         } 
-                        else if (ptype.equals("[J") || ptype.equals("[Ljava.lang.Long;")) {
+                        else if (ptype.equals("long") || ptype.equals("java.lang.Long")) {
                             long l = Long.valueOf(setting[1]);
                             m[j].invoke(xads, l);
+                            paramSet = true;
                         }
-                        else if (ptype.equals("[B") || ptype.equals("[Ljava.lang.Byte;")) {
+                        else if (ptype.equals("int") || ptype.equals("java.lang.Integer")) {
+                            int ii = Integer.valueOf(setting[1]);
+                            m[j].invoke(xads, ii);
+                            paramSet = true;
+                        }
+                        else if (ptype.equals("byte") || ptype.equals("java.lang.Byte")) {
 
                             byte b = Byte.valueOf(setting[1]);
                             m[j].invoke(xads, b);
+                            paramSet = true;
                         }
-                        else if (ptype.equals("[F") || ptype.equals("[Ljava.lang.Float;")) {
+                        else if (ptype.equals("float") || ptype.equals("java.lang.Float")) {
                             float f = Float.valueOf(setting[1]);
                             m[j].invoke(xads, f);
+                            paramSet = true;
                         }
-                        else if (ptype.equals("[D") || ptype.equals("[Ljava.lang.Double;")) {
+                        else if (ptype.equals("double") || ptype.equals("java.lang.Double")) {
                             double d = Double.valueOf(setting[1]);
                             m[j].invoke(xads, d);
+                            paramSet = true;
                         }
-                        else if (ptype.equals("[Z") || ptype.equals("[Ljava.lang.Boolean;")) {
+                        else if (ptype.equals("boolean") || ptype.equals("java.lang.Boolean")) {
                             Boolean b = Boolean.valueOf(setting[1]);
                             m[j].invoke(xads, b);
+                            paramSet = true;
                         }
-                        else if (ptype.equals("[Ljava.lang.String;")) {
-                            m[j].invoke(xads, setting[0]);
+                        else if (ptype.equals("java.lang.String")) {
+                            m[j].invoke(xads, setting[1]);
+                            paramSet = true;
                         }
-                        else if (ptype.equals("Ljava.util.Properties;")) {
+                        else if (ptype.equals("java.util.Properties")) {
                             m[j].invoke(xads, p);
+                            paramSet = true;
+                        }
+                        else
+                        {
+                            tplogError("Type not supported: [%s]", ptype);
                         }
                     } 
                     catch (Exception ex) {
@@ -1503,6 +1521,12 @@ public class AtmiCtx {
                     }
                 }
             } /* for methods in class */
+            
+            if (!paramSet) {
+                tplogError("Parameter [%s] not set", setting[0]);
+            } else {
+                tplogError("Parameter [%s] applied", setting[0]);
+            }
             
         } /* for set arguments */        
         
@@ -1979,9 +2003,35 @@ public class AtmiCtx {
      */
     
     /**
-     * Open the XA sub-system.
+     * Open the XA sub-system / open connection for ATMI Context.
+     * If Enduro/X Java XA Driver is used, then it will prepare connection
+     * connection for given Atmi Context.
+     * @throws  AtmiTPERMERRException Resource Manager failed. The tpstrerror() 
+     *  will provide more info from last call.
+     * @throws  AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. This could also be a 
+     *  problem with dynamical driver loading.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
      */
     public native void tpopen();
+    
+    /**
+     * Close XA sub-system.
+     * Firstly we will test this with java, then will provide update
+     * driver for tmsrv to use jdbc.
+     */
+    public native void tpclose();
+    
+    public native void tpbegin (long timeout, long flags);
+    
+    public native void tpcommit (long flags);
+    
+    public native void tpabort (long flags);
+    
+    public native TPTRANID tpsuspend (long flags);
+    
+    public native TPTRANID tpresume (long flags);
     
 }
 
