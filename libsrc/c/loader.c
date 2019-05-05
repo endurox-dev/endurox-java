@@ -180,8 +180,8 @@ exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpabort)
         (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
 exprivate jobject (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsuspend)
         (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
-exprivate jobject (*p_ndrxj_Java_org_endurox_AtmiCtx_tpresume)
-        (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
+exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpresume)
+        (JNIEnv * v0,  jobject v1,  jobject v2,  jlong v3) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_BExprTree_Btreefree)
         (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_TypedBuffer_tpfree)
@@ -1372,17 +1372,17 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpsuspend (JNIEnv * v0,  jobje
 /**
  * Auto generated
  */
-expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpresume (JNIEnv * v0,  jobject v1,  jlong v2)
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpresume (JNIEnv * v0,  jobject v1,  jobject v2,  jlong v3)
 {
     if (!M_lib_init)
     {
         if (EXSUCCEED!=ndrxj_lib_init(v0))
         {
-            return (jobject)0;
+            return;
         }
     }
     
-    return p_ndrxj_Java_org_endurox_AtmiCtx_tpresume(v0, v1, v2);
+    p_ndrxj_Java_org_endurox_AtmiCtx_tpresume(v0, v1, v2, v3);
 }
 
 /**

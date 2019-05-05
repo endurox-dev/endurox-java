@@ -1517,21 +1517,100 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpbegin
     tpsetctxt(TPNULLCONTEXT, 0L);
 }
 
-/*
- TODO:
- 
- * JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpcommit
-  (JNIEnv *, jobject, jlong);
-
- * JNIEXPORT void JNICALL Java_org_endurox_AtmiCtx_tpabort
-  (JNIEnv *, jobject, jlong);
- * 
- * JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpsuspend
-  (JNIEnv *, jobject, jlong);
- * 
- * JNIEXPORT jobject JNICALL Java_org_endurox_AtmiCtx_tpresume
-  (JNIEnv *, jobject, jlong);
- 
+/**
+ * Commit transaction
+ * @param env java env
+ * @param atmiCtxObj atmi ctx
+ * @param flags flags
  */
+expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpcommit
+  (JNIEnv * env, jobject atmiCtxObj, jlong flags)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpcommit((long)flags))
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Abort transaction
+ * @param env java env
+ * @param atmiCtxObj atmi ctx
+ * @param flags flags
+ */
+expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpabort
+  (JNIEnv *env, jobject atmiCtxObj, jlong flags)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpabort((long)flags))
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Suspend transaction
+ * @param env java env
+ * @param atmiCtxObj Atmi Context
+ * @param flags flags
+ * @return transaction id
+ */
+expublic jobject NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsuspend
+  (JNIEnv *env, jobject atmiCtxObj, jlong flags)
+{
+    TPTRANID_conv tid;
+    jobject jtid = NULL;
+    
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return NULL;
+    }
+    
+    if (EXSUCCEED!=tpsuspend(&tid.tid, (long)flags))
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        goto out;
+    }
+    
+    /* convert TID to java */
+    jtid = ndrxj_atmi_TPTRANID_translate2java(env, 
+            atmiCtxObj, NULL, &tid);
+    
+    if (NULL==jtid)
+    {
+        NDRX_LOG(log_error, "Failed to translate C TID");
+    }
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
+    return jtid;
+}
+
+/**
+ * Resume transaction
+ * @param env java env
+ * @param atmiCtxObj atmi ctx
+ * @param[in] jtid transaction id
+ * @param flags flags
+ */
+JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpresume
+  (JNIEnv * env, jobject atmiCtxObj, jobject jtid, jlong flags)
+{
+    
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */

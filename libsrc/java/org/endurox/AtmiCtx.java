@@ -2031,7 +2031,7 @@ public class AtmiCtx {
     
     public native TPTRANID tpsuspend (long flags);
     
-    public native TPTRANID tpresume (long flags);
+    public native void tpresume (TPTRANID tid, long flags);
     
     /**
      * Get database connection
@@ -2042,8 +2042,6 @@ public class AtmiCtx {
     public Connection getConnection() {
         return dbConn;
     }
-    
-    
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
