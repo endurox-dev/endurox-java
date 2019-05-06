@@ -1,0 +1,2 @@
+Download jdbc drivers from Oracle and put jar files here, including
+ojdbc8.jar

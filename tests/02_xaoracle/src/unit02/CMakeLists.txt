@@ -1,5 +1,5 @@
 ##
-## @brief Include sub-dirs for tests
+## @brief Test02 Unit tests
 ##
 ## @file CMakeLists.txt
 ##
@@ -30,10 +30,49 @@
 ## contact@mavimax.com
 ## -----------------------------------------------------------------------------
 ##
-cmake_minimum_required(VERSION 2.8)
 
-# Sub Dirs
-add_subdirectory (00_unit)
-add_subdirectory (01_basic_server)
-add_subdirectory (02_xaoracle)
+# Set minimum version
+cmake_minimum_required(VERSION 2.6)
+
+find_package(Java)
+include(UseJava)
+
+# Add debug options
+# By default if RELEASE_BUILD is not defined, then we run in debug!
+IF ($ENV{RELEASE_BUILD})
+	# do nothing
+ELSE ($ENV{RELEASE_BUILD})
+	ADD_DEFINITIONS("-D UBF_DEBUG")
+ENDIF ($ENV{RELEASE_BUILD})
+
+# Make sure the compiler can find include files from our UBF library.
+include_directories (. ${JNI_INCLUDE_DIRS})
+
+FILE(GLOB JAVASRC *.java)
+
+add_jar(jexunit02
+    SOURCES
+        ${JAVASRC}
+    INCLUDE_JARS 
+        ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar 
+        ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar 
+        ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
+        ../../../01_basic_server/src/ubftab/ubf01.jar
+        
+        )
+
+ndrx_java_link(
+	TARGET 
+            jexunit02b
+	MAINCLASS 
+            org.junit.runner.JUnitCore
+	JARS
+            jexunit02.jar
+            ${CMAKE_SOURCE_DIR}/libsrc/enduroxjava.jar  
+            ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar  
+            ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
+            ../../../01_basic_server/src/ubftab/ubf01.jar
+            ../../jdbcdrivers/ojdbc8.jar
+)
+
 # vim: set ts=4 sw=4 et smartindent:

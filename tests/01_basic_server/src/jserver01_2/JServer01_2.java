@@ -79,9 +79,6 @@ public class JServer01_2 implements Server, Service {
         ctx.tpadvertise("GLOBNOTIF", "GlobNotif", new GlobNotif());
         ctx.tpadvertise("GLOBBROAD", "GlobBroad", new GlobBroad());
         
-        /* Open the XA connection */
-        ctx.tpopen();
-        
         //for failed startup...
         return AtmiConst.SUCCEED;
     }

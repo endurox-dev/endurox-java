@@ -33,7 +33,5 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Sub Dirs
-add_subdirectory (00_unit)
-add_subdirectory (01_basic_server)
-add_subdirectory (02_xaoracle)
+add_subdirectory (src)
 # vim: set ts=4 sw=4 et smartindent:

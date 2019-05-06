@@ -10,15 +10,8 @@
 
 ADDLIBPATH=""
 
-if [ ! -f  conf/settest1 ]; then
-    
-    echo "Please enter libjvm.so libpath "
-    echo "(e.g. /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server): "
-    read lpath
-
-    ADDLIBPATH=":$lpath"
-
-fi
+# Load env
+source ~/ndrx_home
 
 # prepare test dir..
 rm -rf QTEST 2>/dev/null

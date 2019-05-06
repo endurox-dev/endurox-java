@@ -1610,7 +1610,31 @@ out:
 JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpresume
   (JNIEnv * env, jobject atmiCtxObj, jobject jtid, jlong flags)
 {
+    int ret = EXSUCCEED;
+    TPTRANID_conv tid;
     
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    /* convert TID to c */
+    if (EXSUCCEED!=ndrxj_atmi_TPTRANID_translate2c(env, 
+            atmiCtxObj, jtid, &tid))
+    {
+        NDRX_LOG(log_error, "Failed to restore TID!");
+        EXFAIL_OUT(ret);
+    }
+     
+    if (EXSUCCEED!=tpresume(&tid.tid, (long)flags))
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        goto out;
+    }
+    
+out:
+    tpsetctxt(TPNULLCONTEXT, 0L);
+
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
