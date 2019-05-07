@@ -114,6 +114,7 @@ expublic int ndrxj_xa_init(void)
     jstring jclazz = NULL;
     ndrx_ctx_priv_t *ctxpriv;
     jmethodID mid;
+    TPCONTEXT_T ctx = NULL;
     
     jclass ctxClass = NULL;
     
@@ -188,13 +189,16 @@ expublic int ndrxj_xa_init(void)
     
     /* Call the method */    
     /* unset context */
-    tpsetctxt(TPNULLCONTEXT, 0L);
+    tpgetctxt(&ctx, 0L);
 
     ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
         NDRXJ_JATMICTX(ctxpriv), mid, jclazz, jsets);
 
-    /* set context back... */
-    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
+    /* set context back... 
+     * well this is not available for client processes
+     * thus use the context saved previously
+     */
+    tpsetctxt(ctx, 0L);
     
     if (EXSUCCEED!=ret)
     {
