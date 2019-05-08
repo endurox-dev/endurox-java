@@ -43,6 +43,7 @@
 #include <oatmisrv_integra.h>
 #include "libsrc.h"
 #include <sys_unix.h>
+#include <tmenv.h>
 #include "nerror.h"
 #include <ndrstandard.h>
 /*---------------------------Externs------------------------------------*/
@@ -379,10 +380,18 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
     
     if (NULL==ret)
     {
+        ndrx_ctx_priv_t *ctxpriv;    
+        ctxpriv = ndrx_ctx_priv_get();
+            
         NDRX_LOG(log_error, "Failed to create java ExXid!");
+        
+        /* TODO: Backtrace the call? 
+         * have some common logging for XA.
+         */
+        NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, 
+            NDRXJ_LOGEX_NDRX, "Failed to create ExXid:%s");
         goto out;
     }
-    
 
 out:
             

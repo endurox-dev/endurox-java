@@ -115,6 +115,17 @@ extern "C" {
  */
 #define NDRXJ_CCTX(X)   ( ((TPCONTEXT_T)(X->integptr3)) )
 #define NDRXJ_CCTX_LVAL(X)  X->integptr3
+    
+    
+/**
+ * The process is XATMI server
+ */
+#define NDRXJ_CTXFLAGS_SRV  0x00000001
+/**
+ * Context flags
+ */
+#define NDRXJ_CTXFLAGS(X)   X->integlng4
+
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 

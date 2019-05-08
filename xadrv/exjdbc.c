@@ -96,7 +96,7 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
         /* Check private data, if java env and context is not set
          * then we need to load these.
          * 
-         * Also we need to mark in Cotext in Context in what mode we are started
+         * Also we need to mark in Context in Context in what mode we are started
          * so that in case of tpclose we can destroy the the Atmi Context.
          * What about java env?
          * Shall we leave it open?
@@ -126,6 +126,8 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
     
     if (NULL!=sw)
     {
+        
+        
         /* get the init function... 
          * we have different ones, for java processes & for tmsrv processes.
          */
@@ -133,7 +135,11 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
         {
             NDRX_LOG(log_error, "Failed to init JDBC driver");
             sw = NULL;
+            EXFAIL_OUT(ret);
         }
+        
+        /* No need for tran suspend in contexting */
+        ndrx_xa_noapisusp(EXTRUE);
     }
     
 out:

@@ -102,7 +102,6 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
             ctxpriv = ndrx_ctx_priv_get();
             
             /* update private data storage in context */
-            
             NDRXJ_JENV_LVAL(ctxpriv) = env;
             
             /* why it changes ptr??? because function receives local reference
@@ -112,9 +111,19 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
              * 
              * Context is stored only for servers.
              */
-            if (NULL==NDRXJ_CCTX_LVAL(ctxpriv))
+            if (!(NDRXJ_CTXFLAGS(ctxpriv) & NDRXJ_CTXFLAGS_SRV))
             {
-                NDRXJ_JATMICTX_LVAL(ctxpriv) = atmiCtxObj;
+                /* as it is used by client, it will be made free when returning
+                 * back to java
+                 * Problem is that in case of XA:
+                 * - Java goes to C
+                 * - C goes back to Java
+                 * ---> Here atmiCtxObj reference is changed
+                 * - returns to C
+                 */
+                NDRXJ_JATMICTX_LVAL(ctxpriv) = (*env)->NewLocalRef(env, atmiCtxObj);
+                NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
+                
             }
         }
     }
@@ -151,7 +160,6 @@ expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogqinfo (JNIEnv *env, jo
         /* throw exception */
         ndrxj_nstd_throw(env, Nerror, Nstrerror(Nerror));
     }
-    tpgetctxt(&ctx, 0);
     
 out:
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -941,6 +949,8 @@ expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject
     
     NDRXJ_JATMICTX_LVAL(ctxpriv) = obj;
     NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
+    /* Mark us as a server context */
+    NDRXJ_CTXFLAGS(ctxpriv)|=NDRXJ_CTXFLAGS_SRV;
 
     if (!nocheck)
     {

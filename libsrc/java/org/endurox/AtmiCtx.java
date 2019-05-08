@@ -1542,16 +1542,20 @@ public class AtmiCtx {
     int xa_is_open() {
         
         if (null==xads) {
-            tplogError("xa_open_entry: called, but XA Data Source not initialized");
+            tplogError("xa_is_open: XA Data Source not initialized");
             return AtmiConst.XAER_PROTO;
         }
         
         if (null!=xaConn && null!=dbConn && null!=xaRes) {
-            tplogError("xa_open_entry: Already open");
-            return AtmiConst.XAER_PROTO;
+            tplogDebug("xa_is_open: XA is opened");
+            return AtmiConst.XA_OK;
         }
         
-        return AtmiConst.XA_OK;
+        tplogDebug("xa_is_open: XA is not opened: xaConn=%s dbConn=%s xaRes=%s",
+                null!=xaConn?"non NULL":"NULL",
+                null!=dbConn?"non NULL":"NULL",
+                null!=xaRes?"non NULL":"NULL");
+        return AtmiConst.XAER_RMERR;
     }
     
     /**
@@ -1561,14 +1565,14 @@ public class AtmiCtx {
      */
     int xa_open_entry(long flags) {
         
-        int ret;
+        int ret = AtmiConst.XA_OK;
         
         /* Check some conditions */
-        ret = xa_is_open();
         
-        if (AtmiConst.XA_OK!=ret)
+        if (AtmiConst.XA_OK==xa_is_open())
         {
-            return ret;
+            tplogError("XA Is already open!");
+            return AtmiConst.XAER_PROTO;
         }
         
         try {
