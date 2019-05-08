@@ -66,7 +66,7 @@ public class ExXid implements Xid {
         
         this.gtrid_length = gtrid_length;
         this.bqual_length = bqual_length;
-        
+        this.formatID = formatID;
         this.data = new byte[data.length];
         
         System.arraycopy(data, 0, this.data, 0, data.length);
@@ -79,7 +79,7 @@ public class ExXid implements Xid {
         bqual = new byte[(int)bqual_length];
         
         /* extract the bqual poritions */
-        System.arraycopy(data, (int)gtrid_length, trxid, 0, (int)bqual_length);
+        System.arraycopy(data, (int)gtrid_length, bqual, 0, (int)bqual_length);
         
     }
     

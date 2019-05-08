@@ -1,8 +1,8 @@
+import java.sql.Connection;
+import java.sql.Statement;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.endurox.*;
-import org.endurox.exceptions.AtmiException;
-import org.endurox.exceptions.UbfBNOTPRESException;
 
 /**
  * OracleDB XA Tests
@@ -15,6 +15,8 @@ public class XAOraTests {
     @Test
     public void basicXA() {
         
+        Connection conn = null;
+        Statement stmt = null;
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
 
@@ -26,6 +28,48 @@ public class XAOraTests {
         StopWatch w = new StopWatch();
         
         String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST");
+        
+        ctx.tpopen();
+        ctx.tpbegin(60, 0);
+        
+        /* create some test table */
+        conn = ctx.getConnection();
+        assertNotEquals(null, conn);
+        
+        try {
+            stmt = conn.createStatement();
+        } 
+        catch (Exception e) {
+            /* TODO: LOG Error + exception */
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to create statement", e);
+            assertNull(e);
+        }    
+        
+        String sql = "DROP TABLE EXJTEST";
+        try {
+            stmt.executeUpdate(sql);
+        }
+        catch (Exception e) {
+            ctx.tplogex(AtmiConst.LOG_DEBUG, "Failed to drop EXJTEST", e);
+        }
+        
+        /* create table */
+        
+        sql = "CREATE TABLE EXJTEST\n" +
+            "( customer_id number(10) NOT NULL,\n" +
+            "  customer_name varchar2(50) NOT NULL,\n" +
+            "  city varchar2(50)\n" +
+            ");";
+        
+        try {
+            stmt.executeUpdate(sql);
+        }
+        catch (Exception e) {
+            ctx.tplogex(AtmiConst.LOG_DEBUG, "Failed to drop EXJTEST", e);
+        }
+        
+        ctx.tpcommit(0);
+        ctx.tpclose();
         
         if (null!=leaktestSecStr)
         {

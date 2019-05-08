@@ -67,7 +67,9 @@ public class StaticClassLoader extends URLClassLoader {
         {
             try
             {
-                return new URL("emb://".concat(name));
+                //TODO: https://stackoverflow.com/questions/861500/url-to-load-resources-from-the-classpath-in-java
+                //Have a connection to byte array.
+                return new URL("classpath:".concat(name));
             }
             catch (Exception e)
             {
