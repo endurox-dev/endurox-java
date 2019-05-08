@@ -65,6 +65,7 @@ public class StaticClassLoader extends URLClassLoader {
         
         if (null!=b)
         {
+            /*
             try
             {
                 //TODO: https://stackoverflow.com/questions/861500/url-to-load-resources-from-the-classpath-in-java
@@ -75,6 +76,8 @@ public class StaticClassLoader extends URLClassLoader {
             {
                 System.err.printf("Failed to create URL to %s\n", name);
             }
+            */
+            return null;
         }
         return super.getResource(name);
     }

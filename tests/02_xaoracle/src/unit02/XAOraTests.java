@@ -34,9 +34,11 @@ public class XAOraTests {
         
         /* create some test table */
         conn = ctx.getConnection();
+        
         assertNotEquals(null, conn);
         
         try {
+            conn.setAutoCommit(false);
             stmt = conn.createStatement();
         } 
         catch (Exception e) {
@@ -47,6 +49,7 @@ public class XAOraTests {
         
         String sql = "DROP TABLE EXJTEST";
         try {
+            conn.setAutoCommit(false);
             stmt.executeUpdate(sql);
         }
         catch (Exception e) {
