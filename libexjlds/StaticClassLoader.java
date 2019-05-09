@@ -78,7 +78,14 @@ public class StaticClassLoader extends URLClassLoader {
                 System.err.printf("Failed to create URL to %s\n", name);
             }
             */
-            return null;
+            
+            /* Allocate new object */
+            try {
+                return new URL(null, "bytes:///" + name, new BytesURLHandler());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
         }
         return super.getResource(name);
     }

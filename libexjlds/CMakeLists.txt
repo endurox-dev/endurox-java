@@ -57,9 +57,10 @@ include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
 # Generate class of static loader
 add_custom_command(
-  OUTPUT StaticClassLoader.class
-  COMMAND javac StaticClassLoader.java
-  DEPENDS StaticClassLoader.java)
+  OUTPUT StaticClassLoader.class BytesURLHandler.class BytesURLConnection.class
+  COMMAND javac StaticClassLoader.java BytesURLHandler.java BytesURLConnection.java
+  DEPENDS StaticClassLoader.java BytesURLHandler.java BytesURLConnection.java)
+
 
 # Generate include for static loader
 add_custom_command(
@@ -67,6 +68,15 @@ add_custom_command(
   COMMAND exembedfile StaticClassLoader.class StaticClassLoader cinclude
   DEPENDS StaticClassLoader.class)
 
+add_custom_command(
+  OUTPUT BytesURLHandler.cinclude
+  COMMAND exembedfile BytesURLHandler.class BytesURLHandler cinclude
+  DEPENDS BytesURLHandler.class)
+
+add_custom_command(
+  OUTPUT BytesURLConnection.cinclude
+  COMMAND exembedfile BytesURLConnection.class BytesURLConnection cinclude
+  DEPENDS BytesURLConnection.class)
 
 # Shared static loader library
 add_library (exjlds SHARED
@@ -74,6 +84,8 @@ add_library (exjlds SHARED
                 cp.c
                 except.c
                 StaticClassLoader.cinclude
+                BytesURLHandler.cinclude
+                BytesURLConnection.cinclude
 	)
 
 # target_link_libraries (exjld atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)

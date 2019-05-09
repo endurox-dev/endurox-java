@@ -45,6 +45,8 @@
 #include <exj.h>
 /* Include generated resources */
 #include "StaticClassLoader.cinclude"
+#include "BytesURLHandler.cinclude"
+#include "BytesURLConnection.cinclude"
 
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
@@ -226,7 +228,7 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     jmethodID ldr_ctor;
     jobject ldr_obj;
     JNINativeMethod m[2];
-    jclass cl;
+    jclass cl, urlcon, urlh;
     jobjectArray cpUrls = NULL;
     loaderClass = (*env)->FindClass(env, "java/lang/ClassLoader"); 
     
@@ -263,7 +265,47 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
         NDRX_LOG(log_error, "Failed to create global ref of loader");
         EXFAIL_OUT(ret);
     }
+    
+    /* define classes for Bytes URL Connection */
+   
+    urlcon = (*env)->DefineClass(env, "org/endurox/loader/BytesURLConnection", loader, 
+                                (const jbyte*) ndrx_G_resource_BytesURLConnection, 
+                                ndrx_G_resource_BytesURLConnection_len_def);
+    
+    if(!urlcon)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to define BytesURLConnection: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    urlcon = (jclass) (*env)->NewGlobalRef(env, urlcon);
+    
+    
+    /* define classes for Bytes URL Handler */
+     
+    urlh = (*env)->DefineClass(env, "org/endurox/loader/BytesURLHandler", loader, 
+                                (const jbyte*) ndrx_G_resource_BytesURLHandler, 
+                                ndrx_G_resource_BytesURLHandler_len_def);
+    
+    if(!urlh)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to define BytesURLHandler: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    urlh = (jclass) (*env)->NewGlobalRef(env, urlh);
+    
+    if(!urlh)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to NewGlobalRef BytesURLHandler: %s");
+        EXFAIL_OUT(ret);
+    }
 
+    /* define classes for Bytes URL Handler */
+    
     cl = (*env)->DefineClass(env, "org/endurox/loader/StaticClassLoader", loader, 
                                 (const jbyte*) ndrx_G_resource_StaticClassLoader, 
                                 ndrx_G_resource_StaticClassLoader_len_def);
@@ -286,8 +328,11 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     m[1].name = "getClassBytes";
     m[1].signature = "(Ljava/lang/String;)[B";
 
-    (*env)->RegisterNatives(env, M_classLoaderClass, m, 2);
+    /* have these loader methods in both classes */
+    (*env)->RegisterNatives(env, urlcon, m, 2);
 
+    (*env)->RegisterNatives(env, M_classLoaderClass, m, 2);
+    
     if((*env)->ExceptionCheck(env))
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
