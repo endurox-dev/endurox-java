@@ -70,6 +70,7 @@ public class StaticClassLoader extends URLClassLoader {
             {
                 //TODO: https://stackoverflow.com/questions/861500/url-to-load-resources-from-the-classpath-in-java
                 //Have a connection to byte array.
+                /https://stackoverflow.com/questions/17776884/any-way-to-create-a-url-from-a-byte-array
                 return new URL("classpath:".concat(name));
             }
             catch (Exception e)
