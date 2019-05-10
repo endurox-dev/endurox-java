@@ -1589,6 +1589,7 @@ public class AtmiCtx {
         try {
             tplogInfo("Getting DB Connection");
             dbConn = xaConn.getConnection();
+            dbConn.setAutoCommit(false);
         }
         catch (SQLException ex) {
             tplogex(AtmiConst.LOG_ERROR, String.format("Failed to get DB "

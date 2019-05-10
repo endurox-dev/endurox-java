@@ -1063,17 +1063,18 @@ out:
  * @param flags return flags
  */
 expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpreturn
-  (JNIEnv *env, jobject obj, jint rval, jlong rcode, jobject data, jlong flags)
+  (JNIEnv *env, jobject atmiCtxObj, jint rval, jlong rcode, jobject data, jlong flags)
 {
     int ret = EXSUCCEED;
     /* set context */
     char *buf = NULL;
     long len = 0;
-    ndrx_ctx_priv_t *ctxpriv;
     
-    ctxpriv = ndrx_ctx_priv_get();
-    
-    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
+    /* set ctx from obj */
+    if (NULL == ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
     
     /* get data buffer... */
     if (NULL!=data)
@@ -1104,7 +1105,7 @@ out:
  * @param flags RFU flags
  */
 expublic  JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpforward
-  (JNIEnv *env, jobject obj, jstring svcname, jobject data, jlong flags)
+  (JNIEnv *env, jobject atmiCtxObj, jstring svcname, jobject data, jlong flags)
 {
     int ret = EXSUCCEED;
     /* set context */
@@ -1114,9 +1115,11 @@ expublic  JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpforward
     const char *n_svcname = (*env)->GetStringUTFChars(env, svcname, &n_svcname_copy);
     ndrx_ctx_priv_t *ctxpriv;
     
-    ctxpriv = ndrx_ctx_priv_get();
-    
-    tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
+    /* set ctx from obj */
+    if (NULL == ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
     
     /* get data buffer... */
     if (NULL!=data)

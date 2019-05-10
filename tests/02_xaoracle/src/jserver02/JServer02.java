@@ -1,5 +1,5 @@
+import java.sql.Statement;
 import org.endurox.*;
-import java.util.*;
 
 public class JServer02 implements Server, Service {
 
@@ -9,14 +9,35 @@ public class JServer02 implements Server, Service {
      */
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
+        int ret = AtmiConst.TPSUCCESS;
+        
         ctx.tplogDebug("tpService/DoTran called");
 
         TypedUbf ub = (TypedUbf)svcinfo.getData();
 
         /* TODO: Add something to database */
-
         
-        ctx.tpreturn(AtmiConst.TPSUCCESS, 0, svcinfo.getData(), 0);
+        long id = ub.BgetShort(test.T_LONG_FLD, 0);
+        String name = ub.BgetString(test.T_STRING_FLD, 0);
+        String city = ub.BgetString(test.T_STRING_2_FLD, 0);
+        
+        String sql = String.format("insert into EXJTEST(customer_id, customer_name, city) values (%d, '%s', '%s')", 
+                id, name, city);
+        ctx.tplogInfo("Running stmt: [%s]", sql);
+        
+        try {
+            // create a Statement from the connection
+            Statement statement = ctx.getConnection().createStatement();
+            // insert the data
+            statement.executeUpdate(sql);
+            statement.close();
+        }
+        catch (Exception e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to run update", e);
+            ret = AtmiConst.TPFAIL;
+        }
+        
+        ctx.tpreturn(ret, 0, svcinfo.getData(), 0);
     }
 
     /**
