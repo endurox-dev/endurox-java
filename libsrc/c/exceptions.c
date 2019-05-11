@@ -256,7 +256,12 @@ exprivate void backtrace_recursive(
                                         mid_throwable_getStackTrace);
     
     /* size of frames */
-    jsize frames_length = (*env)->GetArrayLength(env, frames);
+    jsize frames_length = 0;
+    
+    if (NULL!=frames)
+    {
+        frames_length = (*env)->GetArrayLength(env, frames);
+    }
 
     if (0 != frames)
     {

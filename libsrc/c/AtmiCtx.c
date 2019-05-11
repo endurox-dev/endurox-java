@@ -654,7 +654,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
 {
     /* build the svcinfo object and invoke the service proxy of java side */
     jobject jsvcinfo = NULL;
-    jclass bclz;
+    jclass bclz = NULL;
     jmethodID mid;
     jobject jdata = NULL;
     jobject jcltid = NULL;
@@ -713,21 +713,19 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
          */
         if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
         {
-            (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef( NDRXJ_JENV(ctxpriv), bclz);
-            
             NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, 
                 NDRXJ_LOGEX_ULOG, "Service have thrown unexpected exception: "
                     "[%s] - ignoring (continue)");
             
             (*NDRXJ_JENV(ctxpriv))->ExceptionClear(NDRXJ_JENV(ctxpriv));
         }
-        else
-        {
-            (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef( NDRXJ_JENV(ctxpriv), bclz);
-        }
-        
     }
     
+    if (NULL!=bclz)
+    {
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef( NDRXJ_JENV(ctxpriv), bclz);
+    }
+
     /*
      * If not releasing allocated objects from C/C++ that will result in 
      * growth of java.lang.ref.Finalizer
@@ -757,7 +755,7 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
         (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jfname);
     }
     
-    NDRX_LOG(log_error, "%s return", __func__);
+    NDRX_LOG(log_info, "%s return", __func__);
     
 }
 
@@ -1620,7 +1618,7 @@ out:
  * @param[in] jtid transaction id
  * @param flags flags
  */
-JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpresume
+expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpresume
   (JNIEnv * env, jobject atmiCtxObj, jobject jtid, jlong flags)
 {
     int ret = EXSUCCEED;
@@ -1648,6 +1646,30 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpresume
 out:
     tpsetctxt(TPNULLCONTEXT, 0L);
 
+}
+
+/**
+ * Get transaction level.
+ * Are we in tran?
+ * @param env java env
+ * @param atmiCtxObj atmi context
+ * @return  0 - no tran started, 1 - we are in globla tran
+ */
+expublic jint NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpgetlev(JNIEnv *env, 
+        jobject atmiCtxObj)
+{
+    int ret = EXFAIL;
+    
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return ret;
+    }
+    
+    ret=(jint)tpgetlev();
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    return ret;
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

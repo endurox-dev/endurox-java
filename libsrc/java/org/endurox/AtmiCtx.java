@@ -2047,6 +2047,13 @@ public class AtmiCtx {
     public Connection getConnection() {
         return dbConn;
     }
+    
+    /**
+     * Return global transaction level
+     * @return 0 - current thread is not part of global transaction. 
+     *  1 - current thread is part of global transaction.
+     */
+    public native int tpgetlev();
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */
