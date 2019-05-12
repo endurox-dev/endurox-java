@@ -442,6 +442,12 @@ out:
         (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
                 ctxClass);
     }
+
+    if (NULL!=jxid)
+    {
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
+                jxid);
+    }
     
     return ret;
 }

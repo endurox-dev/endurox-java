@@ -270,18 +270,21 @@ exprivate void backtrace_recursive(
             (jstring) (*env)->CallObjectMethod(env, exc,
                                mid_throwable_toString);
         
-        const char* msg_str = (*env)->GetStringUTFChars(env, msg_obj, 
+        if (NULL!=msg_obj)
+        {
+            const char* msg_str = (*env)->GetStringUTFChars(env, msg_obj, 
                                 &m_msg_obj_copy);
 
-        exstring_strcat(s, msg_str);
-        exstring_strcat(s, "\n");
+            exstring_strcat(s, msg_str);
+            exstring_strcat(s, "\n");
 
-        if (m_msg_obj_copy)
-        {
-            (*env)->ReleaseStringUTFChars(env, msg_obj, msg_str);
-        }
+            if (m_msg_obj_copy)
+            {
+                (*env)->ReleaseStringUTFChars(env, msg_obj, msg_str);
+            }
         
-        (*env)->DeleteLocalRef(env, msg_obj);
+            (*env)->DeleteLocalRef(env, msg_obj);
+        }
     }
 
     if (frames_length > 0)
@@ -290,24 +293,34 @@ exprivate void backtrace_recursive(
         for (i = 0; i < frames_length; i++)
         {
             jobject frame = (*env)->GetObjectArrayElement(env, frames, i);
+            
+            /* when we have out of memory, we face problems here.. */
+            if (NULL==frame)
+            {
+                continue;
+            }
+            
             jstring msg_obj =
                 (jstring) (*env)->CallObjectMethod(env, frame,
                                                      mid_frame_toString);
 
             jboolean m_msg_obj_copy = EXFALSE;
             
-            const char* msg_str = (*env)->GetStringUTFChars(env, msg_obj, 
+            if (NULL!=msg_obj)
+            {
+                const char* msg_str = (*env)->GetStringUTFChars(env, msg_obj, 
                     &m_msg_obj_copy);
             
-            exstring_strcat(s, msg_str);
-            exstring_strcat(s, "\n");
+                exstring_strcat(s, msg_str);
+                exstring_strcat(s, "\n");
             
-            if (m_msg_obj_copy)
-            {
-                (*env)->ReleaseStringUTFChars(env, msg_obj, msg_str);
+                if (m_msg_obj_copy)
+                {
+                    (*env)->ReleaseStringUTFChars(env, msg_obj, msg_str);
+                }
+            
+                (*env)->DeleteLocalRef(env, msg_obj);
             }
-            
-            (*env)->DeleteLocalRef(env, msg_obj);
             (*env)->DeleteLocalRef(env, frame);
         }
     }
