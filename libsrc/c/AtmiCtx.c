@@ -1537,13 +1537,16 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpbegin
 expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpcommit
   (JNIEnv * env, jobject atmiCtxObj, jlong flags)
 {
+    int ret;
+
     if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
     {
         return;
     }
     
-    if (EXSUCCEED!=tpcommit((long)flags))
+    if (EXSUCCEED!=(ret=tpcommit((long)flags)))
     {
+        NDRX_LOG(log_debug, "tpcommit returns %d", ret);
         ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
     }
     

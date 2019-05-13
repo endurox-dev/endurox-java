@@ -1670,27 +1670,44 @@ public class AtmiCtx {
      */
     int xa_xaresource_flags_map(long cflags) {
         int ret = 0;
-        
+        String flag = "";
         if ( (cflags & AtmiConst.TMJOIN) > 0) {
             
             ret |= XAResource.TMJOIN;
+            flag = flag.concat("TMJOIN;");
         }
         
         if ( (cflags & AtmiConst.TMSUSPEND) > 0) {
             ret |= XAResource.TMSUSPEND;
+            flag = flag.concat("TMSUSPEND;");
         }
         
         if ( (cflags & AtmiConst.TMSTARTRSCAN) > 0) {
             ret |= XAResource.TMSTARTRSCAN;
+            flag = flag.concat("TMSTARTRSCAN;");
         }
         
         if ( (cflags & AtmiConst.TMENDRSCAN) > 0) {
             ret |= XAResource.TMENDRSCAN;
+            flag = flag.concat("TMENDRSCAN;");
+        }
+        
+        if ( (cflags & AtmiConst.TMSUCCESS) > 0) {
+            ret |= XAResource.TMSUCCESS;
+            flag = flag.concat("TMSUCCESS;");
+        }
+        
+        if ( (cflags & AtmiConst.TMFAIL) > 0) {
+            ret |= XAResource.TMFAIL;
+            flag = flag.concat("TMFAIL;");
         }
         
         if (0==ret) {
             ret = XAResource.TMNOFLAGS;
+            flag = flag.concat("TMNOFLAGS;");
         }
+        
+        tplogInfo("XA C flag %d mapped to Java %d (%s)", cflags, ret, flag);
 
         return ret;
     }
