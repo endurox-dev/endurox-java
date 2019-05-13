@@ -1837,7 +1837,7 @@ public class AtmiCtx {
             xaRes.start(xid, jflags);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_start_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_start_entry got exception", ex);
             ret = xa_jerror_map(ex.errorCode);
         }
         return ret;
@@ -1867,7 +1867,7 @@ public class AtmiCtx {
             xaRes.end(xid, jflags);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_end_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_end_entry got exception", ex);
             ret = xa_jerror_map(ex.errorCode);
         }
         return ret;
@@ -1895,7 +1895,7 @@ public class AtmiCtx {
             xaRes.rollback(xid);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_rollback_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_rollback_entry got exception", ex);
             ret = xa_jerror_map(ex.errorCode);
         }
         return ret;
@@ -1923,7 +1923,7 @@ public class AtmiCtx {
             xaRes.prepare(xid);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_prepare_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_prepare_entry got exception", ex);
             ret = xa_jerror_map(ex.errorCode);
         }
         return ret;
@@ -1951,7 +1951,7 @@ public class AtmiCtx {
             xaRes.commit(xid, false);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_commit_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_commit_entry got exception", ex);
             ret = xa_jerror_map(ex.errorCode);
         }
         
@@ -1981,7 +1981,7 @@ public class AtmiCtx {
             xaRes.forget(xid);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_forget_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_forget_entry got exception", ex);
             ret = xa_jerror_map(ex.errorCode);
         }
         
@@ -2010,7 +2010,7 @@ public class AtmiCtx {
             ret.list = xaRes.recover(jflags);
         } catch (XAException ex) {
             /* Log exception here */
-            tplogex(AtmiConst.LOG_ERROR,"xa_forget_entry got exception: %s", ex);
+            tplogex(AtmiConst.LOG_ERROR,"xa_forget_entry got exception", ex);
             ret.ret = xa_jerror_map(ex.errorCode);
         }
         
