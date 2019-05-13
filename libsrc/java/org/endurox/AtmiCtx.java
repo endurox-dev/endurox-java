@@ -122,17 +122,17 @@ public class AtmiCtx {
      * XA Connection handler, i.e. if the context have invoked
      * tpopen().
      */
-    XAConnection xaConn = null;
+    public XAConnection xaConn = null;
     
     /**
      * Currently active connection
      */
-    Connection dbConn = null;
+    public Connection dbConn = null;
     
     /**
      * Currently active resource
      */
-    XAResource xaRes = null;
+    public XAResource xaRes = null;
 
     /**
      * Get The C Context

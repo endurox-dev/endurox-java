@@ -45,6 +45,14 @@ public class XAOraTests {
         }
         
         if (tranStarted) {
+            try {
+                
+            } 
+            catch (Exception e) {
+                
+                ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get getTransactionTimeout", e);
+                
+            }
             ctx.tpcommit(0);
         }
     }
@@ -103,7 +111,6 @@ public class XAOraTests {
     public void basicXA() {
         
         Connection conn = null;
-        Statement stmt = null;
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
        
