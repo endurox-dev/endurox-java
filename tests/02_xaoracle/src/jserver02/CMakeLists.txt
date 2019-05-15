@@ -55,7 +55,7 @@ add_jar(jserver02
         ${JAVASRC}
     INCLUDE_JARS 
         ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
-        ../../jdbcdrivers/ojdbc8.jar
+        ../../jdbcdrivers/ojdbc7.jar
         ../../../01_basic_server/src/ubftab/ubf01.jar
         )
 
@@ -68,7 +68,7 @@ ndrx_java_link(
                 jserver02.jar
                 ${CMAKE_BINARY_DIR}/libsrc/enduroxjava.jar
                 ../../../01_basic_server/src/ubftab/ubf01.jar
-                ../../jdbcdrivers/ojdbc8.jar
+                ../../jdbcdrivers/ojdbc7.jar
 )
 
 # vim: set ts=4 sw=4 et smartindent:

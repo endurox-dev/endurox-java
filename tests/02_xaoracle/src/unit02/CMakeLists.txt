@@ -72,7 +72,7 @@ ndrx_java_link(
             ${CMAKE_SOURCE_DIR}/tests/libs/hamcrest-core.jar  
             ${CMAKE_SOURCE_DIR}/tests/libs/junit.jar
             ../../../01_basic_server/src/ubftab/ubf01.jar
-            ../../jdbcdrivers/ojdbc8.jar
+            ../../jdbcdrivers/ojdbc7.jar
 )
 
 # vim: set ts=4 sw=4 et smartindent:

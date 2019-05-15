@@ -390,6 +390,8 @@ out:
 
 /**
  * Run the loader 
+ * For exjdbc we could call a static method
+ * for allocating ATMI Context.
  * @param env Java env
  * @param main_class_str main class to be run
  * @param argc command line argument count

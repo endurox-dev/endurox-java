@@ -1,3 +1,5 @@
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import org.endurox.*;
 
@@ -10,7 +12,8 @@ public class JServer02 implements Server, Service {
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
         int ret = AtmiConst.TPSUCCESS;
-        
+        Connection conn = null;
+        Statement statement = null;
         ctx.tplogDebug("tpService/DoTran called");
 
         TypedUbf ub = (TypedUbf)svcinfo.getData();
@@ -27,15 +30,34 @@ public class JServer02 implements Server, Service {
         
         try {
             // create a Statement from the connection
-            Statement statement = ctx.getConnection().createStatement();
+            conn = ctx.getConnection();
+            statement = conn.createStatement();
             // insert the data
             statement.executeUpdate(sql);
-            statement.close();
         }
         catch (Exception e) {
             ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to run update", e);
             ret = AtmiConst.TPFAIL;
         }
+  
+        try {
+            if (null!=conn) {
+                conn.close();
+            }
+        }
+        catch (SQLException e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close conn", e);
+            throw new RuntimeException(e);
+        }
+
+        try {
+            statement.close();
+        }
+        catch (SQLException e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close statement", e);
+            throw new RuntimeException(e);
+        }
+
         
         ctx.tpreturn(ret, 0, svcinfo.getData(), 0);
     }

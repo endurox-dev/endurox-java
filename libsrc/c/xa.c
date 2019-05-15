@@ -51,6 +51,7 @@
 #include <xa.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
+#define ATMICTX_CLASS   "org/endurox/AtmiCtx"
 /*---------------------------Enums--------------------------------------*/
 /*---------------------------Typedefs-----------------------------------*/
 /*---------------------------Globals------------------------------------*/
@@ -98,6 +99,76 @@ struct xa_switch_t ndrxjsw =
 };
 
 /**
+ * Allocate ATMI Context object and install it in ATMI C Context
+ * @return 
+ */
+exprivate int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
+{
+    int ret = EXSUCCEED;
+    jobject jret = NULL;
+    jclass bclz = NULL;
+    jmethodID mid;
+    TPCONTEXT_T ctx;
+    
+    bclz = (*NDRXJ_JENV(ctxpriv))->FindClass(NDRXJ_JENV(ctxpriv), ATMICTX_CLASS);
+    
+    if (NULL==bclz)
+    {        
+        /* I guess we need to abort here! */
+        NDRX_LOG(log_error, "Failed to find AtmiCtx - aborting...!");
+        /* tpreturn fail or simulate time-out? or just abort?*/
+        abort();
+    }
+    
+        /* create buffer object... */
+    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), bclz, "<init>", "(J)V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Cannot get buffer constructor!");
+        goto out;
+    }
+
+    NDRX_LOG(log_debug, "About to NewObject(%s)", ATMICTX_CLASS);
+    
+    /* Install current context handler */
+    
+    /* get current atmi context */
+    tpgetctxt(&ctx, 0L);
+    tpsetctxt(ctx, 0L);
+    
+    jret = (*NDRXJ_JENV(ctxpriv))->NewObject(NDRXJ_JENV(ctxpriv), bclz, mid, (jlong)ctx);
+    
+    if (NULL==jret)
+    {
+        NDRX_LOG(log_error, "Failed to create [%s]", ATMICTX_CLASS);
+        
+        /* backtrace? */
+        NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
+                "Failed to create Atmi Context: %s");
+        
+        goto out;
+    }
+    
+    NDRX_LOG(log_debug, "NewObject() done - atmi ctx");
+    
+    /* create reference... */
+    jret = (*NDRXJ_JENV(ctxpriv))->NewGlobalRef(NDRXJ_JENV(ctxpriv), jret);
+    
+    NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
+    NDRXJ_JATMICTX_LVAL(ctxpriv) = jret;
+
+out:
+    
+    if (NULL!=bclz)
+    {
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), bclz);
+    }
+
+    return ret;
+}
+
+/**
  * Perform init of the xa driver
  * this will parse the open string and will create XADataSource
  * the class name also needs to be set in the ini file.,
@@ -121,6 +192,12 @@ expublic int ndrxj_xa_init(void)
     ctxpriv = ndrx_ctx_priv_get();
         
     /* The JDBC driver shall library shall be added   */
+    if (NULL==NDRXJ_JATMICTX(ctxpriv)
+            && EXSUCCEED!=ndrxj_alloc_context(ctxpriv))
+    {
+        NDRX_LOG(log_error, "Failed to alloc Java ATMI Context!");
+        EXFAIL_OUT(ret);
+    }
     
     /* NDRX_XA_OPEN_STR -> json */
     
@@ -262,6 +339,14 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
     int ret = XA_OK;
     ctxpriv = ndrx_ctx_priv_get();
     
+    if (NULL==NDRXJ_JATMICTX(ctxpriv)
+            && EXSUCCEED!=ndrxj_alloc_context(ctxpriv))
+    {
+        NDRX_LOG(log_error, "Failed to alloc Java ATMI Context!");
+        ret = XAER_RMFAIL;
+        goto out;
+    }
+    
     /* Get the class for the context object */    
     ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
         NDRXJ_JATMICTX(ctxpriv));
@@ -378,6 +463,14 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
     jobject jxid = NULL;
     
     ctxpriv = ndrx_ctx_priv_get();
+    
+    if (NULL==NDRXJ_JATMICTX(ctxpriv)
+            && EXSUCCEED!=ndrxj_alloc_context(ctxpriv))
+    {
+        NDRX_LOG(log_error, "Failed to alloc Java ATMI Context!");
+        ret = XAER_RMFAIL;
+        goto out;
+    }
     
     /* create xid first */
     jxid = ndrxj_cvt_xid_to_java(NDRXJ_JENV(ctxpriv), xid);
@@ -547,8 +640,16 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     
     ctxpriv = ndrx_ctx_priv_get();
     
-    /* create xid first */
+    if (NULL==NDRXJ_JATMICTX(ctxpriv)
+            && EXSUCCEED!=ndrxj_alloc_context(ctxpriv))
+    {
+        NDRX_LOG(log_error, "Failed to alloc Java ATMI Context!");
+        ret = XAER_RMFAIL;
+        goto out;
+    }
     
+    /* create xid first */
+        
     if (NULL==xid)
     {
         NDRX_LOG(log_error, "Failed to convert C xid to Java");

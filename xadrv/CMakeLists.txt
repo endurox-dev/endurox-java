@@ -53,16 +53,15 @@ ENDIF ($ENV{RELEASE_BUILD})
 include_directories (. ${PROJECT_SOURCE_DIR}/include
                         ${JNI_INCLUDE_DIRS})
 
+# Make sure the linker can find the UBF library once it is built.
+link_directories (${NDRX_JAVA_LIBDIR_JVM})
+
 add_library (ndrxxajdbc SHARED
                         exjdbc.c
+                        javaenv.c
    	        )
 
-if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
-    target_link_libraries(ndrxxajdbc atmi ubf nstd)
-elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
-    target_link_libraries(ndrxxajdbc atmi ubf nstd)
-endif()
-
+target_link_libraries(ndrxxajdbc exjava jvm atmi ubf nstd)
 
 # Install bin
 install (TARGETS 

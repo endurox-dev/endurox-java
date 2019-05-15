@@ -13,26 +13,35 @@ public class XAOraTests {
     
     /**
      * Delete all records from db
+     * TODO: try xid 64?
      */
     public void deleteAll(AtmiCtx ctx) {
         
         boolean tranStarted = false;
-        
+        Connection conn = null;
+        Statement stmt = null;
+        /*
         if (ctx.tpgetlev() == 0) {
             
             tranStarted = true;
             ctx.tpbegin(60, 0);
+            ctx.tpcommit(0);
+            
+            ctx.tpbegin(60, 0);
+            ctx.tpcommit(0);    
         }
-        
+        */
+        tranStarted = true;
+        ctx.tpbegin(60, 0);
         /* delete all if error then abort... */
         String sql = "delete from EXJTEST";
         
         try {
-          Statement stmt = ctx.getConnection().createStatement();
+          conn = ctx.getConnection();
+          stmt = conn.createStatement();
+          
           stmt.executeUpdate(sql);
           System.out.println("Record deleted successfully");
-          
-          stmt.close();
           
         } catch (SQLException e) {
           ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to delete: ".concat(sql), e);
@@ -43,7 +52,7 @@ public class XAOraTests {
           
           throw new RuntimeException(e);
         }
-        
+            
         if (tranStarted) {
             try {
                 
@@ -55,8 +64,23 @@ public class XAOraTests {
             }
             ctx.tpcommit(0);
         }
+        
+        try {
+            stmt.close();
+        } catch (SQLException e) {
+
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close stmt", e);
+            throw new RuntimeException(e);
+        }
+
+        try {
+            conn.close();
+        } catch (SQLException e) {
+
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close conn", e);
+            throw new RuntimeException(e);
+        }
     }
-    
     
     /**
      * Check count in database
@@ -146,13 +170,22 @@ public class XAOraTests {
             assertNotEquals(ub, null);
             
             ctx.tpopen();
-            /* create some test table */
-            conn = ctx.getConnection();
+            /* create some test table 
+            try {
+                conn = ctx.getConnection();
+            } 
+            catch (SQLException e) {
+                ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get conn", e);
+                assertEquals(null, e);
+            }
             assertNotEquals(null, conn);
+            */
             
             /* empty up the table... */
             deleteAll(ctx);
              
+            assertEquals(false, true);
+            
             /* run the transaction */
             ctx.tpbegin(160, 0);
             assertEquals(1, ctx.tpgetlev());

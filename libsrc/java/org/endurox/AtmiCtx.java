@@ -126,8 +126,9 @@ public class AtmiCtx {
     
     /**
      * Currently active connection
-     */
+     
     public Connection dbConn = null;
+    */
     
     /**
      * Currently active resource
@@ -1546,14 +1547,13 @@ public class AtmiCtx {
             return AtmiConst.XAER_PROTO;
         }
         
-        if (null!=xaConn && null!=dbConn && null!=xaRes) {
+        if (null!=xaConn && null!=xaRes) {
             tplogDebug("xa_is_open: XA is opened");
             return AtmiConst.XA_OK;
         }
         
-        tplogDebug("xa_is_open: XA is not opened: xaConn=%s dbConn=%s xaRes=%s",
+        tplogDebug("xa_is_open: XA is not opened: dbConn=%s xaRes=%s",
                 null!=xaConn?"non NULL":"NULL",
-                null!=dbConn?"non NULL":"NULL",
                 null!=xaRes?"non NULL":"NULL");
         return AtmiConst.XAER_RMERR;
     }
@@ -1587,19 +1587,6 @@ public class AtmiCtx {
         }
         
         try {
-            tplogInfo("Getting DB Connection");
-            dbConn = xaConn.getConnection();
-            dbConn.setAutoCommit(false);
-        }
-        catch (SQLException ex) {
-            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to get DB "
-                    + "connection: SQL state %s", ex.getSQLState()), ex);
-         
-            xaConn = null;
-            return AtmiConst.XAER_RMERR;
-        }
-        
-        try {
             tplogInfo("Getting XA Resource");
             xaRes = xaConn.getXAResource();
         }
@@ -1609,7 +1596,6 @@ public class AtmiCtx {
                     + "XA resource: SQL state %s", ex.getSQLState()), ex);
             
             xaConn = null;
-            dbConn = null;
             return AtmiConst.XAER_RMERR;
         }
         
@@ -1626,17 +1612,6 @@ public class AtmiCtx {
         
         /* Close database connection */
         boolean got_err = false;
-        try {
-            if (null!=dbConn) {
-                dbConn.close();
-                dbConn = null;
-            }
-        } catch (SQLException ex) {
-            
-            tplogex(AtmiConst.LOG_ERROR, String.format("Failed to close db connection %s",
-                    ex.getSQLState()), ex);
-            got_err = true;
-        }
         
         /* Close XA Connection */
         try {
@@ -1834,6 +1809,10 @@ public class AtmiCtx {
         /* start the tranaction */
         
         try {
+            tplogInfo("format id %d", xid.getFormatId());
+            tplogDump(AtmiConst.LOG_INFO, "xid getGlobalTransactionId", xid.getGlobalTransactionId());
+            tplogDump(AtmiConst.LOG_INFO, "xid getBranchQualifier", xid.getBranchQualifier());
+            
             xaRes.start(xid, jflags);
         } catch (XAException ex) {
             /* Log exception here */
@@ -1864,12 +1843,29 @@ public class AtmiCtx {
         /* end xid session */
         
         try {
+            
+            //tplogInfo("jflags=%d", jflags);
+            tplogInfo("format id %d", xid.getFormatId());
+            tplogDump(AtmiConst.LOG_INFO, "xid getGlobalTransactionId", xid.getGlobalTransactionId());
+            tplogDump(AtmiConst.LOG_INFO, "xid getBranchQualifier", xid.getBranchQualifier());
+            //xaRes.end(xid, jflags);
             xaRes.end(xid, jflags);
+            /*
+            tplogInfo("About to prep..");
+            xaRes.prepare(xid);
+            tplogInfo("About to commit..");
+            xaRes.commit(xid, false);
+            */
+        
         } catch (XAException ex) {
+            /* ignore??? */
             /* Log exception here */
             tplogex(AtmiConst.LOG_ERROR,"xa_end_entry got exception", ex);
+            //tplogError("Error code: %d", ex.)
             ret = xa_jerror_map(ex.errorCode);
+            
         }
+    
         return ret;
     }
     
@@ -2057,12 +2053,11 @@ public class AtmiCtx {
     
     /**
      * Get database connection
-     * There is single database connection per context.
-     * The connection object is accessible only if there was tpopen() called.
+     * It is up to user to close the connections.
      * @return DB connection, null in case if there was no tpopen(), or there was tpclose().
      */
-    public Connection getConnection() {
-        return dbConn;
+    public Connection getConnection() throws SQLException {
+        return xaConn.getConnection();
     }
     
     /**
@@ -2071,6 +2066,15 @@ public class AtmiCtx {
      *  1 - current thread is part of global transaction.
      */
     public native int tpgetlev();
+    
+    /**
+     * Create ATMI Context by static call.
+     * @param ctx C pointer
+     * @return Atmi Context Object
+     */
+    public static AtmiCtx createAtmiCtx(long ctx) {
+        return new AtmiCtx(ctx);
+    }
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

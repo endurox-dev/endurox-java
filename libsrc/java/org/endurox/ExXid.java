@@ -32,6 +32,7 @@
  */
 package org.endurox;
 
+import java.util.Arrays;
 import javax.transaction.xa.Xid;
 
 /**
@@ -106,6 +107,44 @@ public class ExXid implements Xid {
     public byte[] getBranchQualifier() {
         return bqual;
     }
+    
+    /**
+     * required for compare
+     * @return 
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(bqual);
+        result = prime * result + (int)formatID;
+        result = prime * result + Arrays.hashCode(trxid);
+        return result;
+    }
+
+    /**
+     * required for compare
+     * @param obj
+     * @return 
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ExXid other = (ExXid) obj;
+        if (!Arrays.equals(bqual, other.bqual))
+            return false;
+        if (formatID != other.formatID)
+            return false;
+        if (!Arrays.equals(trxid, other.trxid))
+            return false;
+        return true;
+    }
+
     
 }
 

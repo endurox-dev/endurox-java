@@ -45,6 +45,8 @@
 #include <xa.h>
 #define __USE_GNU
 #include <dlfcn.h>
+
+#include "exjdbc.h"
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 /*---------------------------Enums--------------------------------------*/
@@ -106,6 +108,7 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
          * 1. OK, so if context is NOT set, then we operate not from C process
          * 2. If Context is set, then we operate from java process.
          */
+        
     }
     
     /* Check are we C process (tmsrv) or java proc */
@@ -116,8 +119,18 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
         /* TODO: boot java env, store it in global env
          * then at tpopen we transfer this env to tls
          * at tpclose() we shall clear the TLS.
+         * Load the JNI glue libs...
          */
         
+        /* create java env... */
+        if (EXSUCCEED!=ndrxj_jvm_create())
+        {
+            NDRX_LOG(log_error, "Failed to create java env for TMSRV!");
+            EXFAIL_OUT(ret);
+        }
+        
+        /* set the java env we use here.. */
+        NDRXJ_JENV_LVAL(ctxpriv) = ndrxj_G_env;
     }
     else
     {
@@ -127,9 +140,9 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
     if (NULL!=sw)
     {
         
-        
         /* get the init function... 
          * we have different ones, for java processes & for tmsrv processes.
+         * Call this func dynamically..
          */
         if (EXSUCCEED!=ndrxj_xa_init())
         {
