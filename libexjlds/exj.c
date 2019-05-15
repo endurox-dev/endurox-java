@@ -618,6 +618,16 @@ my_init (void)
 
 
 #endif
+
+/**
+ * We need to split up the source so that
+ * - we create JVM
+ * - get static method for current thread (assoc the context)
+ * See this:
+ * https://stackoverflow.com/questions/26256558/calling-jni-createjavavm-function-twice
+ * so we have single env, but may be assoc'd with multiple threads, which have
+ * proper context set?
+ */
 /**
  * Run java main
  * @param argc command line argument count
