@@ -628,57 +628,218 @@ my_init (void)
  * so we have single env, but may be assoc'd with multiple threads, which have
  * proper context set?
  */
-/**
- * Run java main
- * @param argc command line argument count
- * @param argv command line arguments
- * @param main_class main class entry
- * @param class_index index class data
- * @param class_index_len number of entries in index
- * @param emb_index embedded data index
- * @param emb_index_len number of entries in embedded index
- * @param test_mode do we run in test mode?
- * @return EXSUCCEED/EXFAIL
- */
-expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
-                ndrxj_class_index_t *class_index, 
-	        int class_index_len, ndrxj_class_index_t *emb_index, int emb_index_len,
-                int test_mode)
+
+
+
+exprivate int ndrxj_ldr_get_static_handler(JNIEnv *env, 
+			char *static_class,
+                        char *static_method,
+			int argc, char **argv,
+			int test_mode
+  			)
 {
     int ret = EXSUCCEED;
+    jclass main_class;
+    jclass str_class;
+    jmethodID mid;
+
+    jstring jstr; 
+    jobjectArray args; 
+    int i;
+    jmethodID load_class;
+    
+    jclass thread_class;
+    jmethodID cur_thread_mid;
+    jobject cur_thread;
+    jmethodID set_ctx_mid;
+
+    /* boot the main method of the class */
+
+    load_class  = (*env)->GetMethodID(env, M_classLoaderClass, 
+                            "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+    if(NULL==load_class)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Cannot get method 'findClass' of StreamLoader: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    /* get the main class */
+    main_class = (jclass) (*env)->CallObjectMethod(env, M_classLoader, 
+                                                   load_class, 
+                                            (*env)->NewStringUTF(env, main_class_str));
+    if (NULL==main_class)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to get main class: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    /* get main method... */
+
+    mid = (*env)->GetStaticMethodID(env, main_class, "main", 
+                                    "([Ljava/lang/String;)V"); 
+
+    if (mid == 0)
+    { 
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to get main method: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    /* fire it up! */
+
+    /*
+     * Build CLI..
+     */
+    str_class = (*env)->FindClass(env, "java/lang/String");
+
+    if (NULL==str_class)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Cannot find String Class: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    args = (*env)->NewObjectArray(env, argc, str_class, jstr); 
+
+    if (NULL==args)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to allocate command line arguments: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    for (i=0; i<argc; i++)
+    {
+        jstring argString = (*env)->NewStringUTF(env, argv[i]);
+
+        if (NULL==argString)
+        {	
+            EXJLD_LOG_EXCEPTION(env, log_error, 
+                    "Failed to allocate cli arguments: %s (i=%d, argc=%d)",
+                    i, argc);
+            EXFAIL_OUT(ret);
+        }
+
+        /* set array elm */
+        (*env)->SetObjectArrayElement(env, args, i, (jobject)argString);
+
+        /* Check exception.. */
+        if((*env)->ExceptionCheck(env))
+        {
+            EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to set args array elment: %s "
+                            "(i=%d, argc=%d)",
+                            i, argc);
+            EXFAIL_OUT(ret);
+        }
+
+    }
+	
+    /* set current class loader? */
+    thread_class = (*env)->FindClass(env, "java/lang/Thread");
+    
+    if (NULL==thread_class)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to find Thread class: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    cur_thread_mid = (*env)->GetStaticMethodID(env, thread_class, 
+            "currentThread", "()Ljava/lang/Thread;");
+    
+    if (NULL==cur_thread_mid)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to get currentThread() mid: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    cur_thread = (*env)->CallStaticObjectMethod(env, thread_class, cur_thread_mid);
+    
+    if (NULL==cur_thread)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to get current thread: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    set_ctx_mid = (*env)->GetMethodID(env, thread_class, 
+            "setContextClassLoader", "(Ljava/lang/ClassLoader;)V");
+    
+    if (NULL==set_ctx_mid)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, 
+                "Failed to get setContextClassLoader() mid: %s");
+        EXFAIL_OUT(ret);
+    }
+    
+    (*env)->CallVoidMethod(env, cur_thread, set_ctx_mid, M_classLoader);
+
+    if (!test_mode)
+    {
+        NDRX_LOG(log_debug, "Starting...");
+        /* boot up... */
+        (*env)->CallStaticVoidMethod(env, main_class, mid, args);
+
+
+        if((*env)->ExceptionCheck(env))
+        {
+            EXJLD_LOG_EXCEPTION(env, log_error, 
+                            "Failed to run main: %s (%s)",
+                            main_class_str);
+            (*env)->ExceptionClear(env);
+            EXFAIL_OUT(ret);
+        }
+
+    }
+	
+out:
+    NDRX_LOG(log_debug, "%s returns  %d", __func__, ret);
+
+    return ret;
+}
+
+/**
+ * Get java virtual machine instance
+ * NOTE ! Only single instance per process!
+ * @param class_index array of classes
+ * @param class_index_len array len
+ * @param emb_index resources array
+ * @param emb_index_len res array len
+ * @param[out] env allocated env for current rhead
+ * @return ptr to Java VM or NULL on failure
+ */
+expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index, 
+	        int class_index_len, ndrxj_class_index_t *emb_index, int emb_index_len,
+            JNIEnv **env)
+{
     JavaVM *vm = NULL;
-    JNIEnv *env = NULL; 
+    int ret = EXSUCCEED;
     JavaVMInitArgs vm_args;
     jint res;
     char *cp_env = NULL;
     ndrx_inicfg_t *cfg = NULL;
     ndrx_inicfg_section_keyval_t *out = NULL;
     ndrx_inicfg_section_keyval_t *val, *val_tmp;
-
-    /* should be allocated... */
     JavaVMOption *options = NULL;
-
     int n_opt = 0;
-
-    M_class_index = class_index;
-    M_class_index_len = class_index_len;
     
-    M_res_index = emb_index;
-    M_res_index_len = emb_index_len;
-
-    NDRX_LOG(log_debug, "Loading config...");
+    NDRX_LOG(log_debug, "Configuring Java VM");
     
-    /* my_init(); */
     
-    /* Load Enduro/X based config... with @java section */
+        /* Load Enduro/X based config... with @java section */
     if (EXSUCCEED!=ndrx_cconfig_load_general(&cfg))
     {
         NDRX_LOG(log_error, "Failed to get Enduro/X config handler: %s", 
                  Nstrerror(Nerror));
         EXFAIL_OUT(ret);  
     }
-
-    /* Allocate multiple read setting which starts with "opts", and 
+    
+    
+        /* Allocate multiple read setting which starts with "opts", and 
      * allocate java option for it
      */
     if (NULL!=cfg)
@@ -761,24 +922,16 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
         NDRX_LOG(log_error, "Failed to create Java VM");
         EXFAIL_OUT(ret);
     }
-
-    /* prepare stream loader */
-
-    NDRX_LOG(log_debug, "Preparing class loader...");
+    
+    
     if (EXSUCCEED!=create_loader(env, vm))
     {
         NDRX_LOG(log_error, "Failed to prepare class loader");
         EXFAIL_OUT(ret);
     }
+    
 
-    NDRX_LOG(log_debug, "Running main...");
-    /* for java args does not contain binary name... */
-    if (EXSUCCEED!=run_ldr_main(env, main_class, argc-1, &(argv[1]), test_mode))
-    {
-        NDRX_LOG(log_error, "Failed to run main");
-        EXFAIL_OUT(ret);
-    }
-
+    
 out:
     
     if((*env)->ExceptionCheck(env))
@@ -788,6 +941,8 @@ out:
                         main_class);
         EXFAIL_OUT(ret);
     }
+
+    /* free up resources: */
 
     if (NULL!=M_classpath_url)
     {
@@ -809,6 +964,66 @@ out:
         ndrx_inicfg_free(cfg); 
     }
 
-    return ret;
+
+    if (EXSUCCEED!=vm)
+    {
+        return NULL;
+    }
+
+    return vm;
+}
+
+/**
+ * Run java main
+ * @param argc command line argument count
+ * @param argv command line arguments
+ * @param main_class main class entry
+ * @param class_index index class data
+ * @param class_index_len number of entries in index
+ * @param emb_index embedded data index
+ * @param emb_index_len number of entries in embedded index
+ * @param test_mode do we run in test mode?
+ * @return EXSUCCEED/EXFAIL
+ */
+expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
+                ndrxj_class_index_t *class_index, 
+	        int class_index_len, ndrxj_class_index_t *emb_index, int emb_index_len,
+                int test_mode)
+{
+    JavaVM *vm = NULL;
+    JNIEnv *env = NULL;
+    int ret = EXSUCCEED;
+    
+    vm=ndrxj_ldr_getvm(class_index, class_index_len, emb_index, emb_index_len,
+            &env);
+    
+    if (NULL=vm)
+    {
+        NDRX_LOG(log_error, "Failed to create Java VM");
+        EXFAIL_OUT(ret);
+    }
+    
+    NDRX_LOG(log_debug, "Running main...");
+    
+    /* for java args does not contain binary name... */
+    if (EXSUCCEED!=run_ldr_main(env, main_class, argc-1, &(argv[1]), test_mode))
+    {
+        NDRX_LOG(log_error, "Failed to run main");
+        EXFAIL_OUT(ret);
+    }
+
+out:
+   
+   /* terminate the VM? 
+    * Do we get ever here?
+    * Test the return status!
+    */
+   if (NULL!=vm)
+   {
+        vm->DestroyJavaVM(vm);
+   }
+    
+   return ret;
 } 
+
 /* vim: set ts=4 sw=4 et smartindent: */
