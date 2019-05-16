@@ -92,6 +92,7 @@ add_library (exjava SHARED
                 xa.c
                 xaconfig.c
                 TPTRANID.c
+                xatmsrv.c
 	)
 
 add_library (exjavald SHARED
