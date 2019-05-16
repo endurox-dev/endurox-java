@@ -40,7 +40,7 @@
 #include <ndrstandard.h>
 #include <inicfg.h>
 #include <cconfig.h>
-#include <exjlds.h>
+#include <exjldsys.h>
 #include <nstdutil.h>
 #include <exj.h>
 /* Include generated resources */
@@ -460,7 +460,7 @@ my_init (void)
  * @param run_mid ptr to method id
  * @return EXSUCCEED/EXFAIL
  */
-exprivate int ndrxj_ldr_get_static_handler(JNIEnv *env, 
+expublic int ndrxj_ldr_get_static_handler(JNIEnv *env, 
 			char *run_class_str,
                         char *static_method,
                         char *static_method_sign,
@@ -827,7 +827,7 @@ expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index,
     vm_args.ignoreUnrecognized = 1;
 
     NDRX_LOG(log_debug, "Creating JVM...");
-    res = JNI_CreateJavaVM(&vm, (void **)&env, &vm_args);
+    res = JNI_CreateJavaVM(&vm, (void **)env, &vm_args);
 
     if (res < 0) 
     { 
@@ -835,7 +835,7 @@ expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index,
         EXFAIL_OUT(ret);
     }
 
-    if (EXSUCCEED!=create_loader(env, &vm))
+    if (EXSUCCEED!=create_loader(*env, vm))
     {
         NDRX_LOG(log_error, "Failed to prepare class loader");
         EXFAIL_OUT(ret);
@@ -843,11 +843,10 @@ expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index,
     
 out:
     
-    if((*env)->ExceptionCheck(env))
+    if((**env)->ExceptionCheck(*env))
     {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                        "Failed to run main: %s (%s)",
-                        main_class);
+        EXJLD_LOG_EXCEPTION((*env), log_error, 
+                        "Failed to create JVM Instance!: %s");
         EXFAIL_OUT(ret);
     }
 
@@ -906,7 +905,7 @@ expublic int ndrxj_run_main(int argc, char **argv, char *main_class,
     vm=ndrxj_ldr_getvm(class_index, class_index_len, emb_index, emb_index_len,
             &env);
     
-    if (NULL=vm)
+    if (NULL==vm)
     {
         NDRX_LOG(log_error, "Failed to create Java VM");
         EXFAIL_OUT(ret);
@@ -929,7 +928,7 @@ out:
     */
    if (NULL!=vm)
    {
-        vm->DestroyJavaVM(vm);
+        (*vm)->DestroyJavaVM(vm);
    }
     
    return ret;

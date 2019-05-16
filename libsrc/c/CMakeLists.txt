@@ -103,7 +103,7 @@ if(Java_VERSION VERSION_LESS 1.10)
     add_dependencies(exjavald enduroxjh)
 endif()
 
-target_link_libraries (exjava atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
+target_link_libraries (exjava exjlds atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 
 install (TARGETS 
     exjava 
