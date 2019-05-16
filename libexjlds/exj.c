@@ -461,7 +461,7 @@ my_init (void)
  * @return EXSUCCEED/EXFAIL
  */
 exprivate int ndrxj_ldr_get_static_handler(JNIEnv *env, 
-			char *run_class,
+			char *run_class_str,
                         char *static_method,
                         char *static_method_sign,
                         jclass *run_class,
@@ -474,6 +474,7 @@ exprivate int ndrxj_ldr_get_static_handler(JNIEnv *env,
     jmethodID cur_thread_mid;
     jobject cur_thread;
     jmethodID set_ctx_mid;
+    jstring jrun_class_str = NULL;
 
     /* boot the main method of the class */
 
@@ -487,9 +488,10 @@ exprivate int ndrxj_ldr_get_static_handler(JNIEnv *env,
     }
 
     /* get the main class */
+    jrun_class_str = (*env)->NewStringUTF(env, run_class_str);
     *run_class = (jclass) (*env)->CallObjectMethod(env, M_classLoader, 
                                                    load_class, 
-                                            (*env)->NewStringUTF(env, run_class));
+                                                    jrun_class_str);
     if (NULL==*run_class)
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
@@ -555,32 +557,11 @@ exprivate int ndrxj_ldr_get_static_handler(JNIEnv *env,
     if((*env)->ExceptionCheck(env))
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
-                        "Failed to run main: %s (%s)",
-                        main_class_str);
+                        "Failed to set class loader when creating: %s (%s)",
+                        run_class_str);
         (*env)->ExceptionClear(env);
         EXFAIL_OUT(ret);
     }
-
-#if
-    if (!test_mode)
-    {
-        NDRX_LOG(log_debug, "Starting...");
-        /* boot up... */
-        (*env)->CallStaticVoidMethod(env, main_class, mid, args);
-
-
-        if((*env)->ExceptionCheck(env))
-        {
-            EXJLD_LOG_EXCEPTION(env, log_error, 
-                            "Failed to run main: %s (%s)",
-                            main_class_str);
-            (*env)->ExceptionClear(env);
-            EXFAIL_OUT(ret);
-        }
-
-    }
-#endif
-    
 	
 out:
     
@@ -589,7 +570,12 @@ out:
         (*env)->DeleteLocalRef( env, thread_class);
     }
 
-NDRX_LOG(log_debug, "%s returns  %d", __func__, ret);
+    if (NULL!=jrun_class_str)
+    {
+        (*env)->DeleteLocalRef( env, jrun_class_str);
+    }
+
+    NDRX_LOG(log_debug, "%s returns  %d", __func__, ret);
 
     return ret;
 }
@@ -612,55 +598,11 @@ exprivate int run_ldr_main(JNIEnv *env,
   			)
 {
     int ret = EXSUCCEED;
-    jclass main_class;
-    jclass str_class;
+    jclass main_class = NULL;
+    jclass str_class = NULL;
     jmethodID mid;
-
-    jstring jstr; 
-    jobjectArray args; 
+    jobjectArray args = NULL; 
     int i;
-    jmethodID load_class;
-    
-    jclass thread_class;
-    jmethodID cur_thread_mid;
-    jobject cur_thread;
-    jmethodID set_ctx_mid;
-
-    /* boot the main method of the class */
-
-    load_class  = (*env)->GetMethodID(env, M_classLoaderClass, 
-                            "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
-    if(NULL==load_class)
-    {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                            "Cannot get method 'findClass' of StreamLoader: %s");
-        EXFAIL_OUT(ret);
-    }
-
-    /* get the main class */
-    main_class = (jclass) (*env)->CallObjectMethod(env, M_classLoader, 
-                                                   load_class, 
-                                            (*env)->NewStringUTF(env, main_class_str));
-    if (NULL==main_class)
-    {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                            "Failed to get main class: %s");
-        EXFAIL_OUT(ret);
-    }
-
-    /* get main method... */
-
-    mid = (*env)->GetStaticMethodID(env, main_class, "main", 
-                                    "([Ljava/lang/String;)V"); 
-
-    if (mid == 0)
-    { 
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                            "Failed to get main method: %s");
-        EXFAIL_OUT(ret);
-    }
-
-    /* fire it up! */
 
     /*
      * Build CLI..
@@ -674,7 +616,7 @@ exprivate int run_ldr_main(JNIEnv *env,
         EXFAIL_OUT(ret);
     }
 
-    args = (*env)->NewObjectArray(env, argc, str_class, jstr); 
+    args = (*env)->NewObjectArray(env, argc, str_class, 0); 
 
     if (NULL==args)
     {
@@ -707,50 +649,26 @@ exprivate int run_ldr_main(JNIEnv *env,
                             i, argc);
             EXFAIL_OUT(ret);
         }
-
+        
+        /* delete local ref of string */
+        
+        if (NULL!=argString)
+        {
+            (*env)->DeleteLocalRef( env, argString);
+        }
     }
-	
-    /* set current class loader? */
-    thread_class = (*env)->FindClass(env, "java/lang/Thread");
     
-    if (NULL==thread_class)
+    if (EXSUCCEED!=ndrxj_ldr_get_static_handler(env, 
+			main_class_str,
+                        "main",
+                        "([Ljava/lang/String;)V",
+                        &main_class,
+                        &mid))
     {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                "Failed to find Thread class: %s");
+        NDRX_LOG(log_error, "Failed to get main method for [%s] class", main_class_str);
         EXFAIL_OUT(ret);
     }
     
-    cur_thread_mid = (*env)->GetStaticMethodID(env, thread_class, 
-            "currentThread", "()Ljava/lang/Thread;");
-    
-    if (NULL==cur_thread_mid)
-    {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                "Failed to get currentThread() mid: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    cur_thread = (*env)->CallStaticObjectMethod(env, thread_class, cur_thread_mid);
-    
-    if (NULL==cur_thread)
-    {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                "Failed to get current thread: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    set_ctx_mid = (*env)->GetMethodID(env, thread_class, 
-            "setContextClassLoader", "(Ljava/lang/ClassLoader;)V");
-    
-    if (NULL==set_ctx_mid)
-    {
-        EXJLD_LOG_EXCEPTION(env, log_error, 
-                "Failed to get setContextClassLoader() mid: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    (*env)->CallVoidMethod(env, cur_thread, set_ctx_mid, M_classLoader);
-
     if (!test_mode)
     {
         NDRX_LOG(log_debug, "Starting...");
@@ -772,6 +690,21 @@ exprivate int run_ldr_main(JNIEnv *env,
 out:
     NDRX_LOG(log_debug, "%s returns  %d", __func__, ret);
 
+    if (NULL!=main_class)
+    {
+        (*env)->DeleteLocalRef( env, main_class);
+    }
+
+    if (NULL!=str_class)
+    {
+        (*env)->DeleteLocalRef( env, str_class);
+    }
+
+    if (NULL!=args)
+    {
+        (*env)->DeleteLocalRef( env, args);
+    }
+
     return ret;
 }
 
@@ -787,7 +720,7 @@ out:
  */
 expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index, 
 	        int class_index_len, ndrxj_class_index_t *res_index, int res_index_len,
-            JNIEnv **env)
+                JNIEnv **env)
 {
     JavaVM *vm = NULL;
     int ret = EXSUCCEED;
@@ -901,15 +834,12 @@ expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index,
         NDRX_LOG(log_error, "Failed to create Java VM");
         EXFAIL_OUT(ret);
     }
-    
-    
-    if (EXSUCCEED!=create_loader(env, vm))
+
+    if (EXSUCCEED!=create_loader(env, &vm))
     {
         NDRX_LOG(log_error, "Failed to prepare class loader");
         EXFAIL_OUT(ret);
     }
-    
-
     
 out:
     
