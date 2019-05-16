@@ -873,7 +873,7 @@ out:
     }
 
 
-    if (EXSUCCEED!=vm)
+    if (EXSUCCEED!=ret)
     {
         return NULL;
     }
