@@ -100,6 +100,7 @@ expublic int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
     JNIEnv *env = NULL;
     jclass ctx_class = NULL;
     jmethodID factory_mid = NULL;
+    TPCONTEXT_T ctx;
     
     /* call AtmiCtx factory method,
      * also prepare context for current thread
@@ -123,15 +124,31 @@ expublic int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
     
     /* store the env, even if we have one, just common source.. */
     NDRXJ_JENV_LVAL(ctxpriv) = env;
-    /*
+    
     ret = ndrxj_ldr_get_static_handler(env, 
-			char *run_class_str,
-                        char *static_method,
-                        char *static_method_sign,
-                        jclass *run_class,
-                        jmethodID *run_mid
-  			)
-     * */
+			"org.endurox.AtmiCtx",
+                        "createAtmiCtx",
+                        "(J)Lorg/endurox/AtmiCtx;",
+                        &ctx_class,
+                        &factory_mid);
+    
+    if (EXSUCCEED!=ret)
+    {
+        NDRX_LOG(log_error, "Failed to get createAtmiCtx() handler");
+        EXFAIL_OUT(ret);
+    }
+    
+    tpgetctxt(&ctx, 0L);
+    
+    /* Invoke the create at save the returned object 
+     * object shall be created as global ref
+     */
+    
+    
+    
+    
+    tpsetctxt(ctx, 0L);
+    
     
     
     /* TODO: call  ndrxj_ldr_get_static_handler*/
