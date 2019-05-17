@@ -123,14 +123,11 @@ struct xa_switch_t *ndrx_get_xa_switch(void)
          */
         
         /* create java env... */
-        if (EXSUCCEED!=ndrxj_jvm_create())
+        if (EXSUCCEED!=ndrxj_jvm_create(ctxpriv))
         {
             NDRX_LOG(log_error, "Failed to create java env for TMSRV!");
             EXFAIL_OUT(ret);
         }
-        
-        /* set the java env we use here.. */
-        NDRXJ_JENV_LVAL(ctxpriv) = ndrxj_G_env;
     }
     else
     {

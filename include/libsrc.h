@@ -41,6 +41,8 @@ extern "C" {
 /*---------------------------Includes-----------------------------------*/
 #include <jni.h>
 #include <atmi.h>
+#include <ndrx_java_config.h>
+#include <tmenv.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 
@@ -280,8 +282,9 @@ extern jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid);
 extern int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid);
 
 /* TODO: How about dllimport/export? */
-extern int ndrxj_xa_init(void);
-
+extern NDRX_JAVA_API int ndrxj_xa_init(void);
+extern NDRX_JAVA_API int ndrxj_jvm_create(ndrx_ctx_priv_t *ctxpriv);
+extern NDRX_JAVA_API int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv);
 #ifdef  __cplusplus
 }
 #endif
