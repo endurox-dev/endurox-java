@@ -137,18 +137,14 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
                     
                     NDRXJ_JATMICTX_LVAL(ctxpriv) = (*env)->NewWeakGlobalRef(env, atmiCtxObj);
                     
-                    userlog("NEW WEAK REF: %p", NDRXJ_JATMICTX_LVAL(ctxpriv));
-                    
-                    /* we shall kill the weak ref once java dealloc's the
-                     * object.
+                    /* Dealloc is done with C side finalizerC() when AtmiCtx
+                     * object is destructed.
                      */
                 }
                 
                 if (NULL==NDRXJ_JATMICTX_LVAL(ctxpriv))
                 {
                     NDRXJ_JATMICTX_LVAL(ctxpriv) = (*env)->NewWeakGlobalRef(env, atmiCtxObj);
-                    
-                    userlog("NEW WEAK REF 2: %p", NDRXJ_JATMICTX_LVAL(ctxpriv));
                 }
                 
                 NDRXJ_CCTX_LVAL(ctxpriv) = ctx;

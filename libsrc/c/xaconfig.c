@@ -189,8 +189,16 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
                         
                         len = strlen(tmpbuf);
                         
-                        snprintf(tmpbuf+len, sizeof(tmpbuf) - len, "%s%c%s", sub_name2, 
-                                NDRXJ_FS, str_val);
+                        if (n>0)
+                        {
+                            snprintf(tmpbuf+len, sizeof(tmpbuf) - len, "%c%s%c%s", 
+                                    NDRXJ_FS, sub_name2, NDRXJ_FS, str_val);
+                        }
+                        else
+                        {
+                            snprintf(tmpbuf+len, sizeof(tmpbuf) - len, "%s%c%s", sub_name2, 
+                                    NDRXJ_FS, str_val);
+                        }
                     }
                 }
                 

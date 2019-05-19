@@ -223,7 +223,7 @@ classpath)
 values for these data types are parsed as strings.
 
 3. An setter method accepting *java.util.Properties*, accepts JSON sub-objects
-with the same set of parameters described in 2.
+with string values.
 
 And example of XA Open String is following (used by Oracle thin JDBC Driver):
 
@@ -236,12 +236,19 @@ NDRX_XA_OPEN_STR={"class":"oracle.jdbc.xa.client.OracleXADataSource",
                 "setUser":"${EX_ORA_USER}"
                 ,"setPassword":"${EX_ORA_PASS}"
                 ,"setURL":"jdbc:oracle:thin:@${EX_ORA_HOST}:${EX_ORA_PORT}/${EX_ORA_SID}"
+                ,"setConnectionProperties":{
+                        "defaultRowPrefetch":"2"
+                        ,"oracle.jdbc.TcpNoDelay":"true"
+# Number in milliseconds
+                        ,"oracle.jdbc.ReadTimeout":"6000"
+                        }
                 }
         }
 NDRX_XA_CLOSE_STR=${NDRX_XA_OPEN_STR}
 NDRX_XA_DRIVERLIB=${NDRX_APPHOME}/../../xadrv/libndrxxajdbc.so
 NDRX_XA_RMLIB=${NDRX_APPHOME}/../../libsrc/c/libexjava.so
 NDRX_XA_LAZY_INIT=1
+
 
 --------------------------------------------------------------------------------
 
@@ -252,12 +259,29 @@ Overall the library dependencies can be seen in following diagram:
 
 >>>>> LIBRARY DEPS <<<<<<<<<
 
-
 === Transaction Manager operations with JDBC drivers
+...
 
+== Enduro/X Java XA Test Configuration
+
+In order to perform testing of Oracle (02_xaoracle), Posgresql (03_xapostgres)
+and Mysql/MariaDB (04_xamysql) the databases and environment must be configured.
+
+The environment contains host names, users, passwords and database names. The
+build process will automatically skip these tests, if environment is not configured.
+
+=== Configuration of Oracle DB tests
+...
+=== Configuration of Posgresql DB tests
+...
+=== Configuration of Mysql/Maria DB tests
+...
+
+== Object lifecycle for XATMI clients and Servers
+...
 
 == Enduro/X Java Linker
-
+...
 
 :numbered!:
 
