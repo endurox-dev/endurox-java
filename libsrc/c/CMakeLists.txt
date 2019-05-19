@@ -55,6 +55,9 @@ endif()
 # Make sure the compiler can find include files from our UBF library.
 include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
+# We depend on JVM
+link_directories (${NDRX_JAVA_LIBDIR_JVM})
+
 # Create a library called "UBF" which includes the source files.
 # The extension is already found. Any number of sources could be listed here. 
 add_library (exjava SHARED
@@ -89,7 +92,7 @@ add_library (exjava SHARED
                 util.c
                 tpenqueue.c
                 tpdequeue.c
-                xa.c
+                xaj.c
                 xaconfig.c
                 TPTRANID.c
                 xatmsrv.c
@@ -104,7 +107,7 @@ if(Java_VERSION VERSION_LESS 1.10)
     add_dependencies(exjavald enduroxjh)
 endif()
 
-target_link_libraries (exjava exjlds atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
+target_link_libraries (exjava exjlds jvm atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 
 install (TARGETS 
     exjava 

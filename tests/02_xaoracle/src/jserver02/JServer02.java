@@ -6,14 +6,17 @@ import org.endurox.*;
 public class JServer02 implements Server, Service {
 
 
+    Connection conn = null;
+    Statement statement = null;
+    
     /**
      * Do some transaction work
      */
     public void tpService(AtmiCtx ctx, TpSvcInfo svcinfo) {
         
         int ret = AtmiConst.TPSUCCESS;
-        Connection conn = null;
-        Statement statement = null;
+        
+        
         ctx.tplogDebug("tpService/DoTran called");
 
         TypedUbf ub = (TypedUbf)svcinfo.getData();
@@ -29,9 +32,6 @@ public class JServer02 implements Server, Service {
         ctx.tplogInfo("Running stmt: [%s]", sql);
         
         try {
-            // create a Statement from the connection
-            conn = ctx.getConnection();
-            statement = conn.createStatement();
             // insert the data
             statement.executeUpdate(sql);
         }
@@ -39,25 +39,6 @@ public class JServer02 implements Server, Service {
             ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to run update", e);
             ret = AtmiConst.TPFAIL;
         }
-  
-        try {
-            if (null!=conn) {
-                conn.close();
-            }
-        }
-        catch (SQLException e) {
-            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close conn", e);
-            throw new RuntimeException(e);
-        }
-
-        try {
-            statement.close();
-        }
-        catch (SQLException e) {
-            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close statement", e);
-            throw new RuntimeException(e);
-        }
-
         
         ctx.tpreturn(ret, 0, svcinfo.getData(), 0);
     }
@@ -76,6 +57,16 @@ public class JServer02 implements Server, Service {
         /* Open Connection */
         ctx.tpopen();
         
+        try {
+            conn = ctx.getConnection();
+            // create a Statement from the connection
+            statement = conn.createStatement();
+            
+        } catch (Exception e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get SQL Connect or STMT", e);
+            throw new RuntimeException(e);
+        }
+        
         //Notification servers:
         ctx.tpadvertise("DoTran", "DoTran", this);
         
@@ -89,6 +80,19 @@ public class JServer02 implements Server, Service {
      */
     public void tpSvrDone(AtmiCtx ctx) {
         ctx.tplogDebug("Into tpSvrDone()");
+        
+        try {
+            statement.close();
+        } catch (Exception e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close statement", e);
+        }
+        
+        try {
+            conn.close();
+        } catch (Exception e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close conn", e);
+        }
+        
         ctx.tpclose();
     }
     

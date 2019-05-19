@@ -41,6 +41,7 @@
 #include <nerror.h>
 #include <exstring.h>
 #include "libsrc.h"
+#include <exjldsys.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 #define ERROR_MAX               1024

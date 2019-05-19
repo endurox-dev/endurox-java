@@ -11,6 +11,10 @@ import org.endurox.*;
  */
 public class XAOraTests {
     
+    Connection conn = null;
+    
+    public static final int TEST_MAX = 10;
+    
     /**
      * Delete all records from db
      * TODO: try xid 64?
@@ -18,7 +22,6 @@ public class XAOraTests {
     public void deleteAll(AtmiCtx ctx) {
         
         boolean tranStarted = false;
-        Connection conn = null;
         Statement stmt = null;
         /*
         if (ctx.tpgetlev() == 0) {
@@ -37,7 +40,6 @@ public class XAOraTests {
         String sql = "delete from EXJTEST";
         
         try {
-          conn = ctx.getConnection();
           stmt = conn.createStatement();
           
           stmt.executeUpdate(sql);
@@ -72,14 +74,7 @@ public class XAOraTests {
             ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close stmt", e);
             throw new RuntimeException(e);
         }
-
-        try {
-            conn.close();
-        } catch (SQLException e) {
-
-            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close conn", e);
-            throw new RuntimeException(e);
-        }
+        
     }
     
     /**
@@ -102,8 +97,7 @@ public class XAOraTests {
         
         try {
             
-            Statement stmt = ctx.getConnection().createStatement();
-
+            Statement stmt = conn.createStatement();
             ResultSet rs3 = stmt.executeQuery(sql);
             
             rs3.next();
@@ -114,6 +108,7 @@ public class XAOraTests {
             stmt.close();
             
         } catch (SQLException e) {
+            
             ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get count: ".concat(sql), e);
 
             if (tranStarted) {
@@ -134,7 +129,7 @@ public class XAOraTests {
     @Test
     public void basicXA() {
         
-        Connection conn = null;
+        
         AtmiCtx ctx = new AtmiCtx();
         assertNotEquals(ctx.getCtx(), 0x0);
        
@@ -158,39 +153,41 @@ public class XAOraTests {
             }
         }
         
+        ctx.tpopen();
+        
+        try {
+            conn = ctx.getConnection();
+        }  catch (SQLException e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get conn", e);
+            assertEquals(null, e);
+        }
+        
+        assertNotNull(conn);
+        
         /**
          * TODO: Have long term test for memory management.
          * ideally we would time terminated tests, for example 5 min...?
          * thus we need a stop watch construction to have in java..
          */
-        for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        for (int i=0; ((i<100000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             /* TODO: Do the logic */
             ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);
             
-            ctx.tpopen();
+            
             /* create some test table 
-            try {
-                conn = ctx.getConnection();
-            } 
-            catch (SQLException e) {
-                ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get conn", e);
-                assertEquals(null, e);
-            }
             assertNotEquals(null, conn);
             */
             
             /* empty up the table... */
             deleteAll(ctx);
-             
-            assertEquals(false, true);
             
             /* run the transaction */
             ctx.tpbegin(160, 0);
             assertEquals(1, ctx.tpgetlev());
 
-            for (int j=0; j<100; j++)
+            for (int j=0; j<TEST_MAX; j++)
             {
                 /* call the server, insert some data */
                 ub.Bchg(test.T_LONG_FLD, 0, (long)j);
@@ -202,7 +199,7 @@ public class XAOraTests {
             }
             
             /* as we resume tran, get the count... */
-            chkCount(ctx, 100);
+            chkCount(ctx, TEST_MAX);
             
             /* lets abort */
             ctx.tpabort(0);
@@ -212,15 +209,61 @@ public class XAOraTests {
             
             
             /* todo perform abort */
-
-            /* get the count, shall be 0 */
-
-            /* run again tran */
-
-            /* check, shall be 0 */
-
-            ctx.tpclose();
             
+            ctx.tpbegin(160, 0);
+            assertEquals(1, ctx.tpgetlev());
+
+            for (int j=0; j<TEST_MAX; j++)
+            {
+                /* call the server, insert some data */
+                ub.Bchg(test.T_LONG_FLD, 0, (long)j);
+                ub.Bchg(test.T_STRING_FLD, 0, String.format("Name %d", j));
+                ub.Bchg(test.T_STRING_2_FLD, 0, String.format("City %d", j));
+
+                /* well we shall suspend our side here... */
+                ub = (TypedUbf)ctx.tpcall("DoTran", ub, AtmiConst.TPTRANSUSPEND);
+            }
+            
+            /* as we resume tran, get the count... */
+            chkCount(ctx, TEST_MAX);
+            
+            /* Check suspend... */
+            
+            TPTRANID tx1 =  ctx.tpsuspend(0);
+            assertNotNull(tx1);
+            
+            ctx.tpbegin(20, 0);
+            
+            chkCount(ctx, 0);
+            for (int j=0; j<10; j++)
+            {
+                /* call the server, insert some data */
+                ub.Bchg(test.T_LONG_FLD, 0, (long)j);
+                ub.Bchg(test.T_STRING_FLD, 0, String.format("Name %d", j));
+                ub.Bchg(test.T_STRING_2_FLD, 0, String.format("City %d", j));
+
+                /* well we shall suspend our side here... */
+                ub = (TypedUbf)ctx.tpcall("DoTran", ub, AtmiConst.TPTRANSUSPEND);
+            }
+            
+            chkCount(ctx, 10);
+            ctx.tpabort(0);
+            
+            
+            /* resume back original transaction... */
+            ctx.tpresume(tx1, 0);
+            chkCount(ctx, TEST_MAX);
+            
+            /* lets abort */
+            ctx.tpcommit(0);
+            chkCount(ctx, TEST_MAX);
+        }
+        
+        try {
+            conn.close();
+        }  catch (SQLException e) {
+            ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to close conn", e);
+            assertEquals(null, e);
         }
         
         ub.cleanup();

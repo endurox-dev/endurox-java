@@ -1,6 +1,7 @@
 /**
  * @brief API Utilities to avoid repetitive source writing
- *
+ *  WARNING! We are during C initiated JVM calls here. Thus there is no class
+ *  loader context for C. We use own method ndrxj_FindClass() here.
  * @file util.c
  */
 /* -----------------------------------------------------------------------------
@@ -46,6 +47,7 @@
 #include <tmenv.h>
 #include "nerror.h"
 #include <ndrstandard.h>
+#include <exjldsys.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 #define EXXID_CLASS     "org/endurox/ExXid"
@@ -225,6 +227,7 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
             char *cfld = ((char *)cobj)+ tab->coffset;
             jstring str = (*env)->NewStringUTF(env, cfld);
             (*env)->SetObjectField(env, jobj, fid, str);
+            (*env)->DeleteLocalRef( env, str);
         }
         else if (0==strcmp(tab->ftype, "[B"))
         {
@@ -242,6 +245,9 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
             }
             (*env)->SetByteArrayRegion(env, jb, 0, tab->csz, (jbyte*)cfld);
             (*env)->SetObjectField(env, jobj, fid, jb);
+            
+            /* Remove local reference to byte array... */
+            (*env)->DeleteLocalRef( env, jb);
 
         } /* if [B */
         
@@ -353,7 +359,7 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
     
     /* Create that ExXid object */
     
-    bclz = (*env)->FindClass(env, EXXID_CLASS);
+    bclz = ndrxj_FindClass(env, EXXID_CLASS);
     
     if (NULL==bclz)
     {        

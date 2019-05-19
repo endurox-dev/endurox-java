@@ -1,7 +1,7 @@
 /**
  * @brief Transaction ID provided by Enduro/X
  *
- * @class TPQCTL
+ * @class TPTRANID
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -33,6 +33,8 @@
 package org.endurox;
 
 /**
+ * Transaction ID. used by tpsuspend() and tpresume() calls.
+ * This is local machine specific. 
  * This cannot be copied between different architecture machines
  */
 public class TPTRANID {
@@ -41,14 +43,14 @@ public class TPTRANID {
      * Serialized transaction id
      * non cross platform. C data.
      */
-    byte [] data;
+    byte [] data = null;
 
     /**
-     * Create transaction id
-     * @param data C byte data to b set
+     * Create transaction id.
+     * Init is performed by Enduro/X libraries.
      */
-    public TPTRANID(byte[] data) {
-        this.data = data;
+    public TPTRANID() {
+        
     }
     
 }

@@ -95,9 +95,8 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
         if (do_set)
         {
             ndrx_ctx_priv_t *ctxpriv;
-            
-            tpsetctxt(ctx, 0L);
 
+            tpsetctxt(ctx, 0L);
             
             ctxpriv = ndrx_ctx_priv_get();
             
@@ -120,8 +119,38 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
                  * - C goes back to Java
                  * ---> Here atmiCtxObj reference is changed
                  * - returns to C
+                 * Do we need stack if:
+                 * - Java goes to C
+                 * - C goes to Java
+                 * - Java goes to C
+                 * - C returns from java (removes global ref..) ?
+                 * 
                  */
-                NDRXJ_JATMICTX_LVAL(ctxpriv) = (*env)->NewLocalRef(env, atmiCtxObj);
+                
+                /* Check do we have valid reference here?
+                 * if not then free it up and allocate new one
+                 */
+                if (NULL!=NDRXJ_JATMICTX_LVAL(ctxpriv) && 
+                        !(*env)->IsSameObject(env, NDRXJ_JATMICTX_LVAL(ctxpriv), atmiCtxObj))
+                {
+                    (*env)->DeleteWeakGlobalRef(env, NDRXJ_JATMICTX_LVAL(ctxpriv));
+                    
+                    NDRXJ_JATMICTX_LVAL(ctxpriv) = (*env)->NewWeakGlobalRef(env, atmiCtxObj);
+                    
+                    userlog("NEW WEAK REF: %p", NDRXJ_JATMICTX_LVAL(ctxpriv));
+                    
+                    /* we shall kill the weak ref once java dealloc's the
+                     * object.
+                     */
+                }
+                
+                if (NULL==NDRXJ_JATMICTX_LVAL(ctxpriv))
+                {
+                    NDRXJ_JATMICTX_LVAL(ctxpriv) = (*env)->NewWeakGlobalRef(env, atmiCtxObj);
+                    
+                    userlog("NEW WEAK REF 2: %p", NDRXJ_JATMICTX_LVAL(ctxpriv));
+                }
+                
                 NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
                 
             }
@@ -194,18 +223,18 @@ void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tplogC(JNIEnv * env, jobject obj, ji
     
     /* check mandatory arguments...!, thow NullPointerException if any bad.. */
         
-    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXFALSE)))
+    if (NULL==(ctx = ndrxj_get_ctx(env, obj, EXTRUE)))
     {
         return;
     }
     
     if (line!=EXFAIL)
     {
-        Otplogex(&ctx, (int)lev, (char *)n_file, (long)line, (char *)n_msg);
+        tplogex((int)lev, (char *)n_file, (long)line, (char *)n_msg);
     }
     else
     {
-        Otplog(&ctx, (int)lev, (char *)n_msg);
+        tplog((int)lev, (char *)n_msg);
     }
     
 out:
@@ -1111,7 +1140,6 @@ expublic  JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpforward
     long len = 0;
     jboolean n_svcname_copy = EXFALSE;
     const char *n_svcname = (*env)->GetStringUTFChars(env, svcname, &n_svcname_copy);
-    ndrx_ctx_priv_t *ctxpriv;
     
     /* set ctx from obj */
     if (NULL == ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
@@ -1154,11 +1182,26 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_finalizeC
   (JNIEnv *env, jclass cls, jlong cPtr)
 {
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
-    TPCONTEXT_T tmp;
+    /* TPCONTEXT_T tmp; */
+    ndrx_ctx_priv_t *ctxpriv;
+    
     
     tpsetctxt(ctx, 0L);
     
+    ctxpriv = ndrx_ctx_priv_get();
+    /* delete any weakref if have in context... */
+    
+    
     NDRX_LOG(log_debug, "About to free ctx %p", ctx);
+    
+    
+    if (!(NDRXJ_CTXFLAGS(ctxpriv) & NDRXJ_CTXFLAGS_SRV) &&
+	NULL!=NDRXJ_JATMICTX_LVAL(ctxpriv))
+    {
+        NDRX_LOG(log_debug, "Free up weakref %p", NDRXJ_JATMICTX_LVAL(ctxpriv));
+        (*env)->DeleteWeakGlobalRef(env, NDRXJ_JATMICTX_LVAL(ctxpriv));
+    }
+    
     /*
     tpterm();
     tpsetctxt(TPNULLCONTEXT, 0L);

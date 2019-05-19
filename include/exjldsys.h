@@ -64,6 +64,8 @@ extern NDRX_JAVA_API JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index,
 	        int class_index_len, ndrxj_class_index_t *res_index, int res_index_len,
                 JNIEnv **env);
 
+extern NDRX_JAVA_API jclass ndrxj_FindClass(JNIEnv *env, const char *name);
+
 #ifdef  __cplusplus
 }
 #endif

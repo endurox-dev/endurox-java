@@ -100,21 +100,20 @@ expublic int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
     JNIEnv *env = NULL;
     jclass ctx_class = NULL;
     jmethodID factory_mid = NULL;
-    TPCONTEXT_T ctx;
+    TPCONTEXT_T ctx = NULL;
+    jobject jctx = NULL;
     
     /* call AtmiCtx factory method,
      * also prepare context for current thread
      * will get the env handler too.
-     
-    expublic int ndrxj_ldr_get_static_handler(JNIEnv *env, 
-			char *run_class_str,
-                        char *static_method,
-                        char *static_method_sign,
-                        jclass *run_class,
-                        jmethodID *run_mid
-  			)
-    */
-    ret = (int)(*M_jvm)->AttachCurrentThread(M_jvm, &env, NULL);
+     */
+    
+    /* tmsrv threads will become manually allocated
+     * otherwise at times will kill TLS due to auto flag
+     */
+    ndrx_ctx_auto(EXFALSE);
+    
+    (int)(*M_jvm)->AttachCurrentThread(M_jvm, (void **)&env, NULL);
     
     if (ret!=JNI_OK)
     {
@@ -139,85 +138,49 @@ expublic int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
     }
     
     tpgetctxt(&ctx, 0L);
+    tpsetctxt(ctx, 0L);
+    /* save our C context */
+    NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
     
     /* Invoke the create at save the returned object 
      * object shall be created as global ref
      */
+    NDRX_LOG(log_debug, "Create ATMI CTX with C context %p", ctx);
     
+    jctx = (*env)->CallStaticObjectMethod(env, ctx_class, factory_mid, (jlong)ctx);
     
-    
-    
-    tpsetctxt(ctx, 0L);
-    
-    
-    
-    /* TODO: call  ndrxj_ldr_get_static_handler*/
-    
-#if 0
-    
-    jobject jret = NULL;
-    jclass bclz = NULL;
-    jmethodID mid;
-    TPCONTEXT_T ctx;
-    
-    bclz = (*NDRXJ_JENV(ctxpriv))->FindClass(NDRXJ_JENV(ctxpriv), ATMICTX_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to find AtmiCtx - aborting...!");
-        /* tpreturn fail or simulate time-out? or just abort?*/
-        abort();
+    if((*env)->ExceptionCheck(env))
+    {
+        NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, 
+            NDRXJ_LOGEX_NDRX, "Failed to create AtmiCtx obj:%s");
+        
+        (*env)->ExceptionClear(env);
+        EXFAIL_OUT(ret);
     }
     
-        /* create buffer object... */
-    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), bclz, "<init>", "(J)V");
-    
-    if (NULL==mid)
+    if (NULL==jctx)
     {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
+        NDRX_LOG(log_error, "Failed to create ATMI Context!");
+        EXFAIL_OUT(ret);
     }
 
-    NDRX_LOG(log_debug, "About to NewObject(%s)", ATMICTX_CLASS);
+    /* make global ref... */
     
-    /* Install current context handler */
+    jctx=(*NDRXJ_JENV(ctxpriv))->NewGlobalRef(NDRXJ_JENV(ctxpriv), jctx);
     
-    /* get current atmi context */
-    tpgetctxt(&ctx, 0L);
-    tpsetctxt(ctx, 0L);
+    NDRXJ_JATMICTX_LVAL(ctxpriv) = jctx;
     
-    jret = (*NDRXJ_JENV(ctxpriv))->NewObject(NDRXJ_JENV(ctxpriv), bclz, mid, (jlong)ctx);
+    /* set this as server thread... */
+    NDRXJ_CTXFLAGS(ctxpriv) |= NDRXJ_CTXFLAGS_SRV;
     
-    if (NULL==jret)
-    {
-        NDRX_LOG(log_error, "Failed to create [%s]", ATMICTX_CLASS);
-        
-        /* backtrace? */
-        NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to create Atmi Context: %s");
-        
-        goto out;
-    }
+    NDRX_LOG(log_info, "Atmi context allocated");
     
-    NDRX_LOG(log_debug, "NewObject() done - atmi ctx");
-    
-    /* create reference... */
-    jret = (*NDRXJ_JENV(ctxpriv))->NewGlobalRef(NDRXJ_JENV(ctxpriv), jret);
-    
-    NDRXJ_CCTX_LVAL(ctxpriv) = ctx;
-    NDRXJ_JATMICTX_LVAL(ctxpriv) = jret;
-    
-#endif
-
 out:
     
-#if 0
-    if (NULL!=bclz)
+    if (NULL!=ctx_class)
     {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), bclz);
+        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), ctx_class);
     }
-#endif
 
     return ret;
 }

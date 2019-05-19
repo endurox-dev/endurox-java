@@ -55,6 +55,10 @@ endif()
 # Make sure the compiler can find include files from our UBF library.
 include_directories (. ${JNI_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
+
+# We depend on JVM
+link_directories (${NDRX_JAVA_LIBDIR_JVM})
+
 # Generate class of static loader
 add_custom_command(
   OUTPUT StaticClassLoader.class BytesURLHandler.class BytesURLConnection.class
@@ -87,6 +91,8 @@ add_library (exjlds SHARED
                 BytesURLHandler.cinclude
                 BytesURLConnection.cinclude
 	)
+
+target_link_libraries(exjlds jvm)
 
 # target_link_libraries (exjld atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 

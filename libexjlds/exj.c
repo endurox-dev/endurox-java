@@ -73,7 +73,6 @@
 /*---------------------------Statics------------------------------------*/
 exprivate jclass M_classLoaderClass = NULL;
 exprivate jobject M_classLoader = NULL;
-exprivate jmethodID M_class_getctors_method;
 
 /**
  * URL Based classpath to fallback to when we do not find the compile
@@ -194,7 +193,7 @@ out:
  * @param clsclass name to be loaded
  * @return instance to byte array of class data if found or NULL
  */
-expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
+expublic jbyteArray ndrxj_getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
 {
     return getIndexBytes(env, ldrobj, cls, M_res_index, M_res_index_len);
 }
@@ -208,7 +207,7 @@ expublic jbyteArray getResourceBytes(JNIEnv * env, jobject ldrobj, jstring cls)
  * @param clsclass name to be loaded
  * @return instance to byte array of class data if found or NULL
  */
-expublic jbyteArray getClassBytes(JNIEnv * env, jobject ldrobj, jstring cls)
+expublic jbyteArray ndrxj_getClassBytes(JNIEnv * env, jobject ldrobj, jstring cls)
 {
     return getIndexBytes(env, ldrobj, cls, M_class_index, M_class_index_len);
 }
@@ -320,11 +319,11 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     M_classLoaderClass = (jclass) (*env)->NewGlobalRef(env, cl);
 
     /* Now link in native methods */
-    m[0].fnPtr = getResourceBytes;
+    m[0].fnPtr = ndrxj_getResourceBytes;
     m[0].name = "getResourceBytes";
     m[0].signature = "(Ljava/lang/String;)[B";
     
-    m[1].fnPtr = getClassBytes;
+    m[1].fnPtr = ndrxj_getClassBytes;
     m[1].name = "getClassBytes";
     m[1].signature = "(Ljava/lang/String;)[B";
 
@@ -375,7 +374,7 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     M_classLoader = (*env)->NewGlobalRef(env, ldr_obj);
 
     NDRX_LOG(log_info, "Static loader ready for boot...");
-	
+    	
 out:
 
     if (NULL!=cpUrls)
@@ -483,12 +482,13 @@ expublic int ndrxj_ldr_get_static_handler(JNIEnv *env,
     if(NULL==load_class)
     {
         EXJLD_LOG_EXCEPTION(env, log_error, 
-                            "Cannot get method 'findClass' of StreamLoader: %s");
+                            "Cannot get method 'findClass' of StaticClassLoader: %s");
         EXFAIL_OUT(ret);
     }
 
     /* get the main class */
     jrun_class_str = (*env)->NewStringUTF(env, run_class_str);
+    
     *run_class = (jclass) (*env)->CallObjectMethod(env, M_classLoader, 
                                                    load_class, 
                                                     jrun_class_str);
@@ -933,5 +933,81 @@ out:
     
    return ret;
 } 
+
+
+/**
+ * Find the class using the class loader assigned by pure JNI start
+ * This assumes that C context is set.
+ * @param env java env
+ * @param name class to resolve
+ * @return Class found or NULL
+ */
+expublic jclass ndrxj_FindClass(JNIEnv *env, const char *name)
+{
+    jclass ret = NULL;
+    jmethodID load_class;
+    jstring jclass_str = NULL;
+    char *name_mod = NULL;
+    
+    /* if we are invoked from java side, try to locate class first in context loader */
+    
+    if (NULL!=M_classLoaderClass)
+    {
+        
+        name_mod = NDRX_STRDUP(name);
+        
+        if (NULL==name_mod)
+        {
+            NDRX_LOG(log_error, "Failed to strdup: %s", strerror(errno));
+            goto out;
+        }
+        
+        ndrx_strchr_repl (name_mod, '/', '.'); 
+        
+        
+        load_class  = (*env)->GetMethodID(env, M_classLoaderClass, 
+                            "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+        if(NULL==load_class)
+        {
+            NDRX_LOG(log_error, "Failed to get loadClass mid!");
+            goto out;
+        }
+   
+        jclass_str = (*env)->NewStringUTF(env, name_mod);
+        
+        if (NULL==jclass_str)
+        {
+            NDRX_LOG(log_error, "Failed to get Java String of [%s]", name_mod);
+            goto out;
+        }
+        
+        ret = (jclass) (*env)->CallObjectMethod(env, M_classLoader, 
+                                                   load_class, 
+                                                    jclass_str);
+    }
+    else
+    {
+        ret = (*env)->FindClass(env, name);
+    }
+   
+out:
+    
+    if (NULL!=name_mod)
+    {
+        NDRX_FREE(name_mod);
+    }
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_error, "Failed to load class: [%s]", name);
+    }
+    
+    if (NULL!=jclass_str)
+    {
+        (*env)->DeleteLocalRef( env, jclass_str);
+    }
+
+    return ret;
+}
 
 /* vim: set ts=4 sw=4 et smartindent: */

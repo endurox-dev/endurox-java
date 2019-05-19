@@ -120,7 +120,7 @@ extern "C" {
     
     
 /**
- * The process is XATMI server
+ * The process is XATMI server including tmsrv
  */
 #define NDRXJ_CTXFLAGS_SRV  0x00000001
 /**

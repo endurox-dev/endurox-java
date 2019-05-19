@@ -147,85 +147,116 @@ two phase commit interfaces. The basic principle for the operations are the
 same which are used by X/Open XA interface. See 
 https://docs.oracle.com/javaee/5/api/javax/transaction/xa/XAResource.html.
 
-Enduro/X by it self uses following architecture for the XA two phase transactions:
+Enduro/X by it self uses following architecture for the XA two phase transactions,
+thus bindings added to Java shall support XA transactions too. There are known
+"standard" java APIs for this like JTA, but Enduro/X brings as close as possible
+XATMI API To Java, thus transactions are managed by XATMI API, which basically
+consists of following methods:
 
-1. There is driver library needed (as a frontend) for XATMI sub-system to
-acquire a XA Resource Manager (RM) switch (structure with callbacks defined
-inside). The driver usually is provided by Enduro/X. The driver is configured
-in the *NDRX_XA_DRIVERLIB* environment/global variable.
+- AtmiCtx.tpopen - Configure resource manager, create instance of XAResource
+and XAConnection associated with ATMI Context
 
-2. The second shared library is back-end or resource manager by it self, this
-also implements XA switch functions. For Enduro/X Java module XA Switch emulation
-is built in. The "libexjava.so" is loaded by Enduro/X Java API sources. Thus
-there is no need for second argument. This "NDRX_XA_RMLIB" lib can be set to
-some dummy value like "-".
+- AtmiCtx.tpclose - Disconnect from resource manager, delete XAResource and
+XAConnection associated with ATMI Context
 
-With respect to Java module, the developer would expect that JDBC transactions
-firstly would be managed by Enduro/X ATMI Context, as it provides tpbegin(),
-tpcommit(), etc. methods. This would mean, that if developer opens the database
-connection and would expect to start working with DB, some handler needs to
-registered with given ATMI context, so that XATMI sub-system could manage the
-state of the given connection.
+- AtmiCtx.tpbegin - Start the transaction
 
-Also here raises the question, how long the object is able to work with given
-DB connection? Is the session open or not? As the transaction is not associated
-with the thread as in X/Open standard, but it is being associated with the 
-connection object. Thus according the Oracle examples:
-https://docs.oracle.com/cd/B19306_01/java.102/b14355/xadistra.htm#i1066952
-once begin is issued, the connection is able to work with the database, by using
-connection object:
+- AtmiCtx.tpsuspend - Suspend current transaction, put context outside of any
+transaction
+
+- AtmiCtx.tpresume - Resume suspend transaction, put context back into global
+transaction
+
+- AtmiCtx.tpcommit - Commit the transaction
+
+- AtmiCtx.tpabort - Abort current transaction
+
+- AtmiCtx.getConnection - get connect object from XAConnection. The pooling and 
+closing of connection shall done by programmer.
+
+
+The object hierarchy is as follows:
+
+>>>> Object relactions here <<<
+
+The transaction management, communications with transaction manager (Enduro/X
+*tmsrv* binary are performed by Enduro/X C libraries, but due to fact that
+JDBC drivers live in Java side, the callbacks from C are done back to Java.
+To get things more complex, Enduro/X uses standard approach of loading XA drivers
+from C side shared library. Once Enduro/X Core together with Java modules are
+booted, they are not aware of users willing to use JDBC, in fact Enduro/X Core
+does not know anything about JDBC. But Enduro/X Java module provides special
+library named "libndrxxajdbc.so" (our corresponding  counter part for MacOS),
+which in turn expects in "NDRX_XA_RMLIB" (resource managers) configuration
+parameter expects "libexjava.so" to set. The libexjava.so provides handler
+to resolve the XA Switch. At startup static XADataSource is initialized. The
+initialization is done by parsing JSON configuration string found in *NDRX_XA_OPEN_STR*.
+The syntax for Open String is following
 
 --------------------------------------------------------------------------------
-OracleXADataSource oxds1 = new OracleXADataSource();
-XAConnection pc1  = oxds1.getXAConnection();
-Connection conn1 = pc1.getConnection();
-...
-oxar1.start (xid1, XAResource.TMNOFLAGS);
->> DO JDBC WORK <<<
-oxar1.end(xid1, XAResource.TMSUCCESS);
-conn1.close();
-pc1.close();
+
+
+{"class":"<JDBC Driver Class Name>", 
+        "set": {
+                "<Set Method Of Class Object 1>":"<Value to bet set 1>"
+                ,"<Set Method Of Class Object 2>":"<Value to bet set 2>"
+                ,"<Set Method Of Class Object N>":"<Value to bet set N>"
+                ,"<Set Method of Properties 1": {
+                        "<Property 1 Setting 1>":"<Value to bet set 1/1>"
+                        "<Property 1 Setting N>":"<Value to bet set 1/N>"
+                    }
+                }
+        }
+
 --------------------------------------------------------------------------------
 
-The start/end/close etc shall be handled by RM shared library. Also the commit
-actually shall be done by transaction manager (TMSRV) process and not by the
-java client it self.
+Thing is that Configuration of XA JDBC Drivers are not standard. There is no
+standard set of XADataSource methods to configure the driver. Thus Enduro/X uses
+generic approach to create driver instance and configure it via JSON configuration
+string. This string accepts:
 
-Thus we need following libs:
+1. Class name (NOTE! The JDBC driver must be loaded either via linkage or by 
+classpath)
 
-a) libndrxxajavX.so, where X is "s" - static reg, or "d" - dynamic registration.
-Library is configured for java based applications. This is configured into
-*NDRX_XA_DRIVERLIB*.
+2. A group of set method names and their values. The value types accepted are:
+*Short*, *Long*, *Integer*, *Byte*, *Float*, *Double*, *Boolean*, *String*. The
+values for these data types are parsed as strings.
 
-b) libexjdbcxa.so, JDBC XA interface which would perform the JNI calls. This
-would be configured into *NDRX_XA_RMLIB*. And would go for java app and *tmsrv*.
+3. An setter method accepting *java.util.Properties*, accepts JSON sub-objects
+with the same set of parameters described in 2.
 
-c) As *tmsrv* does not know anything about java, we need a different 
-*NDRX_XA_DRIVERLIB* here, as it needs to start embedded java process and
-should configure the environment for the "libexjdbcxa.so".
+And example of XA Open String is following (used by Oracle thin JDBC Driver):
 
-As from JNI side to work probably with java env following data is required:
+--------------------------------------------------------------------------------
 
-- ptr to JNIEnv 
+[@global/DB1_JDBC]
+NDRX_XA_RES_ID=1
+NDRX_XA_OPEN_STR={"class":"oracle.jdbc.xa.client.OracleXADataSource", 
+        "set": {
+                "setUser":"${EX_ORA_USER}"
+                ,"setPassword":"${EX_ORA_PASS}"
+                ,"setURL":"jdbc:oracle:thin:@${EX_ORA_HOST}:${EX_ORA_PORT}/${EX_ORA_SID}"
+                }
+        }
+NDRX_XA_CLOSE_STR=${NDRX_XA_OPEN_STR}
+NDRX_XA_DRIVERLIB=${NDRX_APPHOME}/../../xadrv/libndrxxajdbc.so
+NDRX_XA_RMLIB=${NDRX_APPHOME}/../../libsrc/c/libexjava.so
+NDRX_XA_LAZY_INIT=1
 
-- ptr to XAConnection as from this we want to manage the transaction.
+--------------------------------------------------------------------------------
+
+The XADataSource is configured during the XATMI Startup or during the first
+XA call (if lazy init is used).
+
+Overall the library dependencies can be seen in following diagram:
+
+>>>>> LIBRARY DEPS <<<<<<<<<
 
 
-Thus we need to store somewhere when running at C side all the above data.
-Question is only where, because our calls can be done in two ways:
+=== Transaction Manager operations with JDBC drivers
 
-1. Directly from Java in case of normal java Ops
 
-2. Directly from C, when TMSRV will be running. Here question, is about shared
-java env and ATMI context.
-
-To solve above problem, the requirement from "libexjdbcxa.so" would be that
-current thread is associated with ATMI TLS data where the above pointers are
-stored. It could be some kind of structure and ATMI tls specific pointer.
-
-For "libexjdbcxa.so" we would like to avoid any jar dependencies, except
-the actual JDBC driver. Thus one way would be to compile these resources
-in similar way as done with "exjld" binary linker.
+== Enduro/X Java Linker
 
 
 :numbered!:

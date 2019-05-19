@@ -3,7 +3,7 @@
  *  This will be activated from shared driver library.
  *  Static driver only.
  *
- * @file xa.c
+ * @file xaj.c
  */
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
@@ -197,7 +197,7 @@ expublic int ndrxj_xa_init(void)
     /* Call the method */    
     /* unset context */
     tpgetctxt(&ctx, 0L);
-
+    
     ret = (*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), 
         NDRXJ_JATMICTX(ctxpriv), mid, jclazz, jsets);
 
@@ -268,6 +268,8 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
     jclass ctxClass = NULL;
     int ret = XA_OK;
     ctxpriv = ndrx_ctx_priv_get();
+    
+    /* get env??? */
     
     if (NULL==NDRXJ_JATMICTX(ctxpriv)
             && EXSUCCEED!=ndrxj_alloc_context(ctxpriv))
@@ -452,10 +454,12 @@ out:
     {
         NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
                 "% failed: %s", func);
+        
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
         }
+        
         (*NDRXJ_JENV(ctxpriv))-> ExceptionClear(NDRXJ_JENV(ctxpriv));
     }
 
