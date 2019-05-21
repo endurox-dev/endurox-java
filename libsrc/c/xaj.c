@@ -320,7 +320,7 @@ out:
     if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
         NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
-                "% failed: %s", func);
+                "%s failed: %s", func);
         if (XA_OK==ret)
         {
             ret = XAER_RMERR;
@@ -453,7 +453,7 @@ out:
     if ((*NDRXJ_JENV(ctxpriv))->ExceptionCheck(NDRXJ_JENV(ctxpriv)))
     {
         NDRXJ_LOG_EXCEPTION((NDRXJ_JENV(ctxpriv)), log_error, NDRXJ_LOGEX_ULOG, 
-                "% failed: %s", func);
+                "%s failed: %s", func);
         
         if (XA_OK==ret)
         {
