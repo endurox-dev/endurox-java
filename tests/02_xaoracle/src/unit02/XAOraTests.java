@@ -11,6 +11,14 @@ import org.endurox.*;
  */
 public class XAOraTests {
     
+    
+    /**
+     * Is there shutdown request
+     */
+    public static boolean shutdownReq = false;
+    
+    public static boolean shutdownDone = false;
+    
     Connection conn = null;
     
     public static final int TEST_MAX = 10;
@@ -140,6 +148,28 @@ public class XAOraTests {
         int leaktestSec = 0;
         StopWatch w = new StopWatch();
         
+        /**
+         * Register shutdown hook
+         */
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                System.console().printf("Shutdown requested...\n");
+                XAOraTests.shutdownReq = true;
+                
+                while (!XAOraTests.shutdownDone)
+                {
+                    try {
+                        System.console().printf("Shutdown wait...\n");
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e) {
+                        
+                    }
+                }
+            }
+        });
+        
+        
         String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST"); 
         
         if (null!=leaktestSecStr)
@@ -169,7 +199,7 @@ public class XAOraTests {
          * ideally we would time terminated tests, for example 5 min...?
          * thus we need a stop watch construction to have in java..
          */
-        for (int i=0; ((i<100000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        for (int i=0; ((i<1) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             /* TODO: Do the logic */
             ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
@@ -257,6 +287,11 @@ public class XAOraTests {
             /* lets abort */
             ctx.tpcommit(0);
             chkCount(ctx, TEST_MAX);
+            
+            if (shutdownReq) {
+                ctx.tplogInfo("Shutting down by request....");
+                break;
+            }
         }
         
         try {
@@ -266,8 +301,15 @@ public class XAOraTests {
             assertEquals(null, e);
         }
         
+        ctx.tplogError("Ending UP!");
+        ctx.tpclose();
+        ctx.tpterm();
         ub.cleanup();
         ctx.cleanup();
+        System.console().printf("Done with shut...\n");
+        shutdownDone = true;
+        
+        throw new RuntimeException("TEST");
     }
     
 }

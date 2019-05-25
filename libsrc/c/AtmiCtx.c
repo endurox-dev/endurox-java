@@ -1177,14 +1177,17 @@ out:
 expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_finalizeC
   (JNIEnv *env, jclass cls, jlong cPtr)
 {
+    int freeWeak = EXFALSE;
     TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
     /* TPCONTEXT_T tmp; */
     ndrx_ctx_priv_t *ctxpriv;
+    jobject jctx;
     
     
     tpsetctxt(ctx, 0L);
     
     ctxpriv = ndrx_ctx_priv_get();
+    jctx = NDRXJ_JATMICTX(ctxpriv);
     /* delete any weakref if have in context... */
     
     
@@ -1195,7 +1198,7 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_finalizeC
 	NULL!=NDRXJ_JATMICTX_LVAL(ctxpriv))
     {
         NDRX_LOG(log_debug, "Free up weakref %p", NDRXJ_JATMICTX_LVAL(ctxpriv));
-        (*env)->DeleteWeakGlobalRef(env, NDRXJ_JATMICTX_LVAL(ctxpriv));
+        freeWeak = EXTRUE;
     }
     
     /*
@@ -1203,6 +1206,8 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_finalizeC
     tpsetctxt(TPNULLCONTEXT, 0L);
     */
     tpfreectxt(ctx);
+    
+    (*env)->DeleteWeakGlobalRef(env, jctx);
     
 }
 

@@ -94,6 +94,7 @@ if(Java_VERSION VERSION_LESS 1.10)
         org.endurox.UnsolCallback
         org.endurox.TPQCTL
         org.endurox.TPTRANID
+        java.lang.Runnable
     OUTPUT_DIR ${PROJECT_SOURCE_DIR}/include
     DEPENDS enduroxjava
     CLASSPATH enduroxjava)

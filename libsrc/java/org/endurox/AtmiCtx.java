@@ -2019,6 +2019,12 @@ public class AtmiCtx {
      * tpsrvfreectxdata
      * tpsrvgetctxdata
      */
+
+    /**
+     * Distributed transaction processing
+     * @defgroup DTran Distributed transaction processing methods
+     * @{
+     */
     
     /**
      * Open the XA sub-system / open connection for ATMI Context.
@@ -2067,6 +2073,9 @@ public class AtmiCtx {
      */
     public native int tpgetlev();
     
+    
+    /** @} */ // end of DTran
+    
     /**
      * Create ATMI Context by static call.
      * @param ctx C pointer
@@ -2075,6 +2084,14 @@ public class AtmiCtx {
     public static AtmiCtx createAtmiCtx(long ctx) {
         return new AtmiCtx(ctx);
     }
+    
+    /**
+     * This set a callback method indicating that shutdown 
+     * Enduro/X library shall manage the signal termination
+     * @param run object to be executed (if set) in case if
+     * termination signal is received
+     */
+    public native void installTermSigHandler(java.lang.Runnable run);
 }
 
 /* vim: set ts=4 sw=4 et smartindent: */

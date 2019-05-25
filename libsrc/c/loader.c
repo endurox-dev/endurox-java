@@ -184,6 +184,8 @@ exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpresume)
         (JNIEnv * v0,  jobject v1,  jobject v2,  jlong v3) = NULL;
 exprivate jint (*p_ndrxj_Java_org_endurox_AtmiCtx_tpgetlev)
         (JNIEnv * v0,  jobject v1) = NULL;
+exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_installTermSigHandler)
+        (JNIEnv * v0,  jclass v1,  jobject v2) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_BExprTree_Btreefree)
         (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_TypedBuffer_tpfree)
@@ -384,6 +386,7 @@ exprivate ndrxj_loader_map_t M_funcmap[] =
     {"ndrxj_Java_org_endurox_AtmiCtx_tpsuspend", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsuspend},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpresume", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpresume},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpgetlev", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpgetlev},
+    {"ndrxj_Java_org_endurox_AtmiCtx_installTermSigHandler", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_installTermSigHandler},
     {"ndrxj_Java_org_endurox_BExprTree_Btreefree", (void *)&p_ndrxj_Java_org_endurox_BExprTree_Btreefree},
     {"ndrxj_Java_org_endurox_TypedBuffer_tpfree", (void *)&p_ndrxj_Java_org_endurox_TypedBuffer_tpfree},
     {"ndrxj_Java_org_endurox_TypedBuffer_tprealloc", (void *)&p_ndrxj_Java_org_endurox_TypedBuffer_tprealloc},
@@ -1402,6 +1405,22 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpgetlev (JNIEnv * v0,  jobject v
     }
     
     return p_ndrxj_Java_org_endurox_AtmiCtx_tpgetlev(v0, v1);
+}
+
+/**
+ * Auto generated
+ */
+expublic void JNICALL Java_org_endurox_AtmiCtx_installTermSigHandler (JNIEnv * v0,  jclass v1,  jobject v2)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v0))
+        {
+            return;
+        }
+    }
+    
+    p_ndrxj_Java_org_endurox_AtmiCtx_installTermSigHandler(v0, v1, v2);
 }
 
 /**

@@ -158,6 +158,8 @@ extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpresume
         (JNIEnv *, jobject, jobject, jlong);
 extern NDRX_JAVA_API jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpgetlev
         (JNIEnv *, jobject);
+extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_installTermSigHandler
+        (JNIEnv *, jclass, jobject);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_BExprTree_Btreefree
         (JNIEnv *, jobject, jlong);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_TypedBuffer_tpfree
