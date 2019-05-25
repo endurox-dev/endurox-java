@@ -20,7 +20,7 @@ mkdir QTEST
 # Have some runtime 
 #
 xadmin provision -d -vaddubf=test.fd -vviewInstall=y -vviewFiles=jview01.V \
-	-vshLibs=`pwd`/../../libsrc/c:`pwd`/../../libexjlds$ADDLIBPATH
+	-vshLibs=`pwd`/../../libsrc/c:`pwd`/../../libexjlds$ADDLIBPATH -vnodeid=2
 
 export ASAN_OPTIONS=handle_segv=0
 
