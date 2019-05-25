@@ -9,7 +9,7 @@ import org.endurox.*;
 /**
  * OracleDB XA Tests
  */
-public class XAOraTests {
+public class XAOraTests implements  Runnable {
     
     
     /**
@@ -17,11 +17,15 @@ public class XAOraTests {
      */
     public static boolean shutdownReq = false;
     
-    public static boolean shutdownDone = false;
-    
     Connection conn = null;
     
     public static final int TEST_MAX = 10;
+    
+    
+    public void run() {
+        System.out.print("Got shutdown request...\n");
+        shutdownReq = true;
+    }
     
     /**
      * Delete all records from db
@@ -150,7 +154,7 @@ public class XAOraTests {
         
         /**
          * Register shutdown hook
-         */
+         
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 System.console().printf("Shutdown requested...\n");
@@ -168,7 +172,9 @@ public class XAOraTests {
                 }
             }
         });
+        * */
         
+        ctx.installTermSigHandler(this);
         
         String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST"); 
         
@@ -199,7 +205,7 @@ public class XAOraTests {
          * ideally we would time terminated tests, for example 5 min...?
          * thus we need a stop watch construction to have in java..
          */
-        for (int i=0; ((i<1) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        for (int i=0; ((i<10000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             /* TODO: Do the logic */
             ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
@@ -302,14 +308,17 @@ public class XAOraTests {
         }
         
         ctx.tplogError("Ending UP!");
+        /*
         ctx.tpclose();
         ctx.tpterm();
+         */
+        
         ub.cleanup();
         ctx.cleanup();
-        System.console().printf("Done with shut...\n");
-        shutdownDone = true;
+        //System.console().printf("Done with shut...\n");
+        //shutdownDone = true;
         
-        throw new RuntimeException("TEST");
+        //throw new RuntimeException("TEST");
     }
     
 }

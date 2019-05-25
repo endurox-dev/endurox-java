@@ -64,7 +64,6 @@ MUTEX_LOCKDECL(M_is_set_lock) static pthread_mutex_t X = PTHREAD_MUTEX_INITIALIZ
 /** Needs handler to VM: */
 exprivate JavaVM *M_vm = NULL;
 exprivate jobject M_runner = NULL; /**< Thread to which delivery notification */
-
 /*---------------------------Prototypes---------------------------------*/
 
 /**
@@ -74,16 +73,26 @@ exprivate jobject M_runner = NULL; /**< Thread to which delivery notification */
  * @param arg not used
  * @return  not used
  */
-exprivate void * sig_handler(void *arg)
+exprivate void * sig_thread(void *arg)
 {
     sigset_t blockMask;
     JNIEnv *env = NULL;
     int sig;
+    jclass runnercls;
+    jmethodID mid;
+    TPCONTEXT_T ctx;
+    
+    /* have some context for logging, etc.. */
+    
+    ctx = tpnewctxt(0, 1);
+    
+    
     sigemptyset(&blockMask);
     sigaddset(&blockMask, SIGTERM);
     sigaddset(&blockMask, SIGINT);
     sigaddset(&blockMask, SIGHUP);
-
+    
+    
     if (pthread_sigmask(SIG_BLOCK, &blockMask, NULL) == -1)
     {
         NDRX_LOG(log_always, "%s: pthread_sigmask failed (thread): %s",
@@ -91,29 +100,81 @@ exprivate void * sig_handler(void *arg)
     }
     
     /* Get the java env for given thread */
-    
-    if (EXSUCCEED!=(M_vm->GetEnv(&M_vm, &env)))
+    /*
+    if (EXSUCCEED!=((*M_vm)->GetEnv(M_vm, (void **)&env, JNI_VERSION_1_6)))
     {
         NDRX_LOG(log_error, "Failed to get java env - terminate!");
+        userlog("Failed to get java env - terminate!");
+        exit(EXFAIL);
+    }*/
+    
+    if (EXSUCCEED!=(*M_vm)->AttachCurrentThreadAsDaemon(M_vm, (void **)&env, NULL))
+    {
+        NDRX_LOG(log_error, "Failed to AttachCurrentThreadAsDaemon - terminate!");
+        userlog("Failed to AttachCurrentThreadAsDaemon - terminate!");
         exit(EXFAIL);
     }
     
-    /* TODO: Resolve runner method ...  */
+    /* Resolve runner method ...  */
+    
+    runnercls = (*env)->GetObjectClass(env, M_runner);
+    
+    if (NULL==runnercls)
+    {
+        NDRX_LOG(log_error, "Failed to resolve Runner class!");
+        userlog("Failed to resolve Runner class!");
+        exit(EXFAIL);
+    }
+    
+    mid = (*env)->GetMethodID(env, runnercls, "run", "()V");
+    
+    if (NULL==mid)
+    {
+        NDRX_LOG(log_error, "Failed to get run() method!");
+        userlog("Failed to get run() method!");
+        exit(EXFAIL);
+    }
     
     /* wait for signal... */
     
     for (;;)
     {
-        /* Wait for notification signal */
+        /* Wait for notification signal  */
+        NDRX_LOG(log_debug, "Ok, waiting shutdown signal...");
+        
         if (EXSUCCEED!=sigwait(&blockMask, &sig))     
         {
             NDRX_LOG(log_warn, "sigwait failed:(%s)", strerror(errno));
         }
         
         NDRX_LOG(log_error, "Got signal: %d - notify java", sig);
+        
+        /**
+         * WARNING ! The java method must not change the shutdown handlers!
+         */
+        MUTEX_LOCK_V(M_is_set_lock);
+        /* unset ATMI CTX */
+        tpsetctxt(TPNULLCONTEXT, 0L);
+        (*env)->CallObjectMethod(env, M_runner, mid);
+        tpsetctxt(ctx, 0L);
+        MUTEX_UNLOCK_V(M_is_set_lock);
+        
     }
     
+    NDRX_LOG(log_debug, "Shutdown mon terminates...");
+    
     return NULL;
+}
+
+/**
+ * Restart handler for JNI
+ * Migth be on any thread
+ * @param sig
+ */
+void sig_handler(int sig)
+{
+    /* wakup man thread... */
+    pthread_kill(M_signal_thread, SIGTERM);
 }
 
 /**
@@ -148,28 +209,22 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_installTermSi
              * in threaded and non threaded mode.
              */
             
+            static struct sigaction act;
+
+            memset(&act, 0, sizeof(act));
+            act.sa_handler = sig_handler;
+            act.sa_flags = SA_RESTART;
+
+            sigaction(SIGTERM, &act, NULL);
+            sigaction(SIGINT, &act, NULL);
+            sigaction(SIGHUP, &act, NULL);
+    
+            
             if (EXSUCCEED!=(*env)->GetJavaVM(env, &M_vm))
             {
                 NDRX_LOG(log_error, "Failed to get Java VM!");
                 ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed to get VM!");
                 EXFAIL_OUT(ret);
-            }
-
-            signal(SIGTERM, SIG_DFL);
-            signal(SIGINT, SIG_DFL);
-            signal(SIGHUP, SIG_DFL);
-
-            sigemptyset(&blockMask);
-
-            sigaddset(&blockMask, SIGTERM);
-            sigaddset(&blockMask, SIGINT);
-            sigaddset(&blockMask, SIGHUP);
-            
-
-            if (sigprocmask(SIG_BLOCK, &blockMask, NULL) == -1)
-            {
-                NDRX_LOG(log_always, "%s: sigprocmask failed: %s",
-                        __func__, strerror(errno));
             }
             
             /* set default action for signals too... */
@@ -177,15 +232,15 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_installTermSi
             pthread_attr_init(&pthread_custom_attr);
             /* set some small stacks size, 1M should be fine! */
             ndrx_platf_stack_set(&pthread_custom_attr);
+            
+            /* start the thread for monitoring signals... */
+            
             pthread_create(&M_signal_thread, &pthread_custom_attr, 
-                    sig_handler, NULL);
+                    sig_thread, NULL);
             
             NDRX_LOG(log_info, "Shutdown monitoring thread installed...");
 
         }
-        
-        /* start the thread for monitoring signals... */
-        
     }
     
     if (!have_lock)
