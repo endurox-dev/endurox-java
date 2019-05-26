@@ -260,7 +260,16 @@ Overall the library dependencies can be seen in following diagram:
 >>>>> LIBRARY DEPS <<<<<<<<<
 
 === Transaction Manager operations with JDBC drivers
-...
+
+Enduro/X transaction manager *tmsrv(8)*, is not aware of the Java. The only thing
+it processes is XA Driver loaded by *NDRX_XA_DRIVERLIB* configuration parameter.
+Which in turn provides the Enduro/X Java binding module *libexjava.so* found
+in *NDRX_XA_RMLIB*. The JDBC XA library finds out that this is not java which
+initiated driver loading, thus new Java Virtual Machine instance is created
+and hosted within tmsrv. VM is configured with settings form [@java] (with CCTAG
+support) section. Thus there shall be class path configured with -cp or -classpath
+settings in Java opts. From this class path further the JDBC XA Data Source
+class is loaded. 
 
 == Enduro/X Java XA Test Configuration
 
