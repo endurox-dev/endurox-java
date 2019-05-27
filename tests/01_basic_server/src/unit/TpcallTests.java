@@ -20,7 +20,7 @@ public class TpcallTests {
 
         TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
         assertNotEquals(ub, null);
-        
+        long cnt = 0;
         boolean leaktest = false;
         int leaktestSec = 0;
         StopWatch w = new StopWatch();
@@ -39,6 +39,8 @@ public class TpcallTests {
                 
         }
         
+        
+	w.reset();
         /**
          * TODO: Have long term test for memory management.
          * ideally we would time terminated tests, for example 5 min...?
@@ -47,6 +49,7 @@ public class TpcallTests {
         for (int i=0; ((i<1000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             
+/*
             try {
                 ub.Bdel(test.T_STRING_2_FLD, 0);
             } 
@@ -54,15 +57,23 @@ public class TpcallTests {
             {
                 // ignore.. 
             }
+*/
             
             String reqData = String.format("loop %d", i);
             ub.Bchg(test.T_STRING_FLD, 0, String.format("loop %d", i));
             
             ub = (TypedUbf)ctx.tpcall("ECHOSVC", ub, 0);
             
-            String rspData = ub.BgetString(test.T_STRING_2_FLD, 0);
-            assertEquals(reqData, rspData);
+            //String rspData = ub.BgetString(test.T_STRING_2_FLD, 0);
+            //assertEquals(reqData, rspData);
+            cnt++;
         }
+        
+        double difference = cnt / w.deltaSec();
+        
+        System.console().printf("Call performance: %f calls/sec\n", difference);
+        
+        
         ub.cleanup();
         ctx.cleanup();
     }
