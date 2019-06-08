@@ -1,0 +1,3 @@
+Download jdbc drivers from Postgresql and put jar files here.
+Download from: https://jdbc.postgresql.org/download.html
+Target file name pgjdbc.jar
