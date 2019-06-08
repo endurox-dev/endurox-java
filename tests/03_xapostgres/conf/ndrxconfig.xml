@@ -97,20 +97,6 @@
 			<cctag>DB1_JDBC</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_jdbc.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_jdbc</sysopt>
 		</server>
-                <server name="tmsrv">
-			<min>1</min>
-			<max>1</max>
-			<srvid>140</srvid>
-			<cctag>DB1_OCI</cctag>
-			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_oci.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_oci</sysopt>
-		</server>
-		<server name="tmsrv">
-			<min>1</min>
-			<max>1</max>
-			<srvid>240</srvid>
-			<cctag>DB1_NAT</cctag>
-			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_nat.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_nat</sysopt>
-		</server>
                 <server name="jserver03b">
 			<min>1</min>
 			<max>1</max>
@@ -118,7 +104,5 @@
 			<cctag>DB1_JDBC</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/JSERVER03B.log -r</sysopt>
 		</server>
-
-		<!-- Needs java server -->
 	</servers>
 </endurox>

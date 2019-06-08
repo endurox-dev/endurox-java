@@ -41,4 +41,5 @@ IF (ENABLE_XAORACLE02)
     add_subdirectory (02_xaoracle)
 ENDIF()
 
+add_subdirectory (03_xapostgres)
 # vim: set ts=4 sw=4 et smartindent:

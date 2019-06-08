@@ -35,17 +35,7 @@ public class XAPgTests implements  Runnable {
         
         boolean tranStarted = false;
         Statement stmt = null;
-        /*
-        if (ctx.tpgetlev() == 0) {
-            
-            tranStarted = true;
-            ctx.tpbegin(60, 0);
-            ctx.tpcommit(0);
-            
-            ctx.tpbegin(60, 0);
-            ctx.tpcommit(0);    
-        }
-        */
+        
         tranStarted = true;
         ctx.tpbegin(60, 0);
         /* delete all if error then abort... */
@@ -152,28 +142,6 @@ public class XAPgTests implements  Runnable {
         int leaktestSec = 0;
         StopWatch w = new StopWatch();
         
-        /**
-         * Register shutdown hook
-         
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                System.console().printf("Shutdown requested...\n");
-                XAPgTests.shutdownReq = true;
-                
-                while (!XAPgTests.shutdownDone)
-                {
-                    try {
-                        System.console().printf("Shutdown wait...\n");
-                        Thread.sleep(1000);
-                    }
-                    catch (Exception e) {
-                        
-                    }
-                }
-            }
-        });
-        * */
-        
         ctx.installTermSigHandler(this);
         
         String leaktestSecStr = System.getenv("NDRXJ_LEAKTEST"); 
@@ -205,7 +173,7 @@ public class XAPgTests implements  Runnable {
          * ideally we would time terminated tests, for example 5 min...?
          * thus we need a stop watch construction to have in java..
          */
-        for (int i=0; ((i<10000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        for (int i=0; ((i<100) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             /* TODO: Do the logic */
             ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
@@ -234,9 +202,6 @@ public class XAPgTests implements  Runnable {
                 ub = (TypedUbf)ctx.tpcall("DoTran", ub, AtmiConst.TPTRANSUSPEND);
             }
             
-            /* as we resume tran, get the count... */
-            chkCount(ctx, TEST_MAX);
-            
             /* lets abort */
             ctx.tpabort(0);
             
@@ -260,9 +225,6 @@ public class XAPgTests implements  Runnable {
                 ub = (TypedUbf)ctx.tpcall("DoTran", ub, AtmiConst.TPTRANSUSPEND);
             }
             
-            /* as we resume tran, get the count... */
-            chkCount(ctx, TEST_MAX);
-            
             /* Check suspend... */
             
             TPTRANID tx1 =  ctx.tpsuspend(0);
@@ -271,6 +233,7 @@ public class XAPgTests implements  Runnable {
             ctx.tpbegin(20, 0);
             
             chkCount(ctx, 0);
+            
             for (int j=0; j<10; j++)
             {
                 /* call the server, insert some data */
@@ -282,16 +245,16 @@ public class XAPgTests implements  Runnable {
                 ub = (TypedUbf)ctx.tpcall("DoTran", ub, AtmiConst.TPTRANSUSPEND);
             }
             
-            chkCount(ctx, 10);
             ctx.tpabort(0);
-            
+            chkCount(ctx, 0);
             
             /* resume back original transaction... */
             ctx.tpresume(tx1, 0);
-            chkCount(ctx, TEST_MAX);
+            /* chkCount(ctx, TEST_MAX); - cannot test / sessions not shared/join */
             
             /* lets abort */
             ctx.tpcommit(0);
+            
             chkCount(ctx, TEST_MAX);
             
             if (shutdownReq) {

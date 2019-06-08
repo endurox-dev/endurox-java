@@ -1,3 +1,0 @@
-#!/bin/bash
-
-sqlplus $EX_PG_USER/$EX_PG_PASS@$EX_PG_SID
