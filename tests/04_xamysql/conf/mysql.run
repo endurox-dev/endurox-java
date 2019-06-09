@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#export PGPASSWORD=$EX_PG_PASS
+#psql -U $EX_PG_USER -d $EX_PG_DB -h $EX_PG_HOST
+mysql --user=$EX_MY_USER --password=$EX_MY_PASS -D $EX_MY_DB -h $EX_MY_HOST -P $EX_MY_POR
