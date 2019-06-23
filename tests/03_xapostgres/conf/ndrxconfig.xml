@@ -97,6 +97,15 @@
 			<cctag>DB1_JDBC</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_jdbc.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_jdbc</sysopt>
 		</server>
+		
+		<server name="tmsrv">
+			<min>1</min>
+			<max>1</max>
+			<srvid>140</srvid>
+			<cctag>DB1_PQ</cctag>
+			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_pq.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_pq</sysopt>
+		</server>
+		
                 <server name="jserver03b">
 			<min>1</min>
 			<max>1</max>
