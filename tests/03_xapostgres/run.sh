@@ -48,13 +48,19 @@ export NDRX_CCTAG="on"
 
 rm $NDRX_APPHOME/log/*.log
 
-xadmin start -y
 
 #
-# Running client 01
+# First test with JDBC TMSRV
+#
+echo "Running JDBC TMSRV Mode"
+xadmin start -i 40
+xadmin start -i 340
+
+#
+# Running client 03
 #
 echo "Running jclient03b..."
-NDRX_CCTAG=DB1_JDBC jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
+NDRX_CCTAG=DB1_JDBC/DEBUG jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
 
 RET=$?
 
@@ -62,5 +68,29 @@ if [ "X$RET" != "X0" ]; then
 	echo "jexunit03b failed"
 	go_out 1
 fi
+
+#
+# Run with PQ TMSRV
+#
+xadmin stop -y
+rm *.log
+
+xadmin start -i 140
+xadmin start -i 340
+
+
+#
+# Running client 03
+#
+echo "Running jclient03b... 2"
+NDRX_CCTAG=DB1_JDBC/DEBUG jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
+
+RET=$?
+
+if [ "X$RET" != "X0" ]; then
+	echo "jexunit03b failed 2"
+	go_out 1
+fi
+
 
 go_out 0
