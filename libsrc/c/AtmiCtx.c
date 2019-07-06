@@ -1719,4 +1719,73 @@ expublic jint NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpgetlev(JNIEnv *env,
     return ret;
 }
 
+/**
+ * Get server context data
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @return 
+ */
+expublic jlong NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvgetctxdata
+  (JNIEnv * env, jobject atmiCtxObj)
+{
+    jlong ret = EXFAIL;
+    
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return ret;
+    }
+    
+    ret=(jlong)tpsrvgetctxdata();
+    
+    if (0==ret)
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    
+    return ret;
+}
+
+/**
+ * Set server call context data
+ * @param env java env
+ * @param atmiCtxObj ATMI Context
+ * @param dataptr allocated server context data
+ */
+expublic void NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvsetctxdata
+  (JNIEnv * env, jobject atmiCtxObj, jlong dataptr, jlong flags)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    if (EXSUCCEED!=tpsrvsetctxdata((char *)dataptr, (long)flags))
+    {
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Free server call context data
+ * @param env
+ * @param atmiCtxObj
+ * @param dataptr
+ */
+expublic void NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvfreectxdata
+  (JNIEnv * env, jobject atmiCtxObj, jlong dataptr)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    tpsrvfreectxdata((char *)dataptr);
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
 /* vim: set ts=4 sw=4 et smartindent: */

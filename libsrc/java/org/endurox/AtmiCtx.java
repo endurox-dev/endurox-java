@@ -2014,11 +2014,48 @@ public class AtmiCtx {
         
     }
 
-    /*
-     * TODO: tpsrvsetctxdata
-     * tpsrvfreectxdata
-     * tpsrvgetctxdata
+    /**
+     * Server threads processing. From the dispatcher thread XATMI call handle
+     * can be captured and delivered to worker thread. The handle must be
+     * freed by tpsrvfreectxdata().
+     * 
+     * @defgroup svthreads Server threads
+     * @{
      */
+    
+    /**
+     * Get server context data for multi threaded server
+     * See tpsrvgetctxdata(3) manpage for more information.
+     * 
+     * @throws  AtmiTPEPROTOException Global transaction was started and it was 
+     *  marked for abort-only, there was any open call descriptors 
+     *  with-in global transaction,
+     * 
+     * @throws AtmiTPERMERRException Global transaction was started and it was 
+     *  marked for abort-only, there was any open call descriptors 
+     *  with-in global transaction
+     * 
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. This could also be a 
+     *  problem with dynamical driver loading.
+     * 
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * 
+     * @return C pointer to allocated server context data
+     */
+    public native long tpsrvgetctxdata();
+    
+    /**
+     * Associate current thread with server call data.
+     * See tpsrvsetctxdata(3) manpage for more information.
+     */
+    public native void tpsrvsetctxdata(long dataptr, long flags);
+    
+    public native long tpsrvfreectxdata(long dataptr);
+    
+    /** @} */ // end of DTran
+    
 
     /**
      * Distributed transaction processing
@@ -2042,8 +2079,14 @@ public class AtmiCtx {
     
     /**
      * Close XA sub-system.
-     * Firstly we will test this with java, then will provide update
-     * driver for tmsrv to use jdbc.
+     * This shall be called after the processing thread terminates.
+     * @throws  AtmiTPERMERRException Resource Manager failed. The tpstrerror() 
+     *  will provide more info from last call.
+     * @throws  AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. This could also be a 
+     *  problem with dynamical driver loading.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
      */
     public native void tpclose();
     
@@ -2056,6 +2099,7 @@ public class AtmiCtx {
     public native TPTRANID tpsuspend (long flags);
     
     public native void tpresume (TPTRANID tid, long flags);
+    
     
     /**
      * Get database connection

@@ -168,6 +168,12 @@ exprivate jobject (*p_ndrxj_Java_org_endurox_AtmiCtx_tpdequeue)
         (JNIEnv * v0,  jobject v1,  jstring v2,  jstring v3,  jobject v4,  jobject v5,  jlong v6) = NULL;
 exprivate jobject (*p_ndrxj_Java_org_endurox_AtmiCtx_tpdequeueex)
         (JNIEnv * v0,  jobject v1,  jshort v2,  jshort v3,  jstring v4,  jobject v5,  jobject v6,  jlong v7) = NULL;
+exprivate jlong (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata)
+        (JNIEnv * v0,  jobject v1) = NULL;
+exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata)
+        (JNIEnv * v0,  jobject v1,  jlong v2,  jlong v3) = NULL;
+exprivate jlong (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata)
+        (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpopen)
         (JNIEnv * v0,  jobject v1) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpclose)
@@ -185,7 +191,7 @@ exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpresume)
 exprivate jint (*p_ndrxj_Java_org_endurox_AtmiCtx_tpgetlev)
         (JNIEnv * v0,  jobject v1) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_installTermSigHandler)
-        (JNIEnv * v0,  jclass v1,  jobject v2) = NULL;
+        (JNIEnv * v0,  jobject v1,  jobject v2) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_BExprTree_Btreefree)
         (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_TypedBuffer_tpfree)
@@ -378,6 +384,9 @@ exprivate ndrxj_loader_map_t M_funcmap[] =
     {"ndrxj_Java_org_endurox_AtmiCtx_tpenqueueex", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpenqueueex},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpdequeue", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpdequeue},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpdequeueex", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpdequeueex},
+    {"ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata},
+    {"ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata},
+    {"ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpopen", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpopen},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpclose", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpclose},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpbegin", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpbegin},
@@ -1282,6 +1291,54 @@ expublic jobject JNICALL Java_org_endurox_AtmiCtx_tpdequeueex (JNIEnv * v0,  job
 /**
  * Auto generated
  */
+expublic jlong JNICALL Java_org_endurox_AtmiCtx_tpsrvgetctxdata (JNIEnv * v0,  jobject v1)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v0))
+        {
+            return (jlong)0;
+        }
+    }
+    
+    return p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata(v0, v1);
+}
+
+/**
+ * Auto generated
+ */
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpsrvsetctxdata (JNIEnv * v0,  jobject v1,  jlong v2,  jlong v3)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v0))
+        {
+            return;
+        }
+    }
+    
+    p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata(v0, v1, v2, v3);
+}
+
+/**
+ * Auto generated
+ */
+expublic jlong JNICALL Java_org_endurox_AtmiCtx_tpsrvfreectxdata (JNIEnv * v0,  jobject v1,  jlong v2)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v0))
+        {
+            return (jlong)0;
+        }
+    }
+    
+    return p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata(v0, v1, v2);
+}
+
+/**
+ * Auto generated
+ */
 expublic void JNICALL Java_org_endurox_AtmiCtx_tpopen (JNIEnv * v0,  jobject v1)
 {
     if (!M_lib_init)
@@ -1410,7 +1467,7 @@ expublic jint JNICALL Java_org_endurox_AtmiCtx_tpgetlev (JNIEnv * v0,  jobject v
 /**
  * Auto generated
  */
-expublic void JNICALL Java_org_endurox_AtmiCtx_installTermSigHandler (JNIEnv * v0,  jclass v1,  jobject v2)
+expublic void JNICALL Java_org_endurox_AtmiCtx_installTermSigHandler (JNIEnv * v0,  jobject v1,  jobject v2)
 {
     if (!M_lib_init)
     {
