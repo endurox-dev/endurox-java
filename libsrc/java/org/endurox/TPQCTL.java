@@ -166,6 +166,11 @@ public class TPQCTL {
         this.exp_time = exp_time;
     }
 	
+    /**
+     * indicates which of the values are set
+     * @HasGetter
+     * @HasSetter
+     */
     long flags;             /**< indicates which of the values are set */
     long deq_time;          /**< absolute/relative  time for dequeuing */
     long priority;          /**< enqueue priority */
