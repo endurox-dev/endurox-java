@@ -555,6 +555,53 @@ out:
     return ret;
 }
 
+
+/**
+ * Load the function mappings.
+ * If mappings are OK, warm up the caches
+ */
+expublic JNICALL jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+    JNIEnv* env;
+    
+    if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_2) != JNI_OK) {
+        return JNI_ERR;
+    } 
+    else 
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(env))
+        {
+            return JNI_ERR;
+        }
+        
+        /* Build up the caches */
+        if (EXSUCCEED!=ndrxj_caches_load(env))
+        {
+            return JNI_ERR;
+        }
+        
+    }
+    
+    return JNI_VERSION_1_2;
+}
+
+/**
+ * Remove cached data
+ */
+expublic JNICALL void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    JNIEnv* env;
+    if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_2) != JNI_OK) {
+        // Something is wrong but nothing we can do about this :(
+        return;
+    } else {
+        
+        /*
+         *  Nothing to remove at the moment...
+         * Delete the caches
+         * */
+        ndrxj_caches_unload(env);
+    }
+}
+
 /**
  * Auto generated
  */

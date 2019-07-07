@@ -67,8 +67,6 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
             jobject *p_jdata, jobject *p_jcltid, jstring *p_jname, jstring *p_jfname)
 {
     jobject ret = NULL;
-    jclass bclz;
-    jmethodID mid;
     int we_set_ctx = EXFALSE;
     
     /* Set context if needed */
@@ -84,23 +82,7 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     
     NDRX_LOG(log_debug, "Allocating TpSvcInfo...");
     
-    bclz = (*env)->FindClass(env, TPSVCINFO_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", TPSVCINFO_CLASS);
-        goto out;
-    }
-    
     /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Ljava/lang/String;"
-            "Lorg/endurox/TypedBuffer;JIJLorg/endurox/ClientId;Ljava/lang/String;)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get %s constructor!", TPSVCINFO_CLASS);
-        goto out;
-    }
     
     /* Translate ATMI buffer */
     if (NULL==(*p_jdata=ndrxj_atmi_TypedBuffer_translate(env, 
@@ -127,11 +109,9 @@ expublic jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
     
     NDRX_LOG(log_debug, "About to NewObject() of TpSvcInfo");
     
-    ret = (*env)->NewObject(env, bclz, mid, *p_jname, *p_jdata, 
-            (jlong)svcinfo->flags, (jint)svcinfo->cd, 
+    ret = (*env)->NewObject(env, ndrxj_clazz_TpSvcInfo, ndrxj_clazz_TpSvcInfo_mid_INIT, 
+            *p_jname, *p_jdata, (jlong)svcinfo->flags, (jint)svcinfo->cd, 
             (jlong)svcinfo->appkey, *p_jcltid, *p_jfname);
-    
-    (*env)->DeleteLocalRef( env, bclz);
     
     if (NULL==ret)
     {

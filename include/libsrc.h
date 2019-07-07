@@ -157,7 +157,73 @@ typedef struct
     TPTRANID tid;
 } TPTRANID_conv;
 
+
+/**
+ * Cache of classes
+ */
+struct exj_class_cache
+{
+    char *classStr;     /**< String name of the class           */
+    jclass *calzz;      /**< pointer to class obj               */
+    int global;         /**< is global cached used?             */
+};
+
+/**
+ *  Java/C Object mapper for simple types 
+ */
+typedef struct exj_class_cache exj_class_cache_t;
+
+/**
+ * Cache of method id
+ */
+struct exj_mid_cache
+{
+    jclass *calzz;      /**< pointer to class obj               */
+    char *clz_ref;      /**< class debug reference              */
+    jmethodID *mid;     /**< Method id                          */
+    char *method;       /**< Method name                        */
+    char *sign;         /**< Method signature                   */
+};
+
+/**
+ *  Method ID cache
+ */
+typedef struct exj_mid_cache exj_mid_cache_t;
+
+/**
+ * Cache of field id
+ */
+struct exj_fid_cache
+{
+    jclass *calzz;      /**< pointer to class obj               */
+    char *clz_ref;      /**< class debug reference              */
+    jfieldID *fid;      /**< Method id                          */
+    char *field;        /**< Method name                        */
+    char *type;         /**< Method signature                   */
+};
+
+/**
+ *  Method ID cache
+ */
+typedef struct exj_fid_cache exj_fid_cache_t;
+
 /*---------------------------Globals------------------------------------*/
+
+/* AtmiCtx cached resources: */
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_tpCallDispatch;
+
+extern jfieldID ndrxj_clazz_AtmiCtx_fid_ctx;
+extern jfieldID ndrxj_clazz_AtmiCtx_fid_svr;
+
+/* Server cached resources: */
+extern jclass ndrxj_clazz_Server;
+extern jmethodID ndrxj_clazz_Server_mid_tpSvrDone;
+extern jmethodID ndrxj_clazz_Server_mid_tpSvrInit;
+
+/* TpSvcInfo cached resources: */
+extern jclass ndrxj_clazz_TpSvcInfo;
+extern jmethodID ndrxj_clazz_TpSvcInfo_mid_INIT;
+
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
@@ -285,6 +351,9 @@ extern int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid);
 extern NDRX_JAVA_API int ndrxj_xa_init(void);
 extern NDRX_JAVA_API int ndrxj_jvm_create(ndrx_ctx_priv_t *ctxpriv);
 extern NDRX_JAVA_API int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv);
+
+extern NDRX_JAVA_API int ndrxj_caches_load(JNIEnv *env);
+extern NDRX_JAVA_API void ndrxj_caches_unload(JNIEnv *env);
 #ifdef  __cplusplus
 }
 #endif

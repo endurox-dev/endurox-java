@@ -97,6 +97,7 @@ add_library (exjava SHARED
                 TPTRANID.c
                 xatmsrv.c
                 TermSigHandler.c
+                MetaCache.c
 	)
 
 add_library (exjavald SHARED

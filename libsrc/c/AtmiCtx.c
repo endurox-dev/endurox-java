@@ -78,10 +78,13 @@ exprivate jobjectArray M_jargv;
 expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 {
     TPCONTEXT_T ctx;
-   
+    
+    /* Moved to cache!
     jclass objClass = (*env)->GetObjectClass(env, atmiCtxObj);
     jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
-    jlong fieldVal = (*env)->GetLongField(env, atmiCtxObj, myFieldID);
+    */
+    
+    jlong fieldVal = (*env)->GetLongField(env, atmiCtxObj, ndrxj_clazz_AtmiCtx_fid_ctx);
 
     ctx = (TPCONTEXT_T)fieldVal;
 
@@ -153,9 +156,9 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
         }
     }
     
-    /* release class */
+    /* release class Cached!
     (*env)->DeleteLocalRef( env, objClass);
-
+*/
     return ctx;
 }
 
@@ -566,41 +569,17 @@ out:
  */
 exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
 {
-    int ret = EXSUCCEED;
-    jclass objClass = NULL;
-    jfieldID myFieldID;        
+    int ret = EXSUCCEED;    
     jobject svrObj = NULL;
     ndrx_ctx_priv_t *ctxpriv;
-    
-    /* Attribs of the server to invoke */
-    jclass svrClass = NULL;
-    jmethodID svr_mid;
     
     ctxpriv = ndrx_ctx_priv_get();
     
     NDRX_LOG(log_info, "Into tpsrvinit -> java");
-    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
-            NDRXJ_JATMICTX(ctxpriv));
     
-    if (NULL==objClass)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get object class for AtmiContext",
-                __func__);
-        EXFAIL_OUT(ret);   
-    }
-    
-    myFieldID = (*NDRXJ_JENV(ctxpriv))->GetFieldID(NDRXJ_JENV(ctxpriv), objClass, "svr", 
-            "Lorg/endurox/Server;");
-    
-    if (NULL==myFieldID)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get svr => Lorg/endurox/Server of Context obj!",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
     
     svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), 
-            NDRXJ_JATMICTX(ctxpriv), myFieldID);
+            NDRXJ_JATMICTX(ctxpriv), ndrxj_clazz_AtmiCtx_fid_svr);
     
     if (NULL==svrObj)
     {
@@ -610,25 +589,6 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     }
     
     /* Now invoke the interface method */
-    
-    svrClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), svrObj);
-    
-    if (NULL==svrClass)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get server object class",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-    
-    svr_mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), svrClass, "tpSvrInit",
-            "(Lorg/endurox/AtmiCtx;[Ljava/lang/String;)I");
-    
-    if (NULL==svr_mid)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get tpSvrInit() method!",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
  
     NDRX_LOG(log_debug, "About to call server interface...");
 
@@ -638,8 +598,8 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     tpsetctxt(TPNULLCONTEXT, 0L);
     
 
-    ret = (int)(*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), svrObj, svr_mid,
-            NDRXJ_JATMICTX(ctxpriv), M_jargv);
+    ret = (int)(*NDRXJ_JENV(ctxpriv))->CallIntMethod(NDRXJ_JENV(ctxpriv), svrObj, 
+            ndrxj_clazz_Server_mid_tpSvrInit, NDRXJ_JATMICTX(ctxpriv), M_jargv);
     
     /* set back actual context */
     tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
@@ -656,17 +616,6 @@ exprivate int ndrxj_tpsvrinit(int argc, char ** argv)
     
 out:
 
-    if (NULL!=objClass)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), objClass);
-    }
-
-
-    if (NULL!=svrClass)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), svrClass);
-    }
-
     return ret;
 }
 
@@ -679,8 +628,6 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
 {
     /* build the svcinfo object and invoke the service proxy of java side */
     jobject jsvcinfo = NULL;
-    jclass bclz = NULL;
-    jmethodID mid;
     jobject jdata = NULL;
     jobject jcltid = NULL;
     jstring jname = NULL;
@@ -698,35 +645,12 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
     {
         NDRX_LOG(log_debug, "%s: Got java service info invoke service: [%s]", 
                 __func__, svcinfo->name);
-        
-        /* Call method from Atmi Context, before that unset the C
-         * context, because we do not know in what threads java does works.
-         */
-        bclz = (*NDRXJ_JENV(ctxpriv))->FindClass(NDRXJ_JENV(ctxpriv), "org/endurox/AtmiCtx");
-    
-        if (NULL==bclz)
-        {        
-            /* I guess we need to abort here! */
-            NDRX_LOG(log_error, "Failed to find AtmiCtx - aborting...!");
-            /* tpreturn fail or simulate time-out? or just abort?*/
-            abort();
-        }
 
-        /* create buffer object... */
-        mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), bclz, 
-                "tpCallDispatch", "(Lorg/endurox/TpSvcInfo;)V");
-
-        if (NULL==mid)
-        {
-            NDRX_LOG(log_error, "Cannot get call dispatcher method at C side!");
-            abort();
-        }
-        
         /* unset context */
         tpsetctxt(TPNULLCONTEXT, 0L);
         
         (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), 
-                mid, jsvcinfo);
+                ndrxj_clazz_AtmiCtx_mid_tpCallDispatch, jsvcinfo);
         
         /* set context back... */
         tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
@@ -744,11 +668,6 @@ exprivate void dispatch_call(TPSVCINFO *svcinfo)
             
             (*NDRXJ_JENV(ctxpriv))->ExceptionClear(NDRXJ_JENV(ctxpriv));
         }
-    }
-    
-    if (NULL!=bclz)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef( NDRXJ_JENV(ctxpriv), bclz);
     }
 
     /*
@@ -842,39 +761,13 @@ out:
 exprivate void ndrxj_tpsvrdone(void)
 {
     int ret = EXSUCCEED;
-    jclass objClass;
-    jfieldID myFieldID;        
     jobject svrObj;
-    
-    /* Attribs of the server to invoke */
-    jclass svrClass;
-    jmethodID svr_mid;
     ndrx_ctx_priv_t *ctxpriv;
     
     ctxpriv = ndrx_ctx_priv_get();
     
-    objClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
-            NDRXJ_JATMICTX(ctxpriv));
-    
-    if (NULL==objClass)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get object class for AtmiContext",
-                __func__);
-        EXFAIL_OUT(ret);   
-    }
-    
-    myFieldID = (*NDRXJ_JENV(ctxpriv))->GetFieldID(NDRXJ_JENV(ctxpriv), objClass, "svr", 
-            "Lorg/endurox/Server;");
-    
-    if (NULL==myFieldID)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get svr => Lorg/endurox/Server of Context obj!",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-    
     svrObj = (*NDRXJ_JENV(ctxpriv))->GetObjectField(NDRXJ_JENV(ctxpriv), 
-            NDRXJ_JATMICTX(ctxpriv), myFieldID);
+            NDRXJ_JATMICTX(ctxpriv), ndrxj_clazz_AtmiCtx_fid_svr);
     
     if (NULL==svrObj)
     {
@@ -884,25 +777,6 @@ exprivate void ndrxj_tpsvrdone(void)
     }
     
     /* Now invoke the interface method */
-    
-    svrClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), svrObj);
-    
-    if (NULL==svrClass)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get server object class",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-    
-    svr_mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), svrClass, 
-            "tpSvrDone", "(Lorg/endurox/AtmiCtx;)V");
-    
-    if (NULL==svr_mid)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get tpSvrDone() method!",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
  
     NDRX_LOG(log_debug, "About to call server interface (tpSvrDone)...");
     
@@ -910,8 +784,8 @@ exprivate void ndrxj_tpsvrdone(void)
     tpsetctxt(TPNULLCONTEXT, 0L);
     
     /* Call server object */
-    (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), svrObj, svr_mid, 
-            NDRXJ_JATMICTX(ctxpriv));
+    (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), svrObj, 
+            ndrxj_clazz_Server_mid_tpSvrDone, NDRXJ_JATMICTX(ctxpriv));
     
     /* set back actual context */
     tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);

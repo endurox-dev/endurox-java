@@ -47,6 +47,10 @@ public class ThreadedSvc implements Service {
             ctx.tplogDebug("return...");
             ctx.tpreturn(AtmiConst.TPSUCCESS, 0, buf, 0);
             
+            /* terminate the xatmi session */
+            ctx.tpterm();
+            ctx.cleanup();
+            
         }
         
         /**

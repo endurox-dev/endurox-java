@@ -1,5 +1,7 @@
 /**
  * @brief Common java XA driver loader
+ *  Caches shall be loaded once we attempt to access any of the AtmiCtx
+ *  thus init shall do that.
  *
  * @file exjdbc.c
  */
