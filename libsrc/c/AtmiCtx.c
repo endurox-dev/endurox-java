@@ -79,11 +79,6 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
 {
     TPCONTEXT_T ctx;
     
-    /* Moved to cache!
-    jclass objClass = (*env)->GetObjectClass(env, atmiCtxObj);
-    jfieldID myFieldID = (*env)->GetFieldID(env, objClass, "ctx", "J");
-    */
-    
     jlong fieldVal = (*env)->GetLongField(env, atmiCtxObj, ndrxj_clazz_AtmiCtx_fid_ctx);
 
     ctx = (TPCONTEXT_T)fieldVal;
@@ -156,9 +151,6 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
         }
     }
     
-    /* release class Cached!
-    (*env)->DeleteLocalRef( env, objClass);
-*/
     return ctx;
 }
 
