@@ -67,30 +67,12 @@ expublic int ndrxj_atmi_ClientId_translate_toc(JNIEnv *env,
 {
     /* Copy client data from java object to c object */
     int ret = EXSUCCEED;
-    jclass objClass;
-    jfieldID fldid;
     jstring clientData;
     const char *n_clientData;
     jboolean n_clientData_copy = EXFALSE;
     
-    objClass = (*env)->GetObjectClass(env, in_jcltid);
     
-    if (NULL==objClass)
-    {
-        /* throw new exception?? */
-        NDRX_LOG(log_error, "Failed to get object class for ptr %p", in_jcltid);
-        EXFAIL_OUT(ret);
-    }
-    
-    fldid = (*env)->GetFieldID(env, objClass, "clientData", "Ljava/lang/String;");
-    
-    if (NULL==fldid)
-    {
-        NDRX_LOG(log_error, "Failed to get `clientData' for ClientID field");
-        EXFAIL_OUT(ret);
-    }
-    
-    clientData = (*env)->GetObjectField(env, in_jcltid, fldid);
+    clientData = (*env)->GetObjectField(env, in_jcltid, ndrxj_clazz_ClientId_fid_clientData);
     
     n_clientData  = (*env)->GetStringUTFChars(env, clientData, &n_clientData_copy);
     
@@ -102,11 +84,6 @@ out:
     if (n_clientData_copy)
     {
          (*env)->ReleaseStringUTFChars(env, clientData, n_clientData);
-    }
-
-    if (NULL!=objClass)
-    {
-        (*env)->DeleteLocalRef(env, objClass);
     }
 
     return ret;
@@ -128,8 +105,6 @@ expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
             jobject ctx_obj, int is_ctxset, CLIENTID *cltid)
 {
     jobject ret = NULL;
-    jclass bclz;
-    jmethodID mid;
     jstring jclientdata;
     int we_set_ctx = EXFALSE;
 
@@ -146,32 +121,15 @@ expublic jobject ndrxj_atmi_ClientId_translate(JNIEnv *env,
     
     NDRX_LOG(log_debug, "Allocating ClientID...");
     
-    bclz = (*env)->FindClass(env, CLIENTID_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", CLIENTID_CLASS);
-        goto out;
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Ljava/lang/String;)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get %s constructor!", CLIENTID_CLASS);
-        goto out;
-    }
-    
     /* get the string of client id */
     
     jclientdata = (*env)->NewStringUTF(env, cltid->clientdata);
     
     NDRX_LOG(log_debug, "About to NewObject() of ClientID");
     
-    ret = (*env)->NewObject(env, bclz, mid, jclientdata);
+    ret = (*env)->NewObject(env, ndrxj_clazz_ClientId, ndrxj_clazz_ClientId_mid_INIT, 
+            jclientdata);
     
-    (*env)->DeleteLocalRef( env, bclz);
     
     if (NULL==ret)
     {

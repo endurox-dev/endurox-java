@@ -256,6 +256,11 @@ extern jmethodID ndrxj_clazz_TypedJson_mid_INIT;
 extern jclass ndrxj_clazz_TypedTpInit;
 extern jmethodID ndrxj_clazz_TypedTpInit_mid_INIT;
 
+/************************ ClientId resources **********************************/
+extern jclass ndrxj_clazz_ClientId;
+extern jmethodID ndrxj_clazz_ClientId_mid_INIT;
+extern jfieldID ndrxj_clazz_ClientId_fid_clientData;
+
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 

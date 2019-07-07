@@ -127,6 +127,12 @@ expublic jclass ndrxj_clazz_TypedTpInit;
 expublic jmethodID ndrxj_clazz_TypedTpInit_mid_INIT;
 /* Fields: */
 
+/************************ ClientId resources **********************************/
+expublic jclass ndrxj_clazz_ClientId;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_ClientId_mid_INIT;
+/* Fields: */
+expublic jfieldID ndrxj_clazz_ClientId_fid_clientData;
 
 
 /**
@@ -144,6 +150,9 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"org/endurox/TypedView", &ndrxj_clazz_TypedView,     GLOB}
     ,{"org/endurox/TypedJson", &ndrxj_clazz_TypedJson,     GLOB}
     ,{"org/endurox/TypedTpInit", &ndrxj_clazz_TypedTpInit,     GLOB}
+    ,{"org/endurox/ClientId", &ndrxj_clazz_ClientId,     GLOB}
+    
+    
 };
 
 /**
@@ -167,6 +176,7 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_TypedView), &ndrxj_clazz_TypedView_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
     ,{CRF(ndrxj_clazz_TypedJson), &ndrxj_clazz_TypedJson_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
     ,{CRF(ndrxj_clazz_TypedTpInit), &ndrxj_clazz_TypedTpInit_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_ClientId), &ndrxj_clazz_ClientId_mid_INIT, "<init>", "(Ljava/lang/String;)V"}
 };
 
 /**
@@ -181,6 +191,8 @@ exprivate exj_fid_cache_t M_fields[] =
     ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_fid_len, "len", "J"}
     ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_fid_ctx, "ctx", 
             "Lorg/endurox/AtmiCtx;"}
+    ,{CRF(ndrxj_clazz_ClientId), &ndrxj_clazz_ClientId_fid_clientData, "clientData", 
+            "Ljava/lang/String;"}
 
 };
 
