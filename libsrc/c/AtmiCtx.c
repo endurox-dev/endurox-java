@@ -526,24 +526,14 @@ JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_getAtmiError (JNIEnv *e
     NDRX_LOG(log_debug, "context: (%p)", ctx);
     err = tperrno;
 
-    /* Get the class we wish to return an instance of */
-    jclass errClazz = (*env)->FindClass(env, "org/endurox/ErrorTuple");
-
-    /* Get the method id of an empty constructor in clazz */
-    jmethodID constructor = (*env)->GetMethodID(env, errClazz, "<init>", "()V");
-
     /* Create an instance of clazz */
-    errObj = (*env)->NewObject(env, errClazz, constructor);
-
-    /* Get Field references */
-    jfieldID param1Field = (*env)->GetFieldID(env, errClazz, "err", "I");
-    jfieldID param2Field = (*env)->GetFieldID(env, errClazz, "msg", "Ljava/lang/String;");
+    errObj = (*env)->NewObject(env, ndrxj_clazz_ErrorTuple, ndrxj_clazz_ErrorTuple_mid_INIT);
 
     /* Set fields for object */
-    (*env)->SetIntField(env, errObj, param1Field, err);
+    (*env)->SetIntField(env, errObj, ndrxj_clazz_ErrorTuple_fid_err, err);
 
     jstr=(jstring)((*env)->NewStringUTF(env, tpstrerror(err)) );
-    (*env)->SetObjectField(env, errObj,param2Field,(jobject)jstr);
+    (*env)->SetObjectField(env, errObj,ndrxj_clazz_ErrorTuple_fid_msg,(jobject)jstr);
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);

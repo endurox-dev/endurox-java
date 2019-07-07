@@ -261,6 +261,15 @@ extern jclass ndrxj_clazz_ClientId;
 extern jmethodID ndrxj_clazz_ClientId_mid_INIT;
 extern jfieldID ndrxj_clazz_ClientId_fid_clientData;
 
+
+/************************ ErrorTuple resources ********************************/
+extern jclass ndrxj_clazz_ErrorTuple;
+/* Methods: */
+extern jmethodID ndrxj_clazz_ErrorTuple_mid_INIT;
+/* Fields: */
+extern jfieldID ndrxj_clazz_ErrorTuple_fid_err;
+extern jfieldID ndrxj_clazz_ErrorTuple_fid_msg;
+
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
