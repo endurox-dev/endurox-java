@@ -2049,10 +2049,16 @@ public class AtmiCtx {
     /**
      * Associate current thread with server call data.
      * See tpsrvsetctxdata(3) manpage for more information.
+     * @param flags[in] for server worker threads use AtmiConst.SYS_SRV_THREAD
      */
     public native void tpsrvsetctxdata(long dataptr, long flags);
     
-    public native long tpsrvfreectxdata(long dataptr);
+    public native void tpsrvfreectxdata(long dataptr);
+    
+    /**
+     * Continue the server work after extracting the context data
+     */
+    public native void tpcontinue();
     
     /** @} */ // end of DTran
     

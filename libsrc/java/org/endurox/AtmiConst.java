@@ -486,5 +486,8 @@ public class AtmiConst {
     
     /** @} */ // end of xaconst
     
+    /**< This is new server thread        */
+    public static final long SYS_SRV_THREAD = 0x00000004;
+    
 }
 /* vim: set ts=4 sw=4 et smartindent: */

@@ -76,6 +76,19 @@ if [ "X$1" != "X" ]; then
     jexunit01b $1 || go_out 11
 
 else
+    jexunit01b SrvThreads || go_out 12
+    # start all the copies for high speed testing..
+    echo "Before server boot"
+    xadmin start -i 101
+    xadmin start -i 102
+    xadmin start -i 103
+    xadmin start -i 104
+    echo "After server boot"
+    xadmin psc
+    jexunit01b CltThreads || go_out 10
+    # back to single server
+    xadmin stop -s jserver01_2b
+    xadmin start -i 100
     jexunit01b QueueTests || go_out 9
     jexunit01b TpBroadcastTests || go_out 8
     jexunit01b TpNotifyTests || go_out 7

@@ -24,6 +24,8 @@ public class JServer01 implements Server, Service {
         ctx.tplogDebug("Into tpSvrInit()");
         ctx.tpadvertise("DUMMYSVC", "DUMMYSVC", this);
         ctx.tpadvertise("UBFOK2", "UbfOk2", new UbfOk2());
+        ctx.tpadvertise("ThreadedSvc", "ThreadedSvc", new ThreadedSvc());
+                
         return AtmiConst.SUCCEED;
     }
     

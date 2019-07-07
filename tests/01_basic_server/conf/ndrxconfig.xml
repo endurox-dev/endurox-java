@@ -42,7 +42,7 @@
 	<server name="jserver01_2b">
             <srvid>100</srvid>
             <min>1</min>
-            <max>1</max>
+            <max>5</max>
             <sysopt>-e ${NDRX_APPHOME}/log/JSERVER01_2B -r</sysopt>
         </server>
         

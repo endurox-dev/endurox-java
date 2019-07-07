@@ -172,8 +172,10 @@ exprivate jlong (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata)
         (JNIEnv * v0,  jobject v1) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata)
         (JNIEnv * v0,  jobject v1,  jlong v2,  jlong v3) = NULL;
-exprivate jlong (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata)
+exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata)
         (JNIEnv * v0,  jobject v1,  jlong v2) = NULL;
+exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpcontinue)
+        (JNIEnv * v0,  jobject v1) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpopen)
         (JNIEnv * v0,  jobject v1) = NULL;
 exprivate void (*p_ndrxj_Java_org_endurox_AtmiCtx_tpclose)
@@ -387,6 +389,7 @@ exprivate ndrxj_loader_map_t M_funcmap[] =
     {"ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata},
+    {"ndrxj_Java_org_endurox_AtmiCtx_tpcontinue", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpcontinue},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpopen", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpopen},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpclose", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpclose},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpbegin", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpbegin},
@@ -1323,17 +1326,33 @@ expublic void JNICALL Java_org_endurox_AtmiCtx_tpsrvsetctxdata (JNIEnv * v0,  jo
 /**
  * Auto generated
  */
-expublic jlong JNICALL Java_org_endurox_AtmiCtx_tpsrvfreectxdata (JNIEnv * v0,  jobject v1,  jlong v2)
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpsrvfreectxdata (JNIEnv * v0,  jobject v1,  jlong v2)
 {
     if (!M_lib_init)
     {
         if (EXSUCCEED!=ndrxj_lib_init(v0))
         {
-            return (jlong)0;
+            return;
         }
     }
     
-    return p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata(v0, v1, v2);
+    p_ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata(v0, v1, v2);
+}
+
+/**
+ * Auto generated
+ */
+expublic void JNICALL Java_org_endurox_AtmiCtx_tpcontinue (JNIEnv * v0,  jobject v1)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v0))
+        {
+            return;
+        }
+    }
+    
+    p_ndrxj_Java_org_endurox_AtmiCtx_tpcontinue(v0, v1);
 }
 
 /**

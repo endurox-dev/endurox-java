@@ -118,7 +118,7 @@ for my $qfn (@ARGV) {
 # Now plot the loader.c
 #
 
-my $filename = 'loader.c';
+my $filename = '../libsrc/c/loader.c';
 
 open(OUTC, ">$filename") or die "Could not open file '$filename' $!";
 
@@ -382,7 +382,7 @@ close (OUTC);
 # Now generate header file for real glue code
 #
 
-$filename='exjglue.h';
+$filename='../include/exjglue.h';
 
 open(OUTH, ">$filename") or die "Could not open file '$filename' $!";
 

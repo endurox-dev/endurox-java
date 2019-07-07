@@ -101,6 +101,32 @@ echo "Test period $NDRXJ_LEAKTEST sec"
 #
 xmemck -d45 -s50 -t90 -m jexunit01b -m jserver01_2b &
 
+export NDRXJ_LEAKTEST_NAME="srvThreads"
+jexunit01b SrvThreads || go_out 15
+tmshutdown -y; tmboot -y
+test_leak;
+
+# start all the copies for high speed testing..
+export NDRXJ_LEAKTEST_NAME="clThreadsTest"
+echo "Before server boot"
+xadmin start -i 101
+xadmin start -i 102
+xadmin start -i 103
+xadmin start -i 104
+echo "After server boot"
+xadmin psc
+jexunit01b CltThreads || go_out 10
+# back to single server
+xadmin stop -s jserver01_2b
+xadmin start -i 100
+
+
+export NDRXJ_LEAKTEST_NAME="basicQTest"
+jexunit01b QueueTests || go_out 14
+tmshutdown -y; tmboot -y
+test_leak;
+
+
 export NDRXJ_LEAKTEST_NAME="basicQTest"
 jexunit01b QueueTests || go_out 14
 tmshutdown -y; tmboot -y

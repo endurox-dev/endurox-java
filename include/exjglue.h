@@ -146,8 +146,10 @@ extern NDRX_JAVA_API jlong JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdat
         (JNIEnv *, jobject);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata
         (JNIEnv *, jobject, jlong, jlong);
-extern NDRX_JAVA_API jlong JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata
+extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata
         (JNIEnv *, jobject, jlong);
+extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpcontinue
+        (JNIEnv *, jobject);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpopen
         (JNIEnv *, jobject);
 extern NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpclose

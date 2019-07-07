@@ -1725,7 +1725,7 @@ expublic jint NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpgetlev(JNIEnv *env,
  * @param atmiCtxObj ATMI Context
  * @return 
  */
-expublic jlong NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvgetctxdata
+expublic jlong NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata
   (JNIEnv * env, jobject atmiCtxObj)
 {
     jlong ret = EXFAIL;
@@ -1753,7 +1753,7 @@ expublic jlong NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvgetctxdata
  * @param atmiCtxObj ATMI Context
  * @param dataptr allocated server context data
  */
-expublic void NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvsetctxdata
+expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata
   (JNIEnv * env, jobject atmiCtxObj, jlong dataptr, jlong flags)
 {
     if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
@@ -1775,7 +1775,7 @@ expublic void NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvsetctxdata
  * @param atmiCtxObj
  * @param dataptr
  */
-expublic void NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvfreectxdata
+expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata
   (JNIEnv * env, jobject atmiCtxObj, jlong dataptr)
 {
     if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
@@ -1784,6 +1784,24 @@ expublic void NDRX_JAVA_API Java_org_endurox_AtmiCtx_tpsrvfreectxdata
     }
     
     tpsrvfreectxdata((char *)dataptr);
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+}
+
+/**
+ * Continue the server work
+ * @param env java env
+ * @param atmiCtxObj atmi context
+ */
+expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpcontinue
+        (JNIEnv * env, jobject atmiCtxObj)
+{
+    if (NULL==ndrxj_get_ctx(env, atmiCtxObj, EXTRUE))
+    {
+        return;
+    }
+    
+    tpcontinue();
     
     tpsetctxt(TPNULLCONTEXT, 0L);
 }

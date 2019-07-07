@@ -86,6 +86,22 @@ public class TypedBuffer {
          this.cPtr = cPtr;
          this.len = len;
     }
+    
+    /**
+     * Change the owner ATMi Context, when buffer is passed from one context /
+     * thread to another
+     * @throws NullPointerException ctx is null
+     * @param ctx ATMI Context
+     */
+    public void setAtmiCtx(AtmiCtx ctx) {
+        
+        if (null==ctx) {
+            throw new NullPointerException("ctx must not be NULL");
+        }
+        
+        this.ctx = ctx;
+    }
+
 
     /**
      * Clean up the object (basically this is destructor) as we cannot relay
