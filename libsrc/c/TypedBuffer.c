@@ -60,50 +60,26 @@ expublic int ndrxj_TypedBuffer_finalize_transfer(JNIEnv *env,
         jobject to_data, jobject from_data, int from_invalidate)
 {
     int ret = EXSUCCEED;
-    
-    jclass clz;
-    jfieldID doFinalize_fldid;
-    jboolean doFinalize;
-    
-    clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
 
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to get Atmi buffer class [%s]!",
-                TYPEDBUFFER_CLASS);
-        EXFAIL_OUT(ret);
-    }
+    jboolean doFinalize;
+ 
     
-    if (NULL==(doFinalize_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [doFinalize] field from TypedBuffer: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    doFinalize = (*env)->GetBooleanField(env, from_data, doFinalize_fldid);
+    doFinalize = (*env)->GetBooleanField(env, from_data, 
+            ndrxj_clazz_TypedBuffer_fid_doFinalize);
     
     /* now set the field to dest buffer */
     NDRX_LOG(log_debug, "transfer of auto flag: %d", (int)doFinalize);
-    (*env)->SetBooleanField(env, to_data, doFinalize_fldid, doFinalize);
+    (*env)->SetBooleanField(env, to_data, ndrxj_clazz_TypedBuffer_fid_doFinalize, 
+            doFinalize);
     
     /* now set org buffer to false */
-    (*env)->SetBooleanField(env, from_data, doFinalize_fldid, JNI_FALSE);
+    (*env)->SetBooleanField(env, from_data, ndrxj_clazz_TypedBuffer_fid_doFinalize, 
+            JNI_FALSE);
     
     if (from_invalidate)
     {
-        jfieldID cptr_fldid;
-        NDRX_LOG(log_info, "Source buffer will be invalidated...");
         
-        if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to get [cPtr] field from TypedBuffer: %s");
-            EXFAIL_OUT(ret);
-        }
-        
-        (*env)->SetLongField(env, from_data, cptr_fldid, 0L);
+        (*env)->SetLongField(env, from_data, ndrxj_clazz_TypedBuffer_fid_cPtr, 0L);
     }
     
     if((*env)->ExceptionCheck(env))
@@ -130,27 +106,9 @@ expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env,
         jobject atmiBufObj, int do_set)
 {
     TPCONTEXT_T ctx = NULL;
-
-    jclass objClass = (*env)->GetObjectClass(env, atmiBufObj);
     
-    if (NULL==objClass)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get object class: %s");
-        goto out;
-    }
-    
-    jfieldID atmi_ctx_fld = (*env)->GetFieldID(env, objClass, "ctx", 
-            "Lorg/endurox/AtmiCtx;");
-    
-    if (NULL==atmi_ctx_fld)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get context field from TypedBuffer: %s");
-        goto out;
-    }
-    
-    jobject atmi_ctx_obj = (*env)->GetObjectField(env, atmiBufObj, atmi_ctx_fld);
+    jobject atmi_ctx_obj = (*env)->GetObjectField(env, atmiBufObj, 
+            ndrxj_clazz_TypedBuffer_fid_ctx);
     
     if (NULL==atmi_ctx_obj)
     {
@@ -165,10 +123,7 @@ expublic TPCONTEXT_T ndrxj_TypedBuffer_get_ctx(JNIEnv *env,
     }
     
 out:
-    if (NULL!=objClass)
-    {
-        (*env)->DeleteLocalRef(env, objClass);
-    }
+    
     return ctx;
 }
 
@@ -304,31 +259,43 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     {
         /* UBF object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedUbf");
+        bclz = ndrxj_clazz_TypedUbf;
+        mid = ndrxj_clazz_TypedUbf_mid_INIT;
     }
     else if (0==strcmp(p_type, "CARRAY"))
     {
         /* Carray object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedCarray");
+        bclz = ndrxj_clazz_TypedCarray;
+        mid = ndrxj_clazz_TypedCarray_mid_INIT;
     }
     else if (0==strcmp(p_type, "STRING"))
     {
         /* String object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedString");
+        bclz = ndrxj_clazz_TypedString;
+        mid = ndrxj_clazz_TypedString_mid_INIT;
     }
     else if (0==strcmp(p_type, "VIEW"))
     {
         /* VIEW object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedView");
+        bclz = ndrxj_clazz_TypedView;
+        mid = ndrxj_clazz_TypedView_mid_INIT;
     }
     else if (0==strcmp(p_type, "JSON"))
     {
         /* JSON object */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedJson");
+        bclz = ndrxj_clazz_TypedJson;
+        mid = ndrxj_clazz_TypedJson_mid_INIT;
     }
     else if (0==strcmp(p_type, "TPINIT"))
     {
         /* Init buffer */
         snprintf(clazz, sizeof(clazz), "org/endurox/TypedTpInit");
+        bclz = ndrxj_clazz_TypedTpInit;
+        mid = ndrxj_clazz_TypedTpInit_mid_INIT;
     }
     else
     {
@@ -337,46 +304,10 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
         goto out;
     }
     
-    NDRX_LOG(log_debug, "Allocating [%s] class", clazz);
-    
-    bclz = (*env)->FindClass(env, clazz);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", clazz);
-        goto out;
-        
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
-    }
-
     NDRX_LOG(log_debug, "About to NewObject(%s)", clazz);
     
     ret = (*env)->NewObject(env, bclz, mid, ctx_obj, (jboolean)finalize, 
             (jlong)data, len);
-    
-    /*
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * BIG WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * Seems that if we run from JNI java loader, we must delete local references
-     * THIS AFFECTS FUNCTIONS WHICH ARE USED BY SERVICE CALL DISPATCHER!!!!!!!!!
-     * OTHERWISE EXPECT LEAKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     */
-    (*env)->DeleteLocalRef( env, bclz);
-    
-    if (NULL==ret)
-    {
-        NDRX_LOG(log_error, "Failed to create [%s]", clazz);
-        goto out;
-    }
     
     NDRX_LOG(log_debug, "NewObject() done");
     
@@ -410,11 +341,6 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
             int unsetDoFinalize, int unsetPtr)
 {
     int ret = EXSUCCEED;
-    
-    jclass clz;
-    jfieldID cptr_fldid;
-    jfieldID clen_fldid;
-    jfieldID doFinalize_fldid;
     jlong cptr;
     jlong clen;
     
@@ -425,37 +351,14 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
         goto out;
     }
     
-    clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to get Atmi buffer class!");
-        EXFAIL_OUT(ret);
-    }
-    
-    if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [cPtr] field from TypedBuffer: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    cptr = (*env)->GetLongField(env, data, cptr_fldid);
+    cptr = (*env)->GetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_cPtr);
     
     if (unsetPtr)
     {
-        (*env)->SetLongField(env, data, cptr_fldid, 0L);
+        (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_cPtr, 0L);
     }
     
-    if (NULL==(clen_fldid = (*env)->GetFieldID(env, clz, "len", "J")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [len] field from TypedBuffer: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    clen = (*env)->GetLongField(env, data, clen_fldid);
+    clen = (*env)->GetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_len);
             
     
     *buf = (char *)cptr;
@@ -463,21 +366,17 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     
     if (NULL!=doFinalize || unsetDoFinalize)
     {
-        if (NULL==(doFinalize_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to get [doFinalize] field from TypedBuffer: %s");
-            EXFAIL_OUT(ret);
-        }
 
         if (NULL!=doFinalize)
         {
-            *doFinalize = (*env)->GetBooleanField(env, data, doFinalize_fldid);
+            *doFinalize = (*env)->GetBooleanField(env, data, 
+                    ndrxj_clazz_TypedBuffer_fid_doFinalize);
         }
         
         if (unsetDoFinalize)
         {
-            (*env)->SetBooleanField(env, data, doFinalize_fldid, JNI_FALSE);
+            (*env)->SetBooleanField(env, data, 
+                    ndrxj_clazz_TypedBuffer_fid_doFinalize, JNI_FALSE);
         }
     }
     
@@ -491,11 +390,6 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     }
     
 out:
-    
-    if (NULL!=clz)
-    {
-        (*env)->DeleteLocalRef( env, clz);
-    }
     
     return ret;
 }
@@ -512,49 +406,13 @@ expublic int ndrxj_atmi_TypedBuffer_set_buffer(JNIEnv *env,
             jobject data, char *buf, long len)
 {
     int ret = EXSUCCEED;
-    
-    jclass clz = NULL;
-    jfieldID cptr_fldid;
-    jfieldID clen_fldid;
     jlong cptr = (jlong)buf;
     jlong clen = (jlong)len;
     
-    clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to get Atmi buffer class [%s]!", 
-                TYPEDBUFFER_CLASS);
-        EXFAIL_OUT(ret);
-    }
-    
-    if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [cPtr] field from " TYPEDBUFFER_CLASS ": %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    (*env)->SetLongField(env, data, cptr_fldid, cptr);
-    
-    /* Check exception... */
-            
-    if (NULL==(clen_fldid = (*env)->GetFieldID(env, clz, "len", "J")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [len] field from TypedBuffer: %s");
-        EXFAIL_OUT(ret);
-    }
-    
-    (*env)->SetLongField(env, data, clen_fldid, clen);
+    (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_cPtr, cptr);
+    (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_len, clen);
     
 out:
-    
-    if (NULL!=clz)
-    {
-        (*env)->DeleteLocalRef( env, clz);
-    }
     
     return ret;
 }
@@ -638,10 +496,6 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     
     int is_types_eq;
     
-    jclass clz;
-    jfieldID clen_fldid;
-    jfieldID cptr_fldid;
-    jfieldID dofin_fldid;
     jboolean finalizeOrg = EXFALSE;
 
     if (NULL!=odata)
@@ -675,43 +529,21 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
     else if (is_types_eq)
     {    
         ret = data;
-        clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
-            
-        if (NULL==clz)
-        {        
-            /* I guess we need to abort here! 
-             * exception should be set already
-             */
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                        "Failed to resolve `TypedBuffer' class! ");
-            goto out;
-        }
         
         if (ilen!=olen)
         {
             NDRX_LOG(log_debug, "Buffer sizes changed...");
-            if (NULL==(clen_fldid = (*env)->GetFieldID(env, clz, "len", "J")))
-            {
-                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                        "Failed to get [len] field from TypedBuffer: %s");
-                goto out;
-            }
 
-            (*env)->SetLongField(env, data, clen_fldid, (jlong)olen);
+            (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_len, 
+                    (jlong)olen);
         }
         
         if (idata!=odata && NULL!=data)
         {
             NDRX_LOG(log_debug, "Buffer pointers changed...");
-            
-            if (NULL==(cptr_fldid = (*env)->GetFieldID(env, clz, "cPtr", "J")))
-            {
-                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                        "Failed to get [cPtr] field from TypedBuffer: %s");
-                goto out;
-            }
 
-            (*env)->SetLongField(env, data, cptr_fldid, (jlong)odata);
+            (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_cPtr, 
+                    (jlong)odata);
 
         }
     }
@@ -724,30 +556,13 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
 
         if (NULL!=data)
         {
-            clz = (*env)->FindClass(env, TYPEDBUFFER_CLASS);
-
-            if (NULL==clz)
-            {        
-                /* I guess we need to abort here! 
-                 * exception should be set already
-                 */
-                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                            "Failed to resolve `" TYPEDBUFFER_CLASS "' class! ");
-                goto out;
-            }
-
             /* Change the not finalize flag */
 
-            if (NULL==(dofin_fldid = (*env)->GetFieldID(env, clz, "doFinalize", "Z")))
-            {
-                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                        "Failed to get [doFinalize] field from " TYPEDBUFFER_CLASS ": %s");
-                goto out;
-            }
+            finalizeOrg = (*env)->GetBooleanField(env, data, 
+                    ndrxj_clazz_TypedBuffer_fid_doFinalize);
 
-            finalizeOrg = (*env)->GetBooleanField(env, data, dofin_fldid);
-
-            (*env)->SetBooleanField(env, data, dofin_fldid, (jboolean)JNI_FALSE);
+            (*env)->SetBooleanField(env, data, ndrxj_clazz_TypedBuffer_fid_doFinalize, 
+                    (jboolean)JNI_FALSE);
         }
         else
         {

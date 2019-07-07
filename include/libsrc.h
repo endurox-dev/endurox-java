@@ -209,20 +209,52 @@ typedef struct exj_fid_cache exj_fid_cache_t;
 
 /*---------------------------Globals------------------------------------*/
 
-/* AtmiCtx cached resources: */
+/*********************** AtmiCtx resources ************************************/
 extern jmethodID ndrxj_clazz_AtmiCtx_mid_tpCallDispatch;
 
 extern jfieldID ndrxj_clazz_AtmiCtx_fid_ctx;
 extern jfieldID ndrxj_clazz_AtmiCtx_fid_svr;
 
-/* Server cached resources: */
+/************************ Server resources ************************************/
 extern jclass ndrxj_clazz_Server;
 extern jmethodID ndrxj_clazz_Server_mid_tpSvrDone;
 extern jmethodID ndrxj_clazz_Server_mid_tpSvrInit;
 
-/* TpSvcInfo cached resources: */
+/************************ TpSvcInfo resources *********************************/
 extern jclass ndrxj_clazz_TpSvcInfo;
 extern jmethodID ndrxj_clazz_TpSvcInfo_mid_INIT;
+
+/************************ TypedBuffer resources *******************************/
+extern jclass ndrxj_clazz_TypedBuffer;
+extern jmethodID ndrxj_clazz_TypedBuffer_mid_INIT;
+extern jfieldID ndrxj_clazz_TypedBuffer_fid_doFinalize;
+extern jfieldID ndrxj_clazz_TypedBuffer_fid_cPtr;
+extern jfieldID ndrxj_clazz_TypedBuffer_fid_len;
+extern jfieldID ndrxj_clazz_TypedBuffer_fid_ctx;
+
+/************************ TypedUbf resources **********************************/
+extern jclass ndrxj_clazz_TypedUbf;
+extern jmethodID ndrxj_clazz_TypedUbf_mid_INIT;
+
+/************************ TypedCarray resources *******************************/
+extern jclass ndrxj_clazz_TypedCarray;
+extern jmethodID ndrxj_clazz_TypedCarray_mid_INIT;
+
+/************************ TypedString resources *******************************/
+extern jclass ndrxj_clazz_TypedString;
+extern jmethodID ndrxj_clazz_TypedString_mid_INIT;
+
+/************************ TypedView resources *********************************/
+extern jclass ndrxj_clazz_TypedView;
+extern jmethodID ndrxj_clazz_TypedView_mid_INIT;
+
+/************************ TypedJson resources *********************************/
+extern jclass ndrxj_clazz_TypedJson;
+extern jmethodID ndrxj_clazz_TypedJson_mid_INIT;
+
+/************************ TypedTpInit resources *******************************/
+extern jclass ndrxj_clazz_TypedTpInit;
+extern jmethodID ndrxj_clazz_TypedTpInit_mid_INIT;
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/

@@ -80,6 +80,54 @@ expublic jmethodID ndrxj_clazz_TpSvcInfo_mid_INIT;
 
 /* Fields: */
         
+/************************ TypedBuffer resources *******************************/
+expublic jclass ndrxj_clazz_TypedBuffer;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedBuffer_mid_INIT;
+/* Fields: */
+expublic jfieldID ndrxj_clazz_TypedBuffer_fid_doFinalize;
+expublic jfieldID ndrxj_clazz_TypedBuffer_fid_cPtr;
+expublic jfieldID ndrxj_clazz_TypedBuffer_fid_len;
+expublic jfieldID ndrxj_clazz_TypedBuffer_fid_ctx;
+
+
+/************************ TypedUbf resources **********************************/
+expublic jclass ndrxj_clazz_TypedUbf;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedUbf_mid_INIT;
+/* Fields: */
+
+/************************ TypedCarray resources *******************************/
+expublic jclass ndrxj_clazz_TypedCarray;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedCarray_mid_INIT;
+/* Fields: */
+
+/************************ TypedString resources *******************************/
+expublic jclass ndrxj_clazz_TypedString;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedString_mid_INIT;
+/* Fields: */
+
+/************************ TypedView resources *********************************/
+expublic jclass ndrxj_clazz_TypedView;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedView_mid_INIT;
+/* Fields: */
+
+/************************ TypedJson resources *********************************/
+expublic jclass ndrxj_clazz_TypedJson;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedJson_mid_INIT;
+/* Fields: */
+
+/************************ TypedTpInit resources *******************************/
+expublic jclass ndrxj_clazz_TypedTpInit;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TypedTpInit_mid_INIT;
+/* Fields: */
+
+
 
 /**
  * Mapping of the classes object
@@ -89,6 +137,13 @@ exprivate exj_class_cache_t M_classes[] =
     {"org/endurox/AtmiCtx", &ndrxj_clazz_AtmiCtx,       LOCL}
     ,{"org/endurox/Server", &ndrxj_clazz_Server,        LOCL}
     ,{"org/endurox/TpSvcInfo", &ndrxj_clazz_TpSvcInfo,     GLOB}
+    ,{"org/endurox/TypedBuffer", &ndrxj_clazz_TypedBuffer,     GLOB}
+    ,{"org/endurox/TypedUbf", &ndrxj_clazz_TypedUbf,     GLOB}
+    ,{"org/endurox/TypedCarray", &ndrxj_clazz_TypedCarray,     GLOB}
+    ,{"org/endurox/TypedString", &ndrxj_clazz_TypedString,     GLOB}
+    ,{"org/endurox/TypedView", &ndrxj_clazz_TypedView,     GLOB}
+    ,{"org/endurox/TypedJson", &ndrxj_clazz_TypedJson,     GLOB}
+    ,{"org/endurox/TypedTpInit", &ndrxj_clazz_TypedTpInit,     GLOB}
 };
 
 /**
@@ -104,7 +159,14 @@ exprivate exj_mid_cache_t M_methods[] =
             "tpSvrInit", "(Lorg/endurox/AtmiCtx;[Ljava/lang/String;)I"}
     ,{CRF(ndrxj_clazz_TpSvcInfo), &ndrxj_clazz_TpSvcInfo_mid_INIT, "<init>", 
             "(Ljava/lang/String;Lorg/endurox/TypedBuffer;JIJLorg/endurox/ClientId;Ljava/lang/String;)V"}
-    
+    ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_mid_INIT, "<init>", 
+            "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedUbf), &ndrxj_clazz_TypedUbf_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedCarray), &ndrxj_clazz_TypedCarray_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedString), &ndrxj_clazz_TypedString_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedView), &ndrxj_clazz_TypedView_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedJson), &ndrxj_clazz_TypedJson_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedTpInit), &ndrxj_clazz_TypedTpInit_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
 };
 
 /**
@@ -114,6 +176,12 @@ exprivate exj_fid_cache_t M_fields[] =
 { 
     {CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_fid_ctx, "ctx", "J"}
     ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_fid_svr, "svr", "Lorg/endurox/Server;"}
+    ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_fid_doFinalize, "doFinalize", "Z"}
+    ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_fid_cPtr, "cPtr", "J"}
+    ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_fid_len, "len", "J"}
+    ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_fid_ctx, "ctx", 
+            "Lorg/endurox/AtmiCtx;"}
+
 };
 
 /*---------------------------Statics------------------------------------*/
