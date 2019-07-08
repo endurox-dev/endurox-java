@@ -142,6 +142,33 @@ expublic jmethodID ndrxj_clazz_ErrorTuple_mid_INIT;
 expublic jfieldID ndrxj_clazz_ErrorTuple_fid_err;
 expublic jfieldID ndrxj_clazz_ErrorTuple_fid_msg;
 
+/************************ TPTRANID resources **********************************/
+expublic jclass ndrxj_clazz_TPTRANID;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TPTRANID_mid_INIT;
+/* Fields: */
+expublic jfieldID ndrxj_clazz_TPTRANID_fid_data;
+
+/************************** TPQCTL resources **********************************/
+expublic jclass ndrxj_clazz_TPQCTL;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TPQCTL_mid_INIT;
+/* Fields: */
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_flags;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_priority;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_diagnostic;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_diagmsg;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_msgid;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_corrid;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_replyqueue;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_failurequeue;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_urcode;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_appkey;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_delivery_qos;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_reply_qos;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_exp_time;
+expublic jfieldID ndrxj_clazz_TPQCTL_fid_cltid;
+
 /**
  * Mapping of the classes object
  */
@@ -159,6 +186,8 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"org/endurox/TypedTpInit", &ndrxj_clazz_TypedTpInit,          GLOB}
     ,{"org/endurox/ClientId", &ndrxj_clazz_ClientId,                GLOB}
     ,{"org/endurox/ErrorTuple", &ndrxj_clazz_ErrorTuple,            GLOB}
+    ,{"org/endurox/TPTRANID", &ndrxj_clazz_TPTRANID,                GLOB}
+    ,{"org/endurox/TPQCTL", &ndrxj_clazz_TPQCTL,                    GLOB}
 };
 
 /**
@@ -184,6 +213,8 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_TypedTpInit), &ndrxj_clazz_TypedTpInit_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
     ,{CRF(ndrxj_clazz_ClientId), &ndrxj_clazz_ClientId_mid_INIT, "<init>", "(Ljava/lang/String;)V"}
     ,{CRF(ndrxj_clazz_ErrorTuple), &ndrxj_clazz_ErrorTuple_mid_INIT, "<init>", "()V"}
+    ,{CRF(ndrxj_clazz_TPTRANID), &ndrxj_clazz_TPTRANID_mid_INIT, "<init>", "()V"}
+    ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_mid_INIT, "<init>", "()V"}
 };
 
 /**
@@ -204,6 +235,21 @@ exprivate exj_fid_cache_t M_fields[] =
             "I"}
     ,{CRF(ndrxj_clazz_ErrorTuple), &ndrxj_clazz_ErrorTuple_fid_msg, "msg", 
             "Ljava/lang/String;"}
+   ,{CRF(ndrxj_clazz_TPTRANID), &ndrxj_clazz_TPTRANID_fid_data, "data", "[B"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_flags, "flags", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_priority, "priority", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_diagnostic, "diagnostic", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_diagmsg, "diagmsg", "Ljava/lang/String;"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_msgid, "msgid", "[B"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_corrid, "corrid", "[B"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_replyqueue, "replyqueue", "Ljava/lang/String;"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_failurequeue, "failurequeue", "Ljava/lang/String;"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_urcode, "urcode", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_appkey, "appkey", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_delivery_qos, "delivery_qos", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_reply_qos, "reply_qos", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_exp_time, "exp_time", "J"}
+   ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_cltid, "cltid", "Lorg/endurox/ClientId;"}
 
 };
 

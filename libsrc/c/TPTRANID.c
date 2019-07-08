@@ -59,7 +59,7 @@
  */
 exprivate exjobjmap_t M_fieldmap[] =
 {    
-    {"data",       "[B",                    OFSZ(TPTRANID_conv,tid)},
+    {&ndrxj_clazz_TPTRANID_fid_data, "data",    "[B",   OFSZ(TPTRANID_conv,tid)},
     {NULL}
 };
 
@@ -77,23 +77,11 @@ expublic int ndrxj_atmi_TPTRANID_translate2c(JNIEnv *env,
             jobject ctx_obj, jobject tid_Java, TPTRANID_conv *tid_c)
 {
     int ret = EXSUCCEED;
-    jclass clz;
-
-    clz = (*env)->FindClass(env, TPTRANID_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPTRANID_CLASS);
-        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPTRANID_CLASS);
-        EXFAIL_OUT(ret);
-    }
     
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_c(env, 
-            ctx_obj, M_fieldmap, clz, TPTRANID_CLASS,
+            ctx_obj, M_fieldmap, TPTRANID_CLASS,
             tid_Java, tid_c))
     {
         NDRX_LOG(log_error, "Failed to convert %s to TPTRANID!", TPTRANID_CLASS);
@@ -101,11 +89,6 @@ expublic int ndrxj_atmi_TPTRANID_translate2c(JNIEnv *env,
     }
     
 out:
-       
-    if (NULL!=clz)
-    {
-        (*env)->DeleteLocalRef( env, clz);
-    }
 
     if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
     {
@@ -129,36 +112,13 @@ expublic jobject ndrxj_atmi_TPTRANID_translate2java(JNIEnv *env,
 {
     int ret = EXSUCCEED;
     jobject retObj = NULL;
-    jclass clz;
-    jmethodID mid;
-
-    clz = (*env)->FindClass(env, TPTRANID_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPTRANID_CLASS);
-        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPTRANID_CLASS);
-        EXFAIL_OUT(ret);
-    }
-
 
     if (NULL==tid_Java)
     {
         /* Allocate java object */
-            /* create buffer object... */
-        mid = (*env)->GetMethodID(env, clz, "<init>", "()V");
-
-        if (NULL==mid)
-        {
-            NDRX_LOG(log_error, "Cannot get buffer constructor!");
-            EXFAIL_OUT(ret);
-        }
-
         NDRX_LOG(log_debug, "About to NewObject(%s)", TPTRANID_CLASS);
 
-        retObj = (*env)->NewObject(env, clz, mid);
+        retObj = (*env)->NewObject(env, ndrxj_clazz_TPTRANID, ndrxj_clazz_TPTRANID_mid_INIT);
     }
     else
     {
@@ -169,7 +129,7 @@ expublic jobject ndrxj_atmi_TPTRANID_translate2java(JNIEnv *env,
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_java(env, 
-            ctx_obj, M_fieldmap, clz, TPTRANID_CLASS,
+            ctx_obj, M_fieldmap, TPTRANID_CLASS,
             tid_c, retObj))
     {
         NDRX_LOG(log_error, "Failed to convert C TPTRANID to java %s!", TPTRANID_CLASS);
@@ -177,11 +137,6 @@ expublic jobject ndrxj_atmi_TPTRANID_translate2java(JNIEnv *env,
     }
     
 out:
-       
-    if (NULL!=clz)
-    {
-        (*env)->DeleteLocalRef( env, clz);
-    }
 
     if (EXSUCCEED!=ret && NULL!=retObj && NULL==tid_Java)
     {

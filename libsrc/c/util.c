@@ -63,34 +63,24 @@
  * @param env java env
  * @param ctx_obj 
  * @param tab conversion table, terminated with null field
- * @param clz java class descr
  * @param clzstr class string
  * @param jobj java object
  * @param cobj c object
  * @return EXSUCCEED/EXFAIL (exception set)
  */
 expublic int ndrxj_cvt_to_c(JNIEnv *env, 
-            jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
+            jobject ctx_obj, exjobjmap_t *tab, char *clzstr,
             jobject jobj, void *cobj)
 {
     int ret = EXSUCCEED;
-    jfieldID fid;
     
     while (tab->field)
     {
-        
-        if (NULL==(fid = (*env)->GetFieldID(env, clz, tab->field, tab->ftype)))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to get [%s] descr from %s: %s", tab->field, clzstr);
-            EXFAIL_OUT(ret);
-        }
-       
         /* read the field accordingly */
         if (0==strcmp(tab->ftype, "J"))
         {
             long *cfld = (long *)(((char *)cobj)+ tab->coffset);
-            *cfld = (long)(*env)->GetLongField(env, jobj, fid);
+            *cfld = (long)(*env)->GetLongField(env, jobj, *tab->fid);
         }
         else if (0==strcmp(tab->ftype, "Ljava/lang/String;"))
         {
@@ -98,7 +88,7 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
             const char *n_str = "";
             jstring jstr;
             char *cstr = ((char *)cobj)+ tab->coffset;
-            jstr = (jstring)(*env)->GetObjectField(env, jobj, fid);
+            jstr = (jstring)(*env)->GetObjectField(env, jobj, *tab->fid);
             
             if (NULL!=jstr)
             {
@@ -125,7 +115,7 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
         else if (0==strcmp(tab->ftype, "[B"))
         {
             jboolean n_carray_copy = EXFALSE;
-            jbyteArray jb = (jbyteArray)(*env)->GetObjectField(env, jobj, fid);
+            jbyteArray jb = (jbyteArray)(*env)->GetObjectField(env, jobj, *tab->fid);
             char * n_carray = NULL;
             jsize len;
             char *cmem = ((char *)cobj)+ tab->coffset;
@@ -194,39 +184,30 @@ out:
  * @param env java env
  * @param ctx_obj 
  * @param tab conversion table, terminated with null field
- * @param clz java class descr
  * @param clzstr class string
  * @param cobj c object
  * @param jobj java object
 * @return EXSUCCEED/EXFAIL (exception set)
  */
 expublic int ndrxj_cvt_to_java(JNIEnv *env, 
-            jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
+            jobject ctx_obj, exjobjmap_t *tab, char *clzstr,
             void *cobj, jobject jobj)
 {
     int ret = EXSUCCEED;
-    jfieldID fid;
     
     while (tab->field)
     {
-        if (NULL==(fid = (*env)->GetFieldID(env, clz, tab->field, tab->ftype)))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to get [%s] descr from %s: %s", tab->field, clzstr);
-            EXFAIL_OUT(ret);
-        }
-       
         /* read the field accordingly */
         if (0==strcmp(tab->ftype, "J"))
         {
             long *cfld = (long *)(((char *)cobj)+ tab->coffset);
-            (*env)->SetLongField(env, jobj, fid, (jlong)*cfld);
+            (*env)->SetLongField(env, jobj, *tab->fid, (jlong)*cfld);
         }
         else if (0==strcmp(tab->ftype, "Ljava/lang/String;"))
         {
             char *cfld = ((char *)cobj)+ tab->coffset;
             jstring str = (*env)->NewStringUTF(env, cfld);
-            (*env)->SetObjectField(env, jobj, fid, str);
+            (*env)->SetObjectField(env, jobj, *tab->fid, str);
             (*env)->DeleteLocalRef( env, str);
         }
         else if (0==strcmp(tab->ftype, "[B"))
@@ -244,7 +225,7 @@ expublic int ndrxj_cvt_to_java(JNIEnv *env,
                 EXFAIL_OUT(ret);
             }
             (*env)->SetByteArrayRegion(env, jb, 0, tab->csz, (jbyte*)cfld);
-            (*env)->SetObjectField(env, jobj, fid, jb);
+            (*env)->SetObjectField(env, jobj, *tab->fid, jb);
             
             /* Remove local reference to byte array... */
             (*env)->DeleteLocalRef( env, jb);

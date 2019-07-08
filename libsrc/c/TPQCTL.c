@@ -59,19 +59,19 @@
  */
 exprivate exjobjmap_t M_fieldmap[] =
 {    
-    {"flags",       "J",                    OFSZ(TPQCTL,flags)},
-    {"priority",    "J",                    OFSZ(TPQCTL,priority)},
-    {"diagnostic",  "J",                    OFSZ(TPQCTL,diagnostic)},
-    {"diagmsg",     "Ljava/lang/String;",   OFSZ(TPQCTL,diagmsg)},
-    {"msgid",       "[B",                   OFSZ(TPQCTL,msgid)},
-    {"corrid",      "[B",                   OFSZ(TPQCTL,corrid)},
-    {"replyqueue",  "Ljava/lang/String;",   OFSZ(TPQCTL,replyqueue)},
-    {"failurequeue","Ljava/lang/String;",   OFSZ(TPQCTL,failurequeue)},
-    {"urcode",      "J",                    OFSZ(TPQCTL,urcode)},
-    {"appkey",      "J",                    OFSZ(TPQCTL,appkey)},
-    {"delivery_qos","J",                    OFSZ(TPQCTL,delivery_qos)},
-    {"reply_qos",   "J",                    OFSZ(TPQCTL,reply_qos)},
-    {"exp_time",    "J",                    OFSZ(TPQCTL,exp_time)},
+    {&ndrxj_clazz_TPQCTL_fid_flags,     "flags",       "J",                 OFSZ(TPQCTL,flags)},
+    {&ndrxj_clazz_TPQCTL_fid_priority,  "priority",    "J",                 OFSZ(TPQCTL,priority)},
+    {&ndrxj_clazz_TPQCTL_fid_diagnostic,"diagnostic",  "J",                 OFSZ(TPQCTL,diagnostic)},
+    {&ndrxj_clazz_TPQCTL_fid_diagmsg,   "diagmsg",     "Ljava/lang/String;",OFSZ(TPQCTL,diagmsg)},
+    {&ndrxj_clazz_TPQCTL_fid_msgid,     "msgid",       "[B",                OFSZ(TPQCTL,msgid)},
+    {&ndrxj_clazz_TPQCTL_fid_corrid,    "corrid",      "[B",                OFSZ(TPQCTL,corrid)},
+    {&ndrxj_clazz_TPQCTL_fid_replyqueue, "replyqueue",  "Ljava/lang/String;",OFSZ(TPQCTL,replyqueue)},
+    {&ndrxj_clazz_TPQCTL_fid_failurequeue, "failurequeue","Ljava/lang/String;",OFSZ(TPQCTL,failurequeue)},
+    {&ndrxj_clazz_TPQCTL_fid_urcode,    "urcode",      "J",                 OFSZ(TPQCTL,urcode)},
+    {&ndrxj_clazz_TPQCTL_fid_appkey,    "appkey",      "J",                 OFSZ(TPQCTL,appkey)},
+    {&ndrxj_clazz_TPQCTL_fid_delivery_qos, "delivery_qos","J",              OFSZ(TPQCTL,delivery_qos)},
+    {&ndrxj_clazz_TPQCTL_fid_reply_qos, "reply_qos",   "J",                 OFSZ(TPQCTL,reply_qos)},
+    {&ndrxj_clazz_TPQCTL_fid_exp_time,  "exp_time",    "J",                 OFSZ(TPQCTL,exp_time)},
     {NULL}
 };
 
@@ -90,41 +90,20 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
 {
     int ret = EXSUCCEED;
     
-    jclass clz;
-    jfieldID fid;
     jobject jcltid;
-
-    clz = (*env)->FindClass(env, TPQCTL_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
-        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPQCTL_CLASS);
-        EXFAIL_OUT(ret);
-    }
     
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_c(env, 
-            ctx_obj, M_fieldmap, clz, TPQCTL_CLASS,
+            ctx_obj, M_fieldmap, TPQCTL_CLASS,
             ctl_Java, ctl_c))
     {
         NDRX_LOG(log_error, "Failed to convert %s to TPQCTL!", TPQCTL_CLASS);
         EXFAIL_OUT(ret);
     }
     
-    /* convert client id */
-    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Lorg/endurox/ClientId;")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [cltid] descr from QTPQCTL: %s");
-        EXFAIL_OUT(ret);
-    }
-    
     /* get object field */
-    jcltid = (*env)->GetObjectField(env, ctl_Java, fid);
+    jcltid = (*env)->GetObjectField(env, ctl_Java, ndrxj_clazz_TPQCTL_fid_cltid);
     
     if (NULL!=jcltid)
     {
@@ -145,11 +124,6 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     }
     
 out:
-       
-    if (NULL!=clz)
-    {
-        (*env)->DeleteLocalRef( env, clz);
-    }
 
     if (EXSUCCEED!=ret && !(*env)->ExceptionCheck(env))
     {
@@ -173,39 +147,15 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
 {
     int ret = EXSUCCEED;
     jobject retObj = NULL;
-    
-    jclass clz;
-    jfieldID fid;
     jobject jcltid;
-    jmethodID mid;
-
-    clz = (*env)->FindClass(env, TPQCTL_CLASS);
-
-    if (NULL==clz)
-    {        
-        /* I guess we need to abort here! */
-        NDRX_LOG(log_error, "Failed to to get %s class!", TPQCTL_CLASS);
-        ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed get class [%s]", 
-                    TPQCTL_CLASS);
-        EXFAIL_OUT(ret);
-    }
-
 
     if (NULL==ctl_Java)
     {
         /* Allocate java object */
-            /* create buffer object... */
-        mid = (*env)->GetMethodID(env, clz, "<init>", "()V");
-
-        if (NULL==mid)
-        {
-            NDRX_LOG(log_error, "Cannot get buffer constructor!");
-            EXFAIL_OUT(ret);
-        }
-
+        
         NDRX_LOG(log_debug, "About to NewObject(%s)", TPQCTL_CLASS);
 
-        retObj = (*env)->NewObject(env, clz, mid);
+        retObj = (*env)->NewObject(env, ndrxj_clazz_TPQCTL, ndrxj_clazz_TPQCTL_mid_INIT);
     }
     else
     {
@@ -216,18 +166,10 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
     /* Load values to C */
     
     if (EXSUCCEED!=ndrxj_cvt_to_java(env, 
-            ctx_obj, M_fieldmap, clz, TPQCTL_CLASS,
+            ctx_obj, M_fieldmap, TPQCTL_CLASS,
             ctl_c, retObj))
     {
         NDRX_LOG(log_error, "Failed to convert C TPQCTL to java %s!", TPQCTL_CLASS);
-        EXFAIL_OUT(ret);
-    }
-    
-    /* convert client id */
-    if (NULL==(fid = (*env)->GetFieldID(env, clz, "cltid", "Lorg/endurox/ClientId;")))
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Failed to get [cltid] descr from QTPQCTL: %s");
         EXFAIL_OUT(ret);
     }
     
@@ -241,14 +183,9 @@ expublic jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env,
     
     /* set field */
     
-    (*env)->SetObjectField(env, retObj, fid, jcltid);
+    (*env)->SetObjectField(env, retObj, ndrxj_clazz_TPQCTL_fid_cltid, jcltid);
     
 out:
-       
-    if (NULL!=clz)
-    {
-        (*env)->DeleteLocalRef( env, clz);
-    }
 
     if (NULL!=retObj && EXSUCCEED!=ret && NULL==ctl_Java)
     {

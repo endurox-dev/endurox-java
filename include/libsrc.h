@@ -136,6 +136,7 @@ extern "C" {
  */
 struct exjobjmap
 {
+    jfieldID *fid;  /**< Cached field id                */
     char *field;    /**< field name                     */
     char *ftype;    /**< field type in Java             */
     long coffset;   /**< c field offset                 */
@@ -270,6 +271,31 @@ extern jmethodID ndrxj_clazz_ErrorTuple_mid_INIT;
 extern jfieldID ndrxj_clazz_ErrorTuple_fid_err;
 extern jfieldID ndrxj_clazz_ErrorTuple_fid_msg;
 
+/************************ TPTRANID resources **********************************/
+extern jclass ndrxj_clazz_TPTRANID;
+extern jmethodID ndrxj_clazz_TPTRANID_mid_INIT;
+extern jfieldID ndrxj_clazz_TPTRANID_fid_data;
+
+/************************** TPQCTL resources **********************************/
+extern jclass ndrxj_clazz_TPQCTL;
+/* Methods: */
+extern jmethodID ndrxj_clazz_TPQCTL_mid_INIT;
+/* Fields: */
+extern jfieldID ndrxj_clazz_TPQCTL_fid_flags;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_priority;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_diagnostic;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_diagmsg;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_msgid;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_corrid;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_replyqueue;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_failurequeue;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_urcode;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_appkey;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_delivery_qos;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_reply_qos;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_exp_time;
+extern jfieldID ndrxj_clazz_TPQCTL_fid_cltid;
+
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
@@ -357,12 +383,12 @@ extern void ndrxj_atmictx_unsol_globals_set(JNIEnv* env, jobject atmiCtxObj);
 
 /* Utils */
 extern int ndrxj_cvt_to_c(JNIEnv *env, 
-            jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
+            jobject ctx_obj, exjobjmap_t *tab, char *clzstr,
             jobject jobj, void *cobj);
 
 
 extern int ndrxj_cvt_to_java(JNIEnv *env, 
-            jobject ctx_obj, exjobjmap_t *tab, jclass clz, char *clzstr,
+            jobject ctx_obj, exjobjmap_t *tab, char *clzstr,
             void *cobj, jobject jobj);
 
 extern int ndrxj_cvt_jstr_to_c(JNIEnv *env, 
