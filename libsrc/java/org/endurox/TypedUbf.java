@@ -324,7 +324,6 @@ public class TypedUbf extends TypedBuffer {
      * For more information see Bboolev(3) manpage.
      * @param tree compiled boolean expression
      * @return true or false
-     * @{
      */
     public native boolean Bboolev(BExprTree tree);
 
