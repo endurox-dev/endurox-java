@@ -282,9 +282,22 @@ public class TypedUbf extends TypedBuffer {
     public native void Bchg(int bfldid, int occ, byte []b);
     
     /** @} */ // end of Bchg
-    
+
     /**
-     * @defgroup Bboolubf UBF boolean operations 
+     * Group of methods related to executing the boolean expression on UBF buffer.
+     * In case if compiled boolean expression is used, then \ref AtmiCtx.Bboolco()
+     * shall be used.
+     * @throws UbfBNOTFLDException p_ub is not fielded buffer or argument NULL.
+     * @throws UbfBEINVALException tree parameter is NULL.
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
+     * @throws UbfBBADFLDException Invalid field id passed.
+     * @throws UbfBNOTPRESException Field not present.
+     * @throws UbfFMALLOCException Malloc failed.
+     * @throws UbfBSYNTAXException Synax error in script.
+     * @throws UbfBBADNAMEException Bad field name specified.
+     * @defgroup Bboolev boolean expression handling routines
+     * @{
      */
     
     /**
@@ -305,23 +318,7 @@ public class TypedUbf extends TypedBuffer {
         }
         return cbf.bboolCallBack(ctx, this, funcname);
     }
-
-    /**
-     * Group of methods related to executing the boolean expression on UBF buffer.
-     * In case if compiled boolean expression is used, then \ref AtmiCtx.Bboolco()
-     * shall be used.
-     * @throws UbfBNOTFLDException p_ub is not fielded buffer or argument NULL.
-     * @throws UbfBEINVALException tree parameter is NULL.
-     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not aligned memory area.
-     * @throws UbfBNOTFLDException Buffer not fielded, not correctly allocated or corrupted.
-     * @throws UbfBBADFLDException Invalid field id passed.
-     * @throws UbfBNOTPRESException Field not present.
-     * @throws UbfFMALLOCException Malloc failed.
-     * @throws UbfBSYNTAXException Synax error in script.
-     * @throws UbfBBADNAMEException Bad field name specified.
-     * @defgroup Bboolev boolean expression handling routines
-     * @{
-     */
+    
     /**
      * Evaluate boolean expression by given expression tree. 
      * For more information see Bboolev(3) manpage.
@@ -380,6 +377,8 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfBNOTPRESException Field not present thus not deleted.
      */
     public native void Bdelall(int bfldid);
+    
+    /** @} */ // end of Bdel
     
     /**
      * Test for field presence in UBF buffer.
@@ -453,20 +452,6 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfFBADFLDException Invalid field type.
      */
     public native int Boccur(int bfldid);
-    
-    /**
-     * This method removes any un-needed field from UBF buffer and keeps only 
-     * the list of field identifiers found in bfldlist array. 
-     * As Java keeps the array length internally, the array shall not be 
-     * terminated with BBADFLDID as in case for C.
-     * see Boccur(3) manpage for more information.
-     * @param bfldid array of 
-     * @thorws UbfBALIGNERRException Corrupted buffer or pointing to 
-     *  not aligned memory area.
-     * @thorws UbfBNOTFLDException Buffer not fielded, not correctly 
-     *  allocated or corrupted.
-     */
-    public native void Bproj(int bfldid[]);
     
     /**
      * Read the UBF buffer from input stream. This read binary/platform specific
@@ -549,6 +534,20 @@ public class TypedUbf extends TypedBuffer {
      * modify list of UBF buffer fields.
      * @defgroup Bproj Projection related - high level batch operations.
      */
+    
+    /**
+     * This method removes any un-needed field from UBF buffer and keeps only 
+     * the list of field identifiers found in bfldlist array. 
+     * As Java keeps the array length internally, the array shall not be 
+     * terminated with BBADFLDID as in case for C.
+     * see Boccur(3) manpage for more information.
+     * @param bfldid array of 
+     * @thorws UbfBALIGNERRException Corrupted buffer or pointing to 
+     *  not aligned memory area.
+     * @thorws UbfBNOTFLDException Buffer not fielded, not correctly 
+     *  allocated or corrupted.
+     */
+    public native void Bproj(int bfldid[]);
     
     /**
      * Delete list of fields from UBF buffer
