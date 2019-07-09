@@ -59,6 +59,15 @@ expublic jclass ndrxj_clazz_AtmiCtx;
 
 /* Methods: */
 expublic jmethodID ndrxj_clazz_AtmiCtx_mid_tpCallDispatch;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_open_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_close_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_end_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_rollback_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_prepare_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_start_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_commit_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_recover_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_forget_entry;
 
 /* Fields: */
 expublic jfieldID ndrxj_clazz_AtmiCtx_fid_ctx;
@@ -169,6 +178,13 @@ expublic jfieldID ndrxj_clazz_TPQCTL_fid_reply_qos;
 expublic jfieldID ndrxj_clazz_TPQCTL_fid_exp_time;
 expublic jfieldID ndrxj_clazz_TPQCTL_fid_cltid;
 
+/************************** XidList resources *********************************/
+expublic jclass ndrxj_clazz_XidList;
+/* Methods: */
+/* Fields: */
+expublic jfieldID ndrxj_clazz_XidList_fid_ret;
+expublic jfieldID ndrxj_clazz_XidList_fid_list;
+
 /**
  * Mapping of the classes object
  */
@@ -188,6 +204,7 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"org/endurox/ErrorTuple", &ndrxj_clazz_ErrorTuple,            GLOB}
     ,{"org/endurox/TPTRANID", &ndrxj_clazz_TPTRANID,                GLOB}
     ,{"org/endurox/TPQCTL", &ndrxj_clazz_TPQCTL,                    GLOB}
+    ,{"org/endurox/XidList", &ndrxj_clazz_XidList,                  LOCL}
 };
 
 /**
@@ -197,6 +214,27 @@ exprivate exj_mid_cache_t M_methods[] =
 { 
     {CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_tpCallDispatch, 
             "tpCallDispatch", "(Lorg/endurox/TpSvcInfo;)V"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_open_entry, 
+            "xa_open_entry", "(J)I"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_close_entry, 
+            "xa_close_entry", "(J)I"}
+    
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_end_entry, 
+            "xa_end_entry", "(Ljavax/transaction/xa/Xid;J)I"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_rollback_entry, 
+            "xa_rollback_entry", "(Ljavax/transaction/xa/Xid;J)I"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_prepare_entry, 
+            "xa_prepare_entry", "(Ljavax/transaction/xa/Xid;J)I"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_start_entry, 
+            "xa_start_entry", "(Ljavax/transaction/xa/Xid;J)I"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_commit_entry, 
+            "xa_commit_entry", "(Ljavax/transaction/xa/Xid;J)I"}
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_recover_entry, 
+            "xa_recover_entry", "(J)Lorg/endurox/XidList;"}
+    
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_forget_entry, 
+            "xa_forget_entry", "(Ljavax/transaction/xa/Xid;J)I"}
+    
     ,{CRF(ndrxj_clazz_Server), &ndrxj_clazz_Server_mid_tpSvrDone, 
             "tpSvrDone", "(Lorg/endurox/AtmiCtx;)V"}
     ,{CRF(ndrxj_clazz_Server), &ndrxj_clazz_Server_mid_tpSvrInit, 
@@ -250,6 +288,8 @@ exprivate exj_fid_cache_t M_fields[] =
    ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_reply_qos, "reply_qos", "J"}
    ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_exp_time, "exp_time", "J"}
    ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_cltid, "cltid", "Lorg/endurox/ClientId;"}
+   ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_ret, "ret", "I"}
+   ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_list, "list", "[Ljavax/transaction/xa/Xid;"}
 
 };
 

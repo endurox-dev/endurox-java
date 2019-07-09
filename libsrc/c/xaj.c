@@ -102,6 +102,7 @@ struct xa_switch_t ndrxjsw =
  * Perform init of the xa driver
  * this will parse the open string and will create XADataSource
  * the class name also needs to be set in the ini file.,
+ * Init will not be cached - to pull in the loader...
  * {"class":"org.postgresql.xa.PGXADataSource", "props":{"PROP":"VAL"}, "set":{"SetHost":"192.168.0.1", "SetPort":"7777"}}
  */
 expublic int ndrxj_xa_init(void)
@@ -250,6 +251,7 @@ out:
 
 /**
  * Perform info call
+ * @param[in] cached function
  * @param func function name
  * @param sw XA Switch current
  * @param xa_info XA Info string
@@ -257,15 +259,14 @@ out:
  * @param flags flags
  * @return error code, XA
  */
-exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
+exprivate int xa_info_entry(jmethodID mid, char *func, struct xa_switch_t *sw, 
+        char *xa_info, int rmid, long flags)
 {
    /* TODO: Do we need to check for existing open call?
      * the handler shall be present in java side..
      * So we need two string lists?
      */
     ndrx_ctx_priv_t *ctxpriv;
-    jmethodID mid;
-    jclass ctxClass = NULL;
     int ret = XA_OK;
     ctxpriv = ndrx_ctx_priv_get();
     
@@ -278,31 +279,7 @@ exprivate int xa_info_entry(char *func, struct xa_switch_t *sw, char *xa_info, i
         ret = XAER_RMFAIL;
         goto out;
     }
-    
-    /* Get the class for the context object */    
-    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
-        NDRXJ_JATMICTX(ctxpriv));
-    
-    if (NULL==ctxClass)
-    {
-        NDRX_LOG(log_error, "Failed to get ctx object class");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
-    /* Get the method id  */
-    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
-        ctxClass, func,
-        "(J)I");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Failed to get %s() method!", func);
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
-    
+   
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
     
@@ -328,13 +305,6 @@ out:
         (*NDRXJ_JENV(ctxpriv))-> ExceptionClear(NDRXJ_JENV(ctxpriv));
     }
 
-    /* clear up references... */
-    if (NULL!=ctxClass)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
-                ctxClass);
-    }
-    
     return ret;
 }
 
@@ -359,7 +329,8 @@ out:
  */
 exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
 {
-    return xa_info_entry("xa_open_entry",  sw, xa_info, rmid, flags);
+    return xa_info_entry(ndrxj_clazz_AtmiCtx_mid_xa_open_entry,
+            "xa_open_entry",  sw, xa_info, rmid, flags);
 }
 
 /**
@@ -373,12 +344,14 @@ exprivate int xa_open_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lon
  */
 exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, long flags)
 {
-    return xa_info_entry("xa_close_entry",  sw, xa_info, rmid, flags);
+    return xa_info_entry(ndrxj_clazz_AtmiCtx_mid_xa_close_entry,
+            "xa_close_entry",  sw, xa_info, rmid, flags);
 }
 
 
 /**
  * Call the java with XID related operation
+ * @param[in] mid paresolved method
  * @param func function name
  * @param sw xa switch 
  * @param xid xid for trx
@@ -386,11 +359,10 @@ exprivate int xa_close_entry(struct xa_switch_t *sw, char *xa_info, int rmid, lo
  * @param flags flags
  * @return xa err
  */
-exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmid, long flags)
+exprivate int xa_xid_entry(jmethodID mid, char *func, struct xa_switch_t *sw, 
+        XID *xid, int rmid, long flags)
 {
     ndrx_ctx_priv_t *ctxpriv;
-    jmethodID mid;
-    jclass ctxClass = NULL;
     int ret = XA_OK;
     jobject jxid = NULL;
     
@@ -410,29 +382,6 @@ exprivate int xa_xid_entry(char *func, struct xa_switch_t *sw, XID *xid, int rmi
     if (NULL==xid)
     {
         NDRX_LOG(log_error, "Failed to convert C xid to Java");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
-    /* Get the class for the context object */
-    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
-        NDRXJ_JATMICTX(ctxpriv));
-    
-    if (NULL==ctxClass)
-    {
-        NDRX_LOG(log_error, "Failed to get ctx object class");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
-    /* Get the method id  */
-    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
-        ctxClass, func,
-        "(Ljavax/transaction/xa/Xid;J)I");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Failed to get %s() method!", func);
         ret = XAER_RMERR;
         goto out;
     }
@@ -464,11 +413,6 @@ out:
     }
 
     /* clear up references... */
-    if (NULL!=ctxClass)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
-                ctxClass);
-    }
 
     if (NULL!=jxid)
     {
@@ -490,7 +434,8 @@ out:
  */
 exprivate int xa_start_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return xa_xid_entry("xa_start_entry", sw, xid, rmid, flags);
+    return xa_xid_entry(ndrxj_clazz_AtmiCtx_mid_xa_start_entry,
+            "xa_start_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -503,7 +448,8 @@ exprivate int xa_start_entry(struct xa_switch_t *sw, XID *xid, int rmid, long fl
  */
 exprivate int xa_end_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return xa_xid_entry("xa_end_entry", sw, xid, rmid, flags);
+    return xa_xid_entry(ndrxj_clazz_AtmiCtx_mid_xa_end_entry,
+            "xa_end_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -516,7 +462,8 @@ exprivate int xa_end_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flag
  */
 exprivate int xa_rollback_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return xa_xid_entry("xa_rollback_entry", sw, xid, rmid, flags);
+    return xa_xid_entry(ndrxj_clazz_AtmiCtx_mid_xa_rollback_entry,
+            "xa_rollback_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -529,7 +476,8 @@ exprivate int xa_rollback_entry(struct xa_switch_t *sw, XID *xid, int rmid, long
  */
 exprivate int xa_prepare_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return xa_xid_entry("xa_prepare_entry", sw, xid, rmid, flags);
+    return xa_xid_entry(ndrxj_clazz_AtmiCtx_mid_xa_prepare_entry,
+            "xa_prepare_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -542,7 +490,8 @@ exprivate int xa_prepare_entry(struct xa_switch_t *sw, XID *xid, int rmid, long 
  */
 exprivate int xa_commit_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return xa_xid_entry("xa_commit_entry", sw, xid, rmid, flags);
+    return xa_xid_entry(ndrxj_clazz_AtmiCtx_mid_xa_commit_entry,
+            "xa_commit_entry", sw, xid, rmid, flags);
 }
 
 /**
@@ -557,16 +506,10 @@ exprivate int xa_commit_entry(struct xa_switch_t *sw, XID *xid, int rmid, long f
  * @param flags flags
  * @return XA_OK, XERR
  */
-exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int rmid, long flags)
+exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, 
+        int rmid, long flags)
 {
     ndrx_ctx_priv_t *ctxpriv;
-    jmethodID mid;
-    jclass ctxClass = NULL;
-    jclass xidClass = NULL;
-    
-    jfieldID fxidarr; /* Array of xids */
-    jfieldID fret;  /* return code */
-            
     jobject retObj = NULL;
     int ret = XA_OK;
     jarray xarr = NULL;
@@ -591,68 +534,21 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
         goto out;
     }
     
-    /* Get the class for the context object */
-    ctxClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
-        NDRXJ_JATMICTX(ctxpriv));
-    
-    if (NULL==ctxClass)
-    {
-        NDRX_LOG(log_error, "Failed to get ctx object class");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
-    /* Get the method id */
-    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), 
-        ctxClass, "xa_recover_entry", "(J)Lorg/endurox/XidList;");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Failed to get xa_recover_entry() method!");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
     
     retObj = (*NDRXJ_JENV(ctxpriv))->CallObjectMethod(NDRXJ_JENV(ctxpriv), 
-        NDRXJ_JATMICTX(ctxpriv), mid, (jlong)flags);
+        NDRXJ_JATMICTX(ctxpriv), ndrxj_clazz_AtmiCtx_mid_xa_recover_entry, 
+        (jlong)flags);
     
     /* set context back... */
     tpsetctxt(NDRXJ_CCTX(ctxpriv), 0L);
     
-    /* get xid class */
-    xidClass = (*NDRXJ_JENV(ctxpriv))->GetObjectClass(NDRXJ_JENV(ctxpriv), 
-        retObj);
-    
-    if (NULL==xidClass)
-    {
-        NDRX_LOG(log_error, "Failed to get ctx object class");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
     /* get ret field */
     
-    if (NULL==(fret = (*NDRXJ_JENV(ctxpriv))->GetFieldID(
-            NDRXJ_JENV(ctxpriv), xidClass, "ret", "I")))
-    {
-        NDRX_LOG(log_error, "Failed to get ret field");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
-    if (NULL==(fxidarr = (*NDRXJ_JENV(ctxpriv))->GetFieldID(
-            NDRXJ_JENV(ctxpriv), xidClass, "list", "[Ljavax/transaction/xa/Xid;")))
-    {
-        NDRX_LOG(log_error, "Failed to get ret field");
-        ret = XAER_RMERR;
-        goto out;
-    }
-    
     /* get return code */
-    ret = (*NDRXJ_JENV(ctxpriv))->GetIntField(NDRXJ_JENV(ctxpriv), retObj, fret);
+    ret = (*NDRXJ_JENV(ctxpriv))->GetIntField(NDRXJ_JENV(ctxpriv), retObj, 
+    ndrxj_clazz_XidList_fid_ret);
     
     if (XA_OK!=ret)
     {
@@ -661,7 +557,8 @@ exprivate int xa_recover_entry(struct xa_switch_t *sw, XID *xid, long count, int
     }
     
     xarr = (jarray)(*NDRXJ_JENV(ctxpriv))->GetObjectField(
-            NDRXJ_JENV(ctxpriv), retObj, fxidarr);
+            NDRXJ_JENV(ctxpriv), retObj, 
+            ndrxj_clazz_XidList_fid_list);
     
     if (NULL!=xarr)
     {
@@ -707,17 +604,6 @@ out:
     }
 
     /* clear up references... */
-    if (NULL!=ctxClass)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
-                ctxClass);
-    }
-
-    if (NULL!=xidClass)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), 
-                xidClass);
-    }
 
     if (NULL!=xarr)
     {
@@ -738,7 +624,8 @@ out:
  */
 exprivate int xa_forget_entry(struct xa_switch_t *sw, XID *xid, int rmid, long flags)
 {
-    return xa_xid_entry("xa_forget_entry", sw, xid, rmid, flags);
+    return xa_xid_entry(ndrxj_clazz_AtmiCtx_mid_xa_forget_entry, 
+            "xa_forget_entry", sw, xid, rmid, flags);
 }
 
 /**

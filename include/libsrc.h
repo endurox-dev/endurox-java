@@ -212,6 +212,15 @@ typedef struct exj_fid_cache exj_fid_cache_t;
 
 /*********************** AtmiCtx resources ************************************/
 extern jmethodID ndrxj_clazz_AtmiCtx_mid_tpCallDispatch;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_open_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_close_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_end_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_rollback_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_prepare_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_start_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_commit_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_recover_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_forget_entry;
 
 extern jfieldID ndrxj_clazz_AtmiCtx_fid_ctx;
 extern jfieldID ndrxj_clazz_AtmiCtx_fid_svr;
@@ -295,6 +304,11 @@ extern jfieldID ndrxj_clazz_TPQCTL_fid_delivery_qos;
 extern jfieldID ndrxj_clazz_TPQCTL_fid_reply_qos;
 extern jfieldID ndrxj_clazz_TPQCTL_fid_exp_time;
 extern jfieldID ndrxj_clazz_TPQCTL_fid_cltid;
+
+/************************** XidList resources *********************************/
+extern jclass ndrxj_clazz_XidList;
+extern jfieldID ndrxj_clazz_XidList_fid_ret;
+extern jfieldID ndrxj_clazz_XidList_fid_list;
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
