@@ -310,6 +310,17 @@ extern jclass ndrxj_clazz_XidList;
 extern jfieldID ndrxj_clazz_XidList_fid_ret;
 extern jfieldID ndrxj_clazz_XidList_fid_list;
 
+/************************** String resources **********************************/
+extern jclass ndrxj_clazz_String;
+
+
+/************************** ExXid resources ***********************************/
+extern jclass ndrxj_clazz_ExXid;
+/* Methods: */
+extern jmethodID ndrxj_clazz_ExXid_mid_INIT;
+/* Fields: */
+
+
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 

@@ -185,6 +185,25 @@ expublic jclass ndrxj_clazz_XidList;
 expublic jfieldID ndrxj_clazz_XidList_fid_ret;
 expublic jfieldID ndrxj_clazz_XidList_fid_list;
 
+/************************** Xid resources *************************************/
+expublic jclass ndrxj_clazz_Xid;
+/* Methods: */
+/* Fields: */
+
+/************************** XidList resources *********************************/
+
+expublic jclass ndrxj_clazz_ExXid;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_ExXid_mid_INIT;
+/* Fields: */
+
+/************************** String resources **********************************/
+expublic jclass ndrxj_clazz_String;
+/* Methods: */
+/* Fields: */
+
+
+
 /**
  * Mapping of the classes object
  */
@@ -205,6 +224,10 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"org/endurox/TPTRANID", &ndrxj_clazz_TPTRANID,                GLOB}
     ,{"org/endurox/TPQCTL", &ndrxj_clazz_TPQCTL,                    GLOB}
     ,{"org/endurox/XidList", &ndrxj_clazz_XidList,                  LOCL}
+    ,{"javax/transaction/xa/Xid", &ndrxj_clazz_Xid,                 LOCL}
+    ,{"java/lang/String", &ndrxj_clazz_String,                      GLOB}
+    ,{"org/endurox/ExXid", &ndrxj_clazz_ExXid,                      GLOB}
+    
 };
 
 /**
@@ -253,6 +276,8 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_ErrorTuple), &ndrxj_clazz_ErrorTuple_mid_INIT, "<init>", "()V"}
     ,{CRF(ndrxj_clazz_TPTRANID), &ndrxj_clazz_TPTRANID_mid_INIT, "<init>", "()V"}
     ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_mid_INIT, "<init>", "()V"}
+    ,{CRF(ndrxj_clazz_ExXid), &ndrxj_clazz_ExXid_mid_INIT, "<init>", "(JJJ[B)V"}
+   
 };
 
 /**

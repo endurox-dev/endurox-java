@@ -296,7 +296,7 @@ expublic jobjectArray ndrxj_cvt_arr_c_to_java(JNIEnv *env, string_list_t *list, 
     int i;
     string_list_t *el;
     
-    ret = (*env)->NewObjectArray(env,(jsize)nrel,(*env)->FindClass(env,"java/lang/String"),0);
+    ret = (*env)->NewObjectArray(env, (jsize)nrel, ndrxj_clazz_String, 0);
 
     for (el=list, i=0; el; el=el->next, i++)
     {
@@ -318,8 +318,6 @@ expublic jobjectArray ndrxj_cvt_arr_c_to_java(JNIEnv *env, string_list_t *list, 
 expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
 {
     jobject ret = NULL;
-    jclass bclz;
-    jmethodID mid;
     
     /* OK we to convert data array to java array */
     
@@ -340,28 +338,10 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
     
     /* Create that ExXid object */
     
-    bclz = ndrxj_FindClass(env, EXXID_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", EXXID_CLASS);
-        goto out;
-        
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(JJJ[B)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
-    }
-
     NDRX_LOG(log_debug, "About to NewObject(%s)", EXXID_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, xid->formatID, xid->gtrid_length, 
-            xid->bqual_length, jb);
+    ret = (*env)->NewObject(env, ndrxj_clazz_ExXid, ndrxj_clazz_ExXid_mid_INIT, 
+            xid->formatID, xid->gtrid_length, xid->bqual_length, jb);
     
     /* check result.. */
     
@@ -382,11 +362,6 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
 
 out:
             
-    if (NULL!=bclz)
-    {
-        (*env)->DeleteLocalRef( env, bclz);
-    }
-
     if (NULL!=jb)
     {
         (*env)->DeleteLocalRef( env, jb);
