@@ -68,7 +68,9 @@ expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_start_entry;
 expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_commit_entry;
 expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_recover_entry;
 expublic jmethodID ndrxj_clazz_AtmiCtx_mid_xa_forget_entry;
+expublic jmethodID ndrxj_clazz_AtmiCtx_mid_unsolDispatch;
 
+        
 /* Fields: */
 expublic jfieldID ndrxj_clazz_AtmiCtx_fid_ctx;
 expublic jfieldID ndrxj_clazz_AtmiCtx_fid_svr;
@@ -207,7 +209,24 @@ expublic jclass ndrxj_clazz_String;
 /* Methods: */
 /* Fields: */
 
+/************************** OutputStream resources ****************************/
+expublic jclass ndrxj_clazz_OutputStream;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_OutputStream_mid_write;
+/* Fields: */
 
+/************************** BExprTree resources *******************************/
+expublic jclass ndrxj_clazz_BExprTree;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_BExprTree_mid_INIT;
+/* Fields: */
+expublic jfieldID ndrxj_clazz_BExprTree_fid_cPtr;
+
+/************************** BNextResult resources *******************************/
+expublic jclass ndrxj_clazz_BNextResult;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_BNextResult_mid_INIT;
+/* Fields: */
 
 /**
  * Mapping of the classes object
@@ -232,6 +251,10 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"javax/transaction/xa/Xid", &ndrxj_clazz_Xid,                 LOCL}
     ,{"java/lang/String", &ndrxj_clazz_String,                      GLOB}
     ,{"org/endurox/ExXid", &ndrxj_clazz_ExXid,                      GLOB}
+    ,{"java/io/OutputStream", &ndrxj_clazz_OutputStream,            LOCL}
+    ,{"org/endurox/BExprTree", &ndrxj_clazz_BExprTree,              GLOB}
+    ,{"org/endurox/BNextResult", &ndrxj_clazz_BNextResult,          GLOB}
+    
     
 };
 
@@ -263,6 +286,9 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_forget_entry, 
             "xa_forget_entry", "(Ljavax/transaction/xa/Xid;J)I"}
     
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_forget_entry, 
+            "unsolDispatch", "(Lorg/endurox/TypedBuffer;J)V"}
+    
     ,{CRF(ndrxj_clazz_Server), &ndrxj_clazz_Server_mid_tpSvrDone, 
             "tpSvrDone", "(Lorg/endurox/AtmiCtx;)V"}
     ,{CRF(ndrxj_clazz_Server), &ndrxj_clazz_Server_mid_tpSvrInit, 
@@ -285,9 +311,10 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_Xid), &ndrxj_clazz_Xid_mid_getFormatId, "getFormatId", "()I"}
     ,{CRF(ndrxj_clazz_Xid), &ndrxj_clazz_Xid_mid_getBranchQualifier, "getBranchQualifier", "()[B"}
     ,{CRF(ndrxj_clazz_Xid), &ndrxj_clazz_Xid_mid_getGlobalTransactionId, "getGlobalTransactionId", "()[B"}
+    ,{CRF(ndrxj_clazz_OutputStream), &ndrxj_clazz_OutputStream_mid_write, "write", "([B)V"}
+    ,{CRF(ndrxj_clazz_BExprTree), &ndrxj_clazz_BExprTree_mid_INIT, "<init>", "(J)V"}
+    ,{CRF(ndrxj_clazz_BNextResult), &ndrxj_clazz_BNextResult_mid_INIT, "<init>", "(III)V"}
     
-    
-   
 };
 
 /**
@@ -325,7 +352,8 @@ exprivate exj_fid_cache_t M_fields[] =
    ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_cltid, "cltid", "Lorg/endurox/ClientId;"}
    ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_ret, "ret", "I"}
    ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_list, "list", "[Ljavax/transaction/xa/Xid;"}
-
+   ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_list, "list", "[Ljavax/transaction/xa/Xid;"}
+   ,{CRF(ndrxj_clazz_BExprTree), &ndrxj_clazz_BExprTree_fid_cPtr, "cPtr", "J"}
 };
 
 /*---------------------------Statics------------------------------------*/

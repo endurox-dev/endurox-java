@@ -221,6 +221,7 @@ extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_start_entry;
 extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_commit_entry;
 extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_recover_entry;
 extern jmethodID ndrxj_clazz_AtmiCtx_mid_xa_forget_entry;
+extern jmethodID ndrxj_clazz_AtmiCtx_mid_unsolDispatch;
 
 extern jfieldID ndrxj_clazz_AtmiCtx_fid_ctx;
 extern jfieldID ndrxj_clazz_AtmiCtx_fid_svr;
@@ -323,6 +324,26 @@ extern jclass ndrxj_clazz_Xid;
 extern jmethodID ndrxj_clazz_Xid_mid_getFormatId;
 extern jmethodID ndrxj_clazz_Xid_mid_getBranchQualifier;
 extern jmethodID ndrxj_clazz_Xid_mid_getGlobalTransactionId;
+
+/************************** OutputStream resources ****************************/
+extern jclass ndrxj_clazz_OutputStream;
+/* Methods: */
+extern jmethodID ndrxj_clazz_OutputStream_mid_write;
+/* Fields: */
+
+
+/************************** BExprTree resources *******************************/
+extern jclass ndrxj_clazz_BExprTree;
+/* Methods: */
+extern jmethodID ndrxj_clazz_BExprTree_mid_INIT;
+/* Fields: */
+extern jfieldID ndrxj_clazz_BExprTree_fid_cPtr;
+
+/************************** BNextResult resources *******************************/
+extern jclass ndrxj_clazz_BNextResult;
+/* Methods: */
+extern jmethodID ndrxj_clazz_BNextResult_mid_INIT;
+
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/

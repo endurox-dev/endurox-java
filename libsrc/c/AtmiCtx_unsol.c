@@ -69,8 +69,6 @@ exprivate __thread jobject M_atmiCtxObj;
 exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags) 
 {
     int ret = EXSUCCEED;
-    jclass bclz;
-    jmethodID mid;
     TPCONTEXT_T ctx;
     ndrx_ctx_priv_t *ctxpriv;
     
@@ -90,29 +88,6 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
         EXFAIL_OUT(ret);
     }
     
-    /* Call method from Atmi Context, before that unset the C
-     * context, because we do not know in what threads java does works.
-     */
-    bclz = (*NDRXJ_JENV(ctxpriv))->FindClass(NDRXJ_JENV(ctxpriv), "org/endurox/AtmiCtx");
-
-    if (NULL==bclz)
-    {        
-       /* I guess we need to abort here! */
-       NDRX_LOG(log_error, "Failed to find AtmiCtx - aborting...!");
-       /* tpreturn fail or simulate time-out? or just abort?*/
-       abort();
-    }
-
-    /* create buffer object... */
-    mid = (*NDRXJ_JENV(ctxpriv))->GetMethodID(NDRXJ_JENV(ctxpriv), bclz, 
-           "unsolDispatch", "(Lorg/endurox/TypedBuffer;J)V");
-
-    if (NULL==mid)
-    {
-       NDRX_LOG(log_error, "Failed to get unsolDispatch() method!");
-       abort();
-    }
-    
     /* get the callback dispatcher */
     
     /* unset context */
@@ -121,7 +96,7 @@ exprivate void ndrx_unsol_dispatcher (char *data, long len, long flags)
     tpgetctxt(&ctx, 0L);
 
     (*NDRXJ_JENV(ctxpriv))->CallVoidMethod(NDRXJ_JENV(ctxpriv), NDRXJ_JATMICTX(ctxpriv), 
-            mid, jdata, (jlong)flags);
+            ndrxj_clazz_AtmiCtx_mid_unsolDispatch, jdata, (jlong)flags);
 
     /* set context back... */
     tpsetctxt(ctx, 0L);
@@ -145,11 +120,6 @@ out:
     if (NULL!=jdata)
     {
         (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), jdata);
-    }
-
-    if (NULL!=bclz)
-    {
-        (*NDRXJ_JENV(ctxpriv))->DeleteLocalRef(NDRXJ_JENV(ctxpriv), bclz);
     }
 
     return;

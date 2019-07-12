@@ -1204,8 +1204,6 @@ exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
 {
     Bboolpr_ctl_t *ctl = (Bboolpr_ctl_t *)dataptr1;
     jbyteArray ba = NULL;
-    jclass clazz;
-    jmethodID mid;
     int ret = EXSUCCEED;
     TPCONTEXT_T context;
     
@@ -1230,34 +1228,14 @@ exprivate int bboolprcb_callback(char *buffer, long datalen, void *dataptr1)
         EXFAIL_OUT(ret);
     }
     
-    /* locate write method of output stream class */
-    
-    clazz = (*(ctl->env))->GetObjectClass(ctl->env, ctl->outstream);
-    
-    if (NULL==clazz)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get output stream class",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-    
-    mid = (*(ctl->env))->GetMethodID(ctl->env, clazz, "write",
-            "([B)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get write(byte[]) output stream method!",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-
     /* suspend ATMI context as java might perform some other actions
      * on given thread.
      */
     tpgetctxt(&context, 0L);
     
     /* Call server object */
-    (*(ctl->env))->CallVoidMethod(ctl->env, ctl->outstream, mid, ba);
+    (*(ctl->env))->CallVoidMethod(ctl->env, ctl->outstream, 
+        ndrxj_clazz_OutputStream_mid_write, ba);
     
     /* restore ATMI context */
     tpsetctxt(context, 0L);

@@ -61,27 +61,9 @@
 expublic char* ndrxj_BExprTree_ptr_get(JNIEnv *env, jobject ptrO)
 {
     char *ret = NULL;
-    jclass objClass = (*env)->GetObjectClass(env, ptrO);
-    jfieldID ptr_fld;
     jlong jptr;
     
-    if (NULL==objClass)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get object class: %s");
-        goto out;
-    }
-    
-    ptr_fld = (*env)->GetFieldID(env, objClass, "cPtr", "J");
-    
-    if (NULL==ptr_fld)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get cPtr_last_checked field from BFldLocInfo: %s");
-        goto out;
-    }
-    
-    jptr = (*env)->GetLongField(env, ptrO, ptr_fld);
+    jptr = (*env)->GetLongField(env, ptrO, ndrxj_clazz_BExprTree_fid_cPtr);
     
     ret = (char *)jptr;
     
@@ -97,30 +79,11 @@ out:
  */
 expublic void ndrxj_BExprTree_ptr_set(JNIEnv *env, jobject ptrO, char *new_ptr)
 {
-    jclass objClass = (*env)->GetObjectClass(env, ptrO);
-    jfieldID ptr_fld;
     jlong jptr;
-    
-    if (NULL==objClass)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get object class: %s");
-        goto out;
-    }
-    
-    ptr_fld = (*env)->GetFieldID(env, objClass, "cPtr", "J");
-    
-    if (NULL==ptr_fld)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get cPtr_last_checked field from BExprTree: %s");
-        goto out;
-    }
-    
+        
     jptr = (long)new_ptr;
     
-    (*env)->SetLongField(env, ptrO, ptr_fld, jptr);
-    
+    (*env)->SetLongField(env, ptrO, ndrxj_clazz_BExprTree_fid_cPtr, jptr);
     
 out:
     return;
@@ -137,33 +100,11 @@ out:
 expublic jobject ndrxj_BExprTree_new(JNIEnv *env, char *ptr)
 {
     jobject ret = NULL;
-    jclass bclz;
-    jmethodID mid;
     
-    /* Set context if needed */
-    
-    NDRX_LOG(log_debug, "Allocating [%s]", BEXPRTREE_CLASS);
-    
-    bclz = (*env)->FindClass(env, BEXPRTREE_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", BEXPRTREE_CLASS);
-        goto out;
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(J)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
-    }
-
     NDRX_LOG(log_debug, "About to NewObject(%s)", BEXPRTREE_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, (jlong)ptr);
+    ret = (*env)->NewObject(env, ndrxj_clazz_BExprTree, 
+            ndrxj_clazz_BExprTree_mid_INIT, (jlong)ptr);
     
     if (NULL==ret)
     {

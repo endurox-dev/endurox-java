@@ -64,33 +64,15 @@ expublic jobject ndrxj_BNextResult_new(JNIEnv *env,
         BFLDID bfldid, BFLDOCC occ, BFLDLEN len)
 {
     jobject ret = NULL;
-    jclass bclz;
-    jmethodID mid;
     
     /* Set context if needed */
     
     UBF_LOG(log_debug, "Allocating [%s]", BNEXTRESULT_CLASS);
     
-    bclz = (*env)->FindClass(env, BNEXTRESULT_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", BNEXTRESULT_CLASS);
-        goto out;
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(III)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
-    }
-
     NDRX_LOG(log_debug, "About to NewObject(%s)", BNEXTRESULT_CLASS);
     
-    ret = (*env)->NewObject(env, bclz, mid, (jint)bfldid, (jint)occ, (jint)len);
+    ret = (*env)->NewObject(env, ndrxj_clazz_BNextResult, ndrxj_clazz_BNextResult_mid_INIT, 
+            (jint)bfldid, (jint)occ, (jint)len);
     
     if (NULL==ret)
     {
