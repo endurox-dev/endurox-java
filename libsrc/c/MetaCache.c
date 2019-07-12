@@ -188,6 +188,11 @@ expublic jfieldID ndrxj_clazz_XidList_fid_list;
 /************************** Xid resources *************************************/
 expublic jclass ndrxj_clazz_Xid;
 /* Methods: */
+
+expublic jmethodID ndrxj_clazz_Xid_mid_getFormatId;
+expublic jmethodID ndrxj_clazz_Xid_mid_getBranchQualifier;
+expublic jmethodID ndrxj_clazz_Xid_mid_getGlobalTransactionId;
+
 /* Fields: */
 
 /************************** XidList resources *********************************/
@@ -277,6 +282,11 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_TPTRANID), &ndrxj_clazz_TPTRANID_mid_INIT, "<init>", "()V"}
     ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_mid_INIT, "<init>", "()V"}
     ,{CRF(ndrxj_clazz_ExXid), &ndrxj_clazz_ExXid_mid_INIT, "<init>", "(JJJ[B)V"}
+    ,{CRF(ndrxj_clazz_Xid), &ndrxj_clazz_Xid_mid_getFormatId, "getFormatId", "()I"}
+    ,{CRF(ndrxj_clazz_Xid), &ndrxj_clazz_Xid_mid_getBranchQualifier, "getBranchQualifier", "()[B"}
+    ,{CRF(ndrxj_clazz_Xid), &ndrxj_clazz_Xid_mid_getGlobalTransactionId, "getGlobalTransactionId", "()[B"}
+    
+    
    
 };
 

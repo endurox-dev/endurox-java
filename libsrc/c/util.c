@@ -380,11 +380,6 @@ out:
 expublic int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid)
 {
     int ret = EXSUCCEED;
-    jclass bclz;
-    /* get some mids */
-    jmethodID mid_getBranchQualifier;
-    jmethodID mid_getGlobalTransactionId;
-    jmethodID mid_getFormatId;
     jbyteArray jbqa = NULL;
     jbyteArray jgtid = NULL;
     int jbqa_len, jgtid_len;
@@ -396,57 +391,19 @@ expublic int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid)
     jboolean n_gtid_copy = EXFALSE;
     char * n_gtid = NULL;
     
-    /* Get xid class */
-    bclz = (*env)->FindClass(env, XID_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", XID_CLASS);
-        goto out;
-        
-    }
-    
-    /* Get format id */
-    mid_getFormatId = (*env)->GetMethodID(env, bclz, "getFormatId", "()I");
-    
-    if (NULL==mid_getFormatId)
-    {
-        NDRX_LOG(log_error, "Failed to get MID of `getFormatId'!");
-        ret = EXFAIL;
-        goto out;
-    }
-    
     /* get format id */
-    formatId = (*env)->CallLongMethod(env, j_xid, mid_getFormatId);
+    formatId = (*env)->CallLongMethod(env, j_xid, ndrxj_clazz_Xid_mid_getFormatId);
     
     NDRX_LOG(log_debug, "Got format id: %ld", formatId);
     
-    /* Get Bqual bytes */
-    mid_getBranchQualifier = (*env)->GetMethodID(env, bclz, "getBranchQualifier", "()[B");
-    
-    if (NULL==mid_getBranchQualifier)
-    {
-        NDRX_LOG(log_error, "Failed to get MID of `getBranchQualifier'!");
-        ret = EXFAIL;
-        goto out;
-    }
-    
-    jbqa = (*env)->CallObjectMethod(env, j_xid, mid_getBranchQualifier);
+    jbqa = (*env)->CallObjectMethod(env, j_xid, ndrxj_clazz_Xid_mid_getBranchQualifier);
     jbqa_len = (*env)->GetArrayLength(env, jbqa);
     
     NDRX_LOG(log_debug, "Branch qualifier len: %d", jbqa_len);
     
     /* Get tranid bytes */
-    mid_getGlobalTransactionId = (*env)->GetMethodID(env, bclz, "getGlobalTransactionId", "()[B");
     
-    if (NULL==mid_getBranchQualifier)
-    {
-        NDRX_LOG(log_error, "Failed to get MID of `getGlobalTransactionId'!");
-        ret = EXFAIL;
-        goto out;
-    }
-    
-    jgtid = (*env)->CallObjectMethod(env, j_xid, mid_getBranchQualifier);
+    jgtid = (*env)->CallObjectMethod(env, j_xid, ndrxj_clazz_Xid_mid_getGlobalTransactionId);
     jgtid_len = (*env)->GetArrayLength(env, jgtid);
     
     NDRX_LOG(log_debug, "Transaction id len len: %d", jgtid_len);
@@ -471,11 +428,6 @@ expublic int ndrxj_cvt_xid_to_c(JNIEnv *env, jobject j_xid, XID *c_xid)
     NDRX_DUMP(log_debug, "Restored XID", c_xid, sizeof(c_xid));
     
 out:
-
-    if (NULL!=bclz)
-    {
-        (*env)->DeleteLocalRef( env, bclz);
-    }
 
     if (NULL!=jbqa)
     {

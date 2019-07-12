@@ -316,10 +316,13 @@ extern jclass ndrxj_clazz_String;
 
 /************************** ExXid resources ***********************************/
 extern jclass ndrxj_clazz_ExXid;
-/* Methods: */
 extern jmethodID ndrxj_clazz_ExXid_mid_INIT;
-/* Fields: */
 
+/************************** Xid resources *************************************/
+extern jclass ndrxj_clazz_Xid;
+extern jmethodID ndrxj_clazz_Xid_mid_getFormatId;
+extern jmethodID ndrxj_clazz_Xid_mid_getBranchQualifier;
+extern jmethodID ndrxj_clazz_Xid_mid_getGlobalTransactionId;
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
