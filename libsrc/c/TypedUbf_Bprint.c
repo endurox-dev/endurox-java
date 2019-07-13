@@ -111,39 +111,19 @@ struct Bextread_ctl
 exprivate long Bextread_readf(char *buffer, long bufsz, void *dataptr1)
 {
     Bextread_ctl_t *ctl = (Bextread_ctl_t *)dataptr1;
-    jclass clazz;
-    jmethodID mid;
     long ret = EXSUCCEED;
     TPCONTEXT_T context;
     jstring str;
     jboolean n_str_copy = EXFALSE;
     const char *n_str;
     
-    clazz = (*(ctl->env))->GetObjectClass(ctl->env, ctl->reader);
-    
-    if (NULL==clazz)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get Buffered reader class",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-    
-    mid = (*(ctl->env))->GetMethodID(ctl->env, clazz, "readLine",
-            "()Ljava/lang/String;");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "%s: Failed to get readLine() method!",
-                __func__);
-        EXFAIL_OUT(ret);
-    }
-
     /* suspend ATMI context as java might perform some other actions
      * on given thread.
      */
     tpgetctxt(&context, 0L);
     /* Call server object */
-    str = (*(ctl->env))->CallObjectMethod(ctl->env, ctl->reader, mid);
+    str = (*(ctl->env))->CallObjectMethod(ctl->env, ctl->reader, 
+            ndrxj_clazz_BufferedReader_mid_readLine);
     /* restore ATMI context */
     tpsetctxt(context, 0L);
     

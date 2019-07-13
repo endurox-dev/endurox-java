@@ -78,8 +78,6 @@ exprivate void * sig_thread(void *arg)
     sigset_t blockMask;
     JNIEnv *env = NULL;
     int sig;
-    jclass runnercls;
-    jmethodID mid;
     TPCONTEXT_T ctx;
     
     /* have some context for logging, etc.. */
@@ -115,26 +113,6 @@ exprivate void * sig_thread(void *arg)
         exit(EXFAIL);
     }
     
-    /* Resolve runner method ...  */
-    
-    runnercls = (*env)->GetObjectClass(env, M_runner);
-    
-    if (NULL==runnercls)
-    {
-        NDRX_LOG(log_error, "Failed to resolve Runner class!");
-        userlog("Failed to resolve Runner class!");
-        exit(EXFAIL);
-    }
-    
-    mid = (*env)->GetMethodID(env, runnercls, "run", "()V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Failed to get run() method!");
-        userlog("Failed to get run() method!");
-        exit(EXFAIL);
-    }
-    
     /* wait for signal... */
     
     for (;;)
@@ -155,7 +133,7 @@ exprivate void * sig_thread(void *arg)
         MUTEX_LOCK_V(M_is_set_lock);
         /* unset ATMI CTX */
         tpsetctxt(TPNULLCONTEXT, 0L);
-        (*env)->CallObjectMethod(env, M_runner, mid);
+        (*env)->CallObjectMethod(env, M_runner, ndrxj_clazz_Runnable_mid_run);
         tpsetctxt(ctx, 0L);
         MUTEX_UNLOCK_V(M_is_set_lock);
         
@@ -189,7 +167,6 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_installTermSi
 {
     int ret = EXSUCCEED;
     int have_lock = EXFALSE;
-    sigset_t blockMask;
     pthread_attr_t pthread_custom_attr;
     
     /* set ctx from obj */

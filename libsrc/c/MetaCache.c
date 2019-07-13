@@ -106,6 +106,7 @@ expublic jfieldID ndrxj_clazz_TypedBuffer_fid_ctx;
 expublic jclass ndrxj_clazz_TypedUbf;
 /* Methods: */
 expublic jmethodID ndrxj_clazz_TypedUbf_mid_INIT;
+expublic jmethodID ndrxj_clazz_TypedUbf_mid_boolcbfDispatch;
 /* Fields: */
 
 /************************ TypedCarray resources *******************************/
@@ -222,10 +223,41 @@ expublic jmethodID ndrxj_clazz_BExprTree_mid_INIT;
 /* Fields: */
 expublic jfieldID ndrxj_clazz_BExprTree_fid_cPtr;
 
-/************************** BNextResult resources *******************************/
+/************************** BNextResult resources *****************************/
 expublic jclass ndrxj_clazz_BNextResult;
 /* Methods: */
 expublic jmethodID ndrxj_clazz_BNextResult_mid_INIT;
+/* Fields: */
+
+/************************** Runnable resources ********************************/
+expublic jclass ndrxj_clazz_Runnable;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_Runnable_mid_run;
+/* Fields: */
+
+/************************** Runnable resources ********************************/
+expublic jclass ndrxj_clazz_TpgetrplyResult;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TpgetrplyResult_mid_INIT;
+/* Fields: */
+
+/************************** TprecvResult resources ****************************/
+expublic jclass ndrxj_clazz_TprecvResult;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TprecvResult_mid_INIT;
+/* Fields: */
+
+
+/************************** TpTypesResult resources ***************************/
+expublic jclass ndrxj_clazz_TpTypesResult;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_TpTypesResult_mid_INIT;
+/* Fields: */
+
+/************************** BufferedReader resources ***************************/
+expublic jclass ndrxj_clazz_BufferedReader;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_BufferedReader_mid_readLine;
 /* Fields: */
 
 /**
@@ -254,7 +286,12 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"java/io/OutputStream", &ndrxj_clazz_OutputStream,            LOCL}
     ,{"org/endurox/BExprTree", &ndrxj_clazz_BExprTree,              GLOB}
     ,{"org/endurox/BNextResult", &ndrxj_clazz_BNextResult,          GLOB}
+    ,{"java/lang/Runnable",   &ndrxj_clazz_Runnable,                LOCL}
+    ,{"org/endurox/TpgetrplyResult",   &ndrxj_clazz_TpgetrplyResult,GLOB}
     
+    ,{"org/endurox/TprecvResult",   &ndrxj_clazz_TprecvResult,      GLOB}
+    ,{"org/endurox/TpTypesResult",   &ndrxj_clazz_TpTypesResult,    GLOB}
+    ,{"java/io/BufferedReader",   &ndrxj_clazz_BufferedReader,      LOCL}
     
 };
 
@@ -286,7 +323,7 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_forget_entry, 
             "xa_forget_entry", "(Ljavax/transaction/xa/Xid;J)I"}
     
-    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_xa_forget_entry, 
+    ,{CRF(ndrxj_clazz_AtmiCtx), &ndrxj_clazz_AtmiCtx_mid_unsolDispatch, 
             "unsolDispatch", "(Lorg/endurox/TypedBuffer;J)V"}
     
     ,{CRF(ndrxj_clazz_Server), &ndrxj_clazz_Server_mid_tpSvrDone, 
@@ -298,6 +335,8 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_TypedBuffer), &ndrxj_clazz_TypedBuffer_mid_INIT, "<init>", 
             "(Lorg/endurox/AtmiCtx;ZJJ)V"}
     ,{CRF(ndrxj_clazz_TypedUbf), &ndrxj_clazz_TypedUbf_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
+    ,{CRF(ndrxj_clazz_TypedUbf), &ndrxj_clazz_TypedUbf_mid_boolcbfDispatch, 
+            "boolcbfDispatch", "(Ljava/lang/String;)J"}
     ,{CRF(ndrxj_clazz_TypedCarray), &ndrxj_clazz_TypedCarray_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
     ,{CRF(ndrxj_clazz_TypedString), &ndrxj_clazz_TypedString_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
     ,{CRF(ndrxj_clazz_TypedView), &ndrxj_clazz_TypedView_mid_INIT, "<init>", "(Lorg/endurox/AtmiCtx;ZJJ)V"}
@@ -314,7 +353,15 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_OutputStream), &ndrxj_clazz_OutputStream_mid_write, "write", "([B)V"}
     ,{CRF(ndrxj_clazz_BExprTree), &ndrxj_clazz_BExprTree_mid_INIT, "<init>", "(J)V"}
     ,{CRF(ndrxj_clazz_BNextResult), &ndrxj_clazz_BNextResult_mid_INIT, "<init>", "(III)V"}
-    
+    ,{CRF(ndrxj_clazz_Runnable), &ndrxj_clazz_Runnable_mid_run, "run", "()V"}
+    ,{CRF(ndrxj_clazz_TpgetrplyResult), &ndrxj_clazz_TpgetrplyResult_mid_INIT, "<init>", 
+            "(ILorg/endurox/TypedBuffer;)V"}    
+    ,{CRF(ndrxj_clazz_TprecvResult), &ndrxj_clazz_TprecvResult_mid_INIT, "<init>", 
+            "(ILorg/endurox/TypedBuffer;J)V"}
+    ,{CRF(ndrxj_clazz_TpTypesResult), &ndrxj_clazz_TpTypesResult_mid_INIT, "<init>", 
+            "(Ljava/lang/String;Ljava/lang/String;J)V"}
+    ,{CRF(ndrxj_clazz_BufferedReader), &ndrxj_clazz_BufferedReader_mid_readLine, "readLine", 
+            "()Ljava/lang/String;"}
 };
 
 /**

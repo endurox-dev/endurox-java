@@ -246,7 +246,7 @@ extern jfieldID ndrxj_clazz_TypedBuffer_fid_ctx;
 /************************ TypedUbf resources **********************************/
 extern jclass ndrxj_clazz_TypedUbf;
 extern jmethodID ndrxj_clazz_TypedUbf_mid_INIT;
-
+extern jmethodID ndrxj_clazz_TypedUbf_mid_boolcbfDispatch;
 /************************ TypedCarray resources *******************************/
 extern jclass ndrxj_clazz_TypedCarray;
 extern jmethodID ndrxj_clazz_TypedCarray_mid_INIT;
@@ -344,6 +344,36 @@ extern jclass ndrxj_clazz_BNextResult;
 /* Methods: */
 extern jmethodID ndrxj_clazz_BNextResult_mid_INIT;
 
+/************************** Runnable resources ********************************/
+extern jclass ndrxj_clazz_Runnable;
+/* Methods: */
+extern jmethodID ndrxj_clazz_Runnable_mid_run;
+/* Fields: */
+
+/************************** Runnable resources ********************************/
+extern jclass ndrxj_clazz_TpgetrplyResult;
+/* Methods: */
+extern jmethodID ndrxj_clazz_TpgetrplyResult_mid_INIT;
+/* Fields: */
+
+/************************** TprecvResult resources ****************************/
+extern jclass ndrxj_clazz_TprecvResult;
+/* Methods: */
+extern jmethodID ndrxj_clazz_TprecvResult_mid_INIT;
+/* Fields: */
+
+
+/************************** TpTypesResult resources ***************************/
+extern jclass ndrxj_clazz_TpTypesResult;
+/* Methods: */
+extern jmethodID ndrxj_clazz_TpTypesResult_mid_INIT;
+/* Fields: */
+
+/************************** BufferedReader resources ***************************/
+extern jclass ndrxj_clazz_BufferedReader;
+/* Methods: */
+extern jmethodID ndrxj_clazz_BufferedReader_mid_readLine;
+/* Fields: */
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/

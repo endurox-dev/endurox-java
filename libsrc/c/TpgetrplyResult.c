@@ -64,31 +64,11 @@ expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
         int cd, jobject odata)
 {
     jobject ret = NULL;
-    jclass bclz = NULL;
-    jmethodID mid;
     
     UBF_LOG(log_debug, "Allocating [%s]", ALLOC_CLASS);
-    
-    bclz = (*env)->FindClass(env, ALLOC_CLASS);
-    
-    if (NULL==bclz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", ALLOC_CLASS);
-        goto out;
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, bclz, "<init>", "(ILorg/endurox/TypedBuffer;)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get buffer constructor!");
-        goto out;
-    }
 
-    NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
-    
-    ret = (*env)->NewObject(env, bclz, mid, (jint)cd, odata);
+    ret = (*env)->NewObject(env, ndrxj_clazz_TpgetrplyResult, 
+            ndrxj_clazz_TpgetrplyResult_mid_INIT, (jint)cd, odata);
     
     if (NULL==ret)
     {
@@ -100,10 +80,6 @@ expublic jobject ndrxj_TpgetrplyResult_new(JNIEnv *env, jobject ctx_obj,
     
 out:
     
-    if (NULL!=bclz)
-    {
-        (*env)->DeleteLocalRef(env, bclz);
-    }
     return ret;
 }
 

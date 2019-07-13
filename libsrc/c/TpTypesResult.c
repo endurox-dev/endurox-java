@@ -64,32 +64,14 @@ expublic jobject ndrxj_TpTypesResult_new(JNIEnv *env,
         char *btype, char *sub_type, long size)
 {
     jobject ret = NULL;
-    jclass clz;
-    jmethodID mid;
-    jstring jtype;
-    jstring jsub_type;
+    jstring jtype = NULL;
+    jstring jsub_type = NULL;
     /* have two strings  */
     
     /* Set context if needed */
     
     UBF_LOG(log_debug, "Allocating [%s]", ALLOC_CLASS);
     
-    clz = (*env)->FindClass(env, ALLOC_CLASS);
-    
-    if (NULL==clz)
-    {        
-        NDRX_LOG(log_error, "Failed to find class [%s]", ALLOC_CLASS);
-        goto out;
-    }
-    
-    /* create buffer object... */
-    mid = (*env)->GetMethodID(env, clz, "<init>", "(Ljava/lang/String;Ljava/lang/String;J)V");
-    
-    if (NULL==mid)
-    {
-        NDRX_LOG(log_error, "Cannot get [%s] constructor!", ALLOC_CLASS);
-        goto out;
-    }
     
     jtype = (*env)->NewStringUTF(env, btype);
     jsub_type = (*env)->NewStringUTF(env, sub_type);
@@ -97,7 +79,8 @@ expublic jobject ndrxj_TpTypesResult_new(JNIEnv *env,
     /* TODO: How about exception checking right here? */
     NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
     
-    ret = (*env)->NewObject(env, clz, mid, jtype, jsub_type, (jlong)size);
+    ret = (*env)->NewObject(env, ndrxj_clazz_TpTypesResult, 
+            ndrxj_clazz_TpTypesResult_mid_INIT, jtype, jsub_type, (jlong)size);
     
     if (NULL==ret)
     {
@@ -109,9 +92,15 @@ expublic jobject ndrxj_TpTypesResult_new(JNIEnv *env,
     
 out:
     
-    (*env)->DeleteLocalRef(env, clz);
-    (*env)->DeleteLocalRef(env, jtype);
-    (*env)->DeleteLocalRef(env, jsub_type);
+    if (NULL!=jtype)
+    {
+        (*env)->DeleteLocalRef(env, jtype);
+    }
+
+    if (NULL!=jsub_type)
+    {
+        (*env)->DeleteLocalRef(env, jsub_type);
+    }
     
     return ret;
 }

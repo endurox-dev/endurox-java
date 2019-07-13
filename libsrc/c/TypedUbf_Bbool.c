@@ -78,43 +78,12 @@ expublic long Bbool_callback_function(UBFH *p_ub, char *funcname)
 {
     long ret = EXSUCCEED;
     TPCONTEXT_T context;
-    jclass clazz;
-    jmethodID mid;
-    jstring jfuncname;
+    jstring jfuncname = NULL;
     
     /* suspend ATMI context as java might perform some other actions
      * on given thread.
      */
     tpgetctxt(&context, 0L);
-    
-    
-    /* locate write method of output stream class */
-    
-    clazz = (*M_cb_env)->GetObjectClass(M_cb_env, M_cb_ubf);
-    
-    if (NULL==clazz)
-    {
-        UBF_LOG(log_error, "%s: Failed to get UBF buffer class",
-                __func__);
-        /* we shall throw exception here! */
-        
-        ndrxj_ubf_throw(M_cb_env, BEUNIX, "%s: Failed to get UBF buffer class",
-                __func__);
-        
-        EXFAIL_OUT(ret);
-    }
-    
-    /* get dispatch callback */
-    
-    mid = (*M_cb_env)->GetMethodID(M_cb_env, clazz, "boolcbfDispatch",
-            "(Ljava/lang/String;)J");
-    
-    if (NULL==mid)
-    {
-        NDRXJ_LOG_EXCEPTION(M_cb_env, log_error, NDRXJ_LOGEX_ULOG, 
-                "Failed to get boolcbfDispatch method: %s");
-        EXFAIL_OUT(ret);
-    }
     
     jfuncname = (*M_cb_env)->NewStringUTF(M_cb_env, funcname);
     
@@ -125,10 +94,16 @@ expublic long Bbool_callback_function(UBFH *p_ub, char *funcname)
         EXFAIL_OUT(ret);
     }
     
-    ret = (*M_cb_env)->CallLongMethod(M_cb_env, M_cb_ubf, mid, jfuncname);
+    ret = (*M_cb_env)->CallLongMethod(M_cb_env, M_cb_ubf, 
+            ndrxj_clazz_TypedUbf_mid_boolcbfDispatch, jfuncname);
     
 out:
     
+    if (NULL!=jfuncname)
+    {
+        (*M_cb_env)->DeleteLocalRef(M_cb_env, jfuncname);
+    }
+            
     /* restore ATMI context */
     tpsetctxt(context, 0L);
 
