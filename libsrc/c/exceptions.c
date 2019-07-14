@@ -382,69 +382,6 @@ expublic char *ndrxj_exception_backtrace(JNIEnv *env, jthrowable exc_in)
     jthrowable exc = NULL;
     EX_string *ctrace = NULL;
     
-    jmethodID mid_throwable_getCause;
-    jmethodID mid_throwable_getStackTrace;
-    jmethodID mid_throwable_toString;
-    jmethodID mid_frame_toString;
-    jclass frame_class = NULL;
-    jclass throwable_class = NULL;
-    
-    throwable_class = (*env)->FindClass(env, "java/lang/Throwable");
-    
-    if (NULL==throwable_class)
-    {
-        userlog("Failed to get [java/lang/Throwable] class!");
-        goto out;
-    }
-    
-    mid_throwable_getCause =
-        (*env)->GetMethodID(env, throwable_class, "getCause", 
-            "()Ljava/lang/Throwable;");
-    
-    if (NULL==mid_throwable_getCause)
-    {
-        userlog("Failed to get [Throwable.getCause()] mid!");
-        goto out;
-    }
-
-    mid_throwable_getStackTrace =
-        (*env)->GetMethodID(env, throwable_class, "getStackTrace",
-                          "()[Ljava/lang/StackTraceElement;");
-    
-    if (NULL==mid_throwable_getStackTrace)
-    {
-        userlog("Failed to get [Throwable.getStackTrace()] mid!");
-        goto out;
-    }
-    
-    mid_throwable_toString =
-        (*env)->GetMethodID(env, throwable_class, "toString",
-                          "()Ljava/lang/String;");
-    
-    if (NULL==mid_throwable_toString)
-    {
-        userlog("Failed to get [Throwable.toString()] mid!");
-        goto out;
-    }
-
-    frame_class = (*env)->FindClass(env, "java/lang/StackTraceElement");
-    
-    if (NULL==frame_class)
-    {
-        userlog("Failed to find [java/lang/StackTraceElement] class!");
-        goto out;
-    }
-    
-    mid_frame_toString =
-        (*env)->GetMethodID(env, frame_class,
-                          "toString",
-                          "()Ljava/lang/String;");
-    if (NULL==mid_frame_toString)
-    {
-        userlog("Failed to find [StackTraceElement.toString()] mid!");
-        goto out;
-    }
-    
     exstring_new(ctrace);
 
     if (NULL!=exc_in)
@@ -460,10 +397,10 @@ expublic char *ndrxj_exception_backtrace(JNIEnv *env, jthrowable exc_in)
                         env,
                         exc,
                         ctrace,
-                        mid_throwable_getCause,
-                        mid_throwable_getStackTrace,
-                        mid_throwable_toString,
-                        mid_frame_toString);
+                        ndrxj_clazz_Throwable_mid_getCause,
+                        ndrxj_clazz_Throwable_mid_getStackTrace,
+                        ndrxj_clazz_Throwable_mid_toString,
+                        ndrxj_clazz_StackTraceElement_mid_toString);
     
     ret = NDRX_STRDUP(ctrace->d);
     
@@ -475,17 +412,6 @@ out:
     {
         (*env)->DeleteLocalRef(env, exc);
     }
-
-    if (NULL!=throwable_class)
-    {
-        (*env)->DeleteLocalRef(env, throwable_class);
-    }
-
-    if (NULL!=throwable_class)
-    {
-        (*env)->DeleteLocalRef(env, frame_class);
-    }
-
 
     /* userlog("Backtrace done: %s", ret); */
     

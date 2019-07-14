@@ -260,6 +260,20 @@ expublic jclass ndrxj_clazz_BufferedReader;
 expublic jmethodID ndrxj_clazz_BufferedReader_mid_readLine;
 /* Fields: */
 
+/************************** Throwable resources *******************************/
+expublic jclass ndrxj_clazz_Throwable;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_Throwable_mid_getCause;
+expublic jmethodID ndrxj_clazz_Throwable_mid_getStackTrace;
+expublic jmethodID ndrxj_clazz_Throwable_mid_toString;
+/* Fields: */
+
+/************************** StackTraceElement resources ***********************/
+expublic jclass ndrxj_clazz_StackTraceElement;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_StackTraceElement_mid_toString;
+/* Fields: */
+
 /**
  * Mapping of the classes object
  */
@@ -292,7 +306,8 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"org/endurox/TprecvResult",   &ndrxj_clazz_TprecvResult,      GLOB}
     ,{"org/endurox/TpTypesResult",   &ndrxj_clazz_TpTypesResult,    GLOB}
     ,{"java/io/BufferedReader",   &ndrxj_clazz_BufferedReader,      LOCL}
-    
+    ,{"java/lang/Throwable",   &ndrxj_clazz_Throwable,              LOCL}
+    ,{"java/lang/StackTraceElement",   &ndrxj_clazz_StackTraceElement,LOCL}
 };
 
 /**
@@ -361,6 +376,15 @@ exprivate exj_mid_cache_t M_methods[] =
     ,{CRF(ndrxj_clazz_TpTypesResult), &ndrxj_clazz_TpTypesResult_mid_INIT, "<init>", 
             "(Ljava/lang/String;Ljava/lang/String;J)V"}
     ,{CRF(ndrxj_clazz_BufferedReader), &ndrxj_clazz_BufferedReader_mid_readLine, "readLine", 
+            "()Ljava/lang/String;"}
+    
+    ,{CRF(ndrxj_clazz_Throwable), &ndrxj_clazz_Throwable_mid_getCause, "getCause", 
+            "()Ljava/lang/Throwable;"}
+    ,{CRF(ndrxj_clazz_Throwable), &ndrxj_clazz_Throwable_mid_getStackTrace, "getStackTrace", 
+            "()[Ljava/lang/StackTraceElement;"}
+    ,{CRF(ndrxj_clazz_Throwable), &ndrxj_clazz_Throwable_mid_toString, "toString", 
+            "()Ljava/lang/String;"}
+    ,{CRF(ndrxj_clazz_StackTraceElement), &ndrxj_clazz_StackTraceElement_mid_toString, "toString", 
             "()Ljava/lang/String;"}
 };
 
@@ -441,8 +465,9 @@ expublic int ndrxj_caches_load(JNIEnv *env)
         
         if (M_classes[i].global)
         {
-            /* TODO: Remove local ref... */
+            jclass tmp = *M_classes[i].calzz;
             *M_classes[i].calzz = (*env)->NewWeakGlobalRef(env, *M_classes[i].calzz);
+            (*env)->DeleteLocalRef(env, tmp);
         }
         
         if (NULL==*M_classes[i].calzz)

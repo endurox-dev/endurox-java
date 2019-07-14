@@ -403,6 +403,21 @@ extern jclass ndrxj_clazz_BufferedReader;
 extern jmethodID ndrxj_clazz_BufferedReader_mid_readLine;
 /* Fields: */
 
+/************************** Throwable resources *******************************/
+extern jclass ndrxj_clazz_Throwable;
+/* Methods: */
+extern jmethodID ndrxj_clazz_Throwable_mid_getCause;
+extern jmethodID ndrxj_clazz_Throwable_mid_getStackTrace;
+extern jmethodID ndrxj_clazz_Throwable_mid_toString;
+/* Fields: */
+
+/************************** StackTraceElement resources ***********************/
+extern jclass ndrxj_clazz_StackTraceElement;
+/* Methods: */
+extern jmethodID ndrxj_clazz_StackTraceElement_mid_toString;
+/* Fields: */
+
+
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
