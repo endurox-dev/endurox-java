@@ -163,7 +163,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1,
         
         /* set object */
         
-        (*env)->SetObjectField(env, exception, new_cache.fid2, data);
+        (*env)->SetObjectField(env, exception, cached->fid2, data);
     }
     
     if (NULL!=addarg1 && TPEDIAGNOSTIC == err)

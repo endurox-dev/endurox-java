@@ -441,6 +441,7 @@ expublic int ndrxj_caches_load(JNIEnv *env)
         
         if (M_classes[i].global)
         {
+            /* TODO: Remove local ref... */
             *M_classes[i].calzz = (*env)->NewWeakGlobalRef(env, *M_classes[i].calzz);
         }
         
