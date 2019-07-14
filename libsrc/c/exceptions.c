@@ -68,11 +68,12 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1,
     char cls[256];
     char error[ERROR_MAX];
     jstring jerror;
-    jclass ex;
     
     jobject exception = NULL;
-    jmethodID mid;
-    jfieldID data_fldid;
+    /* jfieldID data_fldid; */
+    
+    exj_dyn_cache_t new_cache;
+    exj_dyn_cache_t *cached;
     
     va_list args;
     
@@ -87,24 +88,64 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1,
     
     NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
-    ex = (*env)->FindClass(env, cls);
+    cached = ndrxj_caches_get(cls);
     
-    if (NULL==ex)
+    if (NULL==cached)
     {
-        NDRX_LOG(log_error, "exception  [%s] not found!!!! - aborting!", cls);
-        abort();
+        memset(&new_cache, 0, sizeof(new_cache));
+        
+        new_cache.clazz = (*env)->FindClass(env, cls);
+
+        if (NULL==new_cache.clazz)
+        {
+            NDRX_LOG(log_error, "exception  [%s] not found!!!! - aborting!", cls);
+            abort();
+        }
+        
+        new_cache.mid1 = (*env)->GetMethodID(env, new_cache.clazz,
+                "<init>", "(Ljava/lang/String;)V");
+
+        if (NULL==new_cache.mid1)
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Cannot get constructor for ATMI exception: %s");
+            return;
+        }
+        
+        if (TPEDIAGNOSTIC == err)
+        {
+            /* In this case addarg1 qctl buffer associated with the queue
+             * call
+             */
+            
+            NDRX_LOG(log_debug, "Getting qctl for TPEDIAGNOSTIC");
+
+            if (NULL==(new_cache.fid1 = (*env)->GetFieldID(env, new_cache.clazz, 
+                    "qctl", "Lorg/endurox/TPQCTL;")))
+            {
+                NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                        "Failed to find data field in exception: %s");
+            }
+        }
+        
+        if (NULL==(new_cache.fid2 = (*env)->GetFieldID(env, new_cache.clazz, "data", 
+                "Lorg/endurox/TypedBuffer;")))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                    "Failed to find data field in exception: %s");
+            return;
+        }
+        
+        if (NULL==(cached = ndrxj_caches_add(env, cls, &new_cache)))
+        {
+            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX | NDRXJ_LOGEX_ULOG, 
+                        "Failed to cached exception class!");
+            abort();
+        }
+        
     }
     
-    mid = (*env)->GetMethodID(env, ex, "<init>", "(Ljava/lang/String;)V");
-    
-    if (NULL==mid)
-    {
-        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                "Cannot get constructor for ATMI exception: %s");
-        return;
-    }
-    
-    exception = (*env)->NewObject(env, ex, mid, jerror);
+    exception = (*env)->NewObject(env, cached->clazz, cached->mid1, jerror);
     
     if (NULL==exception)
     {
@@ -118,41 +159,17 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1,
     if (NULL!=data)
     {
         NDRX_LOG(log_debug, "Setting data object for exception");
-        if (NULL==(data_fldid = (*env)->GetFieldID(env, ex, "data", 
-                "Lorg/endurox/TypedBuffer;")))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to find data field in exception: %s");
-            return;
-        }
+        
         
         /* set object */
         
-        (*env)->SetObjectField(env, exception, data_fldid, data);
+        (*env)->SetObjectField(env, exception, new_cache.fid2, data);
     }
     
     if (NULL!=addarg1 && TPEDIAGNOSTIC == err)
     {
-        /* In this case addarg1 qctl buffer associated with the queue
-         * call
-         */
-        
-        jfieldID qctl_fldid;
-        
-        NDRX_LOG(log_debug, "Setting qctl for TPEDIAGNOSTIC");
-        
-        if (NULL==(qctl_fldid = (*env)->GetFieldID(env, ex, "qctl", 
-                "Lorg/endurox/TPQCTL;")))
-        {
-            NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
-                    "Failed to find data field in exception: %s");
-        }
-        else
-        {
-            /* set object */
-            (*env)->SetObjectField(env, exception, qctl_fldid, addarg1);
-
-        }        
+        /* set object */
+        (*env)->SetObjectField(env, exception, cached->fid1, addarg1);
     }
     
     /* throw finally */
@@ -160,10 +177,7 @@ expublic void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1,
     
 out:
     
-    if (NULL!=ex)
-    {
-        (*env)->DeleteLocalRef(env, ex);
-    }
+    return;
 }
 
 /**
@@ -176,7 +190,8 @@ expublic void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
-    jclass ex;
+    exj_dyn_cache_t *cached;
+    
     va_list args;
     va_start (args, msgfmt);
     vsnprintf (error, sizeof(error), msgfmt, args);
@@ -188,15 +203,15 @@ expublic void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...)
     
     NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
-    ex = (*env)->FindClass(env, cls);
+    cached = ndrxj_caches_single(env, cls);
     
-    if (!ex)
+    if (!cached)
     {
         NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, error);
+    (*env)->ThrowNew(env, cached->clazz, error);
 }
 
 /**
@@ -209,7 +224,8 @@ expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
 {
     char cls[256];
     char error[ERROR_MAX];
-    jclass ex;
+    exj_dyn_cache_t *cached;
+    
     va_list args;
     va_start (args, msgfmt);
     vsnprintf (error, sizeof(error), msgfmt, args);
@@ -220,15 +236,15 @@ expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
     
     NDRX_LOG(log_info, "Throwing: [%s]: %s", cls, error);
     
-    ex = (*env)->FindClass(env, cls);
+    cached = ndrxj_caches_single(env, cls);
     
-    if (!ex)
+    if (!cached)
     {
         NDRX_LOG(log_error, "exception  [%s] not found!!!!", cls);
         abort();
     }
         
-    (*env)->ThrowNew(env, ex, error);
+    (*env)->ThrowNew(env, cached->clazz, error);
 }
 
 /**

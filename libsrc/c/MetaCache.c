@@ -403,6 +403,16 @@ exprivate exj_fid_cache_t M_fields[] =
    ,{CRF(ndrxj_clazz_BExprTree), &ndrxj_clazz_BExprTree_fid_cPtr, "cPtr", "J"}
 };
 
+/**
+ * Lock for dynamic cache
+ */
+MUTEX_LOCKDECL(M_dyn_cache_lock);
+
+/**
+ * Dynamic cache
+ */
+exprivate exj_dyn_cache_t *M_exj_dyn_cache = NULL;
+
 /*---------------------------Statics------------------------------------*/
 
 /**
@@ -497,6 +507,7 @@ out:
 expublic void ndrxj_caches_unload(JNIEnv *env)
 {
     int i;
+    exj_dyn_cache_t *el, *elt;
     
     NDRX_LOG(log_debug, "Removing global class references");
     
@@ -504,10 +515,140 @@ expublic void ndrxj_caches_unload(JNIEnv *env)
     {
         if (M_classes[i].global)
         {
-            (*env)->DeleteLocalRef( env, *M_classes[i].calzz);
+            (*env)->DeleteGlobalRef( env, *M_classes[i].calzz);
         }
     }
     
+    /* Clean up dynamic cache */
+    NDRX_LOG(log_debug, "Dynamic cache cleanup...");
+        
+    EXHASH_ITER(hh, M_exj_dyn_cache, el, elt)
+    {
+        
+        /* delete weak ref */
+        
+        (*env)->DeleteGlobalRef( env, el->clazz);
+        
+        EXHASH_DEL(M_exj_dyn_cache, el);
+        NDRX_FREE(el);
+    }
+    
 }
+
+/**
+ * Read cached data from hash
+ * @param class_name class name to search for
+ * @return NULL not found or cached object
+ */
+expublic exj_dyn_cache_t *ndrxj_caches_get(char *class_name)
+{
+    exj_dyn_cache_t *ret = NULL;
+    
+    MUTEX_LOCK_V(M_dyn_cache_lock);
+    EXHASH_FIND_STR(M_exj_dyn_cache, class_name, ret);
+    MUTEX_UNLOCK_V(M_dyn_cache_lock);
+    
+    if (NULL==ret)
+    {
+        NDRX_LOG(log_debug, "[%s] class not cached", class_name);
+    }
+    
+    return ret;
+}
+
+/**
+ * Add record to cache
+ * @param env Java env
+ * @param class_name class name
+ * @param data data to add
+ * @return NULL fail, else ptr to added obj
+ */
+expublic exj_dyn_cache_t* ndrxj_caches_add(JNIEnv *env, char *class_name, 
+        exj_dyn_cache_t *data)
+{
+    int ret = EXSUCCEED;
+    exj_dyn_cache_t *add = NULL;
+    jclass tmp = data->clazz;
+    
+    
+    add = NDRX_MALLOC(sizeof(*add));
+    
+    if (NULL==add)
+    {
+        NDRX_LOG(log_error, "Failed to malloc class cache! %s", strerror(errno));
+        userlog("Failed to malloc class cache! %s", strerror(errno));
+        EXFAIL_OUT(ret);
+    }
+    
+    memcpy(add, data, sizeof(*add));
+    
+    add->clazz = (*env)->NewWeakGlobalRef(env, data->clazz);
+    
+    (*env)->DeleteLocalRef(env, tmp);
+    
+    if (NULL==add->clazz)
+    {
+        NDRX_LOG(log_error, "Failed to create global weak REF!");
+        EXFAIL_OUT(ret);
+    }
+    
+    NDRX_STRCPY_SAFE(add->class_name, class_name);
+    
+    MUTEX_LOCK_V(M_dyn_cache_lock);
+    EXHASH_ADD_STR( M_exj_dyn_cache, class_name, add );
+    MUTEX_UNLOCK_V(M_dyn_cache_lock);
+    
+    NDRX_LOG(log_debug, "[%s] cached", class_name);
+    
+out:
+    
+    if (EXFAIL==ret)
+    {
+        
+        if (NULL!=add)
+        {
+            NDRX_FREE(add);
+        }
+        
+        return NULL;
+    }
+
+    return add;
+}
+
+/**
+ * get single class and load into cache
+ * @param env java env
+ * @param class_name class name
+ * @return ptr to cached obj, or NULL if not found.
+ */
+expublic exj_dyn_cache_t* ndrxj_caches_single(JNIEnv *env, char *class_name)
+{
+    exj_dyn_cache_t new_cache;
+    exj_dyn_cache_t *cached = NULL;
+    
+    cached = ndrxj_caches_get(class_name);
+    
+    if (NULL==cached)
+    {
+        memset(&new_cache, 0, sizeof(cached));
+        
+        new_cache.clazz = (*env)->FindClass(env, class_name);
+    
+        if (!new_cache.clazz)
+        {
+            NDRX_LOG(log_error, "exception  [%s] not found!!!!", class_name);
+            goto out;
+        }
+        
+        /* add to cache */
+        cached = ndrxj_caches_add(env, class_name, &new_cache);
+        
+    }
+    
+out:
+    return cached;
+}
+        
 
 /* vim: set ts=4 sw=4 et smartindent: */

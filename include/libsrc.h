@@ -43,6 +43,8 @@ extern "C" {
 #include <atmi.h>
 #include <ndrx_java_config.h>
 #include <tmenv.h>
+#include <exhash.h>
+#include <thlock.h>
 /*---------------------------Externs------------------------------------*/
 /*---------------------------Macros-------------------------------------*/
 
@@ -207,6 +209,32 @@ struct exj_fid_cache
  *  Method ID cache
  */
 typedef struct exj_fid_cache exj_fid_cache_t;
+
+
+/*
+ * Dynamic cache
+ */
+struct exj_dyn_cache
+{
+    char class_name[256];
+    jclass clazz;
+    
+    jfieldID fid1;
+    jfieldID fid2;
+    jfieldID fid3;
+    
+    
+    jmethodID mid1;
+    jmethodID mid2;
+    jmethodID mid3;
+    
+    EX_hash_handle hh;         /* makes this structure hashable */
+};
+
+/**
+ * Dynamic cache
+ */
+typedef struct exj_dyn_cache exj_dyn_cache_t;
 
 /*---------------------------Globals------------------------------------*/
 
@@ -505,6 +533,11 @@ extern NDRX_JAVA_API int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv);
 
 extern NDRX_JAVA_API int ndrxj_caches_load(JNIEnv *env);
 extern NDRX_JAVA_API void ndrxj_caches_unload(JNIEnv *env);
+
+extern exj_dyn_cache_t *ndrxj_caches_add(JNIEnv *env, char *class_name, exj_dyn_cache_t *data);
+extern exj_dyn_cache_t *ndrxj_caches_get(char *class_name);
+extern exj_dyn_cache_t* ndrxj_caches_single(JNIEnv *env, char *class_name);
+
 #ifdef  __cplusplus
 }
 #endif
