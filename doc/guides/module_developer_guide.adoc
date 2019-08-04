@@ -12,6 +12,22 @@ It contains solutions for main pitfalls found during the development process.
 Also document contains main configuration steps to get the development IDE
 working.
 
+== Installing Java JDK
+
+First of all to start using or developing Enduro/X Java language plugin, the JDK
+needs to be installed. Enduro/X supports JDK version 1.7 and above.
+
+=== CentOS/RHEL/Oracle Linux 7.X
+
+To install the JDK for RHEL system, use following command:
+
+--------------------------------------------------------------------------------
+
+# yum install java-1.8.0-openjdk
+
+--------------------------------------------------------------------------------
+
+
 == NetBeans configuration
 
 For Enduro/X and other related modules, NetBeans is preferred IDE for development.
