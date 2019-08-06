@@ -7,10 +7,18 @@ v1.0, 2018-08:
 
 == Intro
 
-This document is for internal purposes of the Enduro/X Java module developer.
+This document is for external and internal purposes of the 
+Enduro/X Java module developer. It can be used for building the Enduro/X Java
+package for further use. Document also contains the notes for Enduro/X Java
+module developer.
+
 It contains solutions for main pitfalls found during the development process.
 Also document contains main configuration steps to get the development IDE
 working.
+
+Document starts with approach of building the Enduor/X Java module for external
+use. Afterwards document describes the process for preparing the IDE for internal
+module development process.
 
 == Installing Java JDK
 
@@ -23,9 +31,81 @@ To install the JDK for RHEL system, use following command:
 
 --------------------------------------------------------------------------------
 
-# yum install java-1.8.0-openjdk
+# yum install java-1.8.0-openjdk java-devel
 
 --------------------------------------------------------------------------------
+
+== Prepare Enduro/X for Build
+
+The preparation for build also includes the step of downloading PostgreSQL JDBC
+drivers, as these are used (if not disabled) for testing purposes of the XA
+transactions. PostgreSQL database shall be already configured and users prepared.
+The preparation process is described in 
+building_guide(guides)(Building Enduro/X On GNU/Linux Platform, Testing PostgreSQL chapter).
+Also note that environment variables in ~/ndrx_home must be configured i.e.
+EX_PG_HOST, etc. variables must be configured in order the to establish the connection
+to database.
+
+=== Getting the source
+
+--------------------------------------------------------------------------------
+
+$ git clone https://github.com/endurox-dev/endurox-java
+$ cd endurox-java
+
+--------------------------------------------------------------------------------
+
+
+=== Getting the PostgreSQL JDBC driver
+
+Download the corresponding version from https://jdbc.postgresql.org/download.html.
+For example version postgresql-42.2.6.jar.
+
+ By assuming that you are in the endurox-java folder:
+
+--------------------------------------------------------------------------------
+
+$ cd tests/03_xapostgres/jdbcdrivers
+$ wget https://jdbc.postgresql.org/download/postgresql-42.2.6.jar
+$ mv postgresql-42.2.6.jar pgjdbc.jar
+
+--------------------------------------------------------------------------------
+
+=== Update environment variables
+
+Enduro/X Java module requires libjava.so and libjvm.so (and other OS counterparts),
+Thus the runtime library search path must be set correspondingly. To execute the
+Enduro/X tests, the ~/ndrx_home source script must be updated:
+
+For example on Oracle Linux 7:
+
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+# Java settings
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64/jre/lib/amd64:\
+        /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64/jre/lib/amd64/server
+
+
+--------------------------------------------------------------------------------
+
+=== Preparing to build and build
+
+--------------------------------------------------------------------------------
+
+$ cd endurox-java
+$ cmake .
+$ make
+
+--------------------------------------------------------------------------------
+
+
+=== Executing the unit tests
 
 
 == NetBeans configuration
@@ -69,7 +149,6 @@ And symbolic links are added
 
 --------------------------------------------------------------------------------
 
-$ git clone https://github.com/endurox-dev/endurox-java
 $ mkdir endurox-j
 $ cd endurox-j
 $ ln -s ../endurox-java/build.xml .
@@ -191,9 +270,15 @@ transaction
 closing of connection shall done by programmer.
 
 
-The object hierarchy is as follows:
+The object hierarchy is as follows (Class diagram):
 
->>>> Object relactions here <<<
+>>>> PIC: Object relactions here <<<
+
+
+
+
+>>>> PIC: Object/Global variables linkage and reuse for XA transactions <<<
+
 
 The transaction management, communications with transaction manager (Enduro/X
 *tmsrv* binary are performed by Enduro/X C libraries, but due to fact that
