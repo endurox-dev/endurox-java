@@ -1538,7 +1538,7 @@ public class AtmiCtx {
     
     /**
      * Check is XA Open
-     * @return 
+     * @return XA_OK or error
      */
     int xa_is_open() {
         
@@ -2053,6 +2053,10 @@ public class AtmiCtx {
      */
     public native void tpsrvsetctxdata(long dataptr, long flags);
     
+    /**
+     * Free Server context data
+     * @param dataptr pointer returned by \r tpsrvgetctxdata()
+     */
     public native void tpsrvfreectxdata(long dataptr);
     
     /**
@@ -2073,6 +2077,9 @@ public class AtmiCtx {
      * Open the XA sub-system / open connection for ATMI Context.
      * If Enduro/X Java XA Driver is used, then it will prepare connection
      * connection for given Atmi Context.
+     * 
+     * See tpopen(3) manpage for more information.
+     * 
      * @throws  AtmiTPERMERRException Resource Manager failed. The tpstrerror() 
      *  will provide more info from last call.
      * @throws  AtmiTPESYSTEMException System failure occurred during serving. 
@@ -2086,6 +2093,9 @@ public class AtmiCtx {
     /**
      * Close XA sub-system.
      * This shall be called after the processing thread terminates.
+     * 
+     * See tpopen(3) manpage for more information.
+     * 
      * @throws  AtmiTPERMERRException Resource Manager failed. The tpstrerror() 
      *  will provide more info from last call.
      * @throws  AtmiTPESYSTEMException System failure occurred during serving. 
@@ -2096,16 +2106,132 @@ public class AtmiCtx {
      */
     public native void tpclose();
     
+    /**
+     * Begin the global transaction. The current user must be open XA subsystem 
+     * by topopen(). timeout is setting for transaction manager (tmsrv) how 
+     * long transaction can hang in active state (i.e. not prepared/committed). 
+     * The work done by tpbegin() transaction is only in scope of processes 
+     * which uses XA interfaces for resource managers. 
+     * Any others works are outside of current scope. If timeout is set to 0, 
+     * then default maximum time for transaction processing is used. 
+     * Transaction must be committed or aborted by client process by using 
+     * tpcommit() or tpabort(). If any tpcall() with no TPNOTRAN flag 
+     * fails within given global transaction, then transaction is automatically 
+     * marked as abort only.
+     * See tpopen(3) manpage for more information.
+     * 
+     * @param timeout Number of seconds for which transaction can spend
+     *  in active state. If time is overreached, transaction is aborted by
+     * tmsrv(8).
+     * @param flags. Reserved for future use. Currently must be set to 0.
+     * @throws  AtmiTPEINVALException flags was not 0.
+     * @throws  AtmiTPETIMEException Transaction manager (tmsrv(8)) did not 
+     *    respond in configured time-out time. The state of transaction is unknown.
+     * @throws  AtmiTPESVCERRException Failed to call transaction manager, 
+     *  with service error. The state of transaction is unknown.
+     * @throws  AtmiTPEPROTOException XA subsystem was not initialized 
+     *  (did not call tpopen()) or global transaction already started.
+     * @throws  AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. 
+     */
     public native void tpbegin (long timeout, long flags);
     
+    /**
+     * Function does commit the global transaction. Transaction must not be 
+     * marked as abort only (e.g. in case if tpcall() failed). 
+     * After issuing the command, tmsrv(8) will do the commit procedure, 
+     * prepare phase first, log the results of prepare to persistent storage, 
+     * and then do the actual commit.
+     * @param flags 0 or Atmiconst.TPTXCOMMITDLOG - for logged decision early
+     *  return
+     * @throws  AtmiTPEINVALException flags was not 0 or was not TPTXCOMMITDLOG.
+     * @throws  AtmiTPETIMEException Transaction manager (tmsrv(8)) did not 
+     *  respond in configured time-out time. The state of transaction is unknown.
+     * @throws  AtmiTPEABORTException Global transaction was marked for abort 
+     *  and was aborted, or prepare state failed for some of the 
+     *  resource managers and transaction was aborted.
+     * @throws  AtmiTPEHAZARDException The state of transaction is not fully know. 
+     *  It can be that it is partially committed and partially aborted.
+     * @throws  AtmiTPEHEURISTICException The state of transaction is not 
+     *  full known. The transaction heuristically completed.
+     * @throws  AtmiTPESVCERRException Failed to call transaction manager, 
+     *  with service error. The state of transaction is unknown.
+     * @throws  AtmiTPEPROTOException XA subsystem was not initialized 
+     *  (did not call tpopen()), no global transaction started or caller 
+     *  is not initiator of transaction.
+     * @throws  AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws  AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. 
+     */
     public native void tpcommit (long flags);
     
+    /**
+     * Abort the global transaction. This will make any resources touched during 
+     * the transaction to roll back. Enduro/X will make all resource managers 
+     * to rollback the changes. Abort of transaction can only be done by transaction
+     * initiator, who originally did tpbegin().
+     * @param flags is reserved for future use and must be 0.
+     * @throws AtmiTPEINVALException flags was not 0.
+     * @throws AtmiTPETIMEException Transaction manager (tmsrv(8)) did not 
+     *  respond in configured time-out time. The state of transaction is unknown.
+     * @throws AtmiTPEHAZARDException The state of transaction is not fully know. 
+     *  It can be that it is partially committed and partially aborted.
+     * @throws AtmiTPEHEURISTICException The state of transaction is not full 
+     *  known. The transaction heuristically completed.
+     * @throws AtmiTPESVCERRException Failed to call transaction manager, 
+     *  with service error. The state of transaction is unknown.
+     * @throws AtmiTPEPROTOException XA subsystem was not initialized (did not 
+     *  call tpopen()), no global transaction started or caller is not 
+     *  initiator of transaction.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
     public native void tpabort (long flags);
     
+    /**
+     * Disassociate XA transaction from context and store transaction details 
+     * in returned TPRANID object. The transaction can be resumed as by doing 
+     * tpresume(). tranid must not be NULL. flags are reserved for future use, 
+     * and currently must be set to 0. It is error to have any open 
+     * call descriptors (either by tpacall() or by tpconnect()). Suspending 
+     * can be done by any involved process in transaction. But the role of 
+     * participant does not change. The TPTRANID type records the information 
+     * about caller, is it transaction originator or not.
+     * @param flags reserved for future use and must be be *0*
+     * @return allocated transaction identifier
+     * @throws AtmiTPEINVALException flags was not 0. Or tranid was NULL.
+     * @throws AtmiTPEPROTOException XA subsystem was not initialized (did not 
+     *  call tpopen()), global transaction was not already started, or there 
+     *  was open call descriptors.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     * See logs i.e. user log, or debugs for more info.
+     */
     public native TPTRANID tpsuspend (long flags);
     
+    /**
+     * Resume global transaction with given transaction data in tranid parameter. 
+     * trandid previously must be set by tpsuspend() call. To resume global 
+     * transaction, XA sub-system must be open, by tpopen(). Technically 
+     * it is possible that resume is done by other process than which 
+     * did the suspend
+     * @param tid transaction id previosuly returned from \r tpsuspend() call.
+     * @param flags must be set to 0 (RFU).
+     * @throws AtmiTPEINVALException Flags was not 0. Or tranid was NULL.
+     * @throws AtmiTPEPROTOException Global transaction is already started.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info. Could be the case if 
+     *  XA sub-system is not open by tpopen().
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
     public native void tpresume (TPTRANID tid, long flags);
-    
     
     /**
      * Get database connection

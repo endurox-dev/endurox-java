@@ -237,6 +237,10 @@ public class AtmiConst {
     public static final long TPNOCACHEDDATA  = 0x04000000;
     /** Do not abort global transaction, even if service failed */
     public static final long TPNOABORT       = 0x08000000;
+    
+    
+    /** If set, tpcommit will return when decision for commit is logged. */
+    public static final long TPTXCOMMITDLOG = 0x00000004L;
             
     /** @} */ // end of atmiflags
     
@@ -486,7 +490,7 @@ public class AtmiConst {
     
     /** @} */ // end of xaconst
     
-    /**< This is new server thread        */
+    /** This is new server thread        */
     public static final long SYS_SRV_THREAD = 0x00000004;
     
 }
