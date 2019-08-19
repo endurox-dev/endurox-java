@@ -276,6 +276,17 @@ The object hierarchy is as follows (Class diagram):
 
 
 
+In the background of whole java module, following key principles are used:
+
+- All meta data: Classes, Methods and Fields are cached, for performance reasons.
+
+- Enduro/X thread local storage are used for running in C side during Java calls,
+Special function ndrx_ctx_priv_get() is used to retrieve generic TLS fields
+where data such as Java env, Java ATMI Context object reference, ptr to self
+C context.
+
+- When call from Java is made to C and when in turn C calls back Java (for XA
+and Java XATMI servers) processing, these global variables are used.
 
 >>>> PIC: Object/Global variables linkage and reuse for XA transactions <<<
 

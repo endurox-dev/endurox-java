@@ -423,7 +423,6 @@ exprivate exj_fid_cache_t M_fields[] =
    ,{CRF(ndrxj_clazz_TPQCTL), &ndrxj_clazz_TPQCTL_fid_cltid, "cltid", "Lorg/endurox/ClientId;"}
    ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_ret, "ret", "I"}
    ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_list, "list", "[Ljavax/transaction/xa/Xid;"}
-   ,{CRF(ndrxj_clazz_XidList), &ndrxj_clazz_XidList_fid_list, "list", "[Ljavax/transaction/xa/Xid;"}
    ,{CRF(ndrxj_clazz_BExprTree), &ndrxj_clazz_BExprTree_fid_cPtr, "cPtr", "J"}
 };
 
