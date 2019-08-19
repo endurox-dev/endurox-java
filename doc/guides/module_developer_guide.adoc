@@ -235,6 +235,22 @@ in similar way as other source folders are added.
 
 image:images/java_classpath.png[caption="Figure 9: ", title="Java class path"]
 
+
+== Dynamic C libraries
+
+Enduro/X Java C binding code consists of the following libraries:
+
+- libexjava.so
+
+- libexjavald.so
+
+- libndrxxajdbc.so
+
+Enduro/X Java outer classes are supported by C backend which binds the Java
+calls to actual XATMI C calls. Normally native libraries are loaded 
+*System.loadLibrary()* java method. And it would be epex
+
+
 == Distributed transaction processing architecture
 
 The nice thing about Java is that their JDBC drivers, are that they provide
