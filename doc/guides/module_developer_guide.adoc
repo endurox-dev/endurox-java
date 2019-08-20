@@ -104,9 +104,26 @@ $ make
 
 --------------------------------------------------------------------------------
 
+=== Enduro/X Java XA Test Configuration
+
+In order to perform testing of Oracle (02_xaoracle) and Posgresql (03_xapostgres)
+the databases and environment must be configured.
+
+The environment contains host names, users, passwords and database names. The
+build process will automatically skip these tests, if environment is not configured.
+
+Database configuration (users, environment variables) are configured as part
+of the 
+building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment configuration for HOME directory).
+
+=== Configuration of Oracle DB tests
+...
+
+=== Configuration of Posgresql DB tests
+...
 
 === Executing the unit tests
-
+...
 
 == NetBeans configuration
 
@@ -250,7 +267,6 @@ Enduro/X Java outer classes are supported by C backend which binds the Java
 calls to actual XATMI C calls. Normally native libraries are loaded 
 *System.loadLibrary()* java method. And it would be epex
 
-
 == Distributed transaction processing architecture
 
 The nice thing about Java is that their JDBC drivers, are that they provide
@@ -290,8 +306,6 @@ The object hierarchy is as follows (Class diagram):
 
 >>>> PIC: Object relactions here <<<
 
-
-
 In the background of whole java module, following key principles are used:
 
 - All meta data: Classes, Methods and Fields are cached, for performance reasons.
@@ -304,8 +318,11 @@ C context.
 - When call from Java is made to C and when in turn C calls back Java (for XA
 and Java XATMI servers) processing, these global variables are used.
 
->>>> PIC: Object/Global variables linkage and reuse for XA transactions <<<
+Key concepts of the Enduro/X Java package can be seen in following figure:
 
+[dia, key_objects.dia, key_objects.png, x450]
+-------------------------------
+-------------------------------
 
 The transaction management, communications with transaction manager (Enduro/X
 *tmsrv* binary are performed by Enduro/X C libraries, but due to fact that
@@ -383,10 +400,6 @@ NDRX_XA_LAZY_INIT=1
 The XADataSource is configured during the XATMI Startup or during the first
 XA call (if lazy init is used).
 
-Overall the library dependencies can be seen in following diagram:
-
->>>>> LIBRARY DEPS <<<<<<<<<
-
 === Transaction Manager operations with JDBC drivers
 
 Enduro/X transaction manager *tmsrv(8)*, is not aware of the Java. The only thing
@@ -398,24 +411,6 @@ and hosted within tmsrv. VM is configured with settings form [@java] (with CCTAG
 support) section. Thus there shall be class path configured with -cp or -classpath
 settings in Java opts. From this class path further the JDBC XA Data Source
 class is loaded. 
-
-== Enduro/X Java XA Test Configuration
-
-In order to perform testing of Oracle (02_xaoracle), Posgresql (03_xapostgres)
-and Mysql/MariaDB (04_xamysql) the databases and environment must be configured.
-
-The environment contains host names, users, passwords and database names. The
-build process will automatically skip these tests, if environment is not configured.
-
-=== Configuration of Oracle DB tests
-...
-=== Configuration of Posgresql DB tests
-...
-=== Configuration of Mysql/Maria DB tests
-...
-
-== Object lifecycle for XATMI clients and Servers
-...
 
 == Enduro/X Java Linker
 ...
