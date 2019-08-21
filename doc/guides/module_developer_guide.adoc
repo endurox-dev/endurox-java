@@ -125,133 +125,38 @@ building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment confi
 === Executing the unit tests
 ...
 
-== NetBeans configuration
+== General Enduro/Java concepts
 
-For Enduro/X and other related modules, NetBeans is preferred IDE for development.
-As module is programmed in Java and C languages, two projects in NetBeans are
-required. As NetBeans does not allow to project to co-exist in the same folder,
-some play with symbolic links into separate folder are required. This document
-will guide you for setting up the environment for developing Enduro/X for Java.
+The object hierarchy is as follows (Class diagram):
 
-=== Packages for Java
+>>>> PIC: Object relactions here <<<
 
-This document assumes that NetBeans for C/C++ are installed. Thus to get
-Java projects working, following additional plugins must be installed. As
-plugins require JDK to be present for NetBeans, the IDE must be started with
-'--jdkhome' attribute. In particular case NetBeans 8.2 was installed on Linux Mint
-Mate 19 as a root. For this document we will use "java-8-openjdk-amd64".
+Not all classes are mentioned in this diagram, such as exception and other utility
+classes. But they key access class to Enduro/X APIs are org.endurox.AtmiCtx.
+For this class is associated with Enduro/X XATMI client or servers session. Also
+needs to keep in mind that for one process, there shall be only one XATMI server.
+Thus AtmiCtx.tprun() shall be called only from single Java thread. Java XATMI
+client session in turn can be created as much as needed.
 
---------------------------------------------------------------------------------
+In the background of whole java module, following key principles are used:
 
-$  /usr/local/netbeans-8.2/bin/netbeans --jdkhome /usr/lib/jvm/java-8-openjdk-amd64
+- All meta data: Classes, Methods and Fields are cached, for performance reasons.
 
---------------------------------------------------------------------------------
+- Enduro/X thread local storage are used for running in C side during Java calls,
+Special function ndrx_ctx_priv_get() is used to retrieve generic TLS fields
+where data such as Java env, Java ATMI Context object reference, ptr to self
+C context.
 
-Once NetBeans are started, go to: *Tools > Plugins > Available Plugins* and select
-following ones for install:
+- When call from Java is made to C and when in turn C calls back Java (for XA
+and Java XATMI servers) processing, these global variables are used.
 
-image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install"]
+Key concepts of the Enduro/X Java package can be seen in following figure:
 
-Once modules are installed, it is recommended to update the NetBeans launcher 
-shortcut, because the jdkhome argument is mandatory in order to use java projects
+[dia, key_objects.dia, key_objects.png, x600]
+-------------------------------
+-------------------------------
 
-image:images/update_shortcut.png[caption="Figure 2: ", title="NetBeans Shortcut update"]
-
-== Checking out Enduro/X Java project
-
-With this step we will prepare two folders for the project. The first one is
-default project folder "endurox-java" checked out from source repository. The
-second one (which will be actually used by Java part for NetBeans) is created.
-And symbolic links are added
-
---------------------------------------------------------------------------------
-
-$ mkdir endurox-j
-$ cd endurox-j
-$ ln -s ../endurox-java/build.xml .
-$ ln -s ../endurox-java/tests .
-$ ln -s ../endurox-java/libsrc .
-
---------------------------------------------------------------------------------
-
-== Opening projects in NetBeans
-
-The main project is "endurox-java" which is processed by CMake. The CMake build
-performs building of all parts Java and C. But for IDE we open this project for
-as the C project.
-
-=== Opening C project in NetBeans
-Before opening the project in NetBeans, the cmake shall be run from shell, so
-that it performs initial configuration, as with NetBeans the configuration
-is little bit different:
-
---------------------------------------------------------------------------------
-
-$ cd endurox-java
-$ cmake .
-
---------------------------------------------------------------------------------
-
-After this step is done, start the NetBeans, and create new project with existing
-source code:
-
-image:images/new_c_project.png[caption="Figure 3: ", title="New C Project"]
-
-And then select the folder which checked out sources:
-
-image:images/select_c_sources.png[caption="Figure 4: ", title="Select sources"]
-
-=== Opening Java project in NetBeans
-
-The Java project shall be based on folder where symlinks are produced. That is
-"endurox-j" folder. The project type is "Standard" Java free-form project. The
-project contains an Ant script which is not normally used for build purposes, but
-that is used for NetBeans (or Eclipse) to parse the project structure (CMake
-is not supported yet for Java projects). Also during the development the
-ant script (endurox-java/build.xml) must be maintained.
-
-Create a new project:
-
-image:images/new_java_project.png[caption="Figure 5: ", title="New Java Project"]
-
-
-Select project folder:
-
-image:images/select_java_folder.png[caption="Figure 5: ", title="Select Java folder"]
-
-Ant commands:
-
-image:images/ant_commands.png[caption="Figure 6: ", title="Ant commands"]
-
-Ant next screen is significant one, as here all Java directories must be manually
-added, as the libsrc only is added by default. All unit tests which will be
-changed/added during the development must be added here:
-
-image:images/java_sources.png[caption="Figure 7: ", title="Java sources"]
-
-Once project is created, this list can be altered in 
-*project properties > Java Sources*
-
-Also the class path shall include the Junit JARS. The next screen shows how
-to do it when project is configured, but that can be done during the initial
-wizard too.
-
-If adding new sources folder get similar message like this 
-(Package folder already used in project):
-
-image:images/java_classpath.png[caption="Figure 8: ", title="Java source error"]
-
-Then this probably is caused by "endurox-java" C project. There is nothing to
-do in such case except to go and manually edit the NetBeans project file in
-
-*endurox-j/nbproject/project.xml* and add the necessary source folders to project,
-in similar way as other source folders are added.
-
-
-*The class path attributes*:
-
-image:images/java_classpath.png[caption="Figure 9: ", title="Java class path"]
-
+Key 
 
 == Dynamic C libraries
 
@@ -311,29 +216,6 @@ transaction
 
 - AtmiCtx.getConnection - get connect object from XAConnection. The pooling and 
 closing of connection shall done by programmer.
-
-
-The object hierarchy is as follows (Class diagram):
-
->>>> PIC: Object relactions here <<<
-
-In the background of whole java module, following key principles are used:
-
-- All meta data: Classes, Methods and Fields are cached, for performance reasons.
-
-- Enduro/X thread local storage are used for running in C side during Java calls,
-Special function ndrx_ctx_priv_get() is used to retrieve generic TLS fields
-where data such as Java env, Java ATMI Context object reference, ptr to self
-C context.
-
-- When call from Java is made to C and when in turn C calls back Java (for XA
-and Java XATMI servers) processing, these global variables are used.
-
-Key concepts of the Enduro/X Java package can be seen in following figure:
-
-[dia, key_objects.dia, key_objects.png, x450]
--------------------------------
--------------------------------
 
 The transaction management, communications with transaction manager (Enduro/X
 *tmsrv* binary are performed by Enduro/X C libraries, but due to fact that
@@ -425,6 +307,136 @@ class is loaded.
 
 == Enduro/X Java Linker
 ...
+
+
+== NetBeans configuration - standard development IDE
+
+For Enduro/X and other related modules, NetBeans is preferred IDE for development.
+As module is programmed in Java and C languages, two projects in NetBeans are
+required. As NetBeans does not allow to project to co-exist in the same folder,
+some play with symbolic links into separate folder are required. This document
+will guide you for setting up the environment for developing Enduro/X for Java.
+
+=== Packages for Java
+
+This document assumes that NetBeans for C/C++ are installed. Thus to get
+Java projects working, following additional plugins must be installed. As
+plugins require JDK to be present for NetBeans, the IDE must be started with
+'--jdkhome' attribute. In particular case NetBeans 8.2 was installed on Linux Mint
+Mate 19 as a root. For this document we will use "java-8-openjdk-amd64".
+
+--------------------------------------------------------------------------------
+
+$  /usr/local/netbeans-8.2/bin/netbeans --jdkhome /usr/lib/jvm/java-8-openjdk-amd64
+
+--------------------------------------------------------------------------------
+
+Once NetBeans are started, go to: *Tools > Plugins > Available Plugins* and select
+following ones for install:
+
+image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install"]
+
+Once modules are installed, it is recommended to update the NetBeans launcher 
+shortcut, because the jdkhome argument is mandatory in order to use java projects
+
+image:images/update_shortcut.png[caption="Figure 2: ", title="NetBeans Shortcut update"]
+
+=== Checking out Enduro/X Java project
+
+With this step we will prepare two folders for the project. The first one is
+default project folder "endurox-java" checked out from source repository. The
+second one (which will be actually used by Java part for NetBeans) is created.
+And symbolic links are added
+
+--------------------------------------------------------------------------------
+
+$ mkdir endurox-j
+$ cd endurox-j
+$ ln -s ../endurox-java/build.xml .
+$ ln -s ../endurox-java/tests .
+$ ln -s ../endurox-java/libsrc .
+
+--------------------------------------------------------------------------------
+
+=== Opening projects in NetBeans
+
+The main project is "endurox-java" which is processed by CMake. The CMake build
+performs building of all parts Java and C. But for IDE we open this project for
+as the C project.
+
+=== Opening C project in NetBeans
+Before opening the project in NetBeans, the cmake shall be run from shell, so
+that it performs initial configuration, as with NetBeans the configuration
+is little bit different:
+
+--------------------------------------------------------------------------------
+
+$ cd endurox-java
+$ cmake .
+
+--------------------------------------------------------------------------------
+
+After this step is done, start the NetBeans, and create new project with existing
+source code:
+
+image:images/new_c_project.png[caption="Figure 3: ", title="New C Project"]
+
+And then select the folder which checked out sources:
+
+image:images/select_c_sources.png[caption="Figure 4: ", title="Select sources"]
+
+=== Opening Java project in NetBeans
+
+The Java project shall be based on folder where symlinks are produced. That is
+"endurox-j" folder. The project type is "Standard" Java free-form project. The
+project contains an Ant script which is not normally used for build purposes, but
+that is used for NetBeans (or Eclipse) to parse the project structure (CMake
+is not supported yet for Java projects). Also during the development the
+ant script (endurox-java/build.xml) must be maintained.
+
+Create a new project:
+
+image:images/new_java_project.png[caption="Figure 5: ", title="New Java Project"]
+
+
+Select project folder:
+
+image:images/select_java_folder.png[caption="Figure 5: ", title="Select Java folder"]
+
+Ant commands:
+
+image:images/ant_commands.png[caption="Figure 6: ", title="Ant commands"]
+
+Ant next screen is significant one, as here all Java directories must be manually
+added, as the libsrc only is added by default. All unit tests which will be
+changed/added during the development must be added here:
+
+image:images/java_sources.png[caption="Figure 7: ", title="Java sources"]
+
+Once project is created, this list can be altered in 
+*project properties > Java Sources*
+
+Also the class path shall include the Junit JARS. The next screen shows how
+to do it when project is configured, but that can be done during the initial
+wizard too.
+
+If adding new sources folder get similar message like this 
+(Package folder already used in project):
+
+image:images/java_classpath.png[caption="Figure 8: ", title="Java source error"]
+
+Then this probably is caused by "endurox-java" C project. There is nothing to
+do in such case except to go and manually edit the NetBeans project file in
+
+*endurox-j/nbproject/project.xml* and add the necessary source folders to project,
+in similar way as other source folders are added.
+
+
+*The class path attributes*:
+
+image:images/java_classpath.png[caption="Figure 9: ", title="Java class path"]
+
+
 
 :numbered!:
 
