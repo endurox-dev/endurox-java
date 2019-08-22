@@ -308,6 +308,21 @@ class is loaded.
 == Enduro/X Java Linker
 ...
 
+== Enduro/X Java XATMI Client process clean shutdown
+
+The standard java shutdown signal handling does not work well in the Enduro/X
+Java environment, i.e. "Runtime.getRuntime().addShutdownHook()". Problem is that
+java may receive signal at any time at any thread. Even if thread is the Enduro/X
+C libraries. Such signal can damage the system calls Enduro/X is doing, or this
+might interrupt/corrupt some java environmental settings at C side, due to executing
+Java code on the signal arrival. Thus the segmentation faults, etc can be received
+during such shutdown approach.
+
+To avoid these problems, Enduro/X offers its own mechanisms for receiving the
+shutdown notifications.
+
+TODO:
+
 
 == NetBeans configuration - standard development IDE
 

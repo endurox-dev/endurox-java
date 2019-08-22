@@ -1,8 +1,12 @@
 #!/bin/bash
 
 #
-# @(#) Integration tests
+# @(#) Integration tests. This will load ~/ndrx_home, in order to check the
+#  database avaliblity
 #
+
+source ~/ndrx_home
+echo "Oracle [$EX_ORA_HOST] Postgres [$EX_PG_HOST]"
 
 > ./test.out
 # Have some terminal output...
@@ -17,16 +21,18 @@ M_fail=0
 run_test () {
 
         test=$1
+	runner=$2
         M_tests=$((M_tests + 1))
-        echo "*** RUNNING [$test]"
+        echo "*** RUNNING [$test] [$runner]"
 
         pushd .
         cd $test
-        ./run.sh
+        #./run.sh
+	$runner
         ret=$?
         popd
         
-        echo "*** RESULT [$test] $ret"
+        echo "*** RESULT [$test] [$runner] $ret"
         
         if [[ $ret -eq 0 ]]; then
                 M_ok=$((M_ok + 1))
@@ -35,8 +41,9 @@ run_test () {
         fi
 }
 
-run_test "00_unit"
-run_test "01_basic_server"
+run_test "00_unit" "./run.sh"
+run_test "01_basic_server" "./run.sh"
+run_test "01_basic_server" "./run-leak.sh"
 
 echo "*** SUMMARY $M_tests tests executed. $M_ok passes, $M_fail failures"
 
