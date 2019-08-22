@@ -129,7 +129,9 @@ building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment confi
 
 The object hierarchy is as follows (Class diagram):
 
->>>> PIC: Object relactions here <<<
+[dia, class_diagram.dia, class_diagram.png, x600]
+-------------------------------
+-------------------------------
 
 Not all classes are mentioned in this diagram, such as exception and other utility
 classes. But they key access class to Enduro/X APIs are org.endurox.AtmiCtx.
@@ -155,8 +157,6 @@ Key concepts of the Enduro/X Java package can be seen in following figure:
 [dia, key_objects.dia, key_objects.png, x600]
 -------------------------------
 -------------------------------
-
-Key 
 
 == Dynamic C libraries
 
