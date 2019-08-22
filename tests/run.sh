@@ -45,6 +45,10 @@ run_test "00_unit" "./run.sh"
 run_test "01_basic_server" "./run.sh"
 run_test "01_basic_server" "./run-leak.sh"
 
+if [ "X$EX_PG_HOST" != "X" ]; then
+	run_test "03_xapostgres" "./run.sh"
+fi
+
 echo "*** SUMMARY $M_tests tests executed. $M_ok passes, $M_fail failures"
 
 xadmin killall tail

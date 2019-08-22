@@ -71,7 +71,7 @@ public class TpcallTests {
         
         double difference = cnt / w.deltaSec();
         
-        System.console().printf("Call performance: %f calls/sec\n", difference);
+        //System.console().printf("Call performance: %f calls/sec\n", difference);
         
         
         ub.cleanup();
