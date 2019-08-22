@@ -117,7 +117,8 @@ of the
 building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment configuration for HOME directory).
 
 === Configuration of Oracle DB tests
-...
+Once the Oracle environment is configured, the test database tables must be created.
+
 
 === Configuration of Posgresql DB tests
 ...
