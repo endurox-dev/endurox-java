@@ -36,7 +36,7 @@ package org.endurox;
 import java.util.Arrays;
 
 /**
- * Enduro/X Queue Message interface.
+ * Enduro/X message queue interface.
  * Holds infos about message to be enqueued or dequeued
  */
 public class TPQCTL {
