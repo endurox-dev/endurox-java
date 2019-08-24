@@ -133,7 +133,12 @@ exprivate void * sig_thread(void *arg)
         MUTEX_LOCK_V(M_is_set_lock);
         /* unset ATMI CTX */
         tpsetctxt(TPNULLCONTEXT, 0L);
-        (*env)->CallObjectMethod(env, M_runner, ndrxj_clazz_Runnable_mid_run);
+        
+        if (NULL!=M_runner)
+        {
+            (*env)->CallObjectMethod(env, M_runner, ndrxj_clazz_Runnable_mid_run);
+        }
+        
         tpsetctxt(ctx, 0L);
         MUTEX_UNLOCK_V(M_is_set_lock);
         
@@ -232,7 +237,15 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_installTermSi
         (*env)->DeleteGlobalRef(env, M_runner);
     }
     
-    M_runner = (*env)->NewGlobalRef(env, runner);
+    if (NULL!=runner)
+    {
+        M_runner = (*env)->NewGlobalRef(env, runner);
+    }
+    else
+    {
+        M_runner = NULL;
+    }
+            
     
     NDRX_LOG(log_info, "Shutdown runner installed...");
 

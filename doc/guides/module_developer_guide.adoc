@@ -69,7 +69,23 @@ $ cd tests/03_xapostgres/jdbcdrivers
 $ wget https://jdbc.postgresql.org/download/postgresql-42.2.6.jar
 $ mv postgresql-42.2.6.jar pgjdbc.jar
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+
+=== Getting the Oracle JDBC Driver
+
+If using having Oracle DB installed and ready for testing, then JDBC driver must
+be installed too. This can be downloaded 
+from https://www.oracle.com/database/technologies/appdev/jdbc-downloads.html
+
+In the end, what Enduro/x needs is "ojdbc.jar" to be located in the project path:
+
+-------------------------------------------------------------------------------
+
+$ ls -l endurox-java/tests/02_xaoracle/jdbcdrivers/ojdbc.jar
+
+-------------------------------------------------------------------------------
+
 
 === Update environment variables
 
@@ -118,6 +134,22 @@ building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment confi
 
 === Configuration of Oracle DB tests
 Once the Oracle environment is configured, the test database tables must be created.
+that could be done in following way (assuming that ~/ndrx_home is properly set):
+
+
+--------------------------------------------------------------------------------
+
+$ source ~/ndrx_home
+
+$ cd endurox-java/tests/02_xaoracle/conf
+
+$ ./sqlplus.run
+
+SQL> @tables.sql
+
+Table created.
+
+--------------------------------------------------------------------------------
 
 
 === Configuration of Posgresql DB tests
@@ -320,10 +352,22 @@ Java code on the signal arrival. Thus the segmentation faults, etc can be receiv
 during such shutdown approach.
 
 To avoid these problems, Enduro/X offers its own mechanisms for receiving the
-shutdown notifications.
+shutdown notifications. The mechanism is to install the runnable object in the
+C runtime. At the installation time, the signal handlers are re-configured and
+new thread is standard which monitors the arrival of the following signals:
 
-TODO:
+- *SIGTERM*
 
+- *SIGINT*
+
+- *SIGHUP*
+
+Once any of these signals are received, the java.lang.Runnable callback is
+executed. Next step is for user application to terminate properly e.g setting
+some global termination flag or any other mechanism.
+
+To active the shutdown signal monitor thread, use the *org.endurox.AtmiCtx.installTermSigHandler())*
+static method.
 
 == NetBeans configuration - standard development IDE
 
@@ -455,28 +499,6 @@ image:images/java_classpath.png[caption="Figure 9: ", title="Java class path"]
 
 
 :numbered!:
-
-[bibliography]
-Additional documentation 
-------------------------
-This section lists additional related documents.
-
-[bibliography]
-.Internet resources
-- [[[ATMI-API]]] http://docs.oracle.com/cd/E13203_01/tuxedo/tux71/html/pgint6.htm
-- [[[FML-API]]] http://docs.oracle.com/cd/E13203_01/tuxedo/tux91/fml/index.htm
-
-[glossary]
-Glossary
---------
-This section lists
-
-[glossary]
-ATMI::
-  Application Transaction Monitor Interface
-
-UBF::
-  Unified Buffer Format it is similar API as Tuxedo's FML
 
 
 ////////////////////////////////////////////////////////////////

@@ -2263,9 +2263,14 @@ public class AtmiCtx {
     
     /**
      * This set a callback method indicating that shutdown 
-     * Enduro/X library shall manage the signal termination
+     * is initiated from the OS. This captures the SIGTERM, SIGINT, SIGHUP
+     * signals. I.e. hides from the Java. On first method call, new signals
+     * are masked, and new thread is started which monitors the arrival of
+     * these signals. Once the signal is detected, the \r run object is executed.
      * @param run object to be executed (if set) in case if
-     * termination signal is received
+     * termination signal is received. In case of NULL, the signal thread is
+     * not terminated, but it will do nothing in case of receiving the shutdown
+     * signals.
      */
     public native void installTermSigHandler(java.lang.Runnable run);
 }
