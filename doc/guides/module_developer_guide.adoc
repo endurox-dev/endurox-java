@@ -136,7 +136,6 @@ building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment confi
 Once the Oracle environment is configured, the test database tables must be created.
 that could be done in following way (assuming that ~/ndrx_home is properly set):
 
-
 --------------------------------------------------------------------------------
 
 $ source ~/ndrx_home
@@ -151,14 +150,32 @@ Table created.
 
 --------------------------------------------------------------------------------
 
+After this, system is ready for Oracle DB Unit tests. 
 
 === Configuration of Posgresql DB tests
-...
+
+To configure PostgreSQL for Java tests, corresponding database tables for
+test scenarios must be created. If the environment is properly configured, then
+table creation can be done in following way:
+
+
+--------------------------------------------------------------------------------
+
+$ source ~/ndrx_home
+
+$ cd endurox-java/tests/03_xapostgres/conf
+
+$ cat tables.sql | ./psql.run 
+CREATE TABLE
+
+--------------------------------------------------------------------------------
+
+Now PosgreSQL database is ready for Enduro/X Java tests.
 
 === Executing the unit tests
 ...
 
-== General Enduro/Java concepts
+== General Enduro/X/Java concepts
 
 The object hierarchy is as follows (Class diagram):
 

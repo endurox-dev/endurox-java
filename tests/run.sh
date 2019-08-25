@@ -45,8 +45,14 @@ run_test "00_unit" "./run.sh"
 run_test "01_basic_server" "./run.sh"
 run_test "01_basic_server" "./run-leak.sh"
 
+# TODO: Add Oracle tests
+
 if [ "X$EX_PG_HOST" != "X" ]; then
 	run_test "03_xapostgres" "./run.sh"
+fi
+
+if [ "X$EX_PG_HOST" != "X" ]; then
+	run_test "03_xapostgres" "./run-leak.sh"
 fi
 
 echo "*** SUMMARY $M_tests tests executed. $M_ok passes, $M_fail failures"
