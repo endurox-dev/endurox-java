@@ -222,8 +222,6 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bchg__II_3B
     char * n_carray = (char*)(*env)->GetByteArrayElements(env, jb, &n_carray_copy);
     jsize len = (*env)->GetArrayLength(env, jb);
     
-    NDRX_LOG(log_error, "Adding carray len: %ld", (long)len);
-    
     ndrxj_ubf_CBchg(env, data, bfldid, occ, (char *)n_carray, (BFLDLEN)len, 
             BFLD_CARRAY);
     
