@@ -85,9 +85,9 @@ public class BboolTest {
             ub.Bchg(test.T_LONG_FLD, 0, 551);
 
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
 
             assertEquals(true, ub.Bboolev(tree));
 
@@ -124,12 +124,12 @@ public class BboolTest {
             ub.Bchg(test.T_LONG_FLD, 0, 551);
 
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
 
             
-            ctx.tplogError("Got result: %f", ub.Bfloatev(tree));
+            ctx.tplogInfo("Got result: %f", ub.Bfloatev(tree));
             
             //assertEquals(552.3, ub.Bfloatev(tree), 0.0001);
 
@@ -163,9 +163,9 @@ public class BboolTest {
             ub.Bchg(test.T_LONG_FLD, 0, 551);
 
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
 
             assertEquals(ub.Bqboolev("T_STRING_FLD=='HELLO WORLD' && T_LONG_FLD==551"), true);
 
@@ -228,9 +228,9 @@ public class BboolTest {
             ub.Bchg(test.T_LONG_FLD, 0, 5);
             ub.Bchg(test.T_LONG_2_FLD, 0, 6);
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
 
             assertEquals(ub.Bboolev(tree), true);
 
@@ -238,9 +238,9 @@ public class BboolTest {
 
             assertEquals(ub.Bboolev(tree), false);
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
             
             tree.cleanup();
             ub.cleanup();

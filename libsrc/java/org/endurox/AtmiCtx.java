@@ -296,7 +296,7 @@ public class AtmiCtx {
                  */
                 if (ctxMap.get((Long)ctx) != 0)
                 {
-                   tplogError(">>> About to GC: %x!!!", ctx);
+                   tplogInfo(">>> About to GC: %x!!!", ctx);
                    finalizeC(ctx);
                    ctxMap.remove((Long)ctx);
                 }

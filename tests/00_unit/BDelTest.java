@@ -32,9 +32,9 @@ public class BDelTest {
             ub.Bchg(test.T_LONG_FLD, 2, 552);
             ub.Bchg(test.T_LONG_FLD, 3, 553);
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
             
             assertEquals(true, ub.Bpres(test.T_STRING_FLD, 0));
             assertEquals(true, ub.Bpres(test.T_STRING_FLD, 1));
@@ -84,9 +84,9 @@ public class BDelTest {
             ub.Bchg(test.T_LONG_FLD, 2, 552);
             ub.Bchg(test.T_LONG_FLD, 3, 553);
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
             
             assertEquals(true, ub.Bpres(test.T_STRING_FLD, 0));
             assertEquals(true, ub.Bpres(test.T_STRING_FLD, 1));
@@ -135,9 +135,9 @@ public class BDelTest {
             ub.Bchg(test.T_STRING_3_FLD, 2, "HELLO MARS 1");
             ub.Bchg(test.T_STRING_4_FLD, 10, "HELLO MARS 2");
 
-            ctx.tplogError("Buffer print ----------------");
+            ctx.tplogInfo("Buffer print ----------------");
             ub.Bprint();
-            ctx.tplogError("END ------------------------");
+            ctx.tplogInfo("END ------------------------");
             
             assertEquals(true, ub.Bpres(test.T_STRING_FLD, 0));
             assertEquals(true, ub.Bpres(test.T_STRING_FLD, 1));

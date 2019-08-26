@@ -173,7 +173,17 @@ CREATE TABLE
 Now PosgreSQL database is ready for Enduro/X Java tests.
 
 === Executing the unit tests
-...
+
+To execute module tests, the environment, database tables, etc shall be created
+as written before. Once all is ready, the tests can be executed in following way:
+
+
+--------------------------------------------------------------------------------
+
+$ cd endurox-java/tests
+$ ./run.sh
+
+--------------------------------------------------------------------------------
 
 == General Enduro/X/Java concepts
 
