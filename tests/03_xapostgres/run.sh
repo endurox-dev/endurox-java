@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# @(#) Run the test case for Oracle Database Two phase commit processing
+# @(#) Run the test case for PostgreSQL Two phase commit processing
 #
 
 #
@@ -43,11 +43,12 @@ function go_out {
     exit $1
 }
 
-# debug on
-export NDRX_CCTAG="on"
-
 rm $NDRX_APPHOME/log/*.log
 
+#
+# This is used by ndrxconfig.xml
+#
+export NDRX_TEST_DEBUG_MODE=DEBUG
 
 #
 # First test with JDBC TMSRV

@@ -69,6 +69,11 @@ rm $NDRX_APPHOME/log/*.log
 
 
 #
+# This is used by ndrxconfig.xml
+#
+export NDRX_TEST_DEBUG_MODE=DEBUGOFF
+
+#
 # First test with JDBC TMSRV
 #
 echo "Running JDBC TMSRV Mode"
@@ -78,7 +83,7 @@ xadmin start -i 340
 #
 # Start Enduro/X leak monitor...
 #
-NDRX_CCTAG=DEBUG xmemck -d45 -s50 -t90 -m jexunit03b -m jserver03b -m tmsrv &
+NDRX_CCTAG=DEBUGOFF xmemck -d45 -s50 -t90 -m jexunit03b -m jserver03b -m tmsrv &
 
 #
 # Running client 03
@@ -86,7 +91,7 @@ NDRX_CCTAG=DEBUG xmemck -d45 -s50 -t90 -m jexunit03b -m jserver03b -m tmsrv &
 
 export NDRXJ_LEAKTEST_NAME="basicXA"
 echo "Running jclient03b..."
-NDRX_CCTAG=DB1_JDBC/DEBUG jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
+NDRX_CCTAG=DB1_JDBC/DEBUGOFF jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
 #
 # Run with PQ TMSRV
 #
@@ -109,7 +114,7 @@ xadmin start -i 340
 # Running client 03
 #
 echo "Running jclient03b... 2"
-NDRX_CCTAG=DB1_JDBC/DEBUG jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
+NDRX_CCTAG=DB1_JDBC/DEBUGOFF jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
 xadmin stop -y
 test_leak;
 

@@ -94,7 +94,7 @@
 			<min>1</min>
 			<max>1</max>
 			<srvid>40</srvid>
-			<cctag>DB1_JDBC/DEBUG</cctag>
+			<cctag>DB1_JDBC/${NDRX_TEST_DEBUG_MODE}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_jdbc.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_jdbc</sysopt>
 		</server>
 		
@@ -102,7 +102,7 @@
 			<min>1</min>
 			<max>1</max>
 			<srvid>140</srvid>
-			<cctag>DB1_PQ/DEBUG</cctag>
+			<cctag>DB1_PQ/${NDRX_TEST_DEBUG_MODE}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_pq.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_pq</sysopt>
 		</server>
 		
@@ -110,7 +110,7 @@
 			<min>1</min>
 			<max>1</max>
 			<srvid>340</srvid>
-			<cctag>DB1_JDBC/DEBUG</cctag>
+			<cctag>DB1_JDBC/${NDRX_TEST_DEBUG_MODE}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/JSERVER03B.log -r</sysopt>
 		</server>
 	</servers>

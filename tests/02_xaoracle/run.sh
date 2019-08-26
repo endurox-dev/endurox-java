@@ -43,35 +43,55 @@ function go_out {
     exit $1
 }
 
-# debug on
-export NDRX_CCTAG="on"
+#
+# This is used by ndrxconfig.xml
+#
+export NDRX_DEBUGOUT=DEBUG
 
 xadmin start -y
 rm /tmp/02_CLIENT.log 2>/dev/null
 
-#
-# Running client 01
-#
-echo "Running jclient02b..."
-jclient02b > /tmp/02_CLIENT.log 2>&1
+
+echo "Prepare the JDBC mode..."
+xadmin stop -s tmsrv
+xadmin start -i 40
+
+
+echo "Running jexunit02b..."
+NDRX_CCTAG=DB1_JDBC/DEBUG jexunit02b XAOraTests > $NDRX_APPHOME/log/jexunit02b.log 2>&1
 
 RET=$?
 
 if [ "X$RET" != "X0" ]; then
-	echo "jclient02b failed"
+	echo "jexunit02b failed (DB1_JDBC)"
 	go_out 1
 fi
 
-#
-# Running unit tests...
-#
-xadmin psc
+echo "Prepare the DB1_OCI mode..."
+xadmin stop -s tmsrv
+xadmin start -i 140
 
+echo "Running jexunit02b..."
+NDRX_CCTAG=DB1_JDBC/DEBUG jexunit02b XAOraTests >> $NDRX_APPHOME/log/jexunit02b.log 2>&1
 
-if [ "X$1" != "X" ]; then
+RET=$?
 
-else
+if [ "X$RET" != "X0" ]; then
+	echo "jexunit02b failed (DB1_JDBC)"
+	go_out 1
+fi
 
+echo "Prepare the DB1_NAT mode..."
+xadmin stop -s tmsrv
+xadmin start -i 240
+
+NDRX_CCTAG=DB1_NAT/DEBUG jexunit02b XAOraTests >> $NDRX_APPHOME/log/jexunit02b.log 2>&1
+
+RET=$?
+
+if [ "X$RET" != "X0" ]; then
+	echo "jexunit02b failed (DB1_NAT)"
+	go_out 1
 fi
 
 go_out 0

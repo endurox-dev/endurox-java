@@ -94,31 +94,29 @@
 			<min>1</min>
 			<max>1</max>
 			<srvid>40</srvid>
-			<cctag>DB1_JDBC</cctag>
+			<cctag>DB1_JDBC/${NDRX_DEBUGOUT}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_jdbc.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_jdbc</sysopt>
 		</server>
                 <server name="tmsrv">
 			<min>1</min>
 			<max>1</max>
 			<srvid>140</srvid>
-			<cctag>DB1_OCI</cctag>
+			<cctag>DB1_OCI/${NDRX_DEBUGOUT}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_oci.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_oci</sysopt>
 		</server>
 		<server name="tmsrv">
 			<min>1</min>
 			<max>1</max>
 			<srvid>240</srvid>
-			<cctag>DB1_NAT</cctag>
+			<cctag>DB1_NAT/${NDRX_DEBUGOUT}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/tmsrv-rm1_nat.log -r -- -t1 -l${NDRX_APPHOME}/tmlogs/rm1_nat</sysopt>
 		</server>
                 <server name="jserver02b">
 			<min>1</min>
 			<max>1</max>
 			<srvid>340</srvid>
-			<cctag>DB1_JDBC</cctag>
+			<cctag>DB1_JDBC/${NDRX_DEBUGOUT}</cctag>
 			<sysopt>-e ${NDRX_APPHOME}/log/JSERVER02B.log -r</sysopt>
 		</server>
-
-		<!-- Needs java server -->
 	</servers>
 </endurox>

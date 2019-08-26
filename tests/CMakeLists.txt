@@ -37,11 +37,14 @@ add_subdirectory (00_unit)
 add_subdirectory (01_basic_server)
 
 # Perform Oracle DB tests (have configuration in ndrx_home)
-IF (ENABLE_XAORACLE02)
+IF (ENABLE_TEST_XAORACLE)
     add_subdirectory (02_xaoracle)
 ENDIF()
 
-add_subdirectory (03_xapostgres)
+IF (ENABLE_TEST_XAPOSGRES)
+    add_subdirectory (03_xapostgres)
+ENDIF()
+
 # Not supported due to mysql not handling XA protocol on different sessions
 #add_subdirectory (04_xamysql)
 # vim: set ts=4 sw=4 et smartindent:

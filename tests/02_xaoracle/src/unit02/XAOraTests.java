@@ -61,6 +61,7 @@ public class XAOraTests implements  Runnable {
           ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to delete: ".concat(sql), e);
         
           if (tranStarted) {
+              ctx.tplogDebug("About to abort 0");
               ctx.tpabort(0);
           }
           
@@ -238,6 +239,7 @@ public class XAOraTests implements  Runnable {
             chkCount(ctx, TEST_MAX);
             
             /* lets abort */
+            ctx.tplogDebug("About to abort 1");
             ctx.tpabort(0);
             
             /* there should be 0 after abort */
@@ -283,6 +285,7 @@ public class XAOraTests implements  Runnable {
             }
             
             chkCount(ctx, 10);
+            ctx.tplogDebug("About to abort 2");
             ctx.tpabort(0);
             
             
