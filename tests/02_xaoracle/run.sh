@@ -45,20 +45,15 @@ function go_out {
 
 #
 # This is used by ndrxconfig.xml
-#
-export NDRX_DEBUGOUT=DEBUG
-
-xadmin start -y
-rm /tmp/02_CLIENT.log 2>/dev/null
-
 
 echo "Prepare the JDBC mode..."
-xadmin stop -s tmsrv
-xadmin start -i 40
-
+export NDRX_CCTAG=DB1_JDBC/DEBUG
+xadmin down -y
+rm $NDRX_APPHOME/log/*
+xadmin start -y
 
 echo "Running jexunit02b..."
-NDRX_CCTAG=DB1_JDBC/DEBUG jexunit02b XAOraTests > $NDRX_APPHOME/log/jexunit02b.log 2>&1
+jexunit02b XAOraTests > $NDRX_APPHOME/log/jexunit02b.log 2>&1
 
 RET=$?
 
@@ -68,11 +63,14 @@ if [ "X$RET" != "X0" ]; then
 fi
 
 echo "Prepare the DB1_OCI mode..."
-xadmin stop -s tmsrv
-xadmin start -i 140
+
+export NDRX_CCTAG=DB1_OCI/DEBUG
+xadmin stop -y
+rm $NDRX_APPHOME/log/*
+xadmin start -y
 
 echo "Running jexunit02b..."
-NDRX_CCTAG=DB1_JDBC/DEBUG jexunit02b XAOraTests >> $NDRX_APPHOME/log/jexunit02b.log 2>&1
+jexunit02b XAOraTests > $NDRX_APPHOME/log/jexunit02b.log 2>&1
 
 RET=$?
 
@@ -81,17 +79,22 @@ if [ "X$RET" != "X0" ]; then
 	go_out 1
 fi
 
-echo "Prepare the DB1_NAT mode..."
-xadmin stop -s tmsrv
-xadmin start -i 240
 
-NDRX_CCTAG=DB1_NAT/DEBUG jexunit02b XAOraTests >> $NDRX_APPHOME/log/jexunit02b.log 2>&1
+echo "Prepare the DB1_NAT mode..."
+export NDRX_CCTAG=DB1_NAT/DEBUG
+xadmin stop -y
+rm $NDRX_APPHOME/log/*
+xadmin start -y
+
+echo "Running jexunit02b..."
+jexunit02b XAOraTests > $NDRX_APPHOME/log/jexunit02b.log 2>&1
 
 RET=$?
 
 if [ "X$RET" != "X0" ]; then
-	echo "jexunit02b failed (DB1_NAT)"
+	echo "jexunit02b failed (DB1_JDBC)"
 	go_out 1
 fi
+
 
 go_out 0

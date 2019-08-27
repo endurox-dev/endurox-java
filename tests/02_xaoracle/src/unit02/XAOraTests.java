@@ -99,11 +99,13 @@ public class XAOraTests implements  Runnable {
         
         boolean tranStarted = false;
         
+        /*
         if (ctx.tpgetlev() == 0) {
             
             tranStarted = true;
             ctx.tpbegin(60, 0);
         }
+        */
         
         /* delete all if error then abort... */
         String sql = "select count(*) as count from EXJTEST";
@@ -124,16 +126,19 @@ public class XAOraTests implements  Runnable {
             
             ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get count: ".concat(sql), e);
 
+            /*
             if (tranStarted) {
                 ctx.tpabort(0);
             }
-
+            */
             throw new RuntimeException(e);
         }
         
+        /*
         if (tranStarted) {
             ctx.tpcommit(0);
         }
+        */
     }
              
     /**
