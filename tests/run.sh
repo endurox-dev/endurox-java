@@ -45,13 +45,15 @@ run_test "00_unit" "./run.sh"
 run_test "01_basic_server" "./run.sh"
 run_test "01_basic_server" "./run-leak.sh"
 
-# TODO: Add Oracle tests
-
-if [ "X$EX_PG_HOST" != "X" ]; then
-	run_test "03_xapostgres" "./run.sh"
+# Oracle tests, if configured (see module_developer_guide for details)
+if [ "X$EX_ORA_HOST" != "X" ]; then
+	run_test "02_xaoracle" "./run.sh"
+	run_test "02_xaoracle" "./run-leak.sh"
 fi
 
+# Postgres tests, if configured (see module_developer_guide for details)
 if [ "X$EX_PG_HOST" != "X" ]; then
+	run_test "03_xapostgres" "./run.sh"
 	run_test "03_xapostgres" "./run-leak.sh"
 fi
 

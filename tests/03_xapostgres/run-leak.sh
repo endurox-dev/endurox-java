@@ -83,7 +83,7 @@ xadmin start -i 340
 #
 # Start Enduro/X leak monitor...
 #
-NDRX_CCTAG=DEBUGOFF xmemck -d45 -s50 -t90 -m jexunit03b -m jserver03b -m tmsrv &
+NDRX_CCTAG=DEBUG xmemck -d45 -s50 -t90 -m jexunit03b -m jserver03b -m tmsrv &
 
 #
 # Running client 03
