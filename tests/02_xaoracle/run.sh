@@ -14,6 +14,7 @@ ADDLIBPATH=""
 # Load env
 #
 source ~/ndrx_home
+export NDRX_SILENT=Y
 
 #
 # Have some runtime 
@@ -44,7 +45,7 @@ function go_out {
     exit $1
 }
 
-echo "Prepare the DB1_NAT mode..."
+echo "Prepare the DB1_NAT mode... / JDBC java"
 export NDRX_CCTAG=DB1_NAT/DEBUG
 export NDRX_CCTAG_TEST=DB1_JDBC/DEBUG
 xadmin down -y
