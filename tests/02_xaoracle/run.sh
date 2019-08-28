@@ -38,6 +38,7 @@ function go_out {
     echo "Test exiting with: $1"
     
     xadmin stop -y
+    xadmin killall xmemck
     xadmin down -y 2>/dev/null
 
     exit $1
