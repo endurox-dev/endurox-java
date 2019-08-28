@@ -64,7 +64,7 @@ function test_leak {
 }
 
 export NDRXJ_LEAKTEST=200
-
+export NDRXJ_LEAKTEST_NAME="basicXA"
 
 echo "Prepare the DB1_NAT mode..."
 export NDRX_CCTAG=DB1_NAT/DEBUGOFF
