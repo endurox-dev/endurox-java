@@ -1,0 +1,38 @@
+LIBEXJLDS(8)
+============
+:doctype: manpage
+
+
+NAME
+----
+libexjlds - Support library for *exjld(8)* compiled binaries
+
+
+SYNOPSIS
+--------
+libexjlds.so
+libexjlds.dylib
+
+
+DESCRIPTION
+-----------
+Libary is used by binaries which are linked/compiled by *exjld(8)* linker tool.
+Basically the *exjld* generates the code which includes the class and resources
+in indexed arrays and main() function of the binary calls the functions from
+this *libexjlds* library to start the JVM. Prior startup, the environment is
+prepared, *CLASSPATH* is parsed and configured to jvm instance. Library includes
+also compiled bytecodes which are used as class loaders during the runtime. *libexjlds*
+helps to resolve compiled classes and resources and load them in the JVM instance.
+
+BUGS
+----
+Report bugs to support@mavimax.com
+
+SEE ALSO
+--------
+*exjld(8)*
+
+COPYING
+-------
+(C) Mavimax, Ltd
+
