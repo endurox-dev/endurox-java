@@ -1,0 +1,54 @@
+LIBEXJAVA(8)
+============
+:doctype: manpage
+
+
+NAME
+----
+libexjava - Enduro/X XATMI Java binding glue code
+
+
+SYNOPSIS
+--------
+libexjava.so
+libexjava.dylib
+
+
+DESCRIPTION
+-----------
+This library provides core functionality of the Enduro/X Java binding. It implements
+the actual logic for Java JNI native calls to be translated to Enduro/X API.
+Library provides functionality for XATMI clients, where the calls are only directed
+from Java to XATMI and also provides functionality for XATMI servers, where the
+initial "AtmiCtx.tprun()" is called and once service is called, the call is
+redirected back to Java side where call is mapped to specific interface/object
+where is being invoked, so for servers it gets Java -> C -> Java chain of calls.
+
+Library provides and access to XA distributed transactions functionality. Firstly
+calls are being to translated to *tpopen(3)*, *tpbegin(3)*, etc. But secondly,
+the library provides an XA Switch for JDBC libraries. Thus developers can use
+JDBC drivers to use two phase commit with Enduro/X. For such setup 
+*NDRX_XA_RMLIB* is set to *libexjava.so* (or corresponding counterpart) and
+*NDRX_XA_DRIVERLIB* is set to *libndrxxajdbc.so*. When Java process performs
+the XA init, the *libexjava.so* is not loaded twice. In case if *tmsrv(8)* is
+configured with JDBC driver, then *libexjava.so* is loaded, jvm is started 
+and *ndrxj_xa_init()* is called.
+
+Library provides all buffer format accesses like UBF, JSON, STRING, etc and XATMI
+APIs, logging APIs.
+
+When java loads the JNI library it loads *libexjavald(8)* lib which in turn
+globally loads the *libexjava*.
+
+BUGS
+----
+Report bugs to support@mavimax.com
+
+SEE ALSO
+--------
+*libexjavald(8)* *tmsrv(8)*
+
+COPYING
+-------
+(C) Mavimax, Ltd
+
