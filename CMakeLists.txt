@@ -90,43 +90,55 @@ if( ${CMAKE_OS_NAME} STREQUAL "LINUX" )
 elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
 # Configure the compiler, we support XLC too..
 
-	message("No threads mode for CPM - bit slower child process exit status check...")
-	# Seems aix 7.1 does not like threads mixed with fork...
-   	set(EX_CPM_NO_THREADS "1")
         set(NDRX_LD_LIBRARY_PATH "LD_LIBRARY_PATH")
 
 	if("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-		message("GNU compiler")
-		set ( CMAKE_C_FLAGS "-D_THREAD_SAFE -pthread -maix64 ${CMAKE_C_FLAGS}")
+            message("GNU compiler")
+            set ( CMAKE_C_FLAGS "-D_SEM_SEMUN_UNDEFINED -D_THREAD_SAFE -pthread -maix64 ${CMAKE_C_FLAGS}")
 	elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "XL")
-		message("XL compiler")
-		set ( CMAKE_C_FLAGS " -D_THREAD_SAFE -qpic -bexpfull -b64 -brtl -qtls -q64 -qlanglvl=extc99 -qsuppress=1506-997 -qprocimported=setjmp -lbsd")
+            message("XL compiler")
+            set ( CMAKE_C_FLAGS " -D_SEM_SEMUN_UNDEFINED -D_THREAD_SAFE ")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qwarn64 -qpic -bexpfull -b64")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -brtl -qtls -q64 -qlanglvl=extc99")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qsuppress=1506-997 -qprocimported=setjmp -lbsd")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qsuppress=1506-747")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qsuppress=1506-742")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qsuppress=1506-743")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qsuppress=1506-744")
+            set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qsuppress=1506-745")
 
-		if (NOT DEFINE_RELEASEBUILD)
-			message("XL compiler: with -g (debug symbols...)")
-			set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
-		endif()
+            if (NOT DEFINE_RELEASEBUILD)
+                    message("XL compiler: with -g (debug symbols...)")
+                    set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+            endif()
 	endif()
 
 elseif(${CMAKE_OS_NAME} STREQUAL "HP-UX")
 elseif(${CMAKE_OS_NAME} STREQUAL "SUNOS")
-	# Bug #219 !!! _REENTRANT makes errno thread safe
-	SET(CMAKE_C_FLAGS "-D_REENTRANT")
-	if ("${CMAKE_C_COMPILER_ID}" STREQUAL "SunPro")
-		message("SUN Studio compiler (building for 64bit) ")
+    set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -m64")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -m64")
 
-		# Bug #219 !!! _REENTRANT makes errno thread safe
-		# For GNU I guess 
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -errtags -fast -m64 -xc99=all -erroff=E_PTR_TO_VOID_IN_ARITHMETIC ")
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_EMPTY_MBR_DECLARATION -erroff=E_NO_IMPLICIT_DECL_ALLOWED")
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_EMPTY_DECLARATION -erroff=E_ARGUEMENT_MISMATCH -erroff=E_ZERO_OR_NEGATIVE_SUBSCRIPT")
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_ARG_INCOMPATIBLE_WITH_ARG_L")
-		SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_BAD_PTR_INT_COMBINATION")
+    set(NDRX_LD_LIBRARY_PATH "LD_LIBRARY_PATH")
+    # Bug #219 !!! _REENTRANT makes errno thread safe
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_REENTRANT")
 
-		SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -m64")
-		# Add Sun Studio C runtime
-		SET(RT_LIB ${RT_LIB} Crun)
-	endif()
+    if ("${CMAKE_C_COMPILER_ID}" STREQUAL "SunPro")
+        # set new config for SunPro
+	SET(CMAKE_C_FLAGS "-D_REENTRANT -m64")
+        message("SUN Studio compiler (building for 64bit) ")
+
+        # Bug #219 !!! _REENTRANT makes errno thread safe
+        # For GNU I guess 
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -errtags -fast -xc99=all -erroff=E_PTR_TO_VOID_IN_ARITHMETIC ")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_EMPTY_MBR_DECLARATION -erroff=E_NO_IMPLICIT_DECL_ALLOWED")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_EMPTY_DECLARATION -erroff=E_ARGUEMENT_MISMATCH -erroff=E_ZERO_OR_NEGATIVE_SUBSCRIPT")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_ARG_INCOMPATIBLE_WITH_ARG_L")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_BAD_PTR_INT_COMBINATION")
+
+        # Add Sun Studio C runtime
+        SET(RT_LIB ${RT_LIB} Crun)
+    endif()
+
 elseif(${CMAKE_OS_NAME} STREQUAL "FREEBSD")
     SET(RT_LIB rt)
     set(NDRX_LD_LIBRARY_PATH "LD_LIBRARY_PATH")
@@ -372,6 +384,23 @@ if(LSB_RELEASE_EXECUTABLE)
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
         string(REPLACE "." "_" LSB_RELEASE_OUTPUT_VER ${_TMP_LSB_RELEASE_OUTPUT_VER})
         #string(REGEX MATCH "^[0-9]+" LSB_RELEASE_OUTPUT_VER ${_TMP_LSB_RELEASE_OUTPUT_VER})
+elseif (EXISTS /etc/os-release)
+
+	execute_process(COMMAND bash -c "cat /etc/os-release | egrep '^NAME=' | cut -d '\"' -f2"
+                OUTPUT_VARIABLE _TMP_LSB_RELEASE_OUTPUT_OS
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+        string(TOLOWER 
+                ${_TMP_LSB_RELEASE_OUTPUT_OS}
+        LSB_RELEASE_OUTPUT_OS)
+        string(REPLACE " " "_" LSB_RELEASE_OUTPUT_OS ${LSB_RELEASE_OUTPUT_OS})
+
+        # fixes for CentOs 7.1810, having something like "7 (Core)" in output.
+        execute_process(COMMAND bash -c "cat /etc/os-release | egrep '^VERSION=' | cut -d ' ' -f1 | cut -d '\"' -f2"
+                OUTPUT_VARIABLE _TMP_LSB_RELEASE_OUTPUT_VER
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(REPLACE "." "_" LSB_RELEASE_OUTPUT_VER ${_TMP_LSB_RELEASE_OUTPUT_VER})
+        #string(REGEX MATCH "^[0-9]+" LSB_RELEASE_OUTPUT_VER ${_TMP_LSB_RELEASE_OUTPUT_VER})
 else ()
         set(LSB_RELEASE_OUTPUT_OS ${CMAKE_OS_NAME})
 
@@ -461,13 +490,20 @@ message("CPack:Debug: CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enduro/X Middleware Platform")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION  ${CPACK_PACKAGE_DESCRIPTION})
 set(CPACK_RPM_PACKAGE_DESCRIPTION ${CPACK_PACKAGE_DESCRIPTION})
+set(CPACK_RPM_PACKAGE_AUTOREQ "0")
 #set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/Debian/postinst")
 
 include(CPack)
+################################################################################
+# Source indexing for quick symbol lookup
+# note that "glimpse" package must be installed.
+# to exclude any directory or name from indexing,
+# put the name in the glimpse_index/.glimpse_exclude
 ################################################################################
 
 
 add_custom_target(index glimpseindex -H ./glimpse_index ${PROJECT_SOURCE_DIR}
                     COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/glimpse_index/glim.cmake)
+#this also shall generate the glimp command in the current project
 
 # vim: set ts=4 sw=4 et smartindent:

@@ -16,12 +16,12 @@ libexjlds.dylib
 
 DESCRIPTION
 -----------
-Libary is used by binaries which are linked/compiled by *exjld(8)* linker tool.
+Library is used by binaries which are linked/compiled by *exjld(8)* linker tool.
 Basically the *exjld* generates the code which includes the class and resources
 in indexed arrays and main() function of the binary calls the functions from
 this *libexjlds* library to start the JVM. Prior startup, the environment is
 prepared, *CLASSPATH* is parsed and configured to jvm instance. Library includes
-also compiled bytecodes which are used as class loaders during the runtime. *libexjlds*
+also compiled bytecodes which are used as class loaders during the run-time. *libexjlds*
 helps to resolve compiled classes and resources and load them in the JVM instance.
 
 BUGS
