@@ -33,7 +33,7 @@
 
 cmake_minimum_required (VERSION 2.8) 
 project (ENDUROX-JAVA) 
-set(VERSION "0.0.1")
+set(VERSION "1.0.1")
 set(PROJ_NAME "Enduro/X Java")
 set(RELEASE "1")
 
@@ -46,6 +46,13 @@ set(NDRX_JAVA_VERSION_STR "${PROJ_NAME} ${VERSION}")
 ################################################################################
 # OS Configuration
 ################################################################################
+
+find_package(JNI)
+
+if (JNI_FOUND)
+    message (STATUS "JNI_INCLUDE_DIRS=${JNI_INCLUDE_DIRS}")
+    message (STATUS "JNI_LIBRARIES=${JNI_LIBRARIES}")
+endif()
 
 EXEC_PROGRAM(uname ARGS -a OUTPUT_VARIABLE _TMP_CMAKE_OS_NAME)
 string(REGEX MATCH "^[a-zA-Z0-9-]*" _TMP_CMAKE_OS_NAME_EXTR ${_TMP_CMAKE_OS_NAME})
@@ -134,15 +141,12 @@ else()
 endif()
 
 
-# Extract from:
 # JAVA_AWT_LIBRARY=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/libjawt.so
 # JAVA_JVM_LIBRARY=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so
 
 get_filename_component(NDRX_JAVA_LIBDIR_JAVA ${JAVA_AWT_LIBRARY} DIRECTORY)
 get_filename_component(NDRX_JAVA_LIBDIR_JVM ${JAVA_JVM_LIBRARY} DIRECTORY)
 
-message("CMake NDRX_JAVA_LIBDIR_JAVA  = ${NDRX_JAVA_LIBDIR_JAVA}")
-message("CMake NDRX_JAVA_LIBDIR_JVM  = ${NDRX_JAVA_LIBDIR_JVM}")
 
 ################################################################################
 # "Configure"
@@ -194,8 +198,6 @@ MESSAGE( STATUS "INSTALL_LIB_DIR: " ${INSTALL_LIB_DIR} )
 # Option to disable documentation build (dos are enabled by default)
 OPTION(DEFINE_DISABLEDOC "Disable documentation generation" OFF) 
 ################################################################################
-
-
 
 ################################################################################
 # Functions
@@ -454,7 +456,7 @@ set(CPACK_PACKAGE_VERSION ${VERSION})
 #set(CPACK_RPM_PACKAGE_REQUIRES "libxml2,openssl,libssl,libgpgme11")
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LO)
 message("CPack:Debug: PROJECT NAME = ${PROJECT_NAME_LO}")
-set(CPACK_PACKAGE_FILE_NAME         ${PROJECT_NAME_LO}-${VERSION}-${RELEASE}.${LSB_RELEASE_OUTPUT_OS}${LSB_RELEASE_OUTPUT_VER}_java${Java_VERSION_MAJOR}.${CMAKE_SYSTEM_PROCESSOR})
+set(CPACK_PACKAGE_FILE_NAME         ${PROJECT_NAME_LO}-${VERSION}-${RELEASE}.${LSB_RELEASE_OUTPUT_OS}${LSB_RELEASE_OUTPUT_VER}_java${Java_VERSION_MAJOR}_${Java_VERSION_MINOR}.${CMAKE_SYSTEM_PROCESSOR})
 message("CPack:Debug: CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enduro/X Middleware Platform")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION  ${CPACK_PACKAGE_DESCRIPTION})
