@@ -35,6 +35,14 @@ To install the JDK for RHEL system, use following command:
 
 --------------------------------------------------------------------------------
 
+=== Ubuntu systems
+
+--------------------------------------------------------------------------------
+
+$ sudo apt-get install default-jdk
+
+--------------------------------------------------------------------------------
+
 == Prepare Enduro/X for Build
 
 The preparation for build also includes the step of downloading PostgreSQL JDBC
@@ -94,7 +102,6 @@ Thus the runtime library search path must be set correspondingly. To execute the
 Enduro/X tests, the ~/ndrx_home source script must be updated:
 
 For example on Oracle Linux 7:
-
 
 --------------------------------------------------------------------------------
 
