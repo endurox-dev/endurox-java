@@ -100,35 +100,13 @@ if(Java_VERSION VERSION_LESS 1.10)
     CLASSPATH enduroxjava)
 endif()
 
-# Create a library called "UBF" which includes the source files.
-# The extension is already found. Any number of sources could be listed here. 
-#add_library (exjava SHARED
-#		AtmiCtx.c
-#        AtmiBuf.c
-#        exceptions.c
-#	)
-
-
-#add_dependencies(exjava enduroxjh)
-
-
 add_subdirectory (c)
 
-#    target_link_libraries(exjava atmisrvinteg atmi ubf nstd pthread)
-#if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
-#    target_link_libraries(exjava nstd)
-#elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
-#    target_link_libraries(eoxjava nstd)
-#elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
-#    # for XL tls
-#    target_link_libraries(enduroxjava pthread)
-#endif()
-
-#install (TARGETS 
-#    exjava
-#    DESTINATION "${INSTALL_LIB_DIR}"
-#    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-#    COMPONENT libraries
-#    )
+#
+# Install the jars to the system
+#
+install (FILES
+    enduroxjava.jar
+    DESTINATION share/java)
 
 # vim: set ts=4 sw=4 et smartindent:
