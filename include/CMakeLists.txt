@@ -34,7 +34,8 @@
 cmake_minimum_required (VERSION 2.8)
 
 install (FILES
-        exjlds.h
+            exjlds.h
+            ndrx_java_config.h
     DESTINATION include)
 
 # vim: set ts=4 sw=4 et smartindent:
