@@ -166,7 +166,7 @@ out:
         (*env)->ReleaseStringUTFChars(env, svc, n_svc);
     }
 
-    NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
+    NDRX_LOG(log_debug, "%s returns %p", __func__, ret);
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
