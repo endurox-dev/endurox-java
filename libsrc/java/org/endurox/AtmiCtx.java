@@ -1444,16 +1444,18 @@ public class AtmiCtx {
                     
                     /* Check arguments */
                     
-                    if (m[j].getParameterCount() !=1)
+                    /*if (m[j].getParameterCount() !=1)*/
+                    if (m[j].getParameterTypes().length !=1)
                     {
                         tplogWarn("Ignoring [%s] with %d argruments, expected 1", 
-                                m[j].getName(), m[j].getParameterCount());
+                                m[j].getName(), m[j].getParameterTypes().length);
                         continue;
                     }
                     
                     /* test first argument type.. */
                     
-                    String ptype = m[j].getParameters()[0].getType().getName();
+                    /*String ptype = m[j].getParameters()[0].getType().getName();*/
+                    String ptype = m[j].getParameterTypes()[0].getName();
                     try {
                         
                         if (null==p && ptype.equals("java.util.Properties") ||
