@@ -24,3 +24,4 @@ endif (DOXYGEN_FOUND)
 
 
 add_subdirectory (guides)
+add_subdirectory (manpage)
