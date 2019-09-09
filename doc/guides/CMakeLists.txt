@@ -9,11 +9,11 @@
 ## Copyright (C) 2017-2019, Mavimax, Ltd. All Rights Reserved.
 ## This software is released under one of the following licenses:
 ## LGPL or Mavimax's license for commercial use.
-## See LICENSE text.
+## See LICENSE file for full text.
 ##
 ## C (as designed by Dennis Ritchie and later authors) language code is licensed
 ## under Enduro/X Modified GNU Affero General Public License, version 3.
-## See LICENSE_C text.
+## See LICENSE_C file for full text.
 ## -----------------------------------------------------------------------------
 ## LGPL license:
 ## 
