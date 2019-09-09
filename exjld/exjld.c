@@ -5,11 +5,9 @@
  *   command with custom main entry. The main class shall be specified at build time.
  *   Also include/library path to libraries shall be given too (i.e. where to find
  *   java VM libs and headers)
- *   
  *   All files from jars ar included in class lists, with file extensions.
  *   resources like properties are generated and stored in hash as file path
- *   classes are stored with dot syntax. 
- * 
+ *   classes are stored with dot syntax.
  *   We could store the resources in resource list for performance and
  *   name collision reasons.
  *
@@ -18,22 +16,27 @@
 /* -----------------------------------------------------------------------------
  * Enduro/X Middleware Platform for Distributed Transaction Processing
  * Copyright (C) 2009-2016, ATR Baltic, Ltd. All Rights Reserved.
- * Copyright (C) 2017-2018, Mavimax, Ltd. All Rights Reserved.
+ * Copyright (C) 2017-2019, Mavimax, Ltd. All Rights Reserved.
  * This software is released under one of the following licenses:
- * AGPL or Mavimax's license for commercial use.
+ * LGPL or Mavimax's license for commercial use.
+ * See LICENSE text.
+ *
+ * C (as designed by Dennis Ritchie and later authors) language code is licensed
+ * under Enduro/X Modified GNU Affero General Public License, version 3.
+ * See LICENSE_C text.
  * -----------------------------------------------------------------------------
- * AGPL license:
+ * LGPL license:
  * 
  * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License, version 3 as published
+ * the terms of the GNU Lesser General Public License, version 3 as published
  * by the Free Software Foundation;
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU Affero General Public License, version 3
+ * PARTICULAR PURPOSE. See the GNU Lesser General Public License, version 3
  * for more details.
  *
- * You should have received a copy of the GNU Affero General Public License along 
+ * You should have received a copy of the Lesser General Public License along 
  * with this program; if not, write to the Free Software Foundation, Inc., 
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
