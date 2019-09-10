@@ -1,2 +1,0 @@
-Download jdbc for mysql and put jar files here.
-Target file name myjdbc.jar
