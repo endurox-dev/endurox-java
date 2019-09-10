@@ -56,10 +56,6 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-/* TODO: we need a getter function for current offset 
- * and we need a setter function to update the offset
- */
-
 /**
  * Return location field offset for fastadd operations
  * @param env java env
