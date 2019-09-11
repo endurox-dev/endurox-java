@@ -431,12 +431,12 @@ $  /usr/local/netbeans-8.2/bin/netbeans --jdkhome /usr/lib/jvm/java-8-openjdk-am
 Once NetBeans are started, go to: *Tools > Plugins > Available Plugins* and select
 following ones for install:
 
-image:images/netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install"]
+image:netbeans_java_install.png[caption="Figure 1: ", title="NetBeans Java Plugin Install"]
 
 Once modules are installed, it is recommended to update the NetBeans launcher 
 shortcut, because the jdkhome argument is mandatory in order to use java projects
 
-image:images/update_shortcut.png[caption="Figure 2: ", title="NetBeans Shortcut update"]
+image:update_shortcut.png[caption="Figure 2: ", title="NetBeans Shortcut update"]
 
 === Checking out Enduro/X Java project
 
@@ -476,11 +476,11 @@ $ cmake .
 After this step is done, start the NetBeans, and create new project with existing
 source code:
 
-image:images/new_c_project.png[caption="Figure 3: ", title="New C Project"]
+image:new_c_project.png[caption="Figure 3: ", title="New C Project"]
 
 And then select the folder which checked out sources:
 
-image:images/select_c_sources.png[caption="Figure 4: ", title="Select sources"]
+image:select_c_sources.png[caption="Figure 4: ", title="Select sources"]
 
 === Opening Java project in NetBeans
 
@@ -493,22 +493,22 @@ ant script (endurox-java/build.xml) must be maintained.
 
 Create a new project:
 
-image:images/new_java_project.png[caption="Figure 5: ", title="New Java Project"]
+image:new_java_project.png[caption="Figure 5: ", title="New Java Project"]
 
 
 Select project folder:
 
-image:images/select_java_folder.png[caption="Figure 5: ", title="Select Java folder"]
+image:select_java_folder.png[caption="Figure 5: ", title="Select Java folder"]
 
 Ant commands:
 
-image:images/ant_commands.png[caption="Figure 6: ", title="Ant commands"]
+image:ant_commands.png[caption="Figure 6: ", title="Ant commands"]
 
 Ant next screen is significant one, as here all Java directories must be manually
 added, as the libsrc only is added by default. All unit tests which will be
 changed/added during the development must be added here:
 
-image:images/java_sources.png[caption="Figure 7: ", title="Java sources"]
+image:java_sources.png[caption="Figure 7: ", title="Java sources"]
 
 Once project is created, this list can be altered in 
 *project properties > Java Sources*
@@ -520,7 +520,7 @@ wizard too.
 If adding new sources folder get similar message like this 
 (Package folder already used in project):
 
-image:images/java_classpath.png[caption="Figure 8: ", title="Java source error"]
+image:java_classpath.png[caption="Figure 8: ", title="Java source error"]
 
 Then this probably is caused by "endurox-java" C project. There is nothing to
 do in such case except to go and manually edit the NetBeans project file in
@@ -531,7 +531,7 @@ in similar way as other source folders are added.
 
 *The class path attributes*:
 
-image:images/java_classpath.png[caption="Figure 9: ", title="Java class path"]
+image:java_classpath.png[caption="Figure 9: ", title="Java class path"]
 
 
 
