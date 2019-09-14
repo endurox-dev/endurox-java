@@ -178,7 +178,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** NULL test *** ");
                 doCall(ctx, null);
 
-                Thread.sleep(100);
+                Thread.sleep(200);
                 assertEquals(prev_nrnull + 4, nrnull);
                 assertEquals(other.nrnull, nrnull);
 
@@ -186,7 +186,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
                 assertNotEquals(s, null);            
                 doCall(ctx, s);
-                Thread.sleep(100);
+                Thread.sleep(200);
 
                 assertEquals(prev_nrstring + 4, nrstring);
                 assertEquals(other.nrstring, nrstring);
@@ -195,7 +195,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
                 assertNotEquals(j, null);            
                 doCall(ctx, j);
-                Thread.sleep(100);
+                Thread.sleep(200);
 
                 assertEquals(prev_nrjson+4, nrjson);
                 assertEquals(other.nrjson, nrjson);
@@ -204,7 +204,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
                 assertNotEquals(c, null);            
                 doCall(ctx, c);
-                Thread.sleep(100);
+                Thread.sleep(200);
 
                 assertEquals(prev_nrcarray + 4, nrcarray);
                 assertEquals(other.nrjson, nrcarray);
@@ -213,7 +213,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
                 assertNotEquals(c, null);            
                 doCall(ctx, v);
-                Thread.sleep(100);
+                Thread.sleep(200);
 
                 assertEquals(prev_nrview + 4, nrview);
                 assertEquals(other.nrview, nrview);
@@ -222,7 +222,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
                 assertNotEquals(ub, null);            
                 doCall(ctx, ub);
-                Thread.sleep(100);
+                Thread.sleep(200);
 
                 assertEquals(prev_nrubf + 4, nrubf);
                 assertEquals(other.nrubf, nrubf);
