@@ -35,6 +35,17 @@ To install the JDK for RHEL system, use following command:
 
 --------------------------------------------------------------------------------
 
+=== CentOS/RHEL/Oracle Linux 8.X
+
+To install the JDK for RHEL system, use following command:
+
+--------------------------------------------------------------------------------
+
+# yum install java-11-openjdk-devel
+
+--------------------------------------------------------------------------------
+
+
 === Ubuntu systems
 
 --------------------------------------------------------------------------------
@@ -117,6 +128,24 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64/server
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds    
 
+--------------------------------------------------------------------------------
+
+Oracle Linux 8 with Java 11:
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+
+# Java settings
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.4.11-0.el8_0.x86_64
+
+# Add or update:
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
 
 --------------------------------------------------------------------------------
 
