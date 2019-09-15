@@ -58,7 +58,7 @@ public class JServer02 implements Server, Service {
         ctx.tpopen();
         
         try {
-            conn = ctx.getConnection();
+            conn = ctx.tpgetconn();
             // create a Statement from the connection
             statement = conn.createStatement();
             

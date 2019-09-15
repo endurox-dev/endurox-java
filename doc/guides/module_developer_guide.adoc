@@ -313,7 +313,7 @@ transaction
 
 - AtmiCtx.tpabort - Abort current transaction
 
-- AtmiCtx.getConnection - get connect object from XAConnection. The pooling and 
+- AtmiCtx.tpgetconn - get connect object from XAConnection. The pooling and 
 closing of connection shall done by programmer.
 
 The transaction management, communications with transaction manager (Enduro/X

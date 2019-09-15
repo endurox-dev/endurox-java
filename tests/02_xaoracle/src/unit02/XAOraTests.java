@@ -198,7 +198,7 @@ public class XAOraTests implements  Runnable {
         ctx.tpopen();
         
         try {
-            conn = ctx.getConnection();
+            conn = ctx.tpgetconn();
         }  catch (SQLException e) {
             ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to get conn", e);
             assertEquals(null, e);

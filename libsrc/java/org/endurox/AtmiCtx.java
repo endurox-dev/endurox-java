@@ -2245,7 +2245,7 @@ public class AtmiCtx {
      * It is up to user to close the connections.
      * @return DB connection, null in case if there was no tpopen(), or there was tpclose().
      */
-    public Connection getConnection() throws SQLException {
+    public Connection tpgetconn() throws SQLException {
         return xaConn.getConnection();
     }
     
