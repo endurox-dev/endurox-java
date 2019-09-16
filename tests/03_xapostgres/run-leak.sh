@@ -92,13 +92,12 @@ NDRX_CCTAG=DEBUG xmemck -d45 -s50 -t90 -m jexunit03b -m jserver03b -m tmsrv &
 export NDRXJ_LEAKTEST_NAME="basicXA"
 echo "Running jclient03b..."
 NDRX_CCTAG=DB1_JDBC/DEBUGOFF jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
+RET=$?
 #
 # Run with PQ TMSRV
 #
 xadmin stop -y
 test_leak;
-
-RET=$?
 
 if [ "X$RET" != "X0" ]; then
 	echo "jexunit03b failed"
@@ -115,10 +114,9 @@ xadmin start -i 340
 #
 echo "Running jclient03b... 2"
 NDRX_CCTAG=DB1_JDBC/DEBUGOFF jexunit03b XAPgTests > $NDRX_APPHOME/log/jexunit03b.log 2>&1
+RET=$?
 xadmin stop -y
 test_leak;
-
-RET=$?
 
 if [ "X$RET" != "X0" ]; then
 	echo "jexunit03b failed 2"
