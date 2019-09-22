@@ -315,7 +315,7 @@ out:
     
     if(n_array_copy)
     {
-       (*env)->ReleaseByteArrayElements(env, jb, n_array, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, jb, (signed char *)n_array, JNI_ABORT);
     }
 
     /* switch context back */

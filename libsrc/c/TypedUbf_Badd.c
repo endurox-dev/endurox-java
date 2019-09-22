@@ -224,7 +224,7 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_Badd__I_3B
     
     if(n_carray_copy)
     {
-       (*env)->ReleaseByteArrayElements(env, jb, n_carray, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, jb, (signed char *)n_carray, JNI_ABORT);
     }
 }
 
