@@ -39,12 +39,16 @@
  */
 
 /*---------------------------Includes-----------------------------------*/
+
+#include <ndrx_config.h>
+
 #ifndef EX_OS_DARWIN
 #define _LARGEFILE64_SOURCE
 #define _FILE_OFFSET_BITS 64 
 #define _XOPEN_SOURCE 500
 #endif
 
+#include <string.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
