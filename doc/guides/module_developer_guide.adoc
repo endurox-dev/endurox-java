@@ -148,7 +148,8 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$JAVA_HOME/jre/lib/server
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/Users/user1/modules/endurox-java/libsrc/c:/Users/user1/modules/endurox-java/libexjlds
 
 --------------------------------------------------------------------------------
-*NOTE:* that "..A/Resources:" must be before java 
+*NOTE:* that "..A/Resources:" must be before java library path, otherwise expect
+such errors as "Symbol not found __cg_jpeg_resync_to_restart".
 
 
 Oracle Linux 8 with Java 11:
