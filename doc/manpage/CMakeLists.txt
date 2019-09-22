@@ -52,6 +52,7 @@ set(MAN8_NAMES exjld libexjava libexjavald libexjlds libndrxxajdbc)
 set(PDF_MAN_NAMES ${MAN5_NAMES} ${MAN8_NAMES})
 
 
+if (A2X_EXECUTABLE)
 # Generate MAN5
 set(A2X_OPTS_MAN5 --format=manpage -D man5)
 set(MAN5_FILES)
@@ -116,6 +117,9 @@ foreach(m IN LISTS PDF_MAN_NAMES)
 
 endforeach()
 add_custom_target(pdf_man ALL DEPENDS ${PDF_MAN_FILES})
+endif()
+
+# A2X_EXECUTABLE
 endif()
 
 # end.

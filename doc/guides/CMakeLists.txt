@@ -45,6 +45,7 @@ set(PDF_NAMES module_developer_guide getting_started_tutorial
 set(HTML_NAMES module_developer_guide getting_started_tutorial
 						)
 
+if (A2X_EXECUTABLE)
 # Generate PDFs...
 if(DBLATEX)
 set(A2X_OPTS_PDF -L -f pdf --doctype book)
@@ -90,6 +91,9 @@ foreach(m IN LISTS HTML_NAMES)
 
 endforeach()
 add_custom_target(html ALL DEPENDS ${HTML_FILES})
+
+# if A2X_EXECUTABLE
+endif()
 
 
 # end.

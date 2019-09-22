@@ -118,7 +118,7 @@ expublic int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
      */
     ndrx_ctx_auto(EXFALSE);
     
-    (int)(*M_jvm)->AttachCurrentThread(M_jvm, (void **)&env, NULL);
+    ret=(int)(*M_jvm)->AttachCurrentThread(M_jvm, (void **)&env, NULL);
     
     if (ret!=JNI_OK)
     {

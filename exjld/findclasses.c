@@ -39,6 +39,7 @@
  */
 
 /*---------------------------Includes-----------------------------------*/
+#include <string.h>
 #define _LARGEFILE64_SOURCE
 #define _FILE_OFFSET_BITS 64 
 #define _XOPEN_SOURCE 500
@@ -48,7 +49,6 @@
 #include <ftw.h>
 #include <time.h>
 #include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <ftw.h>
 

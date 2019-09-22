@@ -97,7 +97,15 @@ add_library (exjlds SHARED
                 BytesURLConnection.cinclude
 	)
 
-target_link_libraries(exjlds jvm)
+if(${CMAKE_OS_NAME} STREQUAL "CYGWIN")
+    target_link_libraries(exjlds jvm nstd dl)
+elseif(${CMAKE_OS_NAME} STREQUAL "DARWIN")
+    target_link_libraries(exjlds jvm nstd dl)
+elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
+    target_link_libraries(exjlds pthread)
+else()
+    target_link_libraries(exjlds jvm)
+endif()
 
 # target_link_libraries (exjld atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
 

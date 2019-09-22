@@ -335,7 +335,7 @@ out:
 
     if(n_carray_copy)
     {
-       (*env)->ReleaseByteArrayElements(env, data, n_carray, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, data, (signed char *)n_carray, JNI_ABORT);
     }
 }
 
@@ -389,12 +389,12 @@ out:
 
     if(n_carray_copy1)
     {
-       (*env)->ReleaseByteArrayElements(env, data1, n_carray1, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, data1, (signed char *)n_carray1, JNI_ABORT);
     }
 
     if(n_carray_copy2)
     {
-       (*env)->ReleaseByteArrayElements(env, data1, n_carray2, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, data1, (signed char*)n_carray2, JNI_ABORT);
     }
 }
 

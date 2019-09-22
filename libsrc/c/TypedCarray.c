@@ -155,7 +155,7 @@ out:
     
     if(n_carray_copy)
     {
-       (*env)->ReleaseByteArrayElements(env, b, n_carray, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, b, (signed char *)n_carray, JNI_ABORT);
     }
 
     /* switch context back */

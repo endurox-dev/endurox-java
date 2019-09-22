@@ -115,6 +115,7 @@ if(Java_VERSION VERSION_LESS 1.10)
 endif()
 
 target_link_libraries (exjava exjlds jvm atmisrvinteg atmi ubf nstd ${RT_LIB} pthread m)
+target_link_libraries (exjavald exjava exjlds jvm nstd ${RT_LIB} pthread m)
 
 install (TARGETS 
     exjava 

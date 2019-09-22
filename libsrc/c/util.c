@@ -151,7 +151,7 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                     
                     if(n_carray_copy)
                     {
-                       (*env)->ReleaseByteArrayElements(env, jb, n_carray, JNI_ABORT);
+                       (*env)->ReleaseByteArrayElements(env, jb, (signed char *)n_carray, JNI_ABORT);
                     }
 
 
@@ -162,7 +162,7 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                 
                 if(n_carray_copy)
                 {
-                   (*env)->ReleaseByteArrayElements(env, jb, n_carray, JNI_ABORT);
+                   (*env)->ReleaseByteArrayElements(env, jb, (signed char *)n_carray, JNI_ABORT);
                 }
             } /* if ! NULL */
             else
@@ -447,12 +447,12 @@ out:
 
     if(n_gtid_copy)
     {
-       (*env)->ReleaseByteArrayElements(env, jgtid, n_gtid, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, jgtid, (signed char*)n_gtid, JNI_ABORT);
     }
 
     if(n_bqa_copy)
     {
-       (*env)->ReleaseByteArrayElements(env, jbqa, n_bqa, JNI_ABORT);
+       (*env)->ReleaseByteArrayElements(env, jbqa, (signed char *)n_bqa, JNI_ABORT);
     }
 
     return ret;

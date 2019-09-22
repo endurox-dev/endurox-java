@@ -40,6 +40,7 @@
 #include <jni.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 #include "exjglue.h"
 #include <atmi.h>
 #include <oatmi.h>
@@ -661,7 +662,7 @@ expublic exj_dyn_cache_t* ndrxj_caches_single(JNIEnv *env, char *class_name)
     
     if (NULL==cached)
     {
-        memset(&new_cache, 0, sizeof(cached));
+        memset(&new_cache, 0, sizeof(new_cache));
         
         new_cache.clazz = (*env)->FindClass(env, class_name);
     
