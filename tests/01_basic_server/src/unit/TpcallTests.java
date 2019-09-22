@@ -46,7 +46,7 @@ public class TpcallTests {
          * ideally we would time terminated tests, for example 5 min...?
          * thus we need a stop watch construction to have in java..
          */
-        for (int i=0; ((i<10000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
+        for (int i=0; ((i<100000) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
             
 /*
@@ -71,7 +71,7 @@ public class TpcallTests {
         
         double difference = cnt / w.deltaSec();
         
-        //System.console().printf("Call performance: %f calls/sec\n", difference);
+        System.console().printf("Call performance: %f calls/sec\n", difference);
         
         
         ub.cleanup();

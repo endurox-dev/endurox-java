@@ -192,6 +192,11 @@ Thus append the */opt/app-java/conf/setappj* with:
 export CLASSPATH=/usr/share/java/enduroxjava.jar
 export LD_LIBRARY_PATH=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64:/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server
 
+#
+# For MacOS set to something like this:
+#
+#export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources:$JAVA_HOME/jre/lib
+#export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$JAVA_HOME/jre/lib/server
 ---------------------------------------------------------------------
 
 Also we are about to add some logging settings for our binaries we are about
