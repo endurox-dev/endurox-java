@@ -148,6 +148,7 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$JAVA_HOME/jre/lib/server
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/Users/user1/modules/endurox-java/libsrc/c:/Users/user1/modules/endurox-java/libexjlds
 
 --------------------------------------------------------------------------------
+*NOTE:* that "..A/Resources:" must be before java 
 
 
 Oracle Linux 8 with Java 11:
