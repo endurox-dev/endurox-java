@@ -130,6 +130,28 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 --------------------------------------------------------------------------------
 
+For Mac OS:
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+# Java settings
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home
+
+
+# Add or update:
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/System/Library/Frameworks/ImageIO.framework/Versions/A/Resources:$JAVA_HOME/jre/lib
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$JAVA_HOME/jre/lib/server
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/Users/user1/modules/endurox-java/libsrc/c:/Users/user1/modules/endurox-java/libexjlds
+
+--------------------------------------------------------------------------------
+*NOTE:* that "..A/Resources:" must be before java library path, otherwise expect
+such errors as "Symbol not found __cg_jpeg_resync_to_restart".
+
+
 Oracle Linux 8 with Java 11:
 
 --------------------------------------------------------------------------------
@@ -148,6 +170,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
 
 --------------------------------------------------------------------------------
+
 
 === Preparing to build and build
 
