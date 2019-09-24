@@ -63,7 +63,7 @@ public class TypedUbf extends TypedBuffer {
     
     /**
      * Add field to UBF buffer. Group of methods for different data types.
-     * @defgroup Badd function calls
+     * @defgroup Badd Adding field to UBF
      * @param bfldid compiled field id
      * @throws UbfBALIGNERRException Invalid Buffer
      * @throws UbfBNOTFLDException Invalid Buffer
@@ -135,7 +135,7 @@ public class TypedUbf extends TypedBuffer {
     /**
      * Get field value from UBF buffer. The values are casted according function
      * return types.
-     * @defgroup Bget function calls
+     * @defgroup Bget Getting field from UBF
      * @param bfldid compiled field id
      * @param occ field occurrence
      * @return casted data type
@@ -166,7 +166,7 @@ public class TypedUbf extends TypedBuffer {
      *  When adding first field in the batch, then BFldLocInfo must be reset.
      *  Either by creating new object or explicitly calling reset() method
      *  on the object.
-     * @defgroup Baddfast function calls
+     * @defgroup Baddfast Fast adding field to UBF
      * @param bfldid compiled field id
      * @throws UbfBALIGNERRException Invalid Buffer
      * @throws UbfBNOTFLDException Invalid Buffer
@@ -234,7 +234,7 @@ public class TypedUbf extends TypedBuffer {
     
     /**
      * Add/Update (change) field value at given occurrence
-     * @defgroup Bchg function calls
+     * @defgroup Bchg Change UBF ubf fields
      * @param bfldid compiled field id
      * @param occ field occurrence to change
      * @throws UbfBALIGNERRException Invalid Buffer
