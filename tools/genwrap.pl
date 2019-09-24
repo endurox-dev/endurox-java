@@ -310,6 +310,7 @@ exprivate int ndrxj_lib_init(JNIEnv *env)
                 EXFAIL_OUT(ret);
             }
         }
+        M_lib_init = EXTRUE;
     }
     
 out:
