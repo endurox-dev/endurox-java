@@ -53,6 +53,7 @@ set(NDRX_JAVA_VERSION_STR "${PROJ_NAME} ${VERSION}")
 ################################################################################
 
 if(DEFINED ENV{NDRX_BLD_VERSION})
+        message (STATUS "Have build flags")
         IF(NOT $ENV{NDRX_BLD_VERSION} MATCHES ${VERSION})
                 message( FATAL_ERROR "Invalid versions: ENV: [$ENV{NDRX_BLD_VERSION}] Code: [${VERSION}]" )
         endif()
