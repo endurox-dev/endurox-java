@@ -55,6 +55,14 @@ $ sudo apt-get install default-jdk
 --------------------------------------------------------------------------------
 
 
+=== SLES
+
+
+Example version:
+--------------------------------------------------------------------------------
+$ sudo zypper install java-10-openjdk java-10-openjdk-devel
+--------------------------------------------------------------------------------
+
 === FreeBSD systems
 
 --------------------------------------------------------------------------------
@@ -181,6 +189,25 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 --------------------------------------------------------------------------------
 
 
+Suse Enterprise Linux Server 15 (SLES):
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+
+# Java settings
+export JAVA_HOME=/usr/lib64/jvm/java-10-openjdk-10
+
+# Add or update:
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+
+--------------------------------------------------------------------------------
+
 FreeBSD:
 
 --------------------------------------------------------------------------------
@@ -203,8 +230,12 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 === Preparing to build and build
 
+Before we start to build, lets load the environment, so that cmake can properly
+resolve the Java resources (via *JAVA_HOME*).
+
 --------------------------------------------------------------------------------
 
+$ . ~/ndrx_home
 $ cd endurox-java
 $ cmake .
 $ make
