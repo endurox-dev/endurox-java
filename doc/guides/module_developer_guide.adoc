@@ -25,6 +25,16 @@ module development process.
 First of all to start using or developing Enduro/X Java language plugin, the JDK
 needs to be installed. Enduro/X supports JDK version 1.7 and above.
 
+=== CentOS/RHEL/Oracle Linux 6.X
+
+To install the JDK for RHEL system, use following command:
+
+--------------------------------------------------------------------------------
+
+# yum install java-1.6.0-openjdk.x86_64 java-1.6.0-openjdk-devel.x86_64
+
+--------------------------------------------------------------------------------
+
 === CentOS/RHEL/Oracle Linux 7.X
 
 To install the JDK for RHEL system, use following command:
@@ -55,7 +65,7 @@ $ sudo apt-get install default-jdk
 --------------------------------------------------------------------------------
 
 
-=== SLES
+=== SLES 15:
 
 
 Example version:
