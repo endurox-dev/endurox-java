@@ -6,6 +6,8 @@
 #
 
 source ~/ndrx_home
+# remove any user resources...
+xadmin udown -y
 echo "Oracle [$EX_ORA_HOST] Postgres [$EX_PG_HOST]"
 
 > ./test.out
