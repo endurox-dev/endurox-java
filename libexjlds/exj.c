@@ -233,13 +233,32 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     jobject ldr_obj;
     JNINativeMethod m[2];
     jclass cl, urlcon, urlh;
+    jmethodID class_getctors_method;
     jobjectArray cpUrls = NULL;
+    jclass class_class = (*env)->FindClass(env, "java/lang/Class");
     loaderClass = (*env)->FindClass(env, "java/lang/ClassLoader"); 
     
-    if(NULL==loaderClass) {
+    if(NULL==class_class)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, "Failed to find Class: %s");
+        EXFAIL_OUT(ret);
+    }
+
+    if(NULL==loaderClass) 
+    {
         EXJLD_LOG_EXCEPTION(env, log_error, "Failed to load initial class loader: %s");
         EXFAIL_OUT(ret);
     }
+    
+    class_getctors_method = (*env)->GetMethodID(env, class_class, "getConstructors",
+                    "()[Ljava/lang/reflect/Constructor;");
+
+    if(NULL==class_getctors_method)
+    {
+        EXJLD_LOG_EXCEPTION(env, log_error, "Failed to getConstructors(): %s");
+        EXFAIL_OUT(ret);
+    }
+
 
     loaderMethod = (*env)->GetStaticMethodID(env, loaderClass, 
                     "getSystemClassLoader", "()Ljava/lang/ClassLoader;");
@@ -323,6 +342,9 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
 
     M_classLoaderClass = (jclass) (*env)->NewGlobalRef(env, cl);
 
+    /* jdk 1.6 avoid class resolve error */
+    (*env)->CallObjectMethod(env, M_classLoaderClass, class_getctors_method);
+
     /* Now link in native methods */
     m[0].fnPtr = ndrxj_getResourceBytes;
     m[0].name = "getResourceBytes";
@@ -385,6 +407,11 @@ out:
     if (NULL!=cpUrls)
     {
         (*env)->DeleteLocalRef( env, cpUrls);
+    }
+
+    if (NULL!=class_class)
+    {
+        (*env)->DeleteLocalRef( env, class_class);
     }
         
     NDRX_LOG(log_debug, "%s returns %d", __func__, ret);
