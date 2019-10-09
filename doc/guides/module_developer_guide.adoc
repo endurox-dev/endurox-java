@@ -81,6 +81,26 @@ $ sudo pkg install openjdk8
 
 --------------------------------------------------------------------------------
 
+=== IBM AIX systems
+
+Download desired java from: https://developer.ibm.com/javasdk/support/aix-download-service/
+"Java Runtime Environment" (JRE) and "Development Kit" is needed (JDK) 
+e.g. *Java8_64.sdk.8.0.0.541.tar.gz*. This documents
+installs the new version particularly on AIX 7.1. But it might be possible to use
+existing version of java on the host.
+
+--------------------------------------------------------------------------------
+
+$ su - root
+
+# gunzip -c Java8_64.jre.8.0.0.541.tar.gz  | tar -xvf-
+
+# gunzip -c Java8_64.sdk.8.0.0.541.tar.gz  | tar -xvf-
+
+# installp -agXYd . Java8_64.jre Java8_64.sdk  2>&1 | tee installp.log
+
+--------------------------------------------------------------------------------
+
 
 == Prepare Enduro/X for Build
 
@@ -237,6 +257,22 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 --------------------------------------------------------------------------------
 
+IBM AIX with java 8:
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+export JAVA_HOME=/usr/java8_64
+
+# Add or update:
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/ppc64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/ppc64/default
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+
+--------------------------------------------------------------------------------
 
 === Preparing to build and build
 
