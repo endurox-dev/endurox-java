@@ -383,7 +383,12 @@ add_subdirectory (libexjlds)
 add_subdirectory (exjld)
 add_subdirectory (xadrv)
 add_subdirectory (tests)
-add_subdirectory (doc)
+
+IF(DEFINE_DISABLEDOC)
+        message("Documentation disabled - not building")
+ELSE (DEFINE_DISABLEDOC)
+        add_subdirectory (doc) #  Documentation project.
+ENDIF (DEFINE_DISABLEDOC)
 
 ################################################################################
 # uninstall target

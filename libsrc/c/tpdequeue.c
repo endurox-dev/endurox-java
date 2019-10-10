@@ -173,8 +173,15 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
+            if (NULL==ndrxj_atmi_TPQCTL_translate2java(env, atmiCtxObj, jqctl, &q))
+            {
+                /* use object as is... */
+                NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2java failed - continue");
+            }
+
+            /* nothing todo: continue with old object.. */
             ndrxj_atmi_throw(env, idata, jqctl, err, "%s", errbuf);
-            goto errctl;
+            goto out;
 
         }
     }
@@ -192,8 +199,13 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
 
             NDRX_STRCPY_SAFE(errbuf, tpstrerror(err));
 
+            if (NULL==ndrxj_atmi_TPQCTL_translate2java(env, atmiCtxObj, jqctl, &q))
+            {
+                NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2java failed - continue");
+            }
+
             ndrxj_atmi_throw(env, idata, jqctl, err, "%s", errbuf);
-            goto errctl;
+            goto out;
 
         }
     }
@@ -202,7 +214,6 @@ exprivate jobject tpdequeue_int (JNIEnv * env, jobject atmiCtxObj, jstring jqspa
     retObj = ndrxj_atmi_TypedBuffer_result_prep(env, atmiCtxObj, idata, ibuf, 
         ilen, obuf, olen, itype, isubtype);
 
-errctl:
     /* restore the qctl */
     if (NULL==ndrxj_atmi_TPQCTL_translate2java(env, atmiCtxObj, jqctl, &q))
     {

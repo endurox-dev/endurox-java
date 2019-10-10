@@ -156,6 +156,7 @@ public class QueueTests {
                     
                     ctl = new TPQCTL();
                     qmsg = ctx.tpdequeue("MYSPACE", "TESTQ", ctl, null, 0);
+                    ctx.tplogError("ERROR ! Return OK");
                 }
                 catch (AtmiTPEDIAGNOSTICException e) {
                     
