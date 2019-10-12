@@ -89,6 +89,7 @@ EXEC_PROGRAM(uname ARGS -a OUTPUT_VARIABLE _TMP_CMAKE_OS_NAME)
 string(REGEX MATCH "^[a-zA-Z0-9-]*" _TMP_CMAKE_OS_NAME_EXTR ${_TMP_CMAKE_OS_NAME})
 string(TOUPPER ${_TMP_CMAKE_OS_NAME_EXTR} CMAKE_OS_NAME)
 
+message("JAVA_HOME  = $ENV{JAVA_HOME}")
 message("CMake CMAKE_OS_NAME  = ${CMAKE_OS_NAME}")
 message("CMake CMAKE_C_COMPILER_ID  = ${CMAKE_C_COMPILER_ID}")
 message("CMake CMAKE_CXX_COMPILER_ID  = ${CMAKE_CXX_COMPILER_ID}")
@@ -387,6 +388,7 @@ add_subdirectory (tests)
 IF(DEFINE_DISABLEDOC)
         message("Documentation disabled - not building")
 ELSE (DEFINE_DISABLEDOC)
+        message("Building doc")
         add_subdirectory (doc) #  Documentation project.
 ENDIF (DEFINE_DISABLEDOC)
 
