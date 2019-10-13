@@ -102,6 +102,23 @@ $ su - root
 --------------------------------------------------------------------------------
 
 
+=== Solaris 10 and 11
+
+See notes here: https://docs.oracle.com/javase/8/docs/technotes/guides/install/solaris_jdk.html#A1097833
+
+Basically this manual uses manual install procedure:
+
+--------------------------------------------------------------------------------
+
+# su - root
+
+# gzip -dc jdk-8u202-solaris-x64.tar.gz | tar xf -
+
+# mv jdk1.8.0_202 /usr/jdk1.8
+
+--------------------------------------------------------------------------------
+
+
 == Prepare Enduro/X for Build
 
 The preparation for build also includes the step of downloading PostgreSQL JDBC
@@ -159,7 +176,7 @@ Enduro/X Java module requires libjava.so and libjvm.so (and other OS counterpart
 Thus the runtime library search path must be set correspondingly. To execute the
 Enduro/X tests, the ~/ndrx_home source script must be updated:
 
-For example on Oracle Linux 7:
+==== For example on Oracle Linux 7:
 
 --------------------------------------------------------------------------------
 
@@ -177,7 +194,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 --------------------------------------------------------------------------------
 
-For Mac OS:
+==== For Mac OS:
 
 --------------------------------------------------------------------------------
 
@@ -199,7 +216,7 @@ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/Users/user1/modules/endurox-java/li
 such errors as "Symbol not found __cg_jpeg_resync_to_restart".
 
 
-Oracle Linux 8 with Java 11:
+==== Oracle Linux 8 with Java 11:
 
 --------------------------------------------------------------------------------
 
@@ -219,7 +236,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 --------------------------------------------------------------------------------
 
 
-Suse Enterprise Linux Server 15 (SLES):
+==== Suse Enterprise Linux Server 15 (SLES):
 
 --------------------------------------------------------------------------------
 
@@ -238,7 +255,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 --------------------------------------------------------------------------------
 
-FreeBSD:
+==== FreeBSD:
 
 --------------------------------------------------------------------------------
 
@@ -257,7 +274,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 --------------------------------------------------------------------------------
 
-IBM AIX with java 8:
+==== IBM AIX with Java 8:
 
 --------------------------------------------------------------------------------
 
@@ -272,6 +289,55 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/ppc64
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/ppc64/default
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
 
+--------------------------------------------------------------------------------
+
+
+==== Solaris 10 and 11 (X86):
+
+As CMake version 3.5 or higher is required by Java module, the upgrade of cmake
+must be installed. CSW Packages will be installed from sources:
+
+--------------------------------------------------------------------------------
+
+# pkgadd -d http://get.opencsw.org/now
+# /opt/csw/bin/pkgutil -U
+# /opt/csw/bin/pkgutil -y -i cmake 
+
+--------------------------------------------------------------------------------
+
+Note that later cmake's might require libs like "libCrunG3.so.1" which comes
+from compiler path, thus append the libpath.
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+export JAVA_HOME=/usr/jdk1.8
+
+# Add or update:
+# Fix missing libCrunG3.so.1 for cmake
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/solarisstudio12.4/lib
+
+
+#
+# For x86_64 add:
+#
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64/server
+
+#
+# For Sparc add:
+#
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/sparcv9
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/sparcv9/server
+
+#
+# Continue with both:
+#
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+export PATH=$PATH:$JAVA_HOME/bin
 --------------------------------------------------------------------------------
 
 === Preparing to build and build
