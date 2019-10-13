@@ -42,7 +42,7 @@
 
 #include <ndrx_config.h>
 
-#ifndef EX_OS_DARWIN
+#if !defined(EX_OS_DARWIN) && !defined(EX_OS_SUNOS)
 #define _LARGEFILE64_SOURCE
 #define _FILE_OFFSET_BITS 64 
 #define _XOPEN_SOURCE 500
