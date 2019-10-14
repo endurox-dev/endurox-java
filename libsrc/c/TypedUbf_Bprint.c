@@ -348,7 +348,6 @@ exprivate long Bwrite_writef(char *buffer, long bufsz, void *dataptr1)
                     bufsz, strerror(err));
             
             EXFAIL_OUT(ret);
-            goto out;
         }
     }
     else 
@@ -366,7 +365,6 @@ exprivate long Bwrite_writef(char *buffer, long bufsz, void *dataptr1)
                     newsz, strerror(err));
             
             EXFAIL_OUT(ret);
-            goto out;
         }
     }
     
