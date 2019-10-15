@@ -207,6 +207,12 @@ INCLUDE (${CMAKE_ROOT}/Modules/CheckCXXSourceCompiles.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 INCLUDE (${CMAKE_ROOT}/Modules/CheckSymbolExists.cmake)
 
+# To check the size of a primitive type:
+CHECK_TYPE_SIZE("int"   EX_SIZEOF_INT)
+CHECK_TYPE_SIZE("long"  EX_SIZEOF_LONG)
+CHECK_TYPE_SIZE("void*"  EX_SIZEOF_VOIDPTR)
+
+MATH (EXPR EX_PLATFORM_BITS "${EX_SIZEOF_VOIDPTR} * 8")
 ################################################################################
 # Install dir config
 ################################################################################
