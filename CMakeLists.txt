@@ -129,6 +129,7 @@ elseif(${CMAKE_OS_NAME} STREQUAL "AIX")
             set ( CMAKE_C_FLAGS "-D_SEM_SEMUN_UNDEFINED -D_THREAD_SAFE -pthread -maix64 ${CMAKE_C_FLAGS}")
 	elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "XL")
             message("XL compiler")
+            SET ( CMAKE_CXX_FLAGS "-O2 -qtls -q64 -b64 -qsuppress=1500-030" CACHE STRING "compile flags" FORCE)
             set ( CMAKE_C_FLAGS " -D_SEM_SEMUN_UNDEFINED -D_THREAD_SAFE ")
             set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -qwarn64 -qpic -bexpfull -b64")
             set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -brtl -qtls -q64 -qlanglvl=extc99")
@@ -519,13 +520,20 @@ if(APTPROG)
 	set(CPACK_GENERATOR "${CPACK_GENERATOR};DEB")
 endif()
 
+#
+# Fix arch for AIX
+#
+IF(CMAKE_SYSTEM_PROCESSOR MATCHES "^powerpc")
+	set(CPACK_RPM_PACKAGE_ARCHITECTURE "ppc")
+ENDIF()
+
 set(CPACK_PACKAGE_CONTACT "madars.vitolins@gmail.com")
 set(CPACK_PACKAGE_VERSION ${VERSION})
 #set(CPACK_DEBIAN_PACKAGE_DEPENDS "libxml2,openssl,libgpgme11")
 #set(CPACK_RPM_PACKAGE_REQUIRES "libxml2,openssl,libssl,libgpgme11")
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LO)
 message("CPack:Debug: PROJECT NAME = ${PROJECT_NAME_LO}")
-set(CPACK_PACKAGE_FILE_NAME         ${PROJECT_NAME_LO}-${VERSION}-${RELEASE}.${LSB_RELEASE_OUTPUT_OS}${LSB_RELEASE_OUTPUT_VER}_java${Java_VERSION_MAJOR}_${Java_VERSION_MINOR}.${CMAKE_SYSTEM_PROCESSOR})
+set(CPACK_PACKAGE_FILE_NAME         ${PROJECT_NAME_LO}-${VERSION}-${RELEASE}.${LSB_RELEASE_OUTPUT_OS}${LSB_RELEASE_OUTPUT_VER}_java${Java_VERSION_MAJOR}_${Java_VERSION_MINOR}.${CMAKE_SYSTEM_PROCESSOR}_${EX_PLATFORM_BITS})
 message("CPack:Debug: CPACK_PACKAGE_FILE_NAME = ${CPACK_PACKAGE_FILE_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Enduro/X Middleware Platform")
 set(CPACK_DEBIAN_PACKAGE_DESCRIPTION  ${CPACK_PACKAGE_DESCRIPTION})
@@ -541,8 +549,7 @@ include(CPack)
 # put the name in the glimpse_index/.glimpse_exclude
 ################################################################################
 
-
-add_custom_target(index glimpseindex -H ./glimpse_index ${PROJECT_SOURCE_DIR}
+add_custom_target(index glimpseindex -n -H ./glimpse_index ${PROJECT_SOURCE_DIR}
                     COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/glimpse_index/glim.cmake)
 #this also shall generate the glimp command in the current project
 
