@@ -166,6 +166,11 @@ out:
         dlclose(handle);
     }
 
+    if (EXSUCCEED!=ret && NULL!=sw)
+    {
+        sw = NULL;
+    }
+
     return sw;
 }
 
