@@ -56,7 +56,7 @@ To install the JDK for RHEL system, use following command:
 --------------------------------------------------------------------------------
 
 
-=== Ubuntu systems
+=== Ubuntu systems / Debian / Raspberry systems
 
 --------------------------------------------------------------------------------
 
@@ -175,6 +175,28 @@ $ ls -l endurox-java/tests/02_xaoracle/jdbcdrivers/ojdbc.jar
 Enduro/X Java module requires libjava.so and libjvm.so (and other OS counterparts),
 Thus the runtime library search path must be set correspondingly. To execute the
 Enduro/X tests, the ~/ndrx_home source script must be updated:
+
+NB! "find /usr . -name libjvm.so" may be used to find the JAVA_HOME and other folders.
+
+
+==== Ubuntu/Debian/Raspberry:
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+
+# Java settings
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${JAVA_HOME}/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${JAVA_HOME}/lib/server
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds  
+
+--------------------------------------------------------------------------------
+
 
 ==== For example on Oracle Linux 7:
 
@@ -598,9 +620,6 @@ and hosted within tmsrv. VM is configured with settings form [@java] (with CCTAG
 support) section. Thus there shall be class path configured with -cp or -classpath
 settings in Java opts. From this class path further the JDBC XA Data Source
 class is loaded. 
-
-== Enduro/X Java Linker
-...
 
 == Enduro/X Java XATMI Client process clean shutdown
 
