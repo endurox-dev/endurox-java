@@ -70,7 +70,7 @@ expublic char* ndrxj_BExprTree_ptr_get(JNIEnv *env, jobject ptrO)
     
     jptr = (*env)->GetLongField(env, ptrO, ndrxj_clazz_BExprTree_fid_cPtr);
     
-    ret = (char *)jptr;
+    ret = (char *)(long)jptr;
     
 out:
     return ret;
@@ -109,7 +109,7 @@ expublic jobject ndrxj_BExprTree_new(JNIEnv *env, char *ptr)
     NDRX_LOG(log_debug, "About to NewObject(%s)", BEXPRTREE_CLASS);
     
     ret = (*env)->NewObject(env, ndrxj_clazz_BExprTree, 
-            ndrxj_clazz_BExprTree_mid_INIT, (jlong)ptr);
+            ndrxj_clazz_BExprTree_mid_INIT, (jlong)(long)ptr);
     
     if (NULL==ret)
     {
@@ -144,7 +144,7 @@ expublic void JNICALL ndrxj_Java_org_endurox_BExprTree_Btreefree
     
     ctx = tpnewctxt(EXFALSE, EXTRUE);
     
-    Btreefree((char *)cPtr);
+    Btreefree((char *)(long)cPtr);
     
     tpsetctxt(TPNULLCONTEXT, 0L);
     

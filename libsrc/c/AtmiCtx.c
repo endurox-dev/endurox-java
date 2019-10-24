@@ -86,7 +86,7 @@ expublic TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set)
     
     jlong fieldVal = (*env)->GetLongField(env, atmiCtxObj, ndrxj_clazz_AtmiCtx_fid_ctx);
 
-    ctx = (TPCONTEXT_T)fieldVal;
+    ctx = (TPCONTEXT_T)(long)fieldVal;
 
     if (NULL==ctx)
     {
@@ -407,7 +407,7 @@ out:
 expublic void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpfreectxt(JNIEnv *env, 
         jclass cls, jlong cPtr)
 {
-    TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
+    TPCONTEXT_T ctx = (TPCONTEXT_T)(long)cPtr;
     
     tpfreectxt(ctx);
 }
@@ -1039,7 +1039,7 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_finalizeC
   (JNIEnv *env, jclass cls, jlong cPtr)
 {
     int freeWeak = EXFALSE;
-    TPCONTEXT_T ctx = (TPCONTEXT_T)cPtr;
+    TPCONTEXT_T ctx = (TPCONTEXT_T)(long)cPtr;
     /* TPCONTEXT_T tmp; */
     ndrx_ctx_priv_t *ctxpriv;
     jobject jctx;
@@ -1574,7 +1574,7 @@ expublic jlong NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata
         return ret;
     }
     
-    ret=(jlong)tpsrvgetctxdata();
+    ret=(jlong)(long)tpsrvgetctxdata();
     
     if (0==ret)
     {
@@ -1600,7 +1600,7 @@ expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata
         return;
     }
     
-    if (EXSUCCEED!=tpsrvsetctxdata((char *)dataptr, (long)flags))
+    if (EXSUCCEED!=tpsrvsetctxdata((char *)(long)dataptr, (long)flags))
     {
         ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
     }
@@ -1622,7 +1622,7 @@ expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvfreectxdata
         return;
     }
     
-    tpsrvfreectxdata((char *)dataptr);
+    tpsrvfreectxdata((char *)(long)dataptr);
     
     tpsetctxt(TPNULLCONTEXT, 0L);
 }

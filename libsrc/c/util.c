@@ -347,7 +347,8 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
     NDRX_LOG(log_debug, "About to NewObject(%s)", EXXID_CLASS);
     
     ret = (*env)->NewObject(env, ndrxj_clazz_ExXid, ndrxj_clazz_ExXid_mid_INIT, 
-            xid->formatID, xid->gtrid_length, xid->bqual_length, jb);
+            (jlong)xid->formatID, (jlong)xid->gtrid_length,
+            (jlong)xid->bqual_length, jb);
     
     /* check result.. */
     
@@ -358,7 +359,7 @@ expublic jobject ndrxj_cvt_xid_to_java(JNIEnv *env, XID *xid)
             
         NDRX_LOG(log_error, "Failed to create java ExXid!");
         
-        /* TODO: Backtrace the call? 
+        /* Backtrace the call? 
          * have some common logging for XA.
          */
         NDRXJ_LOG_EXCEPTION(NDRXJ_JENV(ctxpriv), log_error, 

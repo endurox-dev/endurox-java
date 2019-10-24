@@ -165,9 +165,9 @@ expublic void JNICALL ndrxj_Java_org_endurox_TypedBuffer_tpfree (JNIEnv *env, jo
     ctx = tpnewctxt(EXFALSE, EXTRUE);
     
     NDRX_LOG(log_debug, "About to free up buf: %p",
-            (void *)cPtr);
+            (void *)(long)cPtr);
     
-    tpfree((char *)cPtr);
+    tpfree((char *)(long)cPtr);
     
     /* unset context */
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -312,7 +312,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_translate(JNIEnv *env,
     NDRX_LOG(log_debug, "About to NewObject(%s)", clazz);
     
     ret = (*env)->NewObject(env, bclz, mid, ctx_obj, (jboolean)finalize, 
-            (jlong)data, len);
+            (jlong)(long)data, len);
     
     NDRX_LOG(log_debug, "NewObject() done");
     
@@ -366,7 +366,7 @@ expublic int ndrxj_atmi_TypedBuffer_get_buffer(JNIEnv *env,
     clen = (*env)->GetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_len);
             
     
-    *buf = (char *)cptr;
+    *buf = (char *)(long)cptr;
     *len = (long)clen;
     
     if (NULL!=doFinalize || unsetDoFinalize)
@@ -411,7 +411,7 @@ expublic int ndrxj_atmi_TypedBuffer_set_buffer(JNIEnv *env,
             jobject data, char *buf, long len)
 {
     int ret = EXSUCCEED;
-    jlong cptr = (jlong)buf;
+    jlong cptr = (jlong)(long)buf;
     jlong clen = (jlong)len;
     
     (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_cPtr, cptr);
@@ -548,7 +548,7 @@ expublic jobject ndrxj_atmi_TypedBuffer_result_prep
             NDRX_LOG(log_debug, "Buffer pointers changed...");
 
             (*env)->SetLongField(env, data, ndrxj_clazz_TypedBuffer_fid_cPtr, 
-                    (jlong)odata);
+                    (jlong)(long)odata);
 
         }
     }
