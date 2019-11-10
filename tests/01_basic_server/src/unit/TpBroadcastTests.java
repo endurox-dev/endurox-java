@@ -35,7 +35,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             ctx.tpchkunsol();
             
             try {
-                Thread.sleep(0, 100);
+                Thread.sleep(0, 50);
             } 
             catch (Exception e) {
                 ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to sleep", e);
