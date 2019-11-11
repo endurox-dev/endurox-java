@@ -152,7 +152,7 @@ expublic int ndrxj_alloc_context(ndrx_ctx_priv_t *ctxpriv)
      */
     NDRX_LOG(log_debug, "Create ATMI CTX with C context %p", ctx);
     
-    jctx = (*env)->CallStaticObjectMethod(env, ctx_class, factory_mid, (jlong)ctx);
+    jctx = (*env)->CallStaticObjectMethod(env, ctx_class, factory_mid, (jlong)(long)ctx);
     
     if((*env)->ExceptionCheck(env))
     {

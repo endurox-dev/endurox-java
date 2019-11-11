@@ -76,7 +76,7 @@ expublic jobject ndrxj_TprecvResult_new(JNIEnv *env, jobject ctx_obj,
     NDRX_LOG(log_debug, "About to NewObject(%s)", ALLOC_CLASS);
     
     ret = (*env)->NewObject(env, ndrxj_clazz_TprecvResult, 
-            ndrxj_clazz_TprecvResult_mid_INIT, (jint)cd, odata, revent);
+            ndrxj_clazz_TprecvResult_mid_INIT, (jint)cd, odata, (jlong)revent);
     
     if (NULL==ret)
     {

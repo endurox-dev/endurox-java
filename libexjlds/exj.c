@@ -870,17 +870,19 @@ expublic JavaVM * ndrxj_ldr_getvm(ndrxj_class_index_t *class_index,
     if (EXSUCCEED!=create_loader(*env, vm))
     {
         NDRX_LOG(log_error, "Failed to prepare class loader");
-        EXFAIL_OUT(ret);
+        ret=EXFAIL;
+        goto out_chk;
     }
     
-out:
-    
+out_chk:
     if((**env)->ExceptionCheck(*env))
     {
         EXJLD_LOG_EXCEPTION((*env), log_error, 
                         "Failed to create JVM Instance!: %s");
         EXFAIL_OUT(ret);
     }
+
+out:
 
     /* free up resources: */
 

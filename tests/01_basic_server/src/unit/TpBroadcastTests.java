@@ -40,7 +40,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             ctx.tpchkunsol();
             
             try {
-                Thread.sleep(0, 100);
+                Thread.sleep(0, 50);
             } 
             catch (Exception e) {
                 ctx.tplogex(AtmiConst.LOG_ERROR, "Failed to sleep", e);
@@ -184,7 +184,6 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** NULL test *** ");
                 doCall(ctx, null);
 
-                
                 assertEquals(prev_nrnull + 4, nrnull);
                 assertEquals(other.nrnull, nrnull);
 
