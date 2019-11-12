@@ -16,6 +16,19 @@ https://www.endurox.org/projects/endurox/files
 Javadoc and other documentation for the package are available here: 
 https://www.endurox.org/dokuwiki/doku.php?id=endurox-java:v1.0.x:api:javadoc
 
+## Build & test status
+
+| OS   |      Status      | OS       |      Status   |OS       |      Status   |
+|----------|:-------------:|----------|:-------------:|----------|:-------------:|
+| AIX 7.1 |  [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-aix7_1)](http://www.silodev.com:9090/jenkins/job/endurox-java-aix7_1/) |Centos 6|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-centos6)](http://www.silodev.com:9090/jenkins/job/endurox-java-centos6/)|FreeBSD 11|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-freebsd11)](http://www.silodev.com:9090/jenkins/job/endurox-java-freebsd11/)|
+|Oracle Linux 7|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ol7)](http://www.silodev.com:9090/jenkins/job/endurox-java-ol7/)|OSX 11.4|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-osx11_4)](http://www.silodev.com:9090/jenkins/job/endurox-java-osx11_4/)|raspbian10_arv7l|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-raspbian10_arv7l)](http://www.silodev.com:9090/jenkins/job/endurox-java-raspbian10_arv7l/)|
+|RHEL/Oracle Linux 8| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ol8)](http://www.silodev.com:9090/jenkins/job/endurox-java-ol8/)|SLES 15|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-sles15)](http://www.silodev.com:9090/jenkins/job/endurox-java-sles15/)|Solaris 10|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-solaris10_sparc)](http://www.silodev.com:9090/jenkins/job/endurox-java-solaris10-sparc/)|
+|Solaris 11 (JDK 1.8)| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-solaris11_x86)](http://www.silodev.com:9090/jenkins/job/endurox-java-solaris11_x86/)|Ubuntu 14.04| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ubuntu14)](http://www.silodev.com:9090/jenkins/job/endurox-java-ubuntu14/)|Ubuntu 18.04| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ubuntu18)](http://www.silodev.com:9090/jenkins/job/endurox-java-ubuntu18/)|
+
+
+
+
+
 ## Overview
 
 This is binding project for Enduro/X microservices XATMI API based framework. Bindings
