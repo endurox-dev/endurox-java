@@ -484,7 +484,7 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedUbf_tpjsontoubf
     
     if (EXSUCCEED!=tpjsontoubf((UBFH *)cdata, (char *)n_str))
     {
-        ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, data, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     
@@ -542,7 +542,7 @@ JNIEXPORT jstring JNICALL ndrxj_Java_org_endurox_TypedUbf_tpubftojson
     /* build json string */
     if (EXSUCCEED!=tpubftojson((UBFH *)cdata, tmp, bufsz))
     {
-        ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, data, NULL, tperrno, "%s", tpstrerror(tperrno));
         EXFAIL_OUT(ret);
     }
         

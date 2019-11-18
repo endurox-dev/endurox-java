@@ -463,7 +463,7 @@ expublic jobject JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpalloc (JNIEnv *env, jo
     {
         int err = tperrno;
         /* Generate exception! */
-        ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, NULL, NULL, err, "%s", tpstrerror(err));
         goto out;
     }
     
@@ -722,7 +722,7 @@ expublic void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpadvertiseC
         NDRX_LOG(log_error, "Failed to advertise service [%s] func [%s]: %s",
                 n_svcname, n_funcname, tpstrerror(tperrno));
         
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     
@@ -911,7 +911,7 @@ expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpRunC(JNIEnv *env, jobject
     /* Throw exception if any... */
     if (EXSUCCEED!=ret && 0!=tperrno)
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
 out:
@@ -1090,7 +1090,7 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpinit
     
     if (EXSUCCEED!=tpinit(NULL))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1361,7 +1361,7 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpopen
     
     if (EXSUCCEED!=tpopen())
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1382,7 +1382,7 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpclose
     
     if (EXSUCCEED!=tpclose())
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1405,7 +1405,7 @@ expublic NDRX_JAVA_API void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpbegin
     
     if (EXSUCCEED!=tpbegin((unsigned long)timeout, (long)flags))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1430,7 +1430,7 @@ expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpcommit
     if (EXSUCCEED!=(ret=tpcommit((long)flags)))
     {
         NDRX_LOG(log_debug, "tpcommit returns %d", ret);
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1452,7 +1452,7 @@ expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpabort
     
     if (EXSUCCEED!=tpabort((long)flags))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1478,7 +1478,7 @@ expublic jobject NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsuspend
     
     if (EXSUCCEED!=tpsuspend(&tid.tid, (long)flags))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     
@@ -1525,7 +1525,7 @@ expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpresume
      
     if (EXSUCCEED!=tpresume(&tid.tid, (long)flags))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     
@@ -1578,7 +1578,7 @@ expublic jlong NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvgetctxdata
     
     if (0==ret)
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);
@@ -1602,7 +1602,7 @@ expublic void NDRX_JAVA_API ndrxj_Java_org_endurox_AtmiCtx_tpsrvsetctxdata
     
     if (EXSUCCEED!=tpsrvsetctxdata((char *)(long)dataptr, (long)flags))
     {
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
     }
     
     tpsetctxt(TPNULLCONTEXT, 0L);

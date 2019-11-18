@@ -491,15 +491,6 @@ public class AtmiCtx {
     private native void tplogndrxC(int lev, String file, long line, String message);
     
     /**
-     * Query logger information
-     * @param lev current log level
-     * @param flags  See TPLOGQI_GET_ and TPLOGQI_EVAL_ flag constants
-     * @return LOG_FACILITY_ bits, TPLOGQI_RET_ bits, and bits from 24..32 
-     *  represents log level.
-     */
-    public native int tplogqinfo(int lev, long flags);
-    
-    /**
      * Call the C side of advertise. This basically performs the low level
      * C side advertise of the internal dispatching method.
      * During the service call dispatching method shall resolve the actual object
@@ -530,6 +521,31 @@ public class AtmiCtx {
         svcMap.put(svcname, svc);
     }
     
+    
+    /**
+     * List of text logging functions for log file processing.
+     * @defgroup Logging functions
+     * @{
+     */
+    
+    /**
+     * Delete request file name from buffer
+     * @param data typed buffer 
+     * @throws AtmiTPENOENTException Filed not present or failed to remove from UBF.
+     * @throws AtmiTPEINVALException Not UBF buffer or buffer NULL.
+     * @throws NullPointerException data is NULL.
+     */
+    public native void tplogdelbufreqfile(TypedBuffer data);
+
+    /**
+     * Query logger information
+     * @param lev current log level
+     * @param flags  See TPLOGQI_GET_ and TPLOGQI_EVAL_ flag constants
+     * @return LOG_FACILITY_ bits, TPLOGQI_RET_ bits, and bits from 24..32 
+     *  represents log level.
+     */
+    public native int tplogqinfo(int lev, long flags);
+    
     /**
      * Log exception to UBF logger
      * @param lev debug level
@@ -553,6 +569,124 @@ public class AtmiCtx {
      * @param e exception to backtrace
      */
     public native void tplogex(int lev, String msg, Throwable e);
+    
+    /**
+     * Set request log file name. This switches the current logger for tp, ndrx and ubf
+     * to specific file name. The logfile name can be present in typed buffer
+     * (i.e. UBF buffer field EX_NREQLOGFILE) - parameter \data, or file name 
+     * can be specified in \p filename argument if these parameters are not
+     * set or file name os not there, function will attempt to call \p filesvc
+     * service (if present). In case of if function is unable to locate the
+     * filename, the exception is thrown.
+     * 
+     * If UBF buffer is passed and file name is only present in \p filename,
+     * then function sill set field EX_NREQLOGFILE to UBF \p data buffer.
+     * 
+     * See tplogsetreqfile(3) manpage for more information.
+     * 
+     * @param data Typed Buffer (supports only UBF buffer currently) with EX_NREQLOGFILE
+     *  field present. This buffer also is used for doing \p filesvc calls. In
+     *  case if file name is available in \p filename and buffer data is present,
+     *  the value is copied to EX_NREQLOGFILE. It is assumed that buffer has
+     *  enough space to set the EX_NREQLOGFILE field. Parameter is optional
+     *  and might be passed as null.
+     * 
+     * @param filename File name to which set the request logging.
+     * 
+     * @param filesvc fallback service name to request for log file name (EX_NREQLOGFILE)
+     *  in case if \p data and \p filename does not contain the file name to
+     *  switch logging to.
+     * 
+     * @throws AtmiTPEINVALException Missing file name in parameters 
+     *  (invalid parameter combination).
+     * @throws AtmiTPENOENTException No service (filesvc parameter) 
+     *  advertised in system.
+     * @throws AtmiTPETIMEException Service did not reply in given time 
+     *  (NDRX_TOUT).
+     * @throws AtmiTPESVCFAILException Service returned TPFAIL. 
+     *  This is application level failure.
+     * @throws AtmiTPESVCERRException System level service failure. Server 
+     *  died during the message presence in service queue.
+     * @throws AtmiTPESYSTEMException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     * @throws AtmiTPEOSException System failure occurred during serving. 
+     *  See logs i.e. user log, or debugs for more info.
+     */
+    public native void tplogsetreqfile(TypedBuffer data, String filename, String filesvc);
+    
+    /**
+     * Read the request file name from the given \p data buffer. Currently
+     * only UBF buffer is supported and field name must be EX_NREQLOGFILE.
+     * 
+     * See tploggetbufreqfile(3) manpage for more information.
+     * 
+     * @param data Typed buffer, UBF supported only.
+     * @return current logging file name.
+     * @throws AtmiTPENOENTException Request logging file name not present 
+     *  in UBF buffer or system failure in reading from UBF.
+     * @throws AtmiTPEINVALException Not UBF buffer.
+     * 
+     * @throws NullPointerException data is NULL.
+     */
+    public native String tploggetbufreqfile(TypedBuffer data);
+    
+    /**
+     * Get current request logging file.
+     * In case if request logging is not used, method returns null value.
+     * 
+     * See tploggetreqfile(3) manpage for more information.
+     * 
+     * @return current request logging file. In case if request logging is
+     *  not used, null value is returned.
+     */
+    public native String tploggetreqfile();
+    
+    /**
+     * Change logger file directly from the given file name. If there is problem
+     * with setting the output log file, the logger will be changed to stderr.
+     * 
+     * See tplogsetreqfile_direct(3) manpage for more information.
+     * 
+     * @param filename file name to which set the request logger
+     * 
+     * @throws NullPointerException In case if \p filename is null.
+     */
+    public native void tplogsetreqfile_direct(String filename);
+    
+    /**
+     * Close request file.
+     * The logger will return to thread logger (if was configured) or process logger.
+     * 
+     * See tplogclosereqfile(3) manpage for more information.
+     */
+    public native void tplogclosereqfile();
+    
+    /**
+     * Configure logger.
+     * Function does configure logging facilities - NDRX (XATMI internal logs), 
+     * UBF (UBF internal logs( and TP (User logs). If not already logger started, 
+     * then this method will initiate Enduro/X framework to load the logging
+     * settings from [@debug] ini section or from ndrxdebug.conf(5). 
+     * Then with help of this method user is able to override loaded settings.
+     * 
+     * Also it is possible to set per thread logging, if facility code used 
+     * here is LOG_FACILITY_TP_THREAD. Or it is possible to configure request 
+     * based logging from thus method, but tplogsetreqfile_direct(3) and
+     * tplogsetreqfile(3) is recommended to use instead.
+     * 
+     * See tplogconfig(3) manpage for more information.
+     * 
+     * @param logger see AtmiConst.LOG_FACILITY... constants, can be binary OR'd
+     * @param lev log level, see AtmiConst.LOG_DUMP,..,AtmiConst.LOG_ALWAYS
+     * @param debug_string debug string according to ndrxdebug.conf(5)
+     * @param module module name which does the logging (is used in log file line, 4 symbols)
+     * @param new_file New log file to use for logging
+     * 
+     * @throws AtmiNEFORMATException Invalid format for debug_string.
+     * @throws AtmiNESYSTEMException System error occurred. 
+     *  See the logs for more info.
+     */
+    public native void tplogconfig(int logger, int lev, String debug_string, String module, String new_file);
     
     /**
      * Log exception to ulog
@@ -696,6 +830,9 @@ public class AtmiCtx {
      * @param data2 second byte block to compare
      */
     public native void tplogDumpDiff(int lev, String msg, byte[] data1, byte[] data2);
+    
+    
+    /** @} */ // end of Logging
     
     /**
      * Initialize current ATMI Context as a ATMI client

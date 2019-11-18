@@ -56,9 +56,6 @@
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
 
-
-/* TODO: We need a functions to map the ATMI errors to exceptions, this could be table driven. */
-
 /**
  * Throw ATMI error 
  * @param env java env
@@ -251,6 +248,42 @@ expublic void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...)
         
     (*env)->ThrowNew(env, cached->clazz, error);
 }
+
+
+/**
+ * Throw null pointer exception
+ * @param env java env java env
+ * @param msg msgfmt format string
+ * @param ... args to msgfmt
+ */
+expublic void ndrxj_nullptr_throw(JNIEnv *env, char *msgfmt, ...)
+{
+    char error[ERROR_MAX];
+    jobject exception = NULL;
+    jstring jerror;
+    
+    va_list args;
+    va_start (args, msgfmt);
+    vsnprintf (error, sizeof(error), msgfmt, args);
+    va_end (args);
+    
+    NDRX_LOG(log_info, "Throwing: [NullPointerException]: %s", error);
+    
+    jerror = (*env)->NewStringUTF(env, error);
+    
+    exception = (*env)->NewObject(env, ndrxj_clazz_NullPointerException, 
+            ndrxj_clazz_NullPointerException_mid_INIT, jerror);
+    
+    if (NULL==exception)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_NDRX, 
+                "Failed to create exception object: %s");
+        return;
+    }
+    
+    (*env)->Throw(env, (jthrowable)exception);
+}
+
 
 /**
  * Backtrace exception frames

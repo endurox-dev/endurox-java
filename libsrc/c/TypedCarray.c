@@ -104,7 +104,7 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedCarray_setBytes
     
     if (bufsz < 1)
     {
-         ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
+         ndrxj_atmi_throw(env, data, NULL, tperrno, "%s", tpstrerror(tperrno));
          EXFAIL_OUT(ret);
     }
     
@@ -124,7 +124,7 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedCarray_setBytes
             }
             
             /* throw exception */
-            ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
+            ndrxj_atmi_throw(env, data, NULL, tperrno, "%s", tpstrerror(tperrno));
             EXFAIL_OUT(ret);
         }
         else

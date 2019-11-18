@@ -422,6 +422,10 @@ extern jclass ndrxj_clazz_StackTraceElement;
 extern jmethodID ndrxj_clazz_StackTraceElement_mid_toString;
 /* Fields: */
 
+/************************** NullPointerException resources ********************/
+extern jclass ndrxj_clazz_NullPointerException;
+/* Methods: */
+extern jmethodID ndrxj_clazz_NullPointerException_mid_INIT;
 
 /*---------------------------Statics------------------------------------*/
 /*---------------------------Prototypes---------------------------------*/
@@ -430,6 +434,8 @@ extern jmethodID ndrxj_clazz_StackTraceElement_mid_toString;
 extern void ndrxj_atmi_throw(JNIEnv *env, jobject data, jobject addarg1, int err, char *msgfmt, ...);
 extern void ndrxj_nstd_throw(JNIEnv *env, int err, char *msgfmt, ...);
 extern void ndrxj_ubf_throw(JNIEnv *env, int err, char *msgfmt, ...);
+extern void ndrxj_nullptr_throw(JNIEnv *env, char *msgfmt, ...);
+
 extern TPCONTEXT_T ndrxj_get_ctx(JNIEnv *env, jobject atmiCtxObj, int do_set);
 extern char *ndrxj_exception_backtrace(JNIEnv *env, jthrowable exc_in);
 

@@ -33,6 +33,10 @@ cd conf
 
 popd
 
+echo "Reset logs"
+rm -rf ./log 2>/dev/null
+mkdir  ./log
+
 # Use decimal sepertar with dots..
 export LANG=en_UK.UTF-8
 export NDRX_CCONFIG1=`pwd`/settings.ini
@@ -51,6 +55,7 @@ if [ "X$1" != "X" ]; then
 
 else
 
+    ./jexunit00b LoggerTest || exit 1
     ./jexunit00b AtmiCtxTest || exit 1
     ./jexunit00b BaddTest || exit 2
     ./jexunit00b BaddfastTest || exit 3

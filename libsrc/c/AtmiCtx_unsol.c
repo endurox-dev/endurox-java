@@ -156,7 +156,7 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsetunsolC
         {
             err = tperrno;
             /* generate exception... */
-            ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
+            ndrxj_atmi_throw(env, NULL, NULL, err, "%s", tpstrerror(err));
             goto out;
         }
     }
@@ -166,7 +166,7 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpsetunsolC
         {
             err = tperrno;
             /* generate exception... */
-            ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
+            ndrxj_atmi_throw(env, NULL, NULL, err, "%s", tpstrerror(err));
             goto out;
         }
     }
@@ -243,7 +243,7 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpnotify
                 cltid.clientdata, strerror(err));
         /* throw exception */
         
-        ndrxj_atmi_throw(env, idata, NULL, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, idata, NULL, err, "%s", tpstrerror(err));
     }
     
     out:
@@ -323,7 +323,7 @@ JNIEXPORT void JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpbroadcast
         NDRX_LOG(log_error, "Failed to broadcast: %s", tpstrerror(err));
         
         /* generate exception... */
-        ndrxj_atmi_throw(env, idata, NULL, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, idata, NULL, err, "%s", tpstrerror(err));
 
     }
     
@@ -376,7 +376,7 @@ JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpchkunsol
                 strerror(err));
         
         /* throw exception */
-        ndrxj_atmi_throw(env, NULL, NULL, err, tpstrerror(err));
+        ndrxj_atmi_throw(env, NULL, NULL, err, "%s", tpstrerror(err));
     }
     
 out:

@@ -103,6 +103,7 @@ add_library (exjava SHARED
                 xatmsrv.c
                 TermSigHandler.c
                 MetaCache.c
+                logging.c
 	)
 
 add_library (exjavald SHARED

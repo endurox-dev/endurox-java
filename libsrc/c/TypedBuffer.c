@@ -451,7 +451,7 @@ expublic JNIEXPORT void JNICALL ndrxj_Java_org_endurox_TypedBuffer_tprealloc
     if (NULL==(buf = tprealloc(buf, (long)size)))
     {
         NDRX_LOG(log_error, "Failed to reallocate buffer: %s", tpstrerror(tperrno));
-        ndrxj_atmi_throw(env, NULL, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, NULL, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     
@@ -632,7 +632,7 @@ expublic JNIEXPORT jobject JNICALL ndrxj_Java_org_endurox_TypedBuffer_tptypes
     /* read type infos */
     if (EXFAIL==(size = tptypes(cdata, btype, stype)))
     {
-        ndrxj_atmi_throw(env, data, NULL, tperrno, tpstrerror(tperrno));
+        ndrxj_atmi_throw(env, data, NULL, tperrno, "%s", tpstrerror(tperrno));
         goto out;
     }
     

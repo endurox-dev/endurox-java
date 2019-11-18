@@ -156,26 +156,26 @@ public class AtmiConst {
     public static final long TPLOGQI_EVAL_RETURN         = 0x00000010;
     
     /** settings for ATMI logging        */
-    public static final long  LOG_FACILITY_NDRX           = 0x00000001;
+    public static final int  LOG_FACILITY_NDRX           = 0x000001;
     /** settings for UBF logging         */
-    public static final long  LOG_FACILITY_UBF            = 0x00000002;
+    public static final int  LOG_FACILITY_UBF            = 0x000002;
     /** settings for TP logging          */
-    public static final long  LOG_FACILITY_TP             = 0x00000004;
+    public static final int  LOG_FACILITY_TP             = 0x000004;
     /** settings for TP, thread based logging */
-    public static final long  LOG_FACILITY_TP_THREAD      = 0x00000008;
+    public static final int  LOG_FACILITY_TP_THREAD      = 0x000008;
     /** tp, Request logging, thread based*/
-    public static final long  LOG_FACILITY_TP_REQUEST     = 0x00000010;
+    public static final int  LOG_FACILITY_TP_REQUEST     = 0x000010;
     /** ndrx thread logging              */
-    public static final long  LOG_FACILITY_NDRX_THREAD    = 0x00000020;
+    public static final int  LOG_FACILITY_NDRX_THREAD    = 0x000020;
     /** ubf thread logging               */
-    public static final long  LOG_FACILITY_UBF_THREAD     = 0x00000040;
+    public static final int  LOG_FACILITY_UBF_THREAD     = 0x000040;
     /** ndrx request logging             */
-    public static final long  LOG_FACILITY_NDRX_REQUEST   = 0x00000080;
+    public static final int  LOG_FACILITY_NDRX_REQUEST   = 0x000080;
     /** ubf request logging              */
-    public static final long  LOG_FACILITY_UBF_REQUEST    = 0x00000100;
+    public static final int  LOG_FACILITY_UBF_REQUEST    = 0x000100;
 
     /** Mask of the log facility bitwise flags */
-    public static final long  LOG_FACILITY_MASK           = 0x0000ffff;
+    public static final int  LOG_FACILITY_MASK           = 0x00ffff;
 
     /** first byte is reserved for log level (should not collide with LOG_FACILITY!) */
     public static final long  TPLOGQI_RET_HAVDETAILED     = 0x00010000;            

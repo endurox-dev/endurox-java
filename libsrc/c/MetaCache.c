@@ -280,6 +280,11 @@ expublic jclass ndrxj_clazz_StackTraceElement;
 expublic jmethodID ndrxj_clazz_StackTraceElement_mid_toString;
 /* Fields: */
 
+/************************** NullPointerException resources ********************/
+expublic jclass ndrxj_clazz_NullPointerException;
+/* Methods: */
+expublic jmethodID ndrxj_clazz_NullPointerException_mid_INIT;
+
 /**
  * Mapping of the classes object
  */
@@ -314,6 +319,7 @@ exprivate exj_class_cache_t M_classes[] =
     ,{"java/io/BufferedReader",   &ndrxj_clazz_BufferedReader,      LOCL}
     ,{"java/lang/Throwable",   &ndrxj_clazz_Throwable,              LOCL}
     ,{"java/lang/StackTraceElement",   &ndrxj_clazz_StackTraceElement,LOCL}
+    ,{"java/lang/NullPointerException",   &ndrxj_clazz_NullPointerException,GLOB}
 };
 
 /**
@@ -392,6 +398,9 @@ exprivate exj_mid_cache_t M_methods[] =
             "()Ljava/lang/String;"}
     ,{CRF(ndrxj_clazz_StackTraceElement), &ndrxj_clazz_StackTraceElement_mid_toString, "toString", 
             "()Ljava/lang/String;"}
+    ,{CRF(ndrxj_clazz_NullPointerException), &ndrxj_clazz_NullPointerException_mid_INIT, 
+            "<init>", "(Ljava/lang/String;)V"}
+
 };
 
 /**
