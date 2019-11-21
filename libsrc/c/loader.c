@@ -542,6 +542,7 @@ exprivate int ndrxj_lib_init(JNIEnv *env)
     
     if (!M_lib_init)
     {
+        M_handle = RTLD_DEFAULT;
         /* check the symbol, if have one, then load directly
          * if does not have symbol, then load the library
          * Symbol mapping shall be done in separate function.
