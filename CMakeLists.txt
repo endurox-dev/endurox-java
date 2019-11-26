@@ -38,7 +38,7 @@
 
 cmake_minimum_required (VERSION 3.5) 
 project (ENDUROX-JAVA) 
-set(VERSION "1.0.1")
+set(VERSION "1.0.2")
 set(PROJ_NAME "Enduro/X Java")
 set(RELEASE "1")
 
