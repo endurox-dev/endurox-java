@@ -77,13 +77,6 @@ Which includes:
 - Generic JSON/String/Carray buffers
 
 
-## IPC Concept
-
-
-## Protocol buffers
-
-
-
 ## License
 
 The license for project is LGPL for Java code and AGPL with Java exception for
@@ -92,6 +85,10 @@ Core as an LGPL project. Thus code written in Java can be included by free of
 charge in the commercial products. Still the Mavimax Ltd would be happy to provide
 commercial support.
 
+
+# Releases
+
+- Version 1.0.2 released on 26/11/2018. Initial release
 
 ## Configure make with: 
 
