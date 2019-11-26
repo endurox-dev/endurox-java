@@ -511,6 +511,7 @@ set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION /usr/share/man
 		/usr/share/man/man3
 		/usr/share/man/man5
 		/usr/share/man/man8
+		/usr/share/java
 		/usr/lib64/pkgconfig
 		/usr/lib/pkgconfig)
 message("Excl: ${CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION}")

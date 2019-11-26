@@ -64,7 +64,7 @@ foreach(m IN LISTS PDF_NAMES)
   # Install the docs
   install (FILES
     ${mf}
-    DESTINATION share/endurox/doc/pdf)
+    DESTINATION share/endurox-java/doc/pdf)
 
 endforeach()
 add_custom_target(pdf ALL DEPENDS ${PDF_FILES})
@@ -87,7 +87,7 @@ foreach(m IN LISTS HTML_NAMES)
   # Install the docs
   install (FILES
     ${mf}
-    DESTINATION share/endurox/doc/html)
+    DESTINATION share/endurox-java/doc/html)
 
 endforeach()
 add_custom_target(html ALL DEPENDS ${HTML_FILES})
