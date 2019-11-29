@@ -38,7 +38,7 @@
 
 cmake_minimum_required (VERSION 3.5) 
 project (ENDUROX-JAVA) 
-set(VERSION "1.0.1")
+set(VERSION "1.0.2")
 set(PROJ_NAME "Enduro/X Java")
 set(RELEASE "1")
 
@@ -511,6 +511,7 @@ set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION /usr/share/man
 		/usr/share/man/man3
 		/usr/share/man/man5
 		/usr/share/man/man8
+		/usr/share/java
 		/usr/lib64/pkgconfig
 		/usr/lib/pkgconfig)
 message("Excl: ${CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION}")

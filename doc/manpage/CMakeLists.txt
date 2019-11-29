@@ -113,7 +113,7 @@ foreach(m IN LISTS PDF_MAN_NAMES)
   # Install the docs
   install (FILES
     ${mf}
-    DESTINATION share/endurox/doc/pdf)
+    DESTINATION share/endurox-java/doc/pdf)
 
 endforeach()
 add_custom_target(pdf_man ALL DEPENDS ${PDF_MAN_FILES})
