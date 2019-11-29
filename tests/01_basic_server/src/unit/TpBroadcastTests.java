@@ -1,6 +1,7 @@
 import static org.junit.Assert.*;
 import org.endurox.*;
 import org.endurox.exceptions.AtmiException;
+import org.endurox.exceptions.AtmiTPEBLOCKException;
 import org.junit.Test;
 
 /**
@@ -20,7 +21,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
     int nrcarray = 0;
     int nrnull = 0;
     int nrview = 0;
-    
+    int ncallbacks = 0;
     boolean running = true;
 
     public void run() {
@@ -67,6 +68,8 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         
         ctx.tplogInfo("Got notif %b",buf);
         
+        ncallbacks++;
+
         if (null==buf) {
             nrnull++;
         }
@@ -111,11 +114,27 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
      * @param buf
      * @throws InterruptedException 
      */
-    void doCall(AtmiCtx ctx, TypedBuffer buf) throws InterruptedException {
+    void doCall(AtmiCtx ctx, TypedBuffer buf, TpBroadcastTests other ) throws InterruptedException {
         
         int cd = ctx.tpacall("GLOBBROAD", buf, 0);
-        Thread.sleep(300);
+        int sleeps=0;
+        int curcbs = ncallbacks;
+        int curcbs_other = other.ncallbacks;
+
+        Thread.sleep(50);
         ctx.tpgetrply(cd, buf, 0);
+
+        while ((ncallbacks < curcbs+4  || other.ncallbacks < curcbs_other+4) && sleeps<100)
+        {
+            try {
+                ctx.tpgetrply(cd, buf, AtmiConst.TPGETANY | AtmiConst.TPNOBLOCK);
+            } catch (AtmiTPEBLOCKException e) {
+                //Ignore..
+            }
+            Thread.sleep(50);
+            sleeps++;
+        }
+        //ctx.tpgetrply(cd, buf, 0);
     }
     
     @Test
@@ -182,7 +201,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 
 
                 ctx.tplogInfo("*** NULL test *** ");
-                doCall(ctx, null);
+                doCall(ctx, null, other);
 
                 assertEquals(prev_nrnull + 4, nrnull);
                 assertEquals(other.nrnull, nrnull);
@@ -190,7 +209,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** STRING test ***");
                 TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
                 assertNotEquals(s, null);            
-                doCall(ctx, s);
+                doCall(ctx, s, other);
 
                 assertEquals(prev_nrstring + 4, nrstring);
                 assertEquals(other.nrstring, nrstring);
@@ -198,7 +217,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** JSON test ***");
                 TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
                 assertNotEquals(j, null);            
-                doCall(ctx, j);
+                doCall(ctx, j, other);
 
                 assertEquals(prev_nrjson+4, nrjson);
                 assertEquals(other.nrjson, nrjson);
@@ -206,7 +225,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** CARRAY test ***");
                 TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
                 assertNotEquals(c, null);            
-                doCall(ctx, c);
+                doCall(ctx, c, other);
 
                 assertEquals(prev_nrcarray + 4, nrcarray);
                 assertEquals(other.nrjson, nrcarray);
@@ -214,7 +233,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** VIEW test ***");
                 TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
                 assertNotEquals(c, null);            
-                doCall(ctx, v);
+                doCall(ctx, v, other);
 
                 assertEquals(prev_nrview + 4, nrview);
                 assertEquals(other.nrview, nrview);
@@ -222,7 +241,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** UBF test ***");
                 TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
                 assertNotEquals(ub, null);            
-                doCall(ctx, ub);
+                doCall(ctx, ub, other);
 
                 assertEquals(prev_nrubf + 4, nrubf);
                 assertEquals(other.nrubf, nrubf);
