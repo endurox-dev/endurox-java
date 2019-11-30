@@ -122,12 +122,12 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         int curcbs_other = other.ncallbacks;
 
         Thread.sleep(50);
-        ctx.tpgetrply(cd, buf, 0);
+        ctx.tpgetrply(cd, null, 0);
 
         while ((ncallbacks < curcbs+4  || other.ncallbacks < curcbs_other+4) && sleeps<100)
         {
             try {
-                ctx.tpgetrply(cd, buf, AtmiConst.TPGETANY | AtmiConst.TPNOBLOCK);
+                ctx.tpgetrply(cd, null, AtmiConst.TPGETANY | AtmiConst.TPNOBLOCK);
             } catch (AtmiTPEBLOCKException e) {
                 //Ignore..
             }
