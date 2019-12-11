@@ -16,6 +16,9 @@ https://www.endurox.org/projects/endurox/files
 Javadoc and other documentation for the package are available here: 
 https://www.endurox.org/dokuwiki/doku.php?id=endurox-java:v1.0.x:api:javadoc
 
+
+
+
 ## Build & test status
 
 | OS   |      Status      | OS       |      Status   |OS       |      Status   |
@@ -24,9 +27,6 @@ https://www.endurox.org/dokuwiki/doku.php?id=endurox-java:v1.0.x:api:javadoc
 |Oracle Linux 7|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ol7)](http://www.silodev.com:9090/jenkins/job/endurox-java-ol7/)|OSX 11.4|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-osx11_4)](http://www.silodev.com:9090/jenkins/job/endurox-java-osx11_4/)|raspbian10_arv7l|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-raspbian10_arv7l)](http://www.silodev.com:9090/jenkins/job/endurox-java-raspbian10_arv7l/)|
 |RHEL/Oracle Linux 8| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ol8)](http://www.silodev.com:9090/jenkins/job/endurox-java-ol8/)|SLES 15|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-sles15)](http://www.silodev.com:9090/jenkins/job/endurox-java-sles15/)|Solaris 10|[![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-solaris10_sparc)](http://www.silodev.com:9090/jenkins/job/endurox-java-solaris10-sparc/)|
 |Solaris 11 (JDK 1.8)| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-solaris11_x86)](http://www.silodev.com:9090/jenkins/job/endurox-java-solaris11_x86/)|Ubuntu 14.04| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ubuntu14)](http://www.silodev.com:9090/jenkins/job/endurox-java-ubuntu14/)|Ubuntu 18.04| [![Build Status](http://www.silodev.com:9090/jenkins/buildStatus/icon?job=endurox-java-ubuntu18)](http://www.silodev.com:9090/jenkins/job/endurox-java-ubuntu18/)|
-
-
-
 
 
 ## Overview
@@ -56,6 +56,9 @@ On the other hand, multiple JVMs gives much more advantages:
 memory leaks, etc, the Enduor/X Core will boot the particular set of classes
 with the corresponding JVMs. The other JVMs will keep serving the application.
 
+- Easy to build multi-threaded systems. Just boot the more process copies. No
+worry about thread synchronization, etc. All is done a the middleware level.
+
 - Each JVM instanced can be tweaked individually.
 
 - Different classes/XATMI services can have different set of dependencies and
@@ -64,17 +67,25 @@ and different dependency versions.
 - If using compiled Java binaries, the whole application can be built in such
 way that it is forwards and backwards compatible with newer and older binaries.
 
-From API perspective, Enduro/X Java module provides full set of XATMI APIs:
+From API perspective, Enduro/X Java module provides full set of XATMI APIs and
+features:
 
-Which includes:
+- Ultra fast XATMI IPC: synchronous, asynchronous(tpadvertise(), tpcall(), tpforward(), etc).
 
-- XATMI IPC syncrhonus, asyncrhouns(tpadvertise(), tpcall(), tpforward(), etc).
-
-- XATMI Transactions
+- XATMI XA Transactions
 
 - UBF/FML buffers API (Badd, Bchg, Bboolco(), etc.)
 
 - Generic JSON/String/Carray buffers
+
+- Out of the box clusterization, full abstraction from the programmer perspective.
+
+- Logging framework (tplog(), etc.)
+
+- Configuration facility (ini files driving)
+
+- Strong monitoring possibilities, monitor processes, services, queues, etc with
+help of NetXMS tool.
 
 
 ## License
