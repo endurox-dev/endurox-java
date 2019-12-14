@@ -190,6 +190,8 @@ expublic JNIEXPORT jlongArray JNICALL ndrxj_Java_org_endurox_AtmiCtx_getBuffers
 {
     jlongArray ret = NULL;
     ndrx_growlist_t list;
+    jlong *jlong_list;
+    int i;
     
     list.mem = NULL;
     
@@ -219,11 +221,33 @@ expublic JNIEXPORT jlongArray JNICALL ndrxj_Java_org_endurox_AtmiCtx_getBuffers
     /* copy longs to java... */
     if (list.maxindexused > -1)
     {
-        (*env)->SetLongArrayRegion(env, ret, 0, list.maxindexused+1, 
-                (jlong *)list.mem);
+	
+    	jlong_list = NDRX_MALLOC((list.maxindexused+1)*sizeof(jlong));
+    	if (NULL==jlong_list)
+    	{
+            ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM, "Failed to alloc temp list - OOM?!");
+            goto out;
+	    }
+
+        for (i=0; i<list.maxindexused+1; i++)
+        {
+            /* cast ptr to jlong ... */
+            jlong_list[i] = (jlong)*(long *)(list.mem+i*list.size);
+        }
+
+        /* on 32bit systems pointer are 32bit, but jlong expects to get 64bit variable.. */
+        (*env)->SetLongArrayRegion(env, ret, 0, list.maxindexused+1, jlong_list);
     }
     
 out:
+    /* Bug #490 we shall free up the list too.. */
+    if (NULL!=jlong_list)
+    {
+        NDRX_FREE(jlong_list);
+    }
+
+    ndrx_growlist_free(&list);
+
     tpsetctxt(TPNULLCONTEXT, 0L);
 
     return ret;

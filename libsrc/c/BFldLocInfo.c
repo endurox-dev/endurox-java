@@ -89,7 +89,7 @@ expublic BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc)
     
     joffset = (*env)->GetLongField(env, loc, offset_fld);
     
-    ret = (BFLDID *)joffset;
+    ret = (BFLDID *)(long)joffset;
     
 out:
     return ret;
