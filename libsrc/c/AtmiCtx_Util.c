@@ -190,7 +190,7 @@ expublic JNIEXPORT jlongArray JNICALL ndrxj_Java_org_endurox_AtmiCtx_getBuffers
 {
     jlongArray ret = NULL;
     ndrx_growlist_t list;
-    jlong *jlong_list;
+    jlong *jlong_list=NULL;
     int i;
     
     list.mem = NULL;
