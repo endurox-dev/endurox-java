@@ -243,7 +243,7 @@ public class AtmiCtx {
      *  C space.
      */
     public AtmiCtx()  {
-        /* This thorws TPESYSTEM if failed.*/
+        /* This throws TPESYSTEM if failed.*/
        ctx = tpnewctxt();
 
         /* Add context to static synced list of context
@@ -940,7 +940,7 @@ public class AtmiCtx {
      *  See logs i.e. user log, or debugs for more info.
      * @throws AtmiTPEOSException System failure occurred during serving. 
      *  See logs i.e. user log, or debugs for more info.
-     * @thorws AtmiTPEBADDESCException Invalid call descriptor - out of range or
+     * @throws AtmiTPEBADDESCException Invalid call descriptor - out of range or
      *  not issued/canceled value. This exception is thrown only in case if TPGETANY
      *  flag is not passed to the call.
      */

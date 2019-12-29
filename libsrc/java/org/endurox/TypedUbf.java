@@ -140,7 +140,7 @@ public class TypedUbf extends TypedBuffer {
      * @param occ field occurrence
      * @return casted data type
      * @throws UbfBBADFLDException Bad field id requested
-     * @thorws UbfBNOTPRESException Field not present
+     * @throws UbfBNOTPRESException Field not present
      * @throws UbfBALIGNERRException Invalid Buffer
      * @throws UbfBNOTFLDException Invalid Buffer
      * @throws UbfBNOSPACEException No space in buffer
@@ -437,11 +437,11 @@ public class TypedUbf extends TypedBuffer {
      * see Bnext(3) manpage for more information.
      * @param first Restart the iteration.
      * @return Iteration result
-     * @thorws UbfBALIGNERRException Corrupted buffer or pointing to not 
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to not 
      *  aligned memory area.
-     * @thorws UbfBNOTFLD Buffer not fielded, not correctly allocated 
+     * @throws UbfBNOTFLD Buffer not fielded, not correctly allocated 
      *  or corrupted.
-     * @thorws UbfBNOSPACE No space in buf.
+     * @throws UbfBNOSPACE No space in buf.
      */
     public native BNextResult Bnext(boolean first);
     
@@ -546,9 +546,9 @@ public class TypedUbf extends TypedBuffer {
      * terminated with BBADFLDID as in case for C.
      * see Boccur(3) manpage for more information.
      * @param bfldid array of 
-     * @thorws UbfBALIGNERRException Corrupted buffer or pointing to 
+     * @throws UbfBALIGNERRException Corrupted buffer or pointing to 
      *  not aligned memory area.
-     * @thorws UbfBNOTFLDException Buffer not fielded, not correctly 
+     * @throws UbfBNOTFLDException Buffer not fielded, not correctly 
      *  allocated or corrupted.
      */
     public native void Bproj(int bfldid[]);
@@ -688,9 +688,9 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfBEUNIXException cannot get field value from object, access
      *  problem, either got: IllegalAccessException/IllegalArgumentException/
      *  InvocationTargetException or IntrospectionException exception
-     * @thorws UbfBNOTPRESException two few object array elements ("objmin" not
+     * @throws UbfBNOTPRESException two few object array elements ("objmin" not
      *  reached).
-     * @thorws UbfBSYNTAXException Invalid mapped field type. Enduro/X for Java
+     * @throws UbfBSYNTAXException Invalid mapped field type. Enduro/X for Java
      *  supports only following data types: short,Short,long,Long,byte,Byte,float,
      *  Float,double,Double,String,byte[].
      * @throws UbfBALIGNERRException Invalid Buffer
@@ -709,9 +709,9 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfBEUNIXException cannot get field value from object, access
      *  problem, either got: IllegalAccessException/IllegalArgumentException/
      *  InvocationTargetException or IntrospectionException exception
-     * @thorws UbfBNOTPRESException two few object array elements ("objmin" not
+     * @throws UbfBNOTPRESException two few object array elements ("objmin" not
      *  reached).
-     * @thorws UbfBSYNTAXException Invalid mapped field type. Enduro/X for Java
+     * @throws UbfBSYNTAXException Invalid mapped field type. Enduro/X for Java
      *  supports only following data types: short,Short,long,Long,byte,Byte,float,
      *  Float,double,Double,String,byte[].
      * @throws UbfBALIGNERRException Invalid Buffer
@@ -728,14 +728,14 @@ public class TypedUbf extends TypedBuffer {
      * This buffer is reset before filling in with data from \p o.
      * @param o object to which copy the UBF data
      * @throws UbfBEUNIXException 
-     * @thorws UbfBNOTPRESException 
-     * @thorws UbfBSYNTAXException Error while accessing object \p o. Problem
+     * @throws UbfBNOTPRESException 
+     * @throws UbfBSYNTAXException Error while accessing object \p o. Problem
      *  with setter methods. Got either exception: IllegalAccessException,
      *  IllegalArgumentException, InvocationTargetException, IntrospectionException.
      * @throws UbfBALIGNERRException Invalid UBF Buffer
      * @throws UbfBNOTFLDException Invalid UBF Buffer
      * @throws UbfBNOSPACEException No space in buffer (temp buffer for read)
-     * @thorws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
+     * @throws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
      *  minimum fields.
      * 
      */
@@ -748,14 +748,14 @@ public class TypedUbf extends TypedBuffer {
      * @param o object o which copy UBF data
      * @param occ array element occurrence to copy
      * @throws UbfBEUNIXException 
-     * @thorws UbfBNOTPRESException 
-     * @thorws UbfBSYNTAXException Error while accessing object \p o. Problem
+     * @throws UbfBNOTPRESException 
+     * @throws UbfBSYNTAXException Error while accessing object \p o. Problem
      *  with setter methods. Got either exception: IllegalAccessException,
      *  IllegalArgumentException, InvocationTargetException, IntrospectionException.
      * @throws UbfBALIGNERRException Invalid UBF Buffer
      * @throws UbfBNOTFLDException Invalid UBF Buffer
      * @throws UbfBNOSPACEException No space in buffer (temp buffer for read)
-     * @thorws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
+     * @throws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
      *  minimum fields.
      */
     public void unMarshal(Object o, int occ) {
