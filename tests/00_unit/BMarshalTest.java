@@ -25,7 +25,7 @@ public class BMarshalTest {
         /* load the buffer */
         ButilTest.loadTestData1(ub);
 
-        ub.unMarshal(sing);
+        ub.unmarshal(sing);
 
         assertEquals(455, sing.tshort);
         assertEquals(455, (short)sing.tshort2);
@@ -47,7 +47,7 @@ public class BMarshalTest {
         assertArrayEquals(new byte[]{0,1,2,3}, sing.tcarray[0]);
         assertArrayEquals(new Byte[]{0,1,2,3}, sing.tcarray2[0]);
       
-        ub.unMarshal(sing, 1);
+        ub.unmarshal(sing, 1);
         
         
         ub.Bprint();
@@ -76,7 +76,7 @@ public class BMarshalTest {
         BMarshalClassArray arr = new BMarshalClassArray();
 
         System.out.println("About to list... Array");
-        ub.unMarshal(arr);
+        ub.unmarshal(arr);
         */
     }
     
@@ -94,7 +94,7 @@ public class BMarshalTest {
 
         System.out.println("About to list... Single/miss");
         
-        ub.unMarshal(sing);
+        ub.unmarshal(sing);
     }
     
     /**
@@ -111,7 +111,7 @@ public class BMarshalTest {
 
         System.out.println("About to list... Single/opt/miss -> no error");
         
-        ub.unMarshal(sing);
+        ub.unmarshal(sing);
     }
     
     /**
@@ -138,7 +138,7 @@ public class BMarshalTest {
 
         /* Print UBF buffer. */
         ub.Bprint();
-        ub.unMarshal(arr);
+        ub.unmarshal(arr);
         
         /* Short tests: */
         assertEquals(2, arr.tshort.length);
@@ -224,7 +224,7 @@ public class BMarshalTest {
 
         /* Print UBF buffer. */
         ub.Bprint();
-        ub.unMarshal(arr, 1);
+        ub.unmarshal(arr, 1);
         
         /* Short tests: */
         assertEquals(1, arr.tshort.length);
@@ -611,7 +611,7 @@ public class BMarshalTest {
         obj = new BMarshalClassMandOpt2();
         try
         {
-            ub.unMarshal(obj);
+            ub.unmarshal(obj);
         }
         catch (UbfBNOTPRESException e)
         {
@@ -630,7 +630,7 @@ public class BMarshalTest {
         obj = new BMarshalClassMandOpt2();
         try
         {
-            ub.unMarshal(obj);
+            ub.unmarshal(obj);
         }
         catch (UbfBNOTPRESException e)
         {
@@ -650,7 +650,7 @@ public class BMarshalTest {
         obj = new BMarshalClassMandOpt2();
         try
         {
-            ub.unMarshal(obj);
+            ub.unmarshal(obj);
         }
         catch (UbfBNOTPRESException e)
         {
@@ -677,7 +677,7 @@ public class BMarshalTest {
         obj = new BMarshalClassMandOpt2();
         try
         {
-            ub.unMarshal(obj);
+            ub.unmarshal(obj);
         }
         catch (UbfBNOTPRESException e)
         {
@@ -697,7 +697,7 @@ public class BMarshalTest {
         gotex = false;
         try
         {
-            ub.unMarshal(obj);
+            ub.unmarshal(obj);
         }
         catch (UbfBNOTPRESException e)
         {

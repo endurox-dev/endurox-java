@@ -739,7 +739,7 @@ public class TypedUbf extends TypedBuffer {
      *  minimum fields.
      * 
      */
-    public void unMarshal(Object o) {
+    public void unmarshal(Object o) {
         TypedUbfMarshaller.unmarshal(o, -1, this);
     }
     
@@ -758,7 +758,7 @@ public class TypedUbf extends TypedBuffer {
      * @throws UbfBNOTPRESException UBF buffer does not meet "ubfmin" annotation
      *  minimum fields.
      */
-    public void unMarshal(Object o, int occ) {
+    public void unmarshal(Object o, int occ) {
         /* do this logic in java code, it will be simpler */
         TypedUbfMarshaller.unmarshal(o, occ, this);
     }

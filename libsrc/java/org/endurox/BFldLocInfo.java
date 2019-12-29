@@ -55,7 +55,7 @@ public class BFldLocInfo {
     /**
      * Reset location field so that we can fast add again
      */
-    public void Reset() {
+    public void reset() {
         this.cPtr_last_checked = 0;
     }
 }
