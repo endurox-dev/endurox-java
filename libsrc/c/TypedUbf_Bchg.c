@@ -91,10 +91,11 @@ exprivate void ndrxj_ubf_CBchg(JNIEnv *env, jobject data, jint bfldid, jint occ,
     
     if (EXSUCCEED!=CBchg((UBFH*)cdata, bfldid, (BFLDOCC)occ, value, len, usrtype))
     {
+        int err = Berror;
         UBF_LOG(log_error, "%s: CBchg failed to change field %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "%s: CBchg failed to change field %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+                __func__, bfldid, Bfname(bfldid), Bstrerror(err));
+        ndrxj_ubf_throw(env, err, "%s: CBchg failed to change field %d (%s): %s", 
+                __func__, bfldid, Bfname(bfldid), Bstrerror(err));
         goto out;
     }
     
