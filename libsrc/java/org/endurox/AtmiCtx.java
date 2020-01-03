@@ -1347,10 +1347,10 @@ public class AtmiCtx {
      * @param idata input typed buffer (can be null) for notification delivery
      * @param flags following broadcast flags may be set:
      *  - TPNOBLOCK Do not block on full client queue, instead return error.
-     *   - TPNOTIME Do not timeout when waiting on full queue (TPNOBLOCK is not set).
-     *   - TPSIGRSTRT Restart the system call in progress if interrupted by 
+     *  - TPNOTIME Do not timeout when waiting on full queue (TPNOBLOCK is not set).
+     *  - TPSIGRSTRT Restart the system call in progress if interrupted by 
      *      signal handler. This affects only underlaying mq_* function calls.
-     *   - TPREGEXMATCH Match lmid (cluster node id) and cltname by 
+     *  - TPREGEXMATCH Match lmid (cluster node id) and cltname by 
      *      assuming that these are regular expressions.
      * @throws AtmiTPEINVALException Environment variables not configured, see 
      *      ex_env(5) page, or invalid parameters have been passed to the function, 
