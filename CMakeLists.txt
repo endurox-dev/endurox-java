@@ -167,6 +167,9 @@ elseif(${CMAKE_OS_NAME} STREQUAL "SUNOS")
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_EMPTY_DECLARATION -erroff=E_ARGUEMENT_MISMATCH -erroff=E_ZERO_OR_NEGATIVE_SUBSCRIPT")
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_ARG_INCOMPATIBLE_WITH_ARG_L")
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_BAD_PTR_INT_COMBINATION")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=SEC_UNINITIALIZED_MEM_READ")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=E_INIT_DOES_NOT_FIT")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -erroff=SEC_ARR_OUTSIDE_BOUND_READ")
 
         # Add Sun Studio C runtime
         SET(RT_LIB ${RT_LIB} Crun)
@@ -443,7 +446,7 @@ elseif (EXISTS /etc/os-release)
         string(REPLACE " " "_" LSB_RELEASE_OUTPUT_OS ${LSB_RELEASE_OUTPUT_OS})
 
         # fixes for CentOs 7.1810, having something like "7 (Core)" in output.
-        execute_process(COMMAND bash -c "cat /etc/os-release | egrep '^VERSION=' | cut -d ' ' -f1 | cut -d '\"' -f2"
+        execute_process(COMMAND bash -c "cat /etc/os-release | egrep '^VERSION=' | cut -d '=' -f2 | cut -d ' ' -f1 | cut -d '\"' -f2"
                 OUTPUT_VARIABLE _TMP_LSB_RELEASE_OUTPUT_VER
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
         string(REPLACE "." "_" LSB_RELEASE_OUTPUT_VER ${_TMP_LSB_RELEASE_OUTPUT_VER})
