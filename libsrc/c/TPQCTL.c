@@ -91,7 +91,7 @@ exprivate exjobjmap_t M_fieldmap[] =
  * @return EXSUCCEED/EXFAIL
  */
 expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env, 
-            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c)
+            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c, jobject idata)
 {
     int ret = EXSUCCEED;
     
@@ -110,22 +110,27 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     /* get object field */
     jcltid = (*env)->GetObjectField(env, ctl_Java, ndrxj_clazz_TPQCTL_fid_cltid);
     
-    if (NULL!=jcltid)
+    if (NULL==jcltid)
     {
         ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
         EXFAIL_OUT(ret);
+    }
 
-        /* convert to C */
-        if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
-            jcltid, &(ctl_c->cltid)))
+    /* convert to C */
+    if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
+       jcltid, &(ctl_c->cltid)))
+    {
+        NDRX_LOG(log_error, "Failed to convert client id");
+        if ((*env)->ExceptionCheck(env))
         {
-            NDRX_LOG(log_error, "Failed to convert client id");
             EXFAIL_OUT(ret);
         }
-    }
-    else
-    {
-        ctl_c->cltid.clientdata[0] = EXEOS;
+        else
+        {
+            ndrxj_atmi_throw(env, NULL, NULL, TPESYSTEM,
+                    "Failed to translate jclientid to C");
+            EXFAIL_OUT(ret);
+        }
     }
     
 out:

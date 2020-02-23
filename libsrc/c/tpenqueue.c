@@ -133,7 +133,7 @@ exprivate void tpenqueue_int
     }
     
     /* convert qctl */
-    if (EXSUCCEED!=ndrxj_atmi_TPQCTL_translate2c(env, atmiCtxObj, jqctl, &q))
+    if (EXSUCCEED!=ndrxj_atmi_TPQCTL_translate2c(env, atmiCtxObj, jqctl, &q, idata))
     {
         NDRX_LOG(log_error, "ndrxj_atmi_TPQCTL_translate2c failed");
         EXFAIL_OUT(ret);

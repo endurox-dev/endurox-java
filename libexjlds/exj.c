@@ -346,11 +346,11 @@ exprivate int create_loader(JNIEnv *env, JavaVM *vm)
     (*env)->CallObjectMethod(env, M_classLoaderClass, class_getctors_method);
 
     /* Now link in native methods */
-    m[0].fnPtr = ndrxj_getResourceBytes;
+    m[0].fnPtr = (void *)ndrxj_getResourceBytes;
     m[0].name = "getResourceBytes";
     m[0].signature = "(Ljava/lang/String;)[B";
     
-    m[1].fnPtr = ndrxj_getClassBytes;
+    m[1].fnPtr = (void *)ndrxj_getClassBytes;
     m[1].name = "getClassBytes";
     m[1].signature = "(Ljava/lang/String;)[B";
 

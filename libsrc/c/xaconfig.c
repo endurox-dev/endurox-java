@@ -100,7 +100,6 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
     {
         NDRX_LOG(log_debug, "Failed to parse root element");
         EXFAIL_OUT(ret);
-        goto out;
     }
     root_object = exjson_value_get_object(root_value);
 

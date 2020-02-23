@@ -530,7 +530,7 @@ extern int ndrxj_cvt_jstr_to_c(JNIEnv *env,
 /* TPQCTL */
 
 extern int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env, 
-            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c);
+            jobject ctx_obj, jobject ctl_Java, TPQCTL *ctl_c, jobject idata);
 
 
 extern jobject ndrxj_atmi_TPQCTL_translate2java(JNIEnv *env, 
