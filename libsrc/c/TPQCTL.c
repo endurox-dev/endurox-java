@@ -112,12 +112,10 @@ expublic int ndrxj_atmi_TPQCTL_translate2c(JNIEnv *env,
     
     if (NULL==jcltid)
     {
-        ndrxj_atmi_throw(env, NULL, NULL, TPEINVAL, "cltid is NULL in TPQCTL!");
-        EXFAIL_OUT(ret);
+        ctl_c->cltid.clientdata[0] = EXEOS;
     }
-
     /* convert to C */
-    if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
+    else if (EXSUCCEED!=ndrxj_atmi_ClientId_translate_toc(env, 
        jcltid, &(ctl_c->cltid)))
     {
         NDRX_LOG(log_error, "Failed to convert client id");

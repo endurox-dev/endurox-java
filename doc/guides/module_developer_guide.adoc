@@ -118,6 +118,14 @@ Basically this manual uses manual install procedure:
 
 --------------------------------------------------------------------------------
 
+On Solaris 11.4 this way it can be done too:
+
+--------------------------------------------------------------------------------
+
+$ sudo pkg install jdk-8
+
+--------------------------------------------------------------------------------
+
 == Prepare Enduro/X for Build
 
 The preparation for build also includes the step of downloading PostgreSQL JDBC
@@ -357,8 +365,9 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/amd64/server
 #
 # Continue with both:
 #
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/export/home/user1/modules/endurox-java/libsrc/c:/export/home/user1/modules/endurox-java/libexjlds
 export PATH=$PATH:$JAVA_HOME/bin
+
 --------------------------------------------------------------------------------
 
 === Preparing to build and build
