@@ -118,9 +118,6 @@ Basically this manual uses manual install procedure:
 
 --------------------------------------------------------------------------------
 
-Solaris 11.4 JDK is already installed to: /usr/jdk/instances/jdk1.8.0
-
-
 == Prepare Enduro/X for Build
 
 The preparation for build also includes the step of downloading PostgreSQL JDBC
