@@ -27,6 +27,12 @@ export ASAN_OPTIONS=handle_segv=0
 pushd .
 cd conf
 . settest3
+
+#
+# Load db tables..
+#
+cat tables.sql | ./psql.run
+
 popd
 
 # Start the enduro/x app server (which will boot the our server executable)
