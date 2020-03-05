@@ -48,9 +48,12 @@ function go_out {
 # truncate log files before test..
 #
 function trunc_logs {
-    for f in `ls $NDRX_APPHOME/log/*`; do
-         echo > $NDRX_APPHOME/log/$f
+    pushd .
+    cd $NDRX_APPHOME/log || exit 1
+    for f in `ls *`; do
+         echo > $f
     done
+    popd
 }
 
 # debug on
