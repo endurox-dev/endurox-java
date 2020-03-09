@@ -115,6 +115,12 @@ ELSE ()
         SET(CMAKE_C_FLAGS "-fstack-protector -O2 -ggdb ${CMAKE_C_FLAGS}")
 ENDIF ()
 
+IF (MUTEX_DEBUG)
+    SET(CMAKE_C_FLAGS "-D_GNU_SOURCE ${CMAKE_C_FLAGS}")
+    SET(CMAKE_CXX_FLAGS "-D_GNU_SOURCE ${CMAKE_CXX_FLAGS}")
+ENDIF()
+
+# -pthread needed for System V pthread_atfork()
 SET(RT_LIB rt dl)
 if( ${CMAKE_OS_NAME} STREQUAL "LINUX" )
         set(EX_OS_LINUX "1")

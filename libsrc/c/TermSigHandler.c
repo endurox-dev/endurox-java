@@ -64,7 +64,7 @@
  */
 exprivate int M_is_set = EXFALSE;
 exprivate pthread_t M_signal_thread; /* Signalled thread */
-MUTEX_LOCKDECL(M_is_set_lock) static pthread_mutex_t X = PTHREAD_MUTEX_INITIALIZER;
+MUTEX_LOCKDECL(M_is_set_lock);
 
 /** Needs handler to VM: */
 exprivate JavaVM *M_vm = NULL;

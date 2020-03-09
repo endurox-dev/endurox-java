@@ -113,3 +113,7 @@ $ cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd`/dist .
 - To enable PostgreSQL Testing, configure with '-DENABLE_TEST_XAPOSGRES=ON'
 
 - To disable doc building, configure with '-DDEFINE_DISABLEDOC=ON'
+
+- To enable strict mutex checking on GNU platform, use '-DMUTEX_DEBUG=ON' (for
+GNU platforms only)
+
