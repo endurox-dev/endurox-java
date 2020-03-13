@@ -38,10 +38,10 @@ run_test () {
         
         if [[ $ret -eq 0 ]]; then
                 M_ok=$((M_ok + 1))
-		M_last_stat = 0
+		M_last_stat=0
         else
                 M_fail=$((M_fail + 1))
-		M_last_stat = 1
+		M_last_stat=1
         fi
 }
 
