@@ -87,6 +87,8 @@ features:
 - Strong monitoring possibilities, monitor processes, services, queues, etc with
 help of NetXMS tool.
 
+Release binaries may be found here: https://www.mavimax.com/downloads
+
 
 ## License
 
