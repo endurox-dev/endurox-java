@@ -123,7 +123,12 @@ expublic int ndrxj_xa_cfgparse(char *buffer, string_list_t **sets, int *nrsets,
             }
             
             str_val = (char *)exjson_object_get_string(root_object, name);
+            /* Enduro/X 7.1 + */
+#ifdef NDRX_STRCPY_SAFE_DST
+            NDRX_STRCPY_SAFE_DST(clazz, str_val, clazz_bufsz);
+#else
             NDRX_STRNCPY_SAFE(clazz, str_val, clazz_bufsz);
+#endif
             NDRX_LOG(log_debug, "Got JDBC XA Class: [%s]", clazz);
 
         }

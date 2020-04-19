@@ -151,7 +151,11 @@ exprivate long Bextread_readf(char *buffer, long bufsz, void *dataptr1)
     /* transfer bytes to buffer */
     n_str= (*(ctl->env))->GetStringUTFChars(ctl->env, str, &n_str_copy);
      
+#ifdef NDRX_STRCPY_SAFE_DST
+    NDRX_STRCPY_SAFE_DST(buffer, n_str, bufsz);
+#else
     NDRX_STRNCPY_SAFE(buffer, n_str, bufsz);
+#endif
     
     if (n_str_copy)
     {

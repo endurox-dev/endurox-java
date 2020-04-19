@@ -110,7 +110,12 @@ expublic int ndrxj_cvt_to_c(JNIEnv *env,
                 
             }
             
+            /* Enduro/X 7.1 + */
+#ifdef NDRX_STRCPY_SAFE_DST
+            NDRX_STRCPY_SAFE_DST(cstr, n_str, tab->csz);
+#else
             NDRX_STRNCPY_SAFE(cstr, n_str, tab->csz);
+#endif
             
             if (n_str_copy)
             {
@@ -276,7 +281,12 @@ expublic int ndrxj_cvt_jstr_to_c(JNIEnv *env,
         EXFAIL_OUT(ret);
     }
 
+#ifdef NDRX_STRCPY_SAFE_DST
+    NDRX_STRCPY_SAFE_DST(outstr, n_str, outstrsz);
+#else
     NDRX_STRNCPY_SAFE(outstr, n_str, outstrsz);
+#endif
+
 
     if (n_str_copy)
     {
