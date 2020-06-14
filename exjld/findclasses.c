@@ -181,7 +181,7 @@ exprivate int process_entry(const char *filepath, const struct stat *info,
         
         M_was_file = EXTRUE;
         
-        thpool_add_work(ndrx_G_thpool, (void*)exljd_res_add_th, (void *)data);
+        ndrx_thpool_add_work(ndrx_G_thpool, (void*)exljd_res_add_th, (void *)data);
         
     }
     
@@ -206,7 +206,7 @@ expublic int exjld_class_build_hash(void)
     
     if (M_was_file)
     {
-        thpool_wait(ndrx_G_thpool);
+        ndrx_thpool_wait(ndrx_G_thpool);
         
         if (EXSUCCEED!=ndrx_G_thpool_error)
         {

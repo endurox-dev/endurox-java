@@ -51,7 +51,7 @@ add_executable (exjld   exjld.c
                 )
 
 # Link the executable to the UBF library & others...
-target_link_libraries (exjld atmiclt atmi ubf exthpool nstd ${RT_LIB} m pthread)
+target_link_libraries (exjld atmiclt atmi ubf nstd ${RT_LIB} m pthread)
 
 install (TARGETS 
     exjld

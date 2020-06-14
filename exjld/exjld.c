@@ -433,7 +433,7 @@ int main(int argc, char **argv)
         }
     }
     
-    if (NULL==(ndrx_G_thpool = thpool_init(jobs)))
+    if (NULL==(ndrx_G_thpool = ndrx_thpool_init(jobs, NULL, NULL, NULL, argc, argv)))
     {
         NDRX_LOG(log_error, "Failed to initialize thread pool (cnt: %d)!", 
                 jobs);
@@ -495,12 +495,12 @@ int main(int argc, char **argv)
     for (i = optind; i < argc; i++)
     {
         was_file = EXTRUE;
-        thpool_add_work(ndrx_G_thpool, (void*)extract_jar_th, (void *)argv[i]);
+        ndrx_thpool_add_work(ndrx_G_thpool, (void*)extract_jar_th, (void *)argv[i]);
     }
     
     if (was_file)
     {
-        thpool_wait(ndrx_G_thpool);
+        ndrx_thpool_wait(ndrx_G_thpool);
         
         if (EXSUCCEED!=ndrx_G_thpool_error)
         {
@@ -552,8 +552,8 @@ out:
                 
     if (NULL!=ndrx_G_thpool)
     {
-        thpool_wait(ndrx_G_thpool);
-        thpool_destroy(ndrx_G_thpool);
+        ndrx_thpool_wait(ndrx_G_thpool);
+        ndrx_thpool_destroy(ndrx_G_thpool);
     }
                 
     if (EXEOS!=ndrx_G_owd[0])
