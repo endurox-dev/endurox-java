@@ -101,7 +101,7 @@ expublic JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpconnect
     n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
     
     /* OK might get exception, but there could be buffer associated with it.. */
-    if (EXSUCCEED>=(ret=tpconnect((char *)n_svc, ibuf, ilen, (long)flags)))
+    if (0>(ret=tpconnect((char *)n_svc, ibuf, ilen, (long)flags)))
     {
         int err = tperrno;
         char errbuf[MAX_ERROR_LEN+1];
