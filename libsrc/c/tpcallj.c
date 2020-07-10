@@ -223,7 +223,7 @@ JNIEXPORT jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpacall
     n_svc = (*env)->GetStringUTFChars(env, svc, &n_svc_copy);
     
     /* OK might get exception, but there could be buffer associated with it.. */
-    if (EXSUCCEED>=(ret=tpacall((char *)n_svc, ibuf, ilen, (long)flags)))
+    if (EXFAIL==(ret=tpacall((char *)n_svc, ibuf, ilen, (long)flags)))
     {
         int err = tperrno;
         char errbuf[MAX_ERROR_LEN+1];

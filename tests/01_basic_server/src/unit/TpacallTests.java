@@ -121,6 +121,28 @@ public class TpacallTests {
     }
     
     /**
+     * tpacall with TPNOREPLY, shall be no exceptions
+     */
+    @Test
+    public void tpgetrplyNoReply() {
+        
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(ctx.getCtx(), 0x0);
+
+        TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
+        assertNotEquals(ub, null);
+        
+        /* init client before setting tout...! */
+        
+        ctx.tpinit(null);
+        
+        int cd = ctx.tpacall("DROPRSP", null, AtmiConst.TPNOREPLY);
+
+        ub.cleanup();
+        ctx.cleanup();
+    }
+    
+    /**
      * Cross buffer type validation, async
      */
     @Test
