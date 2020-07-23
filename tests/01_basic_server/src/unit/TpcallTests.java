@@ -120,6 +120,9 @@ public class TpcallTests {
                 // ignore.. 
             }
             
+            //Avoid high memory use, for java buffer is small so not often gc, but for
+            //c these buffer are large, say java 24 bytes vs 1042 for java... (or so)
+	    ub.cleanup();
             ub = (TypedUbf)ctx.tpcall("NULL", null, 0);
             
             String rspData = ub.BgetString(test.T_STRING_2_FLD, 0);
