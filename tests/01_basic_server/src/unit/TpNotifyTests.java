@@ -15,7 +15,7 @@ public class TpNotifyTests implements UnsolCallback {
     int nrcarray = 0;
     int nrnull = 0;
     int nrview = 0;
-    
+    int replies = 0;
     /**
      * Receive different types of messages
      * @param ctx Atmi context
@@ -34,6 +34,7 @@ public class TpNotifyTests implements UnsolCallback {
         
         if (null==buf) {
             nrnull++;
+            replies++;
         }
         else if (t.getType().equals("STRING")) {
             TypedString s = (TypedString)buf;
@@ -41,6 +42,7 @@ public class TpNotifyTests implements UnsolCallback {
             String ss = s.getString();
             assertEquals("HELLO NOTIF", ss);
             nrstring++;
+            replies++;
         } 
         else if (t.getType().equals("JSON")) {
             TypedJson j = (TypedJson)buf;
@@ -48,6 +50,7 @@ public class TpNotifyTests implements UnsolCallback {
             String js = j.getJSON();
             assertEquals("{}", js);
             nrjson++;
+            replies++;
         } 
         else if (t.getType().equals("CARRAY")) {
             TypedCarray c = (TypedCarray)buf;
@@ -55,6 +58,7 @@ public class TpNotifyTests implements UnsolCallback {
             
             assertArrayEquals(new byte [] {0, 1, 2, 3, 4, 5, 6}, byt);
             nrcarray++;
+            replies++;
         }
         else if (t.getType().equals("UBF")) {
             TypedUbf ub = (TypedUbf)buf;
@@ -62,12 +66,42 @@ public class TpNotifyTests implements UnsolCallback {
             String s = ub.BgetString(test.T_STRING_10_FLD, 5);
             assertEquals("HELLO UBF FROM SERVICE", s);
             nrubf++;
+            replies++;
         }
         else if (t.getType().equals("VIEW")) {
             TypedView v = (TypedView)buf;
             assertEquals("JVIEW2", t.getSubType());
             nrview++;
+            replies++;
         }
+    }
+    
+    /**
+     * Perform server call, this will wait for reply 
+     * @param ctx
+     * @param buf
+     * @throws InterruptedException 
+     */
+    void doCall(AtmiCtx ctx, TypedBuffer buf) {
+        
+        int cur = replies;
+        int sleeps = 0;
+        ctx.tpcall("GLOBNOTIF", buf, 0);
+        
+        while (replies == cur && sleeps<4000) {
+        
+		/* ignore intr */
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+		
+		}
+		
+                sleeps++;
+                
+                //wait for message...
+		ctx.tpchkunsol();
+	}
     }
     
     @Test
@@ -109,6 +143,7 @@ public class TpNotifyTests implements UnsolCallback {
             nrcarray = 0;
             nrview = 0;
             nrubf = 0 ;
+            replies = 0;
             /* loop over the buffer types
              * send them to server and expect one to be received back..
              * each one we shall test with:
@@ -122,41 +157,41 @@ public class TpNotifyTests implements UnsolCallback {
              */
 
             ctx.tplogInfo("*** NULL test *** ");
-            ctx.tpcall("GLOBNOTIF", null, 0);
+            doCall(ctx, null);
             assertEquals(1, nrnull);
             
             ctx.tplogInfo("*** STRING test ***");
             TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
             assertNotEquals(s, null);            
-            ctx.tpcall("GLOBNOTIF", s, 0);
+            doCall(ctx, s);
             assertEquals(1, nrstring);
             s.cleanup();
             
             ctx.tplogInfo("*** JSON test ***");
             TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
             assertNotEquals(j, null);            
-            ctx.tpcall("GLOBNOTIF", j, 0);
+            doCall(ctx, j);
             assertEquals(1, nrjson);
             j.cleanup();
             
             ctx.tplogInfo("*** CARRAY test ***");
             TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
             assertNotEquals(c, null);            
-            ctx.tpcall("GLOBNOTIF", c, 0);
+            doCall(ctx, c);
             assertEquals(1, nrcarray);
             c.cleanup();
             
             ctx.tplogInfo("*** VIEW test ***");
             TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
             assertNotEquals(c, null);            
-            ctx.tpcall("GLOBNOTIF", v, 0);
+            doCall(ctx, v);
             assertEquals(1, nrview);
             v.cleanup();
             
             ctx.tplogInfo("*** UBF test ***");
             TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);            
-            ctx.tpcall("GLOBNOTIF", ub, 0);
+            doCall(ctx, ub);
             assertEquals(1, nrubf);
             ub.cleanup();
             
