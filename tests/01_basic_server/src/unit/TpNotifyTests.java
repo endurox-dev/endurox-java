@@ -130,30 +130,35 @@ public class TpNotifyTests implements UnsolCallback {
             assertNotEquals(s, null);            
             ctx.tpcall("GLOBNOTIF", s, 0);
             assertEquals(1, nrstring);
+            s.cleanup();
             
             ctx.tplogInfo("*** JSON test ***");
             TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
             assertNotEquals(j, null);            
             ctx.tpcall("GLOBNOTIF", j, 0);
             assertEquals(1, nrjson);
+            j.cleanup();
             
             ctx.tplogInfo("*** CARRAY test ***");
             TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
             assertNotEquals(c, null);            
             ctx.tpcall("GLOBNOTIF", c, 0);
             assertEquals(1, nrcarray);
+            c.cleanup();
             
             ctx.tplogInfo("*** VIEW test ***");
             TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
             assertNotEquals(c, null);            
             ctx.tpcall("GLOBNOTIF", v, 0);
             assertEquals(1, nrview);
+            v.cleanup();
             
             ctx.tplogInfo("*** UBF test ***");
             TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
             assertNotEquals(ub, null);            
             ctx.tpcall("GLOBNOTIF", ub, 0);
             assertEquals(1, nrubf);
+            ub.cleanup();
             
         }
 
