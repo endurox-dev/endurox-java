@@ -15,7 +15,7 @@ SYNOPSIS
 
 DESCRIPTION
 -----------
-*exjld* is Enduro/X Java linker too. The tool is used to compile given jar files
+*exjld* is Enduro/X Java linker tool. The tool is used to compile given jar files
 into single executable binary. *exjld* basically extracts all jar files, converts
 them to C resources (statically initialized byte arrays). These byte array
 global variables are indexed by class names. The application then is started by
