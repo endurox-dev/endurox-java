@@ -38,38 +38,10 @@
 cmake_minimum_required(VERSION 2.8)
 
 find_program(A2X_EXECUTABLE NAMES a2x)
-find_program(DBLATEX "dblatex")
 
-set(PDF_NAMES module_developer_guide getting_started_tutorial
-						)
-set(HTML_NAMES module_developer_guide getting_started_tutorial
-						)
+set(HTML_NAMES module_developer_guide getting_started_tutorial)
 
 if (A2X_EXECUTABLE)
-# Generate PDFs...
-if(DBLATEX)
-set(A2X_OPTS_PDF -L -f pdf --doctype book)
-set(PDF_FILES)
-foreach(m IN LISTS PDF_NAMES)
-  set(mf ${CMAKE_CURRENT_BINARY_DIR}/${m}.pdf)
-  set(ms ${CMAKE_CURRENT_SOURCE_DIR}/${m}.adoc)
-  add_custom_command(OUTPUT ${mf}
-    COMMAND ${A2X_EXECUTABLE} ${A2X_OPTS_PDF} ${ms}
-    DEPENDS ${ms}
-    WORKING_DIRECTORY .
-    COMMENT "Building PDF ${mf}"
-    VERBATIM)
-  list(APPEND PDF_FILES ${mf})
-
-  # Install the docs
-  install (FILES
-    ${mf}
-    DESTINATION share/endurox-java/doc/pdf)
-
-endforeach()
-add_custom_target(pdf ALL DEPENDS ${PDF_FILES})
-endif()
-
 # Generate HTMLs
 set(A2X_OPTS_HTML -D . -f xhtml)
 set(HTML_FILES)
@@ -87,10 +59,16 @@ foreach(m IN LISTS HTML_NAMES)
   # Install the docs
   install (FILES
     ${mf}
-    DESTINATION share/endurox-java/doc/html)
+    DESTINATION share/endurox-java/doc/html/guides)
 
 endforeach()
 add_custom_target(html ALL DEPENDS ${HTML_FILES})
+
+install (FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/docbook-xsl.css
+  DESTINATION share/endurox-java/doc/html/guides
+  OPTIONAL)
+
 
 # if A2X_EXECUTABLE
 endif()
