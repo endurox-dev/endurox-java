@@ -94,6 +94,7 @@ message("CMake CMAKE_OS_NAME  = ${CMAKE_OS_NAME}")
 message("CMake CMAKE_C_COMPILER_ID  = ${CMAKE_C_COMPILER_ID}")
 message("CMake CMAKE_CXX_COMPILER_ID  = ${CMAKE_CXX_COMPILER_ID}")
 
+OPTION(DEFINE_SANITIZE "Enable GCC/Clang Address Sanitizer (for debug)" OFF)
 
 # Support #310 Ubuntu 18.04 prints lot of unneeded warnings...
 if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0)
@@ -101,18 +102,30 @@ if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0)
     SET(CMAKE_C_FLAGS "-Wno-stringop-overflow -Wno-format-truncation -Wformat-overflow=0 ${CMAKE_C_FLAGS}")
 endif()
 
+SET (STACK_PROTECTOR "-fstack-protector")
+
+if(${CMAKE_OS_NAME} STREQUAL "AIX" OR ${CMAKE_OS_NAME} STREQUAL "SUNOS")
+    # not for aix, on gcc 9 does not build
+    SET (STACK_PROTECTOR "")
+endif()
+
 # Enable release only if specified.
 # By default if RELEASE_BUILD is not defined, then we run in debug!
 IF (DEFINE_RELEASEBUILD)
 	MESSAGE( RELEASE_BUILD )
 	SET(CMAKE_BUILD_TYPE release)
-        SET(CMAKE_C_FLAGS "-fstack-protector -O2 ${CMAKE_C_FLAGS}")
+        SET(CMAKE_C_FLAGS "${STACK_PROTECTOR} -O2 ${CMAKE_C_FLAGS}")
 ELSE ()
 	MESSAGE( DEBUG_BUILD )
 	SET(CMAKE_BUILD_TYPE debug)
 # Memory debugging:
 #       SET(CMAKE_C_FLAGS "-fsanitize=alignment -fsanitize=address -fno-omit-frame-pointer -O1 -ggdb ${CMAKE_C_FLAGS}")
-        SET(CMAKE_C_FLAGS "-fstack-protector -O2 -ggdb ${CMAKE_C_FLAGS}")
+
+    IF (DEFINE_SANITIZE)
+        SET(CMAKE_C_FLAGS "-fsanitize=address -fno-omit-frame-pointer -O1 -ggdb ${CMAKE_C_FLAGS}")
+    ELSE ()
+        SET(CMAKE_C_FLAGS "${STACK_PROTECTOR} -O2 -ggdb ${CMAKE_C_FLAGS}")
+    ENDIF()
 ENDIF ()
 
 IF (MUTEX_DEBUG)

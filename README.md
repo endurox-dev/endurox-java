@@ -121,3 +121,6 @@ $ cmake -DCMAKE_INSTALL_PREFIX:PATH=`pwd`/dist .
 - To enable strict mutex checking on GNU platform, use '-DMUTEX_DEBUG=ON' (for
 GNU platforms only)
 
+- To enable address sanitizer for GCC/Clang on supported hardware platforms,
+use '-DDEFINE_SANITIZE=1'
+
