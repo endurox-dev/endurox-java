@@ -90,17 +90,17 @@ public class TpNotifyTests implements UnsolCallback {
         
         while (replies == cur && sleeps<4000) {
         
-		/* ignore intr */
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-		
-		}
-		
-                sleeps++;
-                
-                //wait for message...
-		ctx.tpchkunsol();
+            /* ignore intr */
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+
+            }
+
+            sleeps++;
+
+            //wait for message...
+            ctx.tpchkunsol();
 	}
     }
     

@@ -67,8 +67,6 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         }
         
         ctx.tplogInfo("Got notif %b",buf);
-        
-        ncallbacks++;
 
         if (null==buf) {
             nrnull++;
@@ -106,6 +104,9 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             assertEquals("JVIEW2", t.getSubType());
             nrview++;
         }
+        
+        //So that above stats are filled.
+        ncallbacks++;
     }
     
     /**
@@ -116,10 +117,10 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
      */
     void doCall(AtmiCtx ctx, TypedBuffer buf, TpBroadcastTests other ) throws InterruptedException {
         
-        int cd = ctx.tpacall("GLOBBROAD", buf, 0);
         int sleeps=0;
         int curcbs = ncallbacks;
         int curcbs_other = other.ncallbacks;
+        int cd = ctx.tpacall("GLOBBROAD", buf, 0);
 
         Thread.sleep(50);
         ctx.tpgetrply(cd, null, 0);
