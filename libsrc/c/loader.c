@@ -163,6 +163,8 @@ exprivate jstring (*p_ndrxj_Java_org_endurox_AtmiCtx_Btype)
         (JNIEnv * v0,  jobject v1,  jint v2) = NULL;
 exprivate jstring (*p_ndrxj_Java_org_endurox_AtmiCtx_Bfname)
         (JNIEnv * v0,  jobject v1,  jint v2) = NULL;
+exprivate jint (*p_ndrxj_Java_org_endurox_AtmiCtx_Bfldid)
+        (JNIEnv * v0,  jobject v1,  jstring v2) = NULL;
 exprivate jint (*p_ndrxj_Java_org_endurox_AtmiCtx_tptoutget)
         (JNIEnv * v0,  jobject v1) = NULL;
 exprivate jlong (*p_ndrxj_Java_org_endurox_AtmiCtx_tpurcode)
@@ -400,6 +402,7 @@ exprivate ndrxj_loader_map_t M_funcmap[] =
     {"ndrxj_Java_org_endurox_AtmiCtx_BboolsetcbfC", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_BboolsetcbfC},
     {"ndrxj_Java_org_endurox_AtmiCtx_Btype", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_Btype},
     {"ndrxj_Java_org_endurox_AtmiCtx_Bfname", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_Bfname},
+    {"ndrxj_Java_org_endurox_AtmiCtx_Bfldid", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_Bfldid},
     {"ndrxj_Java_org_endurox_AtmiCtx_tptoutget", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tptoutget},
     {"ndrxj_Java_org_endurox_AtmiCtx_tpurcode", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tpurcode},
     {"ndrxj_Java_org_endurox_AtmiCtx_tptoutset", (void *)&p_ndrxj_Java_org_endurox_AtmiCtx_tptoutset},
@@ -1283,6 +1286,22 @@ expublic jstring JNICALL Java_org_endurox_AtmiCtx_Bfname (JNIEnv * v0,  jobject 
     }
     
     return p_ndrxj_Java_org_endurox_AtmiCtx_Bfname(v0, v1, v2);
+}
+
+/**
+ * Auto generated
+ */
+expublic jint JNICALL Java_org_endurox_AtmiCtx_Bfldid (JNIEnv * v0,  jobject v1,  jstring v2)
+{
+    if (!M_lib_init)
+    {
+        if (EXSUCCEED!=ndrxj_lib_init(v0))
+        {
+            return (jint)0;
+        }
+    }
+    
+    return p_ndrxj_Java_org_endurox_AtmiCtx_Bfldid(v0, v1, v2);
 }
 
 /**

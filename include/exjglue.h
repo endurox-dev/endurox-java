@@ -137,6 +137,8 @@ extern NDRX_JAVA_API jstring JNICALL ndrxj_Java_org_endurox_AtmiCtx_Btype
         (JNIEnv *, jobject, jint);
 extern NDRX_JAVA_API jstring JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bfname
         (JNIEnv *, jobject, jint);
+extern NDRX_JAVA_API jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bfldid
+        (JNIEnv *, jobject, jstring);
 extern NDRX_JAVA_API jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_tptoutget
         (JNIEnv *, jobject);
 extern NDRX_JAVA_API jlong JNICALL ndrxj_Java_org_endurox_AtmiCtx_tpurcode
