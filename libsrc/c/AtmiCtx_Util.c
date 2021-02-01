@@ -151,8 +151,8 @@ expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bfldid
     
     if (NULL==fldnm)
     {
-        ndrxj_ubf_throw(env, BEINVAL, "%s: fldnm cannot be null: %s", 
-                __func__, NULL, Bstrerror(BEINVAL));
+        ndrxj_ubf_throw(env, BEINVAL, "%s: fldnm cannot be null", 
+                __func__);
         goto out;
     }
 

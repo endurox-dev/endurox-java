@@ -41,7 +41,6 @@
 /*---------------------------Includes-----------------------------------*/
 
 #include <ndrx_config.h>
-
 #if !defined(EX_OS_DARWIN) && !defined(EX_OS_SUNOS)
 #define _LARGEFILE64_SOURCE
 #define _FILE_OFFSET_BITS 64 
@@ -57,7 +56,6 @@
 #include <stdio.h>
 #include <errno.h>
 #include <ftw.h>
-
 #include <ndrstandard.h>
 #include <ndebug.h>
 #include "exjld.h"
