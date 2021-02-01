@@ -1159,7 +1159,7 @@ public class AtmiCtx {
      * Return field type in string format. The possible values are following:
      * 'short', 'long', 'char', 'float', 'double', 'string', 'carray'
      * See Btype(3) manpage for more information.
-     * @param bfldid compiled field ied.
+     * @param bfldid compiled field id.
      * @return returns field type string
      * @throws UbfBTYPERRException Invalid field - 
      *  bad type extracted from oldest bits.
@@ -1170,11 +1170,21 @@ public class AtmiCtx {
      * Get field name by give compiled field id. If field tables are bad
      * or field is not found, then output id is formatted as: "((BFLDID32)%d)"
      * where "%d" is filled with \p bfldid
-     * See BFname(3) manpage for more information.
+     * See Bfname(3) manpage for more information.
      * @param bfldid compiled filed
      * @return String name of the field
      */
     public native String Bfname(int bfldid);
+    
+    
+    /**
+     * Method is used to dynamically resolve field id from given field name
+     * See Bfldid(3) manpage for more information.
+     * @param fldnm Field name
+     * @return String name of the field
+     * @throws UbfBEINVALException null value passed in \p fldnm
+     */
+    public native int Bfldid(String fldnm);
     
     /**
      * Return current XATMI timeout for IPC communications.

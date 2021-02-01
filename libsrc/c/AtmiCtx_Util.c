@@ -129,6 +129,53 @@ out:
     return ret;
 }
 
+
+/**
+ * Return field id from field name
+ * @param env java env
+ * @param atmiCtxObj ATMI Context object
+ * @param fldnm field name to return
+ * @return field name instring
+ */
+expublic jint JNICALL ndrxj_Java_org_endurox_AtmiCtx_Bfldid
+  (JNIEnv * env, jobject atmiCtxObj, jstring fldnm)
+{
+    TPCONTEXT_T ctx;
+    char *cret = NULL;
+    jint ret=BBADFLDID;
+    
+    jboolean n_fldnm_copy = EXFALSE;
+    const char *n_fldnm = NULL;
+    
+    /* check the field name, if it is NULL, then thow exception */
+    
+    if (NULL==fldnm)
+    {
+        ndrxj_ubf_throw(env, BEINVAL, "%s: fldnm cannot be null: %s", 
+                __func__, NULL, Bstrerror(BEINVAL));
+        goto out;
+    }
+
+    n_fldnm = (*env)->GetStringUTFChars(env, fldnm, &n_fldnm_copy);
+    
+    if (NULL==(ctx = ndrxj_get_ctx(env, atmiCtxObj, EXTRUE)))
+    {
+        goto out;
+    }
+    
+    ret = (jint)Bfldid((char *)n_fldnm);
+    
+out:
+
+    if (n_fldnm_copy)
+    {
+        (*env)->ReleaseStringUTFChars(env, fldnm, n_fldnm);
+    }
+    
+    tpsetctxt(TPNULLCONTEXT, 0L);
+    return ret;
+}
+
 /**
  * Get ATMI Context current timeout setting
  * @param env java env

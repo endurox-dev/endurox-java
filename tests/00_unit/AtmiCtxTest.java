@@ -80,6 +80,28 @@ public class AtmiCtxTest {
 
         assertEquals("T_SHORT_FLD", ctx.Bfname(test.T_SHORT_FLD));
     }
+    
+    /**
+    * Test Bfldid
+    */
+    @Test
+    public void testBfldid() {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(0x0, ctx.getCtx());
+
+        assertEquals(test.T_SHORT_FLD, ctx.Bfldid("T_SHORT_FLD"));
+    }
+    
+    /**
+     * Test invalid field id / NULL
+     */
+    @Test(expected = org.endurox.exceptions.UbfBEINVALException.class)
+    public void testBfldidNull() {
+        AtmiCtx ctx = new AtmiCtx();
+        assertNotEquals(0x0, ctx.getCtx());
+
+        assertEquals(test.T_SHORT_FLD, ctx.Bfldid(null));
+    }
 
     /**
     * Test Bfname, error

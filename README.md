@@ -105,6 +105,7 @@ commercial support.
 - Version 1.0.4 released on 27/12/2019. Fixes for Bug #490
 - Version 1.0.5 released on 10/07/2020. Fixed Bug #569
 - Version 1.0.6 / 1.5.2 released on 17/08/2020. Support #583
+- Version 1.5.4 released on 01/02/2021. Feature #567
 
 ## Configure make with: 
 
