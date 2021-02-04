@@ -1181,7 +1181,7 @@ public class AtmiCtx {
      * Method is used to dynamically resolve field id from given field name
      * See Bfldid(3) manpage for more information.
      * @param fldnm Field name
-     * @return String name of the field
+     * @return compiled field id
      * @throws UbfBEINVALException null value passed in \p fldnm
      */
     public native int Bfldid(String fldnm);
