@@ -28,6 +28,11 @@ pushd .
 cd conf
 . settest3
 
+
+if [ "$(uname)" == "AIX" ]; then
+        export LIBPATH=$LIBPATH:$EX_PG_LIBPATH
+fi
+
 #
 # Load db tables..
 #
