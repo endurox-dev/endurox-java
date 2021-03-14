@@ -42,39 +42,44 @@ find_program(A2X_EXECUTABLE NAMES a2x)
 set(HTML_NAMES module_developer_guide getting_started_tutorial)
 
 if (A2X_EXECUTABLE)
-# Generate HTMLs
-set(A2X_OPTS_HTML -D . -f xhtml)
-set(HTML_FILES)
-foreach(m IN LISTS HTML_NAMES)
-  set(mf ${CMAKE_CURRENT_BINARY_DIR}/${m}.html)
-  set(ms ${CMAKE_CURRENT_SOURCE_DIR}/${m}.adoc)
-  add_custom_command(OUTPUT ${mf}
-    COMMAND ${A2X_EXECUTABLE} ${A2X_OPTS_HTML} ${ms}
-    DEPENDS ${ms}
-    WORKING_DIRECTORY .
-    COMMENT "Building HTML ${mf}"
-    VERBATIM)
-  list(APPEND HTML_FILES ${mf})
 
-  # Install the docs
-  install (FILES
-    ${mf}
-    DESTINATION share/endurox-java/doc/html/guides)
+    execute_process(COMMAND a2x "--version" RESULT_VARIABLE RET)
 
-endforeach()
-add_custom_target(html ALL DEPENDS ${HTML_FILES})
-
-install (FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/docbook-xsl.css
-  DESTINATION share/endurox-java/doc/html/guides
-  OPTIONAL)
+    if( NOT ${RET} MATCHES "0")
+        message("a2x does not work - disabling doc...")
+        unset(A2X_EXECUTABLE)
+    elseif()
 
 
+    # Generate HTMLs
+    set(A2X_OPTS_HTML -D . -f xhtml)
+    set(HTML_FILES)
+    foreach(m IN LISTS HTML_NAMES)
+        set(mf ${CMAKE_CURRENT_BINARY_DIR}/${m}.html)
+        set(ms ${CMAKE_CURRENT_SOURCE_DIR}/${m}.adoc)
+        add_custom_command(OUTPUT ${mf}
+            COMMAND ${A2X_EXECUTABLE} ${A2X_OPTS_HTML} ${ms}
+            DEPENDS ${ms}
+            WORKING_DIRECTORY .
+            COMMENT "Building HTML ${mf}"
+            VERBATIM)
+        list(APPEND HTML_FILES ${mf})
+
+        # Install the docs
+        install (FILES
+            ${mf}
+            DESTINATION share/endurox-java/doc/html/guides)
+
+    endforeach()
+    add_custom_target(html ALL DEPENDS ${HTML_FILES})
+
+    install (FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/docbook-xsl.css
+        DESTINATION share/endurox-java/doc/html/guides
+        OPTIONAL)
+    endif()
 # if A2X_EXECUTABLE
 endif()
-
-
 # end.
-
 
 # vim: set ts=4 sw=4 et smartindent:

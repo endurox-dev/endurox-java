@@ -314,9 +314,10 @@ Add:
 export JAVA_HOME=/usr/java8_64
 
 # Add or update:
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/ppc64
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/jre/lib/ppc64/default
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+export LIBPATH=$LIBPATH:$JAVA_HOME/jre/lib/ppc64
+export LIBPATH=$LIBPATH:$JAVA_HOME/jre/lib/ppc64/default
+export LIBPATH=$LIBPATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+export PATH=$PATH:$JAVA_HOME/bin
 
 --------------------------------------------------------------------------------
 

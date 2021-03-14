@@ -52,6 +52,14 @@ set(PDF_MAN_NAMES ${MAN5_NAMES} ${MAN8_NAMES})
 
 
 if (A2X_EXECUTABLE)
+execute_process(COMMAND a2x "--version" RESULT_VARIABLE RET)
+
+if( NOT ${RET} MATCHES "0")
+    message("a2x does not work - disabling doc...")
+    unset(A2X_EXECUTABLE)
+elseif()
+
+
 # Generate MAN5
 set(A2X_OPTS_MAN5 --format=manpage -D man5)
 set(MAN5_FILES)
@@ -152,6 +160,7 @@ add_custom_target(man8html ALL DEPENDS ${XHTML_MAN_NAMES})
 
 
 
+endif()
 # A2X_EXECUTABLE
 endif()
 
