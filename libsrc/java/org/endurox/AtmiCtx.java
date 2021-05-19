@@ -1800,8 +1800,8 @@ public class AtmiCtx {
     int xa_xaresource_flags_map(long cflags) {
         int ret = 0;
         String flag = "";
+
         if ( (cflags & AtmiConst.TMJOIN) > 0) {
-            
             ret |= XAResource.TMJOIN;
             flag = flag.concat("TMJOIN;");
         }
@@ -1809,6 +1809,11 @@ public class AtmiCtx {
         if ( (cflags & AtmiConst.TMSUSPEND) > 0) {
             ret |= XAResource.TMSUSPEND;
             flag = flag.concat("TMSUSPEND;");
+        }
+
+        if ( (cflags & AtmiConst.TMRESUME) > 0) {
+            ret |= XAResource.TMRESUME;
+            flag = flag.concat("TMRESUME;");
         }
         
         if ( (cflags & AtmiConst.TMSTARTRSCAN) > 0) {
