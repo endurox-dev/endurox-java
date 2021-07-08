@@ -35,7 +35,7 @@
 ## contact@mavimax.com
 ## -----------------------------------------------------------------------------
 ##
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 find_program(A2X_EXECUTABLE NAMES a2x)
 
