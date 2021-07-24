@@ -63,7 +63,7 @@
             <envs>
                 <usegroup>QTEST</usegroup>
             </envs>
-            <sysopt>-e ${NDRX_APPHOME}/log/tmqueue-dom1.log -r -- -m MYSPACE -s1</sysopt>
+            <sysopt>-e ${NDRX_APPHOME}/log/tmqueue-dom1.log -r -- -s1</sysopt>
         </server>
         
     </servers>
