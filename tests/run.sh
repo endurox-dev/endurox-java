@@ -80,3 +80,7 @@ exit $M_fail
 
 ) > test.out 2>&1
 
+#
+# print results finally...
+#
+grep RESULT test.out
