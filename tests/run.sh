@@ -72,12 +72,11 @@ if [ "X$EX_PG_HOST" != "X" ]; then
 	fi
 fi
 
+grep RESULT test.out
 echo "*** SUMMARY $M_tests tests executed. $M_ok passes, $M_fail failures"
 
 xadmin killall tail
 
-grep RESULT test.out
 exit $M_fail
-
 ) > test.out 2>&1
 
