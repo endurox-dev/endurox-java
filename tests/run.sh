@@ -75,6 +75,8 @@ fi
 grep RESULT test.out
 echo "*** SUMMARY $M_tests tests executed. $M_ok passes, $M_fail failures"
 
+# wait for tail to pick the change
+sleep 5
 xadmin killall tail
 
 exit $M_fail
