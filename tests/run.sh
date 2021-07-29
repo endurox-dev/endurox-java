@@ -72,7 +72,15 @@ if [ "X$EX_PG_HOST" != "X" ]; then
 	fi
 fi
 
-grep RESULT test.out
+################################################################################
+# Print results in out file
+# use temp file to avoid plotting to the same file which are are grepping...
+################################################################################
+grep RESULT test.out >test.out.tmp
+cat test.out.tmp
+rm test.out.tmp
+################################################################################ 
+
 echo "*** SUMMARY $M_tests tests executed. $M_ok passes, $M_fail failures"
 
 # wait for tail to pick the change
