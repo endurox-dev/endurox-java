@@ -3,6 +3,9 @@ import org.endurox.*;
 import org.endurox.exceptions.AtmiException;
 import org.endurox.exceptions.AtmiTPEBLOCKException;
 import org.junit.Test;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * Perform tpbroadcast tests
@@ -23,6 +26,7 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
     int nrview = 0;
     int ncallbacks = 0;
     boolean running = true;
+    private final Lock lock = new ReentrantLock(true);
 
     public void run() {
         
@@ -69,13 +73,16 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         ctx.tplogInfo("Got notif %b",buf);
 
         if (null==buf) {
+            lock.lock();
             nrnull++;
+            lock.unlock();
         }
         else if (t.getType().equals("STRING")) {
             TypedString s = (TypedString)buf;
             /* Check the value sent in... */
             String ss = s.getString();
             assertEquals("HELLO NOTIF", ss);
+            lock.lock();
             nrstring++;
         } 
         else if (t.getType().equals("JSON")) {
@@ -83,30 +90,40 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
             /* Check the value sent in... */
             String js = j.getJSON();
             assertEquals("{}", js);
+            lock.lock();
             nrjson++;
+            lock.unlock();
         } 
         else if (t.getType().equals("CARRAY")) {
             TypedCarray c = (TypedCarray)buf;
             byte [] byt = c.getBytes();
             
             assertArrayEquals(new byte [] {0, 1, 2, 3, 4, 5, 6}, byt);
+            lock.lock();
             nrcarray++;
+            lock.unlock();
         }
         else if (t.getType().equals("UBF")) {
             TypedUbf ub = (TypedUbf)buf;
             /* Check the value sent in... */
             String s = ub.BgetString(test.T_STRING_10_FLD, 5);
             assertEquals("HELLO UBF FROM SERVICE", s);
+            lock.lock();
             nrubf++;
+            lock.unlock();
         }
         else if (t.getType().equals("VIEW")) {
             TypedView v = (TypedView)buf;
             assertEquals("JVIEW2", t.getSubType());
+            lock.lock();
             nrview++;
+            lock.unlock();
         }
         
         //So that above stats are filled.
+        lock.lock();
         ncallbacks++;
+        lock.unlock();
     }
     
     /**
@@ -125,8 +142,11 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         Thread.sleep(50);
         ctx.tpgetrply(cd, null, 0);
 
+        lock.lock();
         while ((ncallbacks != curcbs+4  || other.ncallbacks != curcbs_other+4) && sleeps<4000)
         {
+            lock.unlock();
+
             try {
                 ctx.tpgetrply(cd, null, AtmiConst.TPGETANY | AtmiConst.TPNOBLOCK);
             } catch (AtmiTPEBLOCKException e) {
@@ -134,7 +154,9 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 Thread.sleep(50);
                 sleeps++;
             }
+            lock.lock();
         }
+        lock.unlock();
         //ctx.tpgetrply(cd, buf, 0);
     }
     
@@ -180,12 +202,22 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
         for (int i=0; ((i<100) || (leaktest && w.deltaSec() < leaktestSec)); i++)
         {
                          
-            int prev_nrnull = nrnull;
-            int prev_nrstring = nrstring;
-            int prev_nrjson = nrjson;
-            int prev_nrcarray = nrcarray;
-            int prev_nrview = nrview;
-            int prev_nrubf = nrubf;
+            int prev_nrnull;
+            int prev_nrstring;
+            int prev_nrjson;
+            int prev_nrcarray;
+            int prev_nrview;
+            int prev_nrubf;
+
+            lock.lock();
+            prev_nrnull = nrnull;
+            prev_nrstring = nrstring;
+            prev_nrjson = nrjson;
+            prev_nrcarray = nrcarray;
+            prev_nrview = nrview;
+            prev_nrubf = nrubf;
+            lock.unlock();
+
             
             /* loop over the buffer types
              * send them to server and expect one to be received back..
@@ -204,54 +236,83 @@ public class TpBroadcastTests implements UnsolCallback, Runnable {
                 ctx.tplogInfo("*** NULL test *** ");
                 doCall(ctx, null, other);
 
-                assertEquals(prev_nrnull + 4, nrnull);
-                assertEquals(other.nrnull, nrnull);
+                lock.lock();
+                try {
+                    assertEquals(prev_nrnull + 4, nrnull);
+                    assertEquals(other.nrnull, nrnull);
+                } finally {
+                    lock.unlock();
+                }
 
                 ctx.tplogInfo("*** STRING test ***");
                 TypedString s = (TypedString)ctx.tpalloc("STRING", "", 1024);
                 assertNotEquals(s, null);            
                 doCall(ctx, s, other);
 
-                assertEquals(prev_nrstring + 4, nrstring);
-                assertEquals(other.nrstring, nrstring);
+                lock.lock();
+                try {
+                    assertEquals(prev_nrstring + 4, nrstring);
+                    assertEquals(other.nrstring, nrstring);
+                } finally {
+                    lock.unlock();
+                }
 
                 ctx.tplogInfo("*** JSON test ***");
                 TypedJson j = (TypedJson)ctx.tpalloc("JSON", "", 1024);
                 assertNotEquals(j, null);            
                 doCall(ctx, j, other);
 
-                assertEquals(prev_nrjson+4, nrjson);
-                assertEquals(other.nrjson, nrjson);
+                lock.lock();
+                try {
+                    assertEquals(prev_nrjson+4, nrjson);
+                    assertEquals(other.nrjson, nrjson);
+                } finally {
+                    lock.unlock();
+                }
 
                 ctx.tplogInfo("*** CARRAY test ***");
                 TypedCarray c = (TypedCarray)ctx.tpalloc("CARRAY", "", 1024);
                 assertNotEquals(c, null);            
                 doCall(ctx, c, other);
 
-                assertEquals(prev_nrcarray + 4, nrcarray);
-                assertEquals(other.nrjson, nrcarray);
+                lock.lock();
+                try {
+                    assertEquals(prev_nrcarray + 4, nrcarray);
+                    assertEquals(other.nrjson, nrcarray);
+                } finally {
+                    lock.unlock();
+                }
 
                 ctx.tplogInfo("*** VIEW test ***");
                 TypedView v = (TypedView)ctx.tpalloc("VIEW", "JVIEW1", 1024);
                 assertNotEquals(c, null);            
                 doCall(ctx, v, other);
 
-                assertEquals(prev_nrview + 4, nrview);
-                assertEquals(other.nrview, nrview);
+                lock.lock();
+                try {
+                    assertEquals(prev_nrview + 4, nrview);
+                    assertEquals(other.nrview, nrview);
+                } finally {
+                    lock.unlock();
+                }
 
                 ctx.tplogInfo("*** UBF test ***");
                 TypedUbf ub = (TypedUbf)ctx.tpalloc("UBF", "", 1024);
                 assertNotEquals(ub, null);            
                 doCall(ctx, ub, other);
 
-                assertEquals(prev_nrubf + 4, nrubf);
-                assertEquals(other.nrubf, nrubf);
+                lock.lock();
+                try {
+                    assertEquals(prev_nrubf + 4, nrubf);
+                    assertEquals(other.nrubf, nrubf);
+                } finally {
+                    lock.unlock();
+                }
             
             } 
             catch (AssertionError e) {
                 other.running = false;
                 Thread.sleep(1000, 0);
-                
                 throw e;
             }
             
