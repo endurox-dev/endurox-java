@@ -46,7 +46,7 @@
 #include <ndebug.h>
 #include <ondebug.h>
 #include <oatmisrv_integra.h>
-#include "libsrc.h"
+#include <libsrc.h>
 #include <sys_unix.h>
 #include "nerror.h"
 #include <ndrstandard.h>
@@ -75,6 +75,7 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
     long clen;
     Bfld_loc_info_t loc;
     BFLDID* ptr;
+    BFLDID last_Baddfast;
     
     /* get the context, switch */
     if (NULL==ndrxj_TypedBuffer_get_ctx(env, data, EXTRUE))
@@ -92,7 +93,7 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
         goto out;
     }
     
-    ptr = ndrxj_BFldLocInfo_ptr_get(env, jfldloc);
+    ptr = ndrxj_BFldLocInfo_ptr_get(env, jfldloc, &last_Baddfast);
     
     /* the ptr might be a NULL, thats fine, but to continue we shall check
      * for exception
@@ -104,6 +105,7 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
     }
     
     loc.last_checked = ptr;
+    loc.last_Baddfast = last_Baddfast;
     
     /* get UBF buffer */
     if (EXSUCCEED!=ndrxj_atmi_TypedBuffer_get_buffer(env, data, &cdata, &clen,
@@ -125,7 +127,7 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
     }
     
     /* save location */
-    ndrxj_BFldLocInfo_ptr_set(env, jfldloc, loc.last_checked);
+    ndrxj_BFldLocInfo_ptr_set(env, jfldloc, loc.last_checked, loc.last_Baddfast);
     
 out:
     

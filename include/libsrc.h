@@ -482,8 +482,9 @@ extern jobject ndrxj_atmi_TpSvcInfo_translate(JNIEnv *env,
 
 
 /* BFldLocInfo ops */
-extern BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc);
-extern void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr);
+extern BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc, BFLDID *last_Baddfast);
+extern void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc,
+    BFLDID *new_ptr, BFLDID last_Baddfast);
 
 /* BExprTree ops */
 
