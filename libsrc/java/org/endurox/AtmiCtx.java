@@ -1250,7 +1250,11 @@ public class AtmiCtx {
     }
     
     /**
-     * List XATMI buffers (C side pointers)
+     * List XATMI buffers (C side pointers). Note 
+     * these pointer might not be valid after the call due to
+     * possible work of GC and/or other threads (if used).
+     * The method shall not be normally used. It is provided
+     * soley for Enduro/X internal purposes.
      * @return List of allocated XATMI buffers.
      *  May be used for debug purposes, i.e. detect gc operations.
      */
