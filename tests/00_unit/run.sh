@@ -36,6 +36,7 @@ popd
 echo "Reset logs"
 rm -rf ./log 2>/dev/null
 mkdir  ./log
+rm ULOG* 2>/dev/null
 
 # Use decimal sepertar with dots..
 export LANG=en_UK.UTF-8

@@ -47,6 +47,8 @@ public class AtmiConst {
      * @defgroup atmierrors XATMI Error code
      * @{
      */
+    /** No error code set */
+    public static final int TPMINVAL	= 0;
     /** Transaction is being aborted*/
     public static final int TPEABORT	= 1;
     /** Bad call descriptor */
@@ -86,6 +88,9 @@ public class AtmiConst {
     /** @} */ // end of atmierrors
 
     /* UBF library error codes: */
+
+    /** no error code set */
+    public static final int BMINVAL	= 0;
     public static final int BERFU0	= 1;
     public static final int BALIGNERR	= 2;
     public static final int BNOTFLD	= 3;
@@ -111,6 +116,8 @@ public class AtmiConst {
 
     /* Enduro/X Standard library error codes: */
 
+    /** no error code set */
+    public static final int NMINVAL	= 0;
     /** Invalid INI file */
     public static final int NEINVALINI	= 1;
     /** Malloc failed */

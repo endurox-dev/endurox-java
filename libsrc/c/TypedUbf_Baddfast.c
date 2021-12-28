@@ -117,10 +117,10 @@ exprivate void ndrxj_ubf_Baddfast(JNIEnv *env, jobject data, jint bfldid,
     
     if (EXSUCCEED!=Baddfast((UBFH*)cdata, bfldid, value, len, &loc))
     {
-        UBF_LOG(log_error, "%s: Baddfast failed to add %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
-        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d (%s): %s", 
-                __func__, bfldid, Bfname(bfldid), Bstrerror(Berror));
+        UBF_LOG(log_error, "%s: Baddfast failed to add %d: %s", 
+                __func__, bfldid, Bstrerror(Berror));
+        ndrxj_ubf_throw(env, Berror, "%s: Failed to add %d: %s", 
+                __func__, bfldid, Bstrerror(Berror));
         goto out;
     }
     
