@@ -46,6 +46,22 @@ import org.endurox.exceptions.UbfBNOTPRESException;
 
 public class TypedUbf extends TypedBuffer {
 	
+    /**
+     * UBF Constants
+     * @defgroup ubfconst UBF constants
+     * @{
+     */
+    /** Bad field id */
+    public static final int BBADFLDID    = 0;
+    /** First field id for iteration */
+    public static final int BFIRSTFLDID  = 0;
+    /** Recursive lookup sequence terminator */
+    public static final int BBADFLDOCC  = 0;
+    /** Max number of FLD,OCC pairs for recursive lookup */
+    public static final int BFLDOCCMAX  = 128;
+
+    /** @} */ // end of ubfconst
+
     static {
        System.loadLibrary("exjavald"); // Load native library at runtime
     }

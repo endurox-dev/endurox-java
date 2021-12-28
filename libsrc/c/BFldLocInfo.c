@@ -58,15 +58,17 @@
 
 /**
  * Return location field offset for fastadd operations
+ * TODO: Add field IDs to cache?
  * @param env java env
  * @param loc location object from java
+ * @param last_Baddfast ptr to where to store last field id checked
  * @return NULL in case of error, 
  */
-expublic BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc)
+expublic BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc, BFLDID *last_Baddfast)
 {
     BFLDID *ret = NULL;
     jclass objClass /*= (*env)->GetObjectClass(env, loc)*/;
-    jfieldID offset_fld;
+    jfieldID fid;
     jlong joffset;
 
     objClass = (*env)->FindClass(env, "org/endurox/BFldLocInfo");
@@ -78,17 +80,29 @@ expublic BFLDID* ndrxj_BFldLocInfo_ptr_get(JNIEnv *env, jobject loc)
         goto out;
     }
     
-    offset_fld = (*env)->GetFieldID(env, objClass, "cPtr_last_checked", "J");
+    fid = (*env)->GetFieldID(env, objClass, "cPtr_last_checked", "J");
     
-    if (NULL==offset_fld)
+    if (NULL==fid)
     {
         NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to get cPtr_last_checked field from BFldLocInfo: %s");
         goto out;
     }
     
-    joffset = (*env)->GetLongField(env, loc, offset_fld);
+    joffset = (*env)->GetLongField(env, loc, fid);
     
+    /* get last field id: */
+    fid = (*env)->GetFieldID(env, objClass, "last_Baddfast", "I");
+   
+    if (NULL==fid)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG,
+                "Failed to get last_Baddfast field from BFldLocInfo: %s");
+        goto out;
+    }
+
+    /* Load results: */
+    *last_Baddfast = (*env)->GetIntField(env, loc, fid);
     ret = (BFLDID *)(long)joffset;
     
 out:
@@ -100,12 +114,14 @@ out:
  * @param env java env
  * @param loc java loc object
  * @param new_ptr new ptr to store
+ * @param last_Baddfast last checked field id
  */
-expublic void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr)
+expublic void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_ptr, BFLDID last_Baddfast)
 {
     jclass objClass = (*env)->GetObjectClass(env, loc);
-    jfieldID offset_fld;
+    jfieldID fid;
     jlong joffset;
+    jint jlast_Baddfast;
     
     if (NULL==objClass)
     {
@@ -114,9 +130,9 @@ expublic void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_pt
         goto out;
     }
     
-    offset_fld = (*env)->GetFieldID(env, objClass, "cPtr_last_checked", "J");
+    fid = (*env)->GetFieldID(env, objClass, "cPtr_last_checked", "J");
     
-    if (NULL==offset_fld)
+    if (NULL==fid)
     {
         NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG, 
                 "Failed to get cPtr_last_checked field from BFldLocInfo: %s");
@@ -125,8 +141,22 @@ expublic void ndrxj_BFldLocInfo_ptr_set(JNIEnv *env, jobject loc, BFLDID *new_pt
     
     joffset = (long)new_ptr;
     
-    (*env)->SetLongField(env, loc, offset_fld, joffset);
+    (*env)->SetLongField(env, loc, fid, joffset);
     
+    /* Load field id: */
+    fid = (*env)->GetFieldID(env, objClass, "last_Baddfast", "I");
+
+    if (NULL==fid)
+    {
+        NDRXJ_LOG_EXCEPTION(env, log_error, NDRXJ_LOGEX_ULOG,
+                "Failed to get cPtr_last_checked field from BFldLocInfo: %s");
+        goto out;
+    }
+
+    jlast_Baddfast = (jint)last_Baddfast;
+
+    (*env)->SetIntField(env, loc, fid, jlast_Baddfast);
+
     
 out:
     return;

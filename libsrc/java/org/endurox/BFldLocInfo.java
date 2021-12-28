@@ -44,12 +44,18 @@ public class BFldLocInfo {
      * C pointer to last checked field (casted to BFLDID * at C side)
      */
     long cPtr_last_checked;
+
+    /**
+     * Last field id used by Baddfast
+     */
+    int last_Baddfast;
     
     /**
      * Create the location field field. When object is created 
      */
     public BFldLocInfo() {
         this.cPtr_last_checked = 0;
+        this.last_Baddfast = TypedUbf.BBADFLDID;
     }
     
     /**
@@ -57,6 +63,7 @@ public class BFldLocInfo {
      */
     public void reset() {
         this.cPtr_last_checked = 0;
+        this.last_Baddfast = TypedUbf.BBADFLDID;
     }
 }
 /* vim: set ts=4 sw=4 et smartindent: */
