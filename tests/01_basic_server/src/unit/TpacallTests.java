@@ -5,6 +5,7 @@ import org.endurox.exceptions.AtmiTPEBADDESCException;
 import org.endurox.exceptions.UbfBNOTPRESException;
 import org.endurox.exceptions.AtmiTPEINVALException;
 import org.endurox.exceptions.AtmiTPETIMEException;
+import org.endurox.exceptions.AtmiException;
 
 /**
  * Async tpcall tests
@@ -110,12 +111,16 @@ public class TpacallTests {
         
         ctx.tpinit(null);
         
-        ctx.tptoutset(1);
-        
-        int cd = ctx.tpacall("DROPRSP", null, 0);
+        try {
+            ctx.tptoutset(1);
+            int cd = ctx.tpacall("DROPRSP", null, 0);
+            ctx.tpgetrply(cd, ub, 0);
+        } catch (AtmiException e) {
+            //Restore tout, stored for process, if not restored, may harm other tests.
+            ctx.tptoutset(90);
+            throw e; 
+        }
 
-        ctx.tpgetrply(cd, ub, 0);
-        
         ub.cleanup();
         ctx.cleanup();
     }
