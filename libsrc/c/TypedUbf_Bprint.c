@@ -305,7 +305,7 @@ expublic void JNICALL ndrxj_Java_org_endurox_TypedUbf_Bread
     ctl.buf = n_array;
     ctl.size = (*env)->GetArrayLength(env, jb);
     
-    NDRX_LOG(log_error, "Reading buffer len: %ld", (long)ctl.size);
+    NDRX_LOG(log_debug, "Reading buffer len: %ld", (long)ctl.size);
     
     if (EXSUCCEED!=Breadcb ((UBFH *)cdata, Bread_readf, (void *)&ctl))
     {
