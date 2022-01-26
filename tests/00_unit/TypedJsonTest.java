@@ -25,7 +25,8 @@ public class TypedJsonTest {
             
             String cmp = "{\"test\":\"";
             
-            for (int j=0; j<i+1; j++)
+            /* seems on some jdk version too long concat is slow */
+            for (int j=0; j<10; j++)
             {
                 cmp = cmp.concat(BIGTEST);
             }

@@ -27,7 +27,7 @@ public class TypedStringTest {
             
             String cmp = BIGTEST;
             
-            for (int j=0; j<i; j++)
+            for (int j=0; j<10; j++)
             {
                 cmp = cmp.concat(BIGTEST);
             }
