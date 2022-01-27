@@ -23,7 +23,7 @@ public class TypedStringTest {
         assertNotEquals(ctx.getCtx(), 0x0);
         TypedString str;
 
-        for (int i=0; i<4000; i++) {
+        for (int i=0; i<2000; i++) {
             
             String cmp = BIGTEST;
             
@@ -47,8 +47,10 @@ public class TypedStringTest {
             /* str.cleanup(); */
         }
         
-        /* check that we got gc...! */
+        /* check that we got gc...! 
         assertFalse(ctx.getBuffers().length == 1000);
+        * gc will work whenever it wants
+        */
         
         ctx.cleanup();
     }
