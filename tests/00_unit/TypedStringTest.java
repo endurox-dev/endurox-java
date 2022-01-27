@@ -23,7 +23,7 @@ public class TypedStringTest {
         assertNotEquals(ctx.getCtx(), 0x0);
         TypedString str;
 
-        for (int i=0; i<1000; i++) {
+        for (int i=0; i<4000; i++) {
             
             String cmp = BIGTEST;
             
