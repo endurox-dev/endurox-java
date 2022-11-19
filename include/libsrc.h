@@ -79,7 +79,10 @@ extern "C" {
         UBF_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_TP)\
         TP_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
-    NDRX_FREE(jerr__);\
+    if (jerr__!=jerr_null__)\
+    {\
+        NDRX_FREE(jerr__);\
+    }\
 }
 
 /**
@@ -104,7 +107,10 @@ extern "C" {
         UBF_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
     if (FLAGS__ & NDRXJ_LOGEX_TP)\
         TP_LOG(LEV__, FMT__, ##__VA_ARGS__, jerr__);\
-    NDRX_FREE(jerr__);\
+    if (jerr__!=jerr_null__)\
+    {\
+        NDRX_FREE(jerr__);\
+    }\
 }
 
 /**

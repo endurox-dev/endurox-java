@@ -45,7 +45,7 @@ To install the JDK for RHEL system, use following command:
 
 --------------------------------------------------------------------------------
 
-=== CentOS/RHEL/Oracle Linux 8.X
+=== CentOS/RHEL/Oracle Linux 8.X, 9.X
 
 To install the JDK for RHEL system, use following command:
 
@@ -264,6 +264,23 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/
 
 --------------------------------------------------------------------------------
 
+==== Oracle Linux 9 with Java 11:
+
+--------------------------------------------------------------------------------
+
+$ vi ~/ndrx_home
+
+Add:
+
+# Java settings
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.17.0.8-2.0.1.el9_0.x86_64
+
+# Add or update:
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/user1/modules/endurox-java/libsrc/c:/home/user1/modules/endurox-java/libexjlds
+
+--------------------------------------------------------------------------------
 
 ==== Suse Enterprise Linux Server 15 (SLES):
 
@@ -417,6 +434,7 @@ of the
 building_guide(guides)(Enduro/X Building Guide, Enduro/X basic Environment configuration for HOME directory).
 
 === Configuration of Oracle DB tests
+
 Once the Oracle environment is configured, the test database tables must be created.
 that could be done in following way (assuming that ~/ndrx_home is properly set):
 
