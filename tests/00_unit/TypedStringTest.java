@@ -8,10 +8,44 @@ import org.endurox.exceptions.*;
  */
 public class TypedStringTest {
 
-    
-    public static final String BIGTEST = "THIS IS SOME VERY BIG STRNIG 1" +
-                   "THIS IS SOME VERY BIG STRNIG 2" +
-                   "THIS IS SOME VERY BIG STRNIG 3";
+    /* about 1k bytes */
+    public static final String BIGTEST = "THIS IS SOME VERY BIG STRING 1" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 3";
     
     /**
      * Test string alloocation
@@ -27,11 +61,8 @@ public class TypedStringTest {
             
             String cmp = BIGTEST;
             
-            for (int j=0; j<10; j++)
-            {
-                cmp = cmp.concat(BIGTEST);
-            }
-            
+            cmp = cmp.concat(BIGTEST);
+
             /* create new string */
             str = ctx.newString("HELLO WORLD");
             
