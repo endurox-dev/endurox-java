@@ -8,9 +8,56 @@ import org.endurox.exceptions.*;
  */
 public class TypedJsonTest {
 
-    public static final String BIGTEST = "THIS IS SOME VERY BIG STRNIG 1" +
-                   "THIS IS SOME VERY BIG STRNIG 2" +
-                   "THIS IS SOME VERY BIG STRNIG 3";
+    /* over 1024 bytes */
+    public static final String BIGTEST = "THIS IS SOME VERY BIG STRING 1" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 2" +
+                   "THIS IS SOME VERY BIG STRING 3";
     /**
      * Test string allocation
      */
@@ -25,11 +72,7 @@ public class TypedJsonTest {
             
             String cmp = "{\"test\":\"";
             
-            /* seems on some jdk version too long concat is slow */
-            for (int j=0; j<10; j++)
-            {
-                cmp = cmp.concat(BIGTEST);
-            }
+            cmp.concat(BIGTEST);
             
             cmp = cmp.concat("\"}");
             
