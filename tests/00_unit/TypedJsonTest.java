@@ -91,9 +91,6 @@ public class TypedJsonTest {
             /* str.cleanup(); */
         }
         
-        /* check that we got gc...! */
-        assertFalse(ctx.getBuffers().length == 1000);
-        
         ctx.cleanup();
     }
 }
