@@ -1,3 +1,6 @@
+
+cmake_minimum_required (VERSION 3.5)
+
 # first we can indicate the documentation build as an option and set it to ON by default
 #option(BUILD_DOC "Build documentation" ON)
 
