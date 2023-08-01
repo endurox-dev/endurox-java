@@ -57,7 +57,7 @@ execute_process(COMMAND a2x "--version" RESULT_VARIABLE RET)
 if( NOT ${RET} MATCHES "0")
     message("a2x does not work - disabling doc...")
     unset(A2X_EXECUTABLE)
-elseif()
+endif()
 
 
 # Generate MAN5
@@ -159,8 +159,6 @@ install (FILES
 add_custom_target(man8html ALL DEPENDS ${XHTML_MAN_NAMES})
 
 
-
-endif()
 # A2X_EXECUTABLE
 endif()
 
