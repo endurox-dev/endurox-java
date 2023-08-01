@@ -48,8 +48,7 @@ if (A2X_EXECUTABLE)
     if( NOT ${RET} MATCHES "0")
         message("a2x does not work - disabling doc...")
         unset(A2X_EXECUTABLE)
-    elseif()
-
+    endif()
 
     # Generate HTMLs
     set(A2X_OPTS_HTML -D . -f xhtml)
@@ -77,7 +76,6 @@ if (A2X_EXECUTABLE)
         ${CMAKE_CURRENT_BINARY_DIR}/docbook-xsl.css
         DESTINATION share/endurox-java/doc/html/guides
         OPTIONAL)
-    endif()
 # if A2X_EXECUTABLE
 endif()
 # end.
