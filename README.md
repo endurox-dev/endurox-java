@@ -109,7 +109,7 @@ commercial support.
 - Version 1.5.4 released on 01/02/2021. Feature #567
 - Version 1.5.6 released on 19/05/2021. Support #671
 - Version 8.0.0 released on 27/12/2021. Initial build for Enduro/X 8.0
-- Version 8.0.2 released on 07/08/2034. Support #791
+- Version 8.0.2 released on 07/08/2023. Support #791
 
 ## Configure make with: 
 
